@@ -1,1 +1,6 @@
 rootProject.name = 'lacheln'
+include 'model'
+include 'company'
+include 'user'
+include 'ws'
+

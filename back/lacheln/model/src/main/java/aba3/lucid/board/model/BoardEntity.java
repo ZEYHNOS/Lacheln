@@ -6,12 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// TODO 태호형
 @Getter
 @Entity(name = "board")
 @AllArgsConstructor
 @NoArgsConstructor
+// TODO @Builder 넣기
 public class BoardEntity {
 
+    // todo 자동증가
     @Id
     private int boardId;
 

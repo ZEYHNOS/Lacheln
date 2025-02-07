@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// TODO 샤히드
 
 @Getter
 @Entity
@@ -18,6 +19,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserNoticeEntity {
 
+    /**
+     * TODO space 관리 잘하기
+     * TODO alarmId 제외하고 alarm 빼기
+     */
     @Id
     private  String alarmId;
 

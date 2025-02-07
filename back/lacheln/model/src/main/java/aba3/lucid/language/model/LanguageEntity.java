@@ -8,10 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// todo 현준이형
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "language")
+// todo @Builder 넣어주세요
 public class LanguageEntity {
     @Id
     private String countryId;

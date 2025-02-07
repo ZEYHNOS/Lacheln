@@ -2,10 +2,18 @@ package aba3.lucid.company.model;
 
 import aba3.lucid.enums.CompanyStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Entity
+@Table(name = "company")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CompanyEntity {
 
     @Id

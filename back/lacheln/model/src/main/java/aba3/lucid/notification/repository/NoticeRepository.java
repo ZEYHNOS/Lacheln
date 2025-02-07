@@ -1,4 +1,4 @@
-package aba3.lucid.notification.db;
+package aba3.lucid.notification.repository;
 
 import aba3.lucid.notification.model.UserNoticeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

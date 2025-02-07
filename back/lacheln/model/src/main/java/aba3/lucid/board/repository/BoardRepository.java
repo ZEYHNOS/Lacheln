@@ -1,4 +1,4 @@
-package aba3.lucid.board.db;
+package aba3.lucid.board.repository;
 
 import aba3.lucid.board.model.BoardEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

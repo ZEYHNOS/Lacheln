@@ -1,4 +1,4 @@
-package aba3.lucid.post.db;
+package aba3.lucid.post.repository;
 
 import aba3.lucid.post.model.PostEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

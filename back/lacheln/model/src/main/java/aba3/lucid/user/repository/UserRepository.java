@@ -1,4 +1,4 @@
-package aba3.lucid.user.db;
+package aba3.lucid.user.repository;
 
 import aba3.lucid.user.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

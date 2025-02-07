@@ -1,4 +1,4 @@
-package aba3.lucid.user;
+package aba3.lucid.controller.user;
 
 import org.springframework.web.bind.annotation.RestController;
 

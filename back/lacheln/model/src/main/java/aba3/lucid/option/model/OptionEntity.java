@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class OptionEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long opId;
 
     private Long pdId;
@@ -23,8 +23,10 @@ public class OptionEntity {
     private String name;
 
     private String overlap;
+//중복 여부 - overlap
 
     private String essential;
+//    필수 여부-essential
 
     private String status;
 

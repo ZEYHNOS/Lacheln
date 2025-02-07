@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class DetailOpEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long detailOpId;
 
     private Long opId;
@@ -25,5 +25,6 @@ public class DetailOpEntity {
     private String detailOpName;
 
     private int opPlusPrice;
+//  opPlusPrice--  추가금
 
 }

@@ -1,11 +1,9 @@
 package aba3.lucid.packag.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,9 +12,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name="package")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PackageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,4 +1,4 @@
-package aba3.lucid.language;
+package aba3.lucid.language.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,14 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "language")
+@Entity(name = "language")
 public class LanguageEntity {
     @Id
-    private String country_Id;
+    private String countryId;
 
     @Column(nullable = false)
     private String name;

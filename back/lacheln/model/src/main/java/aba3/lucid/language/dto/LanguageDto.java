@@ -1,4 +1,4 @@
-package aba3.lucid.language;
+package aba3.lucid.language.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class LanguageDto {
-    private String country_Id;
+    private String countryId;
     private String name;
     private String url;
 }

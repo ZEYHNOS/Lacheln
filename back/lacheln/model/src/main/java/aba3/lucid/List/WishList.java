@@ -13,7 +13,7 @@ import lombok.*;
 public class WishList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String productId;
+    private long pdId;
 
     private String userId;
 

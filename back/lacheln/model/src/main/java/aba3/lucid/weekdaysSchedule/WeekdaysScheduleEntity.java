@@ -25,6 +25,7 @@ public class WeekdaysScheduleEntity {
     private long cpId;
 
     // 월요일~일요일
+    @Enumerated(EnumType.STRING)
     private Weekdays weekdays;
 
     // 시작 시간

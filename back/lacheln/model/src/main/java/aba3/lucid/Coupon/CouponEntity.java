@@ -8,7 +8,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @Table(name="coupon")
 @Builder
 @AllArgsConstructor

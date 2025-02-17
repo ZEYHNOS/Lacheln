@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Setter
 @Getter
 @Table(name = "cart")
 @Builder

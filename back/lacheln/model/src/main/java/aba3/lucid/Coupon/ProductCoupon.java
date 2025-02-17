@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Entity
 @Getter
-@Setter
 @Table(name="product_coupon")
 @Builder
 @AllArgsConstructor

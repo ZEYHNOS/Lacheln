@@ -5,7 +5,6 @@ import lombok.*;
 
 
 @Entity
-@Setter
 @Getter
 @Table(name="wishlist")
 @Builder

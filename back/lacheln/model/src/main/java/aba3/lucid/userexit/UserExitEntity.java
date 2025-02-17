@@ -20,7 +20,7 @@ public class UserExitEntity {
     private String userId;
 
     //탈퇴일
-    private LocalTime exit;
+    private LocalTime exitDate;
 
     //탈퇴 사유
     private String reason;

@@ -53,7 +53,7 @@ public class CompanyEntity {
     private String profile;
 
     // 업체 설명
-    private String explain;
+    private String cpExplain;
 
     // 카테고리
     // todo enum

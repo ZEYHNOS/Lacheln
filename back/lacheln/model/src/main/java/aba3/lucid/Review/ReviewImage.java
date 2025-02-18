@@ -16,11 +16,12 @@ import lombok.NoArgsConstructor;
 public class ReviewImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ImageId;
+    @Column(name = "image_id")
+    private long imageId;
 
-    private long reviewId;
+    @Column(name = "review_id", nullable = false)
+    private long reviewId;  //주후 테이블 관계 설정
 
-    private long scheduleId;
-
-    private String imageUrl;
+    @Column(name = "rv_image_url", length = 255, nullable = false)
+    private String rvImageUrl;
 }

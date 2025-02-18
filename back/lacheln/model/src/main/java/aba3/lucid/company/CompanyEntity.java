@@ -1,5 +1,7 @@
 package aba3.lucid.company;
 
+import aba3.lucid.company.enums.CompanyCategory;
+import aba3.lucid.company.enums.CompanyStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,49 +21,64 @@ public class CompanyEntity {
     private long cpId;
 
     // 회사 이메일
-    private String email;
+    @Column(name = "cp_email", columnDefinition = "VARCHAR(255)", nullable = false)
+    private String cpEmail;
 
     // 회사 비밀번호
-    private String password;
+    @Column(name = "cp_password", columnDefinition = "CHAR(255)", nullable = false)
+    private String cpPassword;
 
     // 업체명
+    @Column(name = "cp_name", columnDefinition = "VARCHAR(100)")
     private String cpName;
 
     // 대표자명
-    private String repName;
+    @Column(name = "cp_rep_name", columnDefinition = "VARCHAR(20)", nullable = false)
+    private String cpRepName;
 
     // 대표자 전화번호
-    private String regNo;
+    @Column(name = "cp_reg_no", columnDefinition = "CHAR(11)", nullable = false)
+    private String cpRegNo;
 
     // 주소
-    private String mainContact;
+    @Column(name = "cp_main_contact", columnDefinition = "CHAR(100)", nullable = false)
+    private String cpMainContact;
 
     // 우편번호
-    private String postalCode;
+    @Column(name = "cp_postal_code", columnDefinition = "CHAR(5)", nullable = false)
+    private String cpPostalCode;
 
     // 사업자등록번호
-    private String bnRegNo;
+    @Column(name = "cp_bn_reg_no", columnDefinition = "CHAR(10)", nullable = false)
+    private String cpBnRegNo;
 
     // 통신판매업신고번호
-    private String mos;
+    @Column(name = "cp_mos", columnDefinition = "VARCHAR(20)", nullable = false)
+    private String cpMos;
 
     // 입점 상태
-    // TODO ENUM 처리
-    private String cpStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cp_status", columnDefinition = "CHAR(20)", nullable = false)
+    private CompanyStatus cpStatus;
 
     // 업체 소개 이미지(대표 이미지)
-    private String profile;
+    @Column(name = "cp_profile", columnDefinition = "CHAR(255)", nullable = false)
+    private String cpProfile;
 
     // 업체 설명
+    @Column(name = "cp_explain", columnDefinition = "TEXT")
     private String cpExplain;
 
     // 카테고리
-    // todo enum
-    private String cpCategory;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cp_category", columnDefinition = "CHAR(1)", nullable = false)
+    private CompanyCategory cpCategory;
 
     // 업체 전화번호
+    @Column(name = "cp_contact", columnDefinition = "CHAR(11)")
     private String cpContact;
 
     // 팩스 번호
-    private String fax;
+    @Column(name = "cp_fax", columnDefinition = "CHAR(20)")
+    private String cpFax;
 }

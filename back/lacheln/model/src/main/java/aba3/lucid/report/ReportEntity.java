@@ -21,7 +21,7 @@ public class ReportEntity {
     //type, column 제대로 만들기
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "report_id", nullable = false)
+    @Column(name = "report_id")
     private long reportId;
 
     @Column(name = "user_id", columnDefinition = "char(36)", nullable = false)

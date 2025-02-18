@@ -19,7 +19,7 @@ export default function NationButton() {
     };
 
     const handleMouseLeave = () => {
-        timeoutId = setTimeout(() => setIsOpen(false), 200);
+        timeoutId = setTimeout(() => setIsOpen(false), 50);
     };
 
     return (

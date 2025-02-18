@@ -11,7 +11,7 @@ export default function AlarmButton() {
     };
 
     const handleMouseLeave = () => {
-        timeoutId = setTimeout(() => setIsOpen(false), 200); // 0.2초 딜레이 후 닫힘
+        timeoutId = setTimeout(() => setIsOpen(false), 50); // 딜레이 후 닫힘
     };
 
     return (

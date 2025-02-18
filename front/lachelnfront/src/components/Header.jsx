@@ -38,10 +38,10 @@ export default function Header() {
             <div className={`flex justify-center items-center py-1 transition-all duration-300 ${isSidebarOpen ? "justify-start pl-10" : ""}`}>
                 {/* 로고 (사이드바 열리면 숨김) */}
                 {!isSidebarOpen && (
-                    <div className="mr-10 cursor-pointer">
+                    <a href="/" className="mr-10 cursor-pointer">
                         <h1 className="text-5xl font-inknut font-semibold text-[#845EC2]">Lächeln</h1>
                         <p className="text-lg text-[#845EC2]">스튜디오 드레스 메이크업</p>
-                    </div>
+                    </a>
                 )}
 
                 {/* 검색창 (사이드바 열리면 확장) */}

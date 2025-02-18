@@ -7,7 +7,7 @@ export default function SearchBar() {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
 
     // 더미 추천 검색어 (나중에 API 연동 가능)
-    const dummySuggestions = ["ssg닷컴", "ssg", "ssf몰", "ss501", "ssf", "ssd", "ssf샵"];
+    const dummySuggestions = ["lacheln", "LachelnProject", "신현준 대현준", "손지훈 캡틴 230레벨달성", "샤히드 귀국", "손휘성 나락", "이태호 아이패드", "정현철 프론트"];
 
     // 입력 변경 핸들러
     const handleChange = (e) => {
@@ -50,7 +50,7 @@ export default function SearchBar() {
                             suggestions.map((suggestion, index) => (
                                 <li
                                     key={index}
-                                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center"
+                                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center text-black"
                                     onClick={() => handleSelectSuggestion(suggestion)}
                                 >
                                     <FaSearch className="text-gray-400 mr-2" />
@@ -66,4 +66,3 @@ export default function SearchBar() {
         </div>
     );
 }
-ㄴ

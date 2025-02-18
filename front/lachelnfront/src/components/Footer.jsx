@@ -1,5 +1,6 @@
 import { FaInstagram } from "react-icons/fa";
 import { SiKakaotalk } from "react-icons/si";
+import CompanyNav from "./CompanyNavgation/CompanyNav.jsx";
 
 export default function Footer() {
   return (
@@ -45,12 +46,8 @@ export default function Footer() {
 
         {/* 우측 */}
         <div className="space-y-2 pl-10 mt-3">
-            {/* 회사 네비게이션*/}
-          <div className="mb-2 space-x-3">
-            <a href="#" className="text-sm text-white">회사소개</a>
-            <a href="#" className="text-sm text-white">이용약관</a>
-            <a href="#" className="text-sm text-white">개인정보처리방침</a>
-            <a href="#" className="text-sm text-white">오시는 길</a>
+          <div className="text-sm space-y-2 text-white [&_a]:text-white">
+            <CompanyNav />
           </div>
           <h3 className="text-lg font-medium mb-1">Contact Us</h3>
           <p className="text-sm">오전 10:00 - 오후 06:00 (월요일-금요일)</p>

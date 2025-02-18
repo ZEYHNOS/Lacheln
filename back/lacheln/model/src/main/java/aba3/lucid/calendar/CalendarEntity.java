@@ -20,10 +20,13 @@ public class CalendarEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long calId;
 
-    // 캘린더 날짜
-    private LocalDate date;
-
+    // ManyToOne 설정
     // 업체 id
     private long cpId;
+
+    // 캘린더 날짜
+    @Column(name = "cal_date", columnDefinition = "DATE", nullable = false)
+    private LocalDate calDate;
+
 
 }

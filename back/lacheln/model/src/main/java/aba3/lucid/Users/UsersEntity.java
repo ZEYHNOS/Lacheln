@@ -60,7 +60,7 @@ public class UsersEntity {
 
     @NotNull
     @Column(name = "user_social", columnDefinition = "CHAR(1)", nullable = false)
-    private String userSocial; //로그인 수단 식별
+    private String userSocial; //로그인 수단 식별 로컬, 카카오, 구글, 애플(L, K, G, A)
 
     @Column(name = "user_phone", length = 20)
     private String userPhone; //국제전화번호 생각
@@ -95,7 +95,7 @@ public class UsersEntity {
 
     @NotNull
     @Column(name = "user_gender", columnDefinition = "CHAR(1)", nullable = false)
-    private String userGender; //남자 0  여자 1
+    private String userGender; //남자 M  여자 F
 
     @NotNull
     @Column(name = "user_mileage", nullable = false)

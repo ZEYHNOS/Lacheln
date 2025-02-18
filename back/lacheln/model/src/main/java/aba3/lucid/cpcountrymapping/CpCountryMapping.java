@@ -1,4 +1,4 @@
-package aba3.lucid.cplanmapping;
+package aba3.lucid.cpcountrymapping;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,18 +8,20 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "cp_lan_mapping")
+@Table(name = "cp_country_mapping")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CompanyLanguageMappingEntity {
+public class CpCountryMapping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int cpLanId;
+    private long cpCountryId;
 
+    // TODO ManyToOne 설정
     private String countryId;
 
+    // TODO ManyToOne 설정
     private long cpId;
 
 }

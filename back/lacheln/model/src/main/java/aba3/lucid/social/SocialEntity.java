@@ -16,13 +16,19 @@ import lombok.NoArgsConstructor;
 public class SocialEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long snsId;
+
+    // ManyToOne 설정
     private long cpId;
 
     // SNS 이름 및 이미지 주소
     @Enumerated(EnumType.STRING)
+    @Column(name = "sns_name", columnDefinition = "CHAR(30)", nullable = false)
     private SNS snsName;
 
     // 업체 다이렉트 사이트 주소
-    private String urlAddress;
+    @Column(name = "sns_url", columnDefinition = "CHAR(255)", nullable = false)
+    private String snsUrl;
 
 }

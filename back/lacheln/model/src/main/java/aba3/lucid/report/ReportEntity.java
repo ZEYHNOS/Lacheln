@@ -19,6 +19,7 @@ public class ReportEntity {
     //TOdo
     //Entity 만들기
     //type, column 제대로 만들기
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "report_id")

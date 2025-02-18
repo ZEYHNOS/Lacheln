@@ -24,11 +24,11 @@ public class ReportEntity {
     @Column(name = "report_id", nullable = false)
     private long reportId;
 
-    @Column(name = "user_id", length = 36, nullable = false)
-    private String userId;
+    @Column(name = "user_id", columnDefinition = "char(36)", nullable = false)
+    private String userId; // 추후 ManyToOne으로 수정
 
     @Column(name = "cp_id", nullable = false)
-    private long cpId;
+    private long cpId;  // 추후 ManyToOne으로 수정
 
     @Column(name = "report_title", length = 100, nullable = false)
     private String reportTitle;
@@ -39,12 +39,12 @@ public class ReportEntity {
     @Column(name = "report_created_at", nullable = false, updatable = false)
     private LocalDateTime reportCreatedAt;
 
-    @Column(name = "report_target", length = 1, nullable = false)
+    @Column(name = "report_target", columnDefinition = "char(1)", nullable = false)
     private String reportTarget;
 
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "report_category", length = 50, nullable = false)
+    @Column(name = "report_category", columnDefinition = "char(50)", nullable = false)
     private ReportCategory reportCategory;
 
 }

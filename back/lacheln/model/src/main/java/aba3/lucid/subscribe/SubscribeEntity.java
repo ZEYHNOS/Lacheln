@@ -17,6 +17,7 @@ public class SubscribeEntity {
     // 기본키
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "subscribe_id")
     private long subscribeId;
 
     // 외래키(업체ID)

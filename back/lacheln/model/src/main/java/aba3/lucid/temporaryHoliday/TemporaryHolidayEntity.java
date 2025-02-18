@@ -1,6 +1,7 @@
 package aba3.lucid.temporaryHoliday;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,12 +22,15 @@ public class TemporaryHolidayEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long temHolidayId;
 
+    // ManyToOne
     private long cpId;
 
     // 날짜
-    private LocalDate hdDate;
+    @Column(name = "th_date", columnDefinition = "DATE", nullable = false)
+    private LocalDate thDate;
 
     // 사유
-    private String reason;
+    @Column(name = "th_reason", columnDefinition = "VARCHAR(255)")
+    private String thReason;
 
 }

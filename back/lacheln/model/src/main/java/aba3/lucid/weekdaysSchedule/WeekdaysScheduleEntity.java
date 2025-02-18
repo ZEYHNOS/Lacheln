@@ -20,18 +20,23 @@ public class WeekdaysScheduleEntity {
     // 요일별 일정 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long weekSchId;
+    @Column(name = "ws_id")
+    private long wsId;
 
+    // ManyToOne
     private long cpId;
 
     // 월요일~일요일
     @Enumerated(EnumType.STRING)
-    private Weekdays weekdays;
+    @Column(name = "ws_weekdays", columnDefinition = "CHAR(3)", nullable = false)
+    private Weekdays wsWeekdays;
 
     // 시작 시간
-    private LocalTime start;
+    @Column(name = "ws_start", columnDefinition = "DATETIME", nullable = false)
+    private LocalTime wsStart;
 
     // 종료 시간
-    private LocalTime end;
+    @Column(name = "ws_end", columnDefinition = "DATETIME", nullable = false)
+    private LocalTime wsEnd;
 
 }

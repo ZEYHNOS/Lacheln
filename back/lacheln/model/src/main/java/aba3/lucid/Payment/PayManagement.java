@@ -40,13 +40,15 @@ public class PayManagement {
     private long payCost; //원가
 
     @Column(name = "pay_dc_price", nullable = false)
-    private long payDcPrice = 0L; //할인 금액 (기본값 0)
+    private long payDcPrice; //할인 금액 (기본값 0) //기본형 long 필드는 자동으로 0L 설정된다
 
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "pay_status", columnDefinition = "char(20)", nullable = false)
-    private String payStatus; //납부 취소
+    private PayStatus payStatus; //납부 취소
 
     @Column(name = "pay_refund_price", nullable = false)
-    private long payRefundPrice = 0L; //환불 금액(기본값 0)
+    private long payRefundPrice; //환불 금액(기본값 0)  기본형 long 필드는 자동으로 0L 설정된다
 
     @Column(name = "pay_refund_date", nullable = false)
     private LocalDateTime payRefundDate;  //환불 일자

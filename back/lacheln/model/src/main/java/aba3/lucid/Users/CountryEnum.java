@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CountryEnum {
-    KOR("KR"),  // 한국
-    USA("US"),  // 미국
-    JPN("JP"),  // 일본
-    CHN("CN");  // 중국
+    KR("KOR"),  // 한국
+    US("USA"),  // 미국
+    JP("JPN"),  // 일본
+    CN("CHN");  // 중국
 
     private final String countryCode;
 }

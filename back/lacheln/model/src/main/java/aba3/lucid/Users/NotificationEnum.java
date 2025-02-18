@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum NotificationEnum {
-    YES("1"),
-    NO("0");
+    Y("YES"),
+    N("NO");
 
     private final String notificationStatus;
 }

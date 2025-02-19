@@ -1,7 +1,7 @@
 package aba3.lucid.domain.schedule;
 
-import aba3.lucid.enums.HolidayWeek;
-import aba3.lucid.enums.Weekdays;
+import aba3.lucid.common.enums.HolidayWeek;
+import aba3.lucid.common.enums.Weekdays;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

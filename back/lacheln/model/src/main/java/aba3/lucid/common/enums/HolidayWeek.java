@@ -1,4 +1,4 @@
-package aba3.lucid.enums;
+package aba3.lucid.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

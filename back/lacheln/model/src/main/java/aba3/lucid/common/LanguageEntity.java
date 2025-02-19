@@ -1,4 +1,4 @@
-package aba3.lucid.domain.common;
+package aba3.lucid.common;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

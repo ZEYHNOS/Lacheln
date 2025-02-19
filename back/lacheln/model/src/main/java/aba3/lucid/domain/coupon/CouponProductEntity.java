@@ -1,4 +1,4 @@
-package aba3.lucid.domain.common.coupon;
+package aba3.lucid.domain.coupon;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -7,15 +7,13 @@ import lombok.*;
 
 @Entity
 @Getter
-@Table(name = "cp_coupon")
+@Table(name="product_coupon")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CouponCopanyEntity {
+public class CouponProductEntity {
     @Id
     private String couponId;
 
-    private String companyId;
-
-
+    private String productId;
 }

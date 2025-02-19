@@ -1,4 +1,4 @@
-package aba3.lucid.domain.common.coupon;
+package aba3.lucid.domain.coupon;
 
 
 import jakarta.persistence.Entity;

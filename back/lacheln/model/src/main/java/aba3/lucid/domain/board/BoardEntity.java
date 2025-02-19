@@ -1,6 +1,6 @@
 package aba3.lucid.domain.board;
 
-import aba3.lucid.domain.board.enums.BoardStatus;
+import aba3.lucid.common.enums.ActiveEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +28,5 @@ public class BoardEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "board_status", columnDefinition = "CHAR(20)", nullable = false)
-    private BoardStatus boardStatus; //활성화여부 enum 참고
+    private ActiveEnum boardStatus; //활성화여부 enum 참고
 }

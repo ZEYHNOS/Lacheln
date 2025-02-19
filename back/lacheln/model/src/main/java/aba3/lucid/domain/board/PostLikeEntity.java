@@ -15,12 +15,13 @@ import lombok.NoArgsConstructor;
 public class PostLikeEntity {
 
     @Id
+    @Column(name = "like_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long likeId;
+    private long likeId;
 
-    //게시글ID
-    private Long postId;
+    @Column(name = "post_id", nullable = false)
+    private long postId; //게시글ID
 
-    //유저ID 이메일+비밀번호+비밀키
-    private String userId;
+    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
+    private String userId; //유저ID
 }

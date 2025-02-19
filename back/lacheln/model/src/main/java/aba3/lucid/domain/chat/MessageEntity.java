@@ -1,0 +1,47 @@
+package aba3.lucid.domain.chat;
+
+import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.domain.chat.enums.UserType;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalTime;
+
+@Getter
+@Entity
+@Table(name = "message")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class MessageEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long msgId;
+
+    //채팅방ID
+    // ManyToOne
+    private Long chatRoomId;
+
+    //메시지
+    @Column(name = "msg_content", columnDefinition = "VARCHAR(255)", nullable = false)
+    private String msgContent;
+
+    //전송시간
+    @Column(name = "msg_send_time", columnDefinition = "DATETIME", nullable = false)
+    private LocalTime msgSendTime;
+
+    //읽음여부
+    @Enumerated(EnumType.STRING)
+    @Column(name = "msg_read", columnDefinition = "CHAR(1)", nullable = false)
+    private BinaryChoice msgRead;
+
+    //발신자식별코드
+    @Enumerated(EnumType.STRING)
+    @Column(name = "msg_sender", columnDefinition = "CHAR(1)", nullable = false)
+    private UserType msgSender;
+
+}

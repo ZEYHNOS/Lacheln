@@ -5,16 +5,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum SuccessCode implements StatusCodeIfs{
+public enum CompanyCode implements StatusCodeIfs {
 
-
-    OK(200, 200, "요청 처리 성공"),
-    RESET_CONTENT(205, 205, "화면을 리셋해주세요")
+    TMP(1234, 1234, "뭘 넣어야할까나"),
 
     ;
 
     private final Integer httpStatusCode;
     private final Integer serverStatusCode;
     private final String description;
-
 }

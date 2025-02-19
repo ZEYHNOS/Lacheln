@@ -1,5 +1,6 @@
 package aba3.lucid.domain.board;
 
+import aba3.lucid.domain.board.enums.StatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,15 +16,17 @@ import lombok.NoArgsConstructor;
 public class BoardEntity {
 
     @Id
+    @Column(name = "board_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long boardId;
 
-    //국가코드
-    private String countryId;
+    @Column(name = "country_id", columnDefinition = "CHAR(3)", nullable = false)
+    private String countryId; //국가코드
 
-    //게시판이름
-    private String boardName;
+    @Column(name = "board_name", length = 50, nullable = false)
+    private String boardName; //게시판이름
 
-    //활성화여부 0비활성화 1활성화
-    private String boardStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "board_status", columnDefinition = "CHAR(20)", nullable = false)
+    private StatusEnum boardStatus; //활성화여부 enum 참고
 }

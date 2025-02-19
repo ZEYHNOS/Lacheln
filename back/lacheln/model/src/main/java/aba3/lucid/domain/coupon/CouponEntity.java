@@ -1,10 +1,14 @@
 package aba3.lucid.domain.coupon;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -13,20 +17,29 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CouponEntity {
+
     @Id
-    private String couponId;
+    @Column(name = "coupon_id", columnDefinition = "CHAR(15)")
+    private String couponId; //'-' 하이폰은 저장하지 않음
 
-    private String couponName;
+    @Column(name = "coupon_name", length = 50, nullable = false)
+    private String couponName; //쿠폰이름
 
-    private String content;//내용
+    @Column(name = "coupon_content", length = 255)
+    private String couponContent; //내용
 
-    private String discountRate;
+    @Column(name = "coupon_discount_rate", nullable = false)
+    private BigInteger couponDiscountRate; //할인율 5~90%
 
-    private String minimumCost; //가격 하한선
+    @Column(name = "coupon_minimumcost", nullable = false)
+    private BigInteger couponMinimumCost; //가격하한선 0
 
-    private String maximumCost;//가격 상한선
+    @Column(name = "coupon_maximumcost", nullable = false)
+    private BigInteger couponMaximumCost; //가격상한선 1억
 
-    private String createDate;//발급일
+    @Column(name = "coupon_create_date", nullable = false)
+    private LocalDateTime couponCreateDate; //발급일 now
 
-    private String expirationDate;//만료일
+    @Column(name = "coupon_expiration_date", nullable = false)
+    private LocalDateTime couponExpirationDate; //만료일 2099-12-31
 }

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductToPackageEntity {
+public class PackageToProductEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

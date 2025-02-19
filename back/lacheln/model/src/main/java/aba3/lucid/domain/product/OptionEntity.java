@@ -30,14 +30,17 @@ public class OptionEntity {
     private String opName;
 
     // 중복 여부
+    @Enumerated(EnumType.STRING)
     @Column(name = "op_overlap", columnDefinition = "CHAR(1)", nullable = false)
     private BinaryChoice opOverlap;
 
     // 필수 여부
+    @Enumerated(EnumType.STRING)
     @Column(name = "op_essential", columnDefinition = "CHAR(1)", nullable = false)
     private BinaryChoice opEssential;
 
     // 옵션 상태(활성, 비활성)
+    @Enumerated(EnumType.STRING)
     @Column(name = "op_status", columnDefinition = "CHAR(20)", nullable = false)
     private ActiveEnum opStatus;
 }

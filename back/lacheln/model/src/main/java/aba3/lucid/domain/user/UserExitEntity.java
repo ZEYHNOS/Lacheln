@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -17,11 +18,12 @@ import java.time.LocalTime;
 public class UserExitEntity {
 
     @Id
-    private String userId;
+    @Column(name = "user_id", columnDefinition = "CHAR(36)")
+    private String userId; //FK
 
-    //탈퇴일
-    private LocalTime exitDate;
+    @Column(name = "exit_date", nullable = false)
+    private LocalDateTime exitDate; //탈퇴일
 
-    //탈퇴 사유
-    private String reason;
+    @Column(name = "exit_reason", length = 100, nullable = false)
+    private String exitReason; //탈퇴사유
 }

@@ -1,11 +1,13 @@
 package aba3.lucid.domain.board;
 
+import aba3.lucid.domain.board.enums.CommentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -17,30 +19,32 @@ import java.time.LocalTime;
 public class CommentEntity {
 
     @Id
+    @Column(name = "cmt_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cmtId;
+    private long cmtId;
 
-    //부모답글Id
-    private Long parentId;
+    @Column(name = "parent_id")
+    private Long parentId; //부모답글Id
 
-    //게시글Id
-    private Long postId;
+    @Column(name = "post_id", nullable = false)
+    private long postId; //게시글Id
 
-    //사용자Id 이메일+비밀번호+비밀키
-    private String userId;
+    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
+    private String userId; //사용자Id
 
-    //내용
-    private String cmtContent;
+    @Column(name = "cmt_content", columnDefinition = "CHAR(100)", nullable = false)
+    private String cmtContent; //내용
 
-    //작성일
-    private LocalTime cmtCreate;
+    @Column(name = "cmt_create", nullable = false)
+    private LocalDateTime cmtCreate; //작성일
 
-    //수정일
-    private LocalTime cmtUpdate;
+    @Column(name = "cmt_update", nullable = false)
+    private LocalDateTime cmtUpdate; //수정일
 
-    //상태 등록,비밀,삭제,관리자삭제,비밀수정
-    private String cmtStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cmt_status", columnDefinition = "CHAR(20)", nullable = false)
+    private CommentStatus cmtStatus; //CommentStatus 참고
 
-    //차수
-    private int filed;
+    @Column(name = "cmt_degree", nullable = false)
+    private int cmtDegree; //차수 1~4
 }

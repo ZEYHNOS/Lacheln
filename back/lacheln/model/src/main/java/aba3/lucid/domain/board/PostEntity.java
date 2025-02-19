@@ -1,11 +1,13 @@
 package aba3.lucid.domain.board;
 
+import aba3.lucid.domain.board.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -17,27 +19,29 @@ import java.time.LocalTime;
 public class PostEntity {
 
     @Id
+    @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private long postId;
 
-    //게시판ID
-    private Long boardId;
+    @Column(name = "board_id", nullable = false)
+    private long boardId; //게시판ID
 
-    //소비자ID
-    private String userId;
+    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
+    private String userId; //소비자ID
 
-    //제목
-    private String postTitle;
+    @Column(name = "post_title", columnDefinition = "CHAR(100)", nullable = false)
+    private String postTitle; //제목
 
-    //내용
-    private String postContent;
+    @Column(name = "post_content", columnDefinition = "LONGTEXT", nullable = false)
+    private String postContent; // 내용
 
-    //작성일
-    private LocalTime postCreate;
+    @Column(name = "post_create", nullable = false)
+    private LocalDateTime postCreate; //작성일
 
-    //수정일
-    private LocalTime postUpdate;
+    @Column(name = "post_update", nullable = false)
+    private LocalDateTime postUpdate; //수정일
 
-    //상태 등록, 삭제, 수정, 관리자삭제
-    private String postStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "post_status", columnDefinition = "CHAR(20)", nullable = false)
+    private PostStatus postStatus; //상태 enum 참고
 }

@@ -22,11 +22,11 @@ public class UsersEntity {
 
     @Id
     @Column(name = "user_id", columnDefinition = "CHAR(36)") //UUID 36글자
-    private String userId;
+    private String userId; //소비자ID
 
     @Enumerated(EnumType.STRING)
     @Column(name = "country_id", columnDefinition = "CHAR(2)", nullable = false)
-    private CountryEnum countryId; //국가명코드 ISO 4217
+    private CountryEnum country; //국가명코드 ISO 3166-1 alpha-2
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_language", columnDefinition = "CAHR(3)", nullable = false)
@@ -45,21 +45,21 @@ public class UsersEntity {
     @Column(name = "user_name", length = 255, nullable = false)
     private String userName; //외국 이름 포함
 
-    @Column(name = "user_nickname", columnDefinition = "CHAR(30)", nullable = false)
-    private String userNickName;
+    @Column(name = "user_nickname", columnDefinition = "CHAR(255)", nullable = false)
+    private String userNickName; //닉네임
 
     @Column(name = "user_birthday", nullable = false)
-    private LocalDate userBirthday;
+    private LocalDate userBirthday; //생년월일
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_social", columnDefinition = "CHAR(1)", nullable = false)
     private SocialEnum userSocial; //로그인 수단 식별 로컬, 카카오, 구글, 애플(L, K, G, A)
 
     @Column(name = "user_phone", length = 20)
-    private String userPhone; //국제전화번호 생각
+    private String userPhone; //전화번호
 
     @Column(name = "user_profile", columnDefinition = "CHAR(255)", nullable = false)
-    private String userProfile; //기본 이미지 넣을 예정
+    private String userProfile; //프로필URL 디폴트 이미지 있음
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_tier", columnDefinition = "CHAR(30)", nullable = false)
@@ -77,17 +77,17 @@ public class UsersEntity {
     private LocalDate userJoinDate; //가입일
 
     @Column(name = "user_modify_date", nullable = false)
-    private LocalDate userModifyDate; //비밀번호 변경 시간 체크용 비번 수정일
+    private LocalDate userModifyDate; //비밀번호 변경일 비밀번호 변경 시간 체크용
 
     @Column(name = "user_access_time", nullable = false)
-    private LocalDateTime userAccessTime; //휴면,해킹 체크용 마지막 접속일
+    private LocalDateTime userAccessTime; //마지막접속 휴면,해킹 체크용 마지막 접속일
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_gender", columnDefinition = "CHAR(1)", nullable = false)
-    private GenderEnum userGender; //남자 M  여자 F
+    private GenderEnum userGender; //성별     남자 M 여자 F
 
     @Column(name = "user_mileage", nullable = false)
-    private BigInteger mileage;
+    private BigInteger mileage; //마일리지
 
     /*
      * 시간 기반 UUIDv1을 생성하여 userId로 설정한 새로운 UsersEntity 객체를 반환한다.

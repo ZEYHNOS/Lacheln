@@ -18,23 +18,23 @@ public class UserAlertEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userAlertId;
+    private long userAlertId;
 
-    //소비자ID 이메일+비밀번호+비밀키
-    private String userId;
+    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
+    private String user; //소비자ID 이메일+비밀번호+비밀키
 
-    //제목
-    private String userAlertTitle;
+    @Column(name = "user_alert", length = 50, nullable = false)
+    private String userAlertTitle; //제목
 
-    //내용
-    private String userAlertContent;
+    @Column(name = "user_alert_content", length = 100, nullable = false)
+    private String userAlertContent; //내용
 
-    //시간
-    private LocalTime userAlertSendTime;
+    @Column(name = "user_alert_sendtime", nullable = false)
+    private LocalTime userAlertSendtime; //시간
 
-    //읽음여부
-    private String userAlertRead;
+    @Column(name = "user_alert_read", columnDefinition = "CHAR(1)", nullable = false)
+    private String userAlertRead; //읽음여부
 
-    //접속URL
-    private String userAlertUrl;
+    @Column(name = "user_alert_url", length = 255, nullable = false)
+    private String userAlertUrl; //접속URL
 }

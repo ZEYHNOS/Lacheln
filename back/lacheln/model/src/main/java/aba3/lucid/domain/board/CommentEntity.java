@@ -24,13 +24,13 @@ public class CommentEntity {
     private long cmtId;
 
     @Column(name = "parent_id")
-    private Long parentId; //부모답글Id
+    private Long parent; //부모답글Id
 
     @Column(name = "post_id", nullable = false)
-    private long postId; //게시글Id
+    private long post; //게시글Id
 
     @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
-    private String userId; //사용자Id
+    private String user; //사용자Id
 
     @Column(name = "cmt_content", columnDefinition = "CHAR(100)", nullable = false)
     private String cmtContent; //내용

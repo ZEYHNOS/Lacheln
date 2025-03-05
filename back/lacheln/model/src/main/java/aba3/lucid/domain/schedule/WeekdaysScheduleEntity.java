@@ -39,4 +39,8 @@ public class WeekdaysScheduleEntity {
     @Column(name = "ws_end", columnDefinition = "DATETIME", nullable = false)
     private LocalTime wsEnd;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cp_id")
+    private WeekdaysScheduleEntity cpWeekdaysSchedule;
+
 }

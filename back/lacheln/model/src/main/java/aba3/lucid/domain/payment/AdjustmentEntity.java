@@ -1,6 +1,7 @@
 package aba3.lucid.adjustment;
 
 import aba3.lucid.adjustment.enums.Bank;
+import aba3.lucid.domain.company.CompanyEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,5 +39,9 @@ public class AdjustmentEntity {
     // 정기 대금 수령일
     @Column(name = "cp_receipt_date", columnDefinition = "DATE", nullable = false)
     private LocalDate receiptDate;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cp_id")
+    private CompanyEntity company;
 
 }

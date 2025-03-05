@@ -31,4 +31,8 @@ public class SocialEntity {
     @Column(name = "sns_url", columnDefinition = "CHAR(255)", nullable = false)
     private String snsUrl;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company")
+    private CompanyEntity company;
+
 }

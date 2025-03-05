@@ -1,5 +1,6 @@
 package aba3.lucid.domain.company;
 
+import aba3.lucid.domain.user.UserCountryEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +24,13 @@ public class CompanyCountryEntity {
 
     // TODO ManyToOne 설정
     private long cpId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cp_id")
+    private CompanyEntity company;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id" )
+    private UserCountryEntity country;
 
 }

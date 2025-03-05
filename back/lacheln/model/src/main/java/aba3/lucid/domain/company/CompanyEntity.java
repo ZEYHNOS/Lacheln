@@ -1,12 +1,19 @@
 package aba3.lucid.domain.company;
 
+import aba3.lucid.domain.calendar.CalendarEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
+import aba3.lucid.domain.product.ReviewCommentEntity;
+import aba3.lucid.domain.schedule.RegularHolidayEntity;
+import aba3.lucid.domain.schedule.TemporaryHolidayEntity;
+import aba3.lucid.domain.schedule.WeekdaysScheduleEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Calendar;
 
 @Getter
 @Entity
@@ -81,4 +88,35 @@ public class CompanyEntity {
     // 팩스 번호
     @Column(name = "cp_fax", columnDefinition = "CHAR(20)")
     private String cpFax;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    private ReviewCommentEntity reviewComment;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cal_id")
+    private CalendarEntity calendarEntity;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sns_id")
+    private SocialEntity socialEntity;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cp_country_id")
+    private CompanyAlertEntity companyAlertEntity;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rh_id")
+    private RegularHolidayEntity regularHolidayEntity;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "th_id")h
+    private TemporaryHolidayEntity temporaryHolidayEntity;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ws_id")
+    private WeekdaysScheduleEntity weekdaysScheduleEntity;
+
+
+
 }

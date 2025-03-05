@@ -21,15 +21,15 @@ public class PackageToProductEntity {
     private long packMapId;
     
     // 부모 테이블에서 데이터 제거시 매핑 테이블에서도 제거되도록 Cascade 적용
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pd_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private ProductEntity pdId;
+    private ProductEntity product;
     
     // 부모 테이블에서 데이터 제거시 매핑 테이블에서도 제거되도록 Cascade 적용
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pack_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private PackageEntity packId;
+    private PackageEntity packageEntity;
 
 }

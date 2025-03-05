@@ -37,9 +37,9 @@ public class CouponEntity {
     @Column(name = "coupon_maximumcost", nullable = false)
     private BigInteger couponMaximumCost; //가격상한선 1억
 
-    @Column(name = "coupon_create_date", nullable = false)
+    @Column(name = "coupon_create_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime couponCreateDate; //발급일 now
 
-    @Column(name = "coupon_expiration_date", nullable = false)
+    @Column(name = "coupon_expiration_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT '2099-12-31 23:59:59'")
     private LocalDateTime couponExpirationDate; //만료일 2099-12-31
 }

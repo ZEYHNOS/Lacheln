@@ -17,22 +17,15 @@ public class ProductInfoEntity {
     // 기본키
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long piId;
+    private long pdInfoId;
 
-    // 외래키(상품ID)
-    // TODO ManyToOne 설정
-    @Column(nullable = false)
-    private long pdId;
+    // 외래키(상품)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pd_id")
+    private ProductEntity product;
 
-    // 컬럼명(NULL)
-    @Column(nullable = true)
-    private String piTitle;
+    // TODO 외래키(업체언어) 제작하기
 
-    // 컬럼 내용(NULL)
-    @Column(nullable = true)
-    private String piContent;
-
-    // 이미지 URL(NULL)
-    @Column(nullable = true)
-    private String piImageUrl;
+    @Column(name = "pd_info_content", columnDefinition = "VARCHAR(255)", nullable = false)
+    private String content;
 }

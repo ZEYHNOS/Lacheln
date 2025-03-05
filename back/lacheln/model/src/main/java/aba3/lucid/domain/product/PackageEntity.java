@@ -42,16 +42,4 @@ public class PackageEntity {
 
     @Column(name = "pack_status", columnDefinition = "CHAR(10)", nullable = false)
     private PackageStatus packStatus;
-
-    @PrePersist
-    public void onCreate() {
-
-        if (packStartdate == null) {
-            packStartdate = LocalDateTime.now();
-        }
-
-        if (packEndDate == null) {
-            packEndDate = LocalDateTime.of(2099, 12, 31, 0, 0);
-        }
-    }
 }

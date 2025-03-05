@@ -28,4 +28,6 @@ public class HashtagEntity {
     @Column(name = "tag_name", nullable = false, columnDefinition = "VARCHAR(20)")
     private String tagName;
 
+        // 품 ID    @Column(nullable = false)
+    private long pdId;
 }

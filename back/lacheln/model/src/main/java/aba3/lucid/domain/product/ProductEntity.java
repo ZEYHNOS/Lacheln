@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigInteger;
-import java.util.List;
 
 @Getter
 @Entity
@@ -35,6 +34,10 @@ public class ProductEntity {
     // 상품 가격
     @Column(nullable = false)
     private BigInteger pdPrice;
+
+    // 상품 재고()
+    @Column(nullable = false)
+    private int pdStock;
 
     // 상품 상태
     @Column(nullable = false, columnDefinition = "CHAR(20)")

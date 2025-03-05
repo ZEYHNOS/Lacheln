@@ -19,10 +19,10 @@ public class CompanyCountryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cpCountryId;
 
-    // TODO ManyToOne 설정
+    // TODO 관계 이미 다 만듬 샤히드가 지우삼
     private String countryId;
 
-    // TODO ManyToOne 설정
+    // TODO 관계 이미 다 만듬 샤히드가 지우삼
     private long cpId;
 
     @ManyToOne(fetch = FetchType.LAZY)

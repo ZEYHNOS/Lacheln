@@ -19,7 +19,7 @@ public class UserExitEntity {
 
     @Id
     @Column(name = "user_id", columnDefinition = "CHAR(36)")
-    private String userId; //FK
+    private String userId; //소비자ID FK
 
     @Column(name = "exit_date", nullable = false)
     private LocalDateTime exitDate; //탈퇴일

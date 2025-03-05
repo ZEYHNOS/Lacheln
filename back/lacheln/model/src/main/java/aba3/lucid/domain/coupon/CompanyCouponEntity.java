@@ -17,8 +17,8 @@ public class CompanyCouponEntity {
     private long couponCpId;
 
     @Column(name = "cp_id")
-    private long cpId; //업체ID
+    private long cp; //업체ID
 
     @Column(name = "coupon_id", columnDefinition = "CHAR(15)", nullable = false)
-    private String couponId; //쿠폰ID
+    private String coupon; //쿠폰ID
 }

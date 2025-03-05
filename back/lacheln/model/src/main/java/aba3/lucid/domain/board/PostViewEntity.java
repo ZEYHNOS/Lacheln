@@ -8,16 +8,16 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "post_like")
+@Table(name = "post_view")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PostLikeEntity {
+public class PostViewEntity {
 
     @Id
-    @Column(name = "post_like_id")
+    @Column(name = "post_view_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postLikeId;
+    private long postViewId;
 
     @Column(name = "post_id", nullable = false)
     private long post; //게시글ID

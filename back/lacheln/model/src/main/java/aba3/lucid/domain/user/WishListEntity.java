@@ -18,8 +18,8 @@ public class WishListEntity {
     private long wishlistId; //찜ID
 
     @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
-    private String userId; //소비자ID
+    private String user; //소비자ID
 
     @Column(name = "pd_id")
-    private long pdId; //상품ID
+    private long pd; //상품ID
 }

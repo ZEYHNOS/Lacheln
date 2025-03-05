@@ -21,7 +21,7 @@ public class BoardEntity {
     private long boardId;
 
     @Column(name = "country_id", columnDefinition = "CHAR(3)", nullable = false)
-    private String countryId; //국가코드
+    private String country; //국가코드
 
     @Column(name = "board_name", length = 50, nullable = false)
     private String boardName; //게시판이름

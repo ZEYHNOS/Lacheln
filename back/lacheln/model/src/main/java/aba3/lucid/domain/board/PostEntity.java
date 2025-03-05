@@ -21,13 +21,13 @@ public class PostEntity {
     @Id
     @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postId;
+    private long postId; //게시글ID
 
     @Column(name = "board_id", nullable = false)
-    private long boardId; //게시판ID
+    private long board; //게시판ID
 
     @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
-    private String userId; //소비자ID
+    private String user; //소비자ID
 
     @Column(name = "post_title", columnDefinition = "CHAR(100)", nullable = false)
     private String postTitle; //제목

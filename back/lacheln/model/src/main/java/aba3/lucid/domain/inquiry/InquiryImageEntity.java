@@ -16,11 +16,11 @@ public class InquiryImageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long inquiryImageId;
+    private long inquiryImageId;
 
-    //문의ID
-    private Long InquiryId;
+    @Column(name = "inquiry_id", nullable = false)
+    private long Inquiry; //문의ID
 
-    //이미지URL
-    private String imageUrl;
+    @Column(name = "image_url", length = 255, nullable = false)
+    private String imageUrl; //이미지URL
 }

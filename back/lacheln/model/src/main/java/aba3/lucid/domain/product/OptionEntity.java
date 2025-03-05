@@ -2,11 +2,14 @@ package aba3.lucid.domain.product;
 
 import aba3.lucid.common.enums.ActiveEnum;
 import aba3.lucid.common.enums.BinaryChoice;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Entity
@@ -22,8 +25,8 @@ public class OptionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long opId;
 
-    // ManyToOne
-    private long pdId;
+    @ManyToOne
+    private ProductEntity product;
 
     // 옵션 이름
     @Column(name = "op_name", columnDefinition = "VARCHAR(30)", nullable = false)
@@ -43,4 +46,8 @@ public class OptionEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "op_status", columnDefinition = "CHAR(20)", nullable = false)
     private ActiveEnum opStatus;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "option", cascade = CascadeType.REMOVE)
+    private List<OptionDetailEntity> opDtList;
 }

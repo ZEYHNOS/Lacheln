@@ -1,6 +1,7 @@
 package aba3.lucid.domain.user;
 
 
+import aba3.lucid.domain.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,9 +18,9 @@ public class CartEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cartId; //장바구니ID
 
-    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
-    private String userId; //소비자ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UsersEntity users;
 
-    @Column(name = "pd_id", nullable = false)
-    private long pdId; //상품ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ProductEntity product;
 }

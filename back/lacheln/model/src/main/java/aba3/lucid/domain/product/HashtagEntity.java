@@ -23,5 +23,5 @@ public class HashtagEntity {
 
     // 상품 ID(외래키)
     @Column(nullable = false)
-    private Long pdId;
+    private long pdId;
 }

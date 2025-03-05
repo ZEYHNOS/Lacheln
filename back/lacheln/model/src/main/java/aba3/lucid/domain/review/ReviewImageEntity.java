@@ -14,14 +14,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewImageEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
     private long imageId;
 
-    @Column(name = "review_id", nullable = false)
-    private long reviewId;  //주후 테이블 관계 설정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    private ReviewEntity reviewId;  //주후 테이블 관계 설정
 
-    @Column(name = "rv_image_url", length = 255, nullable = false)
+    @Column(name = "rv_image_url", columnDefinition = "VARCHAR(255)", nullable = false)
     private String rvImageUrl;
 }

@@ -3,6 +3,8 @@ package aba3.lucid.domain.product;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigInteger;
+
 @Getter
 @Entity
 @Table(name = "product")
@@ -26,7 +28,7 @@ public class ProductEntity {
 
     // 상품 가격
     @Column(nullable = false)
-    private int pdPrice;
+    private BigInteger pdPrice;
 
     // 상품 재고()
     @Column(nullable = false)

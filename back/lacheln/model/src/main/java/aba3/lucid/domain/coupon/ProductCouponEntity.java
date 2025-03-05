@@ -13,6 +13,7 @@ import lombok.*;
 public class ProductCouponEntity {
 
     @Id
+    @Column(name = "product_coupon_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long productCouponId;
 

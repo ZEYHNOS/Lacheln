@@ -1,9 +1,6 @@
 package aba3.lucid.domain.product;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,11 +14,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HashtagEntity {
 
-    // 기본키 - type(varchar(10))
+    // 상품 태그
     @Id
+    @Column(name = "tag_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long tagId;
+
+    // 상품 ID(외래키) 상품 Entity 조회할 때 무조건 존재해야하는 테이블
+    @ManyToOne
+    private ProductEntity product;
+
+    // 태그 이름
+    @Column(name = "tag_name", nullable = false, columnDefinition = "VARCHAR(20)")
     private String tagName;
 
-    // 상품 ID(외래키)
-    @Column(nullable = false)
-    private Long pdId;
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
+
 @Getter
 @Entity
 @Table(name = "option_detail")
@@ -19,13 +21,14 @@ public class OptionDetailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long opDtId;
 
-    // ManyToOne
-    private long opId;
+    @ManyToOne
+    @JoinColumn(name = "op_id")
+    private OptionEntity option;
 
     @Column(name = "op_dt_name", columnDefinition = "VARCHAR(50)", nullable = false)
     private String opDtName;
 
     @Column(name = "op_dt_plus_cost", columnDefinition = "BIGINT", nullable = false)
-    private long opDtPlusCost;
+    private BigInteger opDtPlusCost;
 
 }

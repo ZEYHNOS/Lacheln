@@ -19,8 +19,8 @@ public class PackageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "package_id")
-    private long packageId;
+    @Column(name = "pack_id")
+    private long packId;
 
     @Column(name = "pack_name", columnDefinition = "VARCHAR(255)", nullable = false)
     private String packName;
@@ -31,10 +31,10 @@ public class PackageEntity {
     @Column(name = "pack_discountrate", columnDefinition = "INT", nullable = false)
     private int packDiscountrate;
 
-    @Column(name = "pack_startdate", columnDefinition = "DATETIME", nullable = false)
+    @Column(name = "pack_start_date", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime packStartdate;
 
-    @Column(name = "pack_enddate", columnDefinition = "DATETIME", nullable = false)
+    @Column(name = "pack_end_date", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime packEndDate;
 
     @Column(name = "pack_image_url", columnDefinition = "CHAR(255)", nullable = false)

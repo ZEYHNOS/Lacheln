@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Entity
@@ -13,15 +15,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PackageToProductEntity {
-
+    // Package와 Product의 Mapping Table 고유키 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long packMapId;
-
-    // ManyToOne
-    private long pdId;
-
-    // ManyToOne
-    private long packId;
+    
+    // 부모 테이블에서 데이터 제거시 매핑 테이블에서도 제거되도록 Cascade 적용
+    @ManyToOne
+    @JoinColumn(name = "pd_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ProductEntity pdId;
+    
+    // 부모 테이블에서 데이터 제거시 매핑 테이블에서도 제거되도록 Cascade 적용
+    @ManyToOne
+    @JoinColumn(name = "pack_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private PackageEntity packId;
 
 }

@@ -1,9 +1,7 @@
 package aba3.lucid.domain.coupon;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import aba3.lucid.domain.product.ProductEntity;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -15,10 +13,12 @@ import lombok.*;
 public class ProductCouponEntity {
 
     @Id
-    @Column(name = "coupon_id", columnDefinition = "CHAR(15)")
-    private String couponId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long productCouponId;
 
-    @Id
-    @Column(name = "pd_id")
-    private long pdId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CouponEntity coupon;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ProductEntity product;
 }

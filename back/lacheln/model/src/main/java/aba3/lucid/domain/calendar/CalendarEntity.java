@@ -1,5 +1,6 @@
 package aba3.lucid.domain.calendar;
 
+import aba3.lucid.domain.company.CompanyEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,14 @@ public class CalendarEntity {
     // 캘린더 날짜
     @Column(name = "cal_date", columnDefinition = "DATE", nullable = false)
     private LocalDate calDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cp_id")
+    private CompanyEntity company;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cal_dt_id")
+    private CalendarDetailEntity calendarDetailEntity;
 
 
 }

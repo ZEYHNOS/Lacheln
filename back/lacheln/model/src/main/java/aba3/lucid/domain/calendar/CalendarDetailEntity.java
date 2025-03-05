@@ -53,10 +53,16 @@ public class CalendarDetailEntity {
     @Column(name = "cal_dt_memo", columnDefinition = "CHAR(255)")
     private String calDtMemo;
 
-    @PrePersist
-    protected void onCreate() {
-        if (this.calDtColor == null) {
-            this.calDtColor = "845EC2"; // 기본값 설정
-        }
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cal_id")
+    private CalendarEntity calendar;
+
+//    @PrePersist
+//    protected void onCreate() {
+//        if (this.calDtColor == null) {
+//            this.calDtColor = "845EC2"; // 기본값 설정
+//        }
+//    }
+
+
 }

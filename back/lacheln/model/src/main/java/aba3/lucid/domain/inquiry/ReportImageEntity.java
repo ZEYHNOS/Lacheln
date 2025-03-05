@@ -1,9 +1,6 @@
 package aba3.lucid.domain.inquiry;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,4 +22,8 @@ public class ReportImageEntity {
 
     @Column(name = "report_image_url", columnDefinition = "CHAR(255)", nullable = false)
     private String reportImageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_id")
+    private ReportEntity report;
 }

@@ -1,11 +1,13 @@
 package aba3.lucid.domain.inquiry;
 
+import aba3.lucid.domain.company.CompanyEntity;
 import aba3.lucid.domain.inquiry.enums.ReportCategory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.mapping.List;
 
 import java.time.LocalDateTime;
 
@@ -47,5 +49,12 @@ public class ReportEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "report_category", columnDefinition = "char(50)", nullable = false)
     private ReportCategory reportCategory;
+
+    @OneToMany( mappedBy = "report", cascade = CascadeType.ALL)
+    private List<ReportImageEntity> reportImageId;     //??????????
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cp_id")
+    private CompanyEntity company;
 
 }

@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -20,19 +21,20 @@ public class MessageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long msgId;
+    private long msgId;
 
-    //채팅방ID
-    // ManyToOne
-    private Long chatRoomId;
+    // 채팅방ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoomEntity chatRoomId;
 
     //메시지
     @Column(name = "msg_content", columnDefinition = "VARCHAR(255)", nullable = false)
     private String msgContent;
 
-    //전송시간
+    //전송시각
     @Column(name = "msg_send_time", columnDefinition = "DATETIME", nullable = false)
-    private LocalTime msgSendTime;
+    private LocalDateTime msgSendTime;
 
     //읽음여부
     @Enumerated(EnumType.STRING)
@@ -43,5 +45,4 @@ public class MessageEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "msg_sender", columnDefinition = "CHAR(1)", nullable = false)
     private UserType msgSender;
-
 }

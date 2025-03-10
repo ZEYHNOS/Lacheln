@@ -1,6 +1,7 @@
 package aba3.lucid.domain.board;
 
 import aba3.lucid.common.enums.ActiveEnum;
+import aba3.lucid.domain.board.enums.BoardName;
 import aba3.lucid.domain.user.CountryEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -28,8 +29,9 @@ public class BoardEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private CountryEntity country; // 게시판 국가 설정
 
-    @Column(name = "board_name", length = 50, nullable = false)
-    private String boardName; //게시판이름
+    @Enumerated(EnumType.STRING)
+    @Column(name = "board_name", columnDefinition = "CHAR(20)", nullable = false)
+    private BoardName boardName; //게시판이름
 
     @Enumerated(EnumType.STRING)
     @Column(name = "board_status", columnDefinition = "CHAR(20)", nullable = false)

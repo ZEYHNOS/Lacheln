@@ -1,5 +1,7 @@
 package aba3.lucid.domain.coupon;
 
+import aba3.lucid.domain.coupon.enums.CouponBoxStatus;
+import aba3.lucid.domain.user.UsersEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,13 +18,13 @@ public class CouponBoxEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long couponBoxId;//쿠폰함ID
 
-    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
-    private String user; //소비자ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CouponEntity coupon;
 
-    @Column(name = "coupon_id", columnDefinition = "CHAR(15)", nullable = false)
-    private String coupon; //쿠폰ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UsersEntity users;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "coupon_status", columnDefinition = "CHAR(20)", nullable = false)
-    private String couponStatus; //사용, 미사용, 만료
+    private CouponBoxStatus couponStatus; //사용, 미사용, 만료
 }

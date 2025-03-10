@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,10 +18,11 @@ import java.time.LocalTime;
 @Builder
 public class UserExitEntity {
 
-    @Id
-    @Column(name = "user_id", columnDefinition = "CHAR(36)")
-    private String userId; //소비자ID FK
+    @OneToOne
+    @PrimaryKeyJoinColumn // users의 기본 키를 외래 키로 설정
+    private UsersEntity users;
 
+    @CreationTimestamp
     @Column(name = "exit_date", nullable = false)
     private LocalDateTime exitDate; //탈퇴일
 

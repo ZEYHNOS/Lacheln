@@ -44,12 +44,12 @@ public class CompanyEntity {
     private String cpRepName;
 
     // 대표자 전화번호
-    @Column(name = "cp_reg_no", columnDefinition = "CHAR(11)", nullable = false)
-    private String cpRegNo;
+    @Column(name = "cp_main_contact", columnDefinition = "CHAR(11)", nullable = false)
+    private String cpMainContact;
 
     // 주소
-    @Column(name = "cp_main_contact", columnDefinition = "CHAR(100)", nullable = false)
-    private String cpMainContact;
+    @Column(name = "cp_address", columnDefinition = "CHAR(100)", nullable = false)
+    private String cpAddress;
 
     // 우편번호
     @Column(name = "cp_postal_code", columnDefinition = "CHAR(5)", nullable = false)
@@ -69,6 +69,7 @@ public class CompanyEntity {
     private CompanyStatus cpStatus;
 
     // 업체 소개 이미지(대표 이미지)
+    // TODO 기본값 설정
     @Column(name = "cp_profile", columnDefinition = "CHAR(255)", nullable = false)
     private String cpProfile;
 
@@ -89,34 +90,39 @@ public class CompanyEntity {
     @Column(name = "cp_fax", columnDefinition = "CHAR(20)")
     private String cpFax;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id")
-    private ReviewCommentEntity reviewComment;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cal_id")
-    private CalendarEntity calendarEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sns_id")
-    private SocialEntity socialEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cp_country_id")
-    private CompanyAlertEntity companyAlertEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rh_id")
-    private RegularHolidayEntity regularHolidayEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "th_id")h
-    private TemporaryHolidayEntity temporaryHolidayEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ws_id")
-    private WeekdaysScheduleEntity weekdaysScheduleEntity;
-
-
-
+    // TODO 나중에 필요하면 하나씩 사용하기
+//    // 리뷰 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "review_id")
+//    private ReviewCommentEntity reviewComment;
+//
+//    // 캘린더 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "cal_id")
+//    private CalendarEntity calendarEntity;
+//
+//    // 업체 SNS Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "sns_id")
+//    private SocialEntity socialEntity;
+//
+//    // 업체 알림 Mapping table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "cp_country_id")
+//    private CompanyAlertEntity companyAlertEntity;
+//
+//    // 정규 휴무일 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "rh_id")
+//    private RegularHolidayEntity regularHolidayEntity;
+//
+//    // 임시 휴무일 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "th_id")
+//    private TemporaryHolidayEntity temporaryHolidayEntity;
+//
+//    // 요일별 일정 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "ws_id")
+//    private WeekdaysScheduleEntity weekdaysScheduleEntity;
 }

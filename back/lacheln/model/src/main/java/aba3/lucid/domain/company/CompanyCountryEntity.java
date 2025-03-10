@@ -19,12 +19,6 @@ public class CompanyCountryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cpCountryId;
 
-    // TODO 관계 이미 다 만듬 샤히드가 지우삼
-    private String countryId;
-
-    // TODO 관계 이미 다 만듬 샤히드가 지우삼
-    private long cpId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;

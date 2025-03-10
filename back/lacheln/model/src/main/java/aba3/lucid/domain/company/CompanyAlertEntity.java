@@ -20,13 +20,14 @@ public class CompanyAlertEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cpAlertId;
 
-    // TODO ManyToOne
-    private long cpId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cp_id")
+    private CompanyEntity company;
 
-    @Column(name = "cp_alert_title", length = 50, nullable = false)
+    @Column(name = "cp_alert_title", columnDefinition = "VARCHAR(50)", nullable = false)
     private String cpAlertTitle;
 
-    @Column(name = "cp_alert_content", length = 100, nullable = false)
+    @Column(name = "cp_alert_content", columnDefinition = "VARCHAR(100)", nullable = false)
     private String cpAlertContent;
 
     @Column(name = "cp_alert_sendtime", nullable = false, updatable = false)
@@ -37,10 +38,6 @@ public class CompanyAlertEntity {
 
     @Column(name = "cp_alert_access_url", columnDefinition = "VARCHAR(255)")
     private String cpAlertAccessUrl;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cp_id")
-    private CompanyEntity company;
 
     // JPA 엔티티가 데이터베이스에 저장되기 전 자동으로 실행
     // 데이터베이스에 INSERT 되기 직전 실행

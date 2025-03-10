@@ -2,6 +2,7 @@ package aba3.lucid.domain.schedule;
 
 import aba3.lucid.common.enums.HolidayWeek;
 import aba3.lucid.common.enums.Weekdays;
+import aba3.lucid.domain.company.CompanyEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,17 +24,18 @@ public class RegularHolidayEntity {
     private long regHolidayId;
 
     // ManyToOne
-    // 업체 id
-    private long cpId;
+    @JoinColumn(name = "cp_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CompanyEntity cpId;
 
-    // 월요일~일요일
+    // 요일
     @Enumerated(EnumType.STRING)
-    @Column(name = "rh_hd_weekdays")
+    @Column(name = "rh_hd_weekdays", columnDefinition = "CHAR(3)")
     private Weekdays rhHdWeekdays;
 
     // 격주 단위(1, 2, 3, 4, 5, 홀, 짝)
     @Enumerated(EnumType.STRING)
-    @Column(name = "rh_hd_week")
+    @Column(name = "rh_hd_week", columnDefinition = "VARCHAR(10)")
     private HolidayWeek rhHdWeek;
 
     // 일 단위인지

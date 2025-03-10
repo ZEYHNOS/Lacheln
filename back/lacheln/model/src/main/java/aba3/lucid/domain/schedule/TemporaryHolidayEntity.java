@@ -1,5 +1,6 @@
 package aba3.lucid.domain.schedule;
 
+import aba3.lucid.domain.company.CompanyEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,10 +22,12 @@ public class TemporaryHolidayEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long temHolidayId;
 
-    // ManyToOne
-    private long cpId;
+    // 업체
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cp_id")
+    private CompanyEntity cpId;
 
-    // 날짜
+    // 휴무일
     @Column(name = "th_date", columnDefinition = "DATE", nullable = false)
     private LocalDate thDate;
 

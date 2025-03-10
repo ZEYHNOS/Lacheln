@@ -1,6 +1,7 @@
 package aba3.lucid.domain.calendar;
 
 import aba3.lucid.domain.company.CompanyEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Entity
@@ -17,25 +19,23 @@ import java.time.LocalDate;
 @Builder
 public class CalendarEntity {
 
+    // 캘린더 기본 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long calId;
-
-    // ManyToOne 설정
-    // 업체 id
-    private long cpId;
 
     // 캘린더 날짜
     @Column(name = "cal_date", columnDefinition = "DATE", nullable = false)
     private LocalDate calDate;
 
+    // 업체 외래키
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;
 
+    // 캘린더 상세 List 받아오기
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "cal_dt_id")
-    private CalendarDetailEntity calendarDetailEntity;
-
-
+    private List<CalendarDetailEntity> calendarDetailEntity;
 }

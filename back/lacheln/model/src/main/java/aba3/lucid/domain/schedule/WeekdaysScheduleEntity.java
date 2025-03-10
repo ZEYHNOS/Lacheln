@@ -1,6 +1,7 @@
 package aba3.lucid.domain.schedule;
 
 import aba3.lucid.common.enums.Weekdays;
+import aba3.lucid.domain.company.CompanyEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,8 +24,10 @@ public class WeekdaysScheduleEntity {
     @Column(name = "ws_id")
     private long wsId;
 
-    // ManyToOne
-    private long cpId;
+    // 업체
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cp_id")
+    private CompanyEntity company;
 
     // 월요일~일요일
     @Enumerated(EnumType.STRING)
@@ -38,9 +41,4 @@ public class WeekdaysScheduleEntity {
     // 종료 시간
     @Column(name = "ws_end", columnDefinition = "DATETIME", nullable = false)
     private LocalTime wsEnd;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cp_id")
-    private WeekdaysScheduleEntity cpWeekdaysSchedule;
-
 }

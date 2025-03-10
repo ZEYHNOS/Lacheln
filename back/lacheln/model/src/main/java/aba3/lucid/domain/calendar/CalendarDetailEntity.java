@@ -23,7 +23,9 @@ public class CalendarDetailEntity {
 
     // ManyToOne
     // 캘린더 id(날짜 식별하기 위해서)
-    private long calId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cal_id")
+    private CalendarEntity calendar;
 
     // 제목
     @Column(name = "cal_dt_title", columnDefinition = "CHAR(100)", nullable = false)
@@ -43,7 +45,7 @@ public class CalendarDetailEntity {
 
     // 캘린더 색상 RGB 값
     @Column(name = "cal_dt_color", columnDefinition = "CHAR(6)", nullable = false)
-    private String calDtColor;
+    private String calDtColor = "845EC2";
 
     // 담당자
     @Column(name = "cal_dt_manager", columnDefinition = "CHAR(20)")
@@ -53,9 +55,6 @@ public class CalendarDetailEntity {
     @Column(name = "cal_dt_memo", columnDefinition = "CHAR(255)")
     private String calDtMemo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cal_id")
-    private CalendarEntity calendar;
 
 //    @PrePersist
 //    protected void onCreate() {
@@ -63,6 +62,4 @@ public class CalendarDetailEntity {
 //            this.calDtColor = "845EC2"; // 기본값 설정
 //        }
 //    }
-
-
 }

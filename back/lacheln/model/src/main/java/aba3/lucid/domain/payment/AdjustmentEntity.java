@@ -1,4 +1,4 @@
-package aba3.lucid.adjustment;
+package aba3.lucid.domain.payment;
 
 import aba3.lucid.adjustment.enums.Bank;
 import aba3.lucid.domain.company.CompanyEntity;
@@ -18,30 +18,26 @@ import java.time.LocalDate;
 @Builder
 public class AdjustmentEntity {
 
-    // 업체 id
-    // TODO oneToOne 처리하기
+    // 회사(1:1)
     @Id
-    private long cpId;
+    @JoinColumn(name = "cp_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    private CompanyEntity company;
 
     // 은행 이름
     @Enumerated(EnumType.STRING)
     @Column(name = "cp_bank_name", columnDefinition = "CHAR(50)", nullable = false)
-    private Bank bankName;
+    private Bank cpBankName;
 
     // 은행 계좌번호
     @Column(name = "cp_bank_account", columnDefinition = "CHAR(20)", nullable = false)
-    private String bankAccount;
+    private String cpBankAccount;
 
     // 예금주명
     @Column(name = "cp_deposit_name", columnDefinition = "CHAR(100)", nullable = false)
-    private String depositName;
+    private String cpDepositName;
 
     // 정기 대금 수령일
     @Column(name = "cp_receipt_date", columnDefinition = "DATE", nullable = false)
-    private LocalDate receiptDate;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cp_id")
-    private CompanyEntity company;
-
+    private LocalDate cpReceiptDate;
 }

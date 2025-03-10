@@ -15,12 +15,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SocialEntity {
 
+    // primary key
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long snsId;
 
-    // ManyToOne 설정
-    private long cpId;
+    // foreign key
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company")
+    private CompanyEntity company;
 
     // SNS 이름 및 이미지 주소
     @Enumerated(EnumType.STRING)
@@ -30,9 +33,4 @@ public class SocialEntity {
     // 업체 다이렉트 사이트 주소
     @Column(name = "sns_url", columnDefinition = "CHAR(255)", nullable = false)
     private String snsUrl;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company")
-    private CompanyEntity company;
-
 }

@@ -30,6 +30,7 @@ public class ProductInfoEntity {
     @JoinColumn(name = "cp_country_id")
     private CompanyCountryEntity companyCountry;
 
+
     @Column(name = "pd_info_content", columnDefinition = "VARCHAR(255)", nullable = false)
     private String content;
 }

@@ -5,6 +5,7 @@ import aba3.lucid.domain.company.CompanyEntity;
 import aba3.lucid.domain.coupon.CouponEntity;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.product.ProductEntity;
+import aba3.lucid.domain.schedule.ScheduleEntity;
 import aba3.lucid.domain.user.UsersEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -42,7 +43,11 @@ public class PayManagementEntity {
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;
 
-    @Column(name = "pay_tool", length = 50, nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id")
+    private ScheduleEntity schedule;
+
+    @Column(name = "pay_tool", columnDefinition = "VARCHAR(50)", nullable = false)
     private String payTool; // 결제 수단 (간편 결제, Visa 등)
 
     @Column(name = "pay_schedule", nullable = false)

@@ -3,11 +3,14 @@ package aba3.lucid.dto.product;
 import aba3.lucid.common.annotation.valid.BinaryChoiceValid;
 import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.domain.product.enums.ProductStatus;
+import aba3.lucid.dto.product.option.OptionRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -43,5 +46,9 @@ public class ProductRequest implements ProductRequestIfs {
     // 설명
     @NotNull
     private String description;
+
+    private List<String> hashTagList;
+
+    private List<OptionRequest> optionList;
 
 }

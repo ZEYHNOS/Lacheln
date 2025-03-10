@@ -1,5 +1,7 @@
 package aba3.lucid.domain.product;
 
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.product.enums.DressSize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,4 +31,12 @@ public class DressSizeEntity {
 
     @Column(name = "dress_size_stock")
     private int dressSizeStock; //재고
+
+    public void changeStock(int stock) {
+        if (stock <= 0) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "재고가 1개 이상 존재해야 합니다.");
+        }
+
+        this.dressSizeStock = stock;
+    }
 }

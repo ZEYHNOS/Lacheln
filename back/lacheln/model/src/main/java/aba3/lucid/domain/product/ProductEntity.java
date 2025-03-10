@@ -1,6 +1,8 @@
 package aba3.lucid.domain.product;
 
 import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.CompanyEntity;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -64,5 +66,68 @@ public class ProductEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<HashtagEntity> hashtagList;
+
+
+    // TODO 상품 이름 길이 제약조건 이야기 하기
+    public void changeProductName(String name) {
+        if (name == null || (name.length() < 3 && name.length() > 100)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "상품 이름 값이 없거나 조건에 맞지 않습니다.");
+        }
+
+        this.pdName = name;
+    }
+
+
+    // 가격 변경
+    public void changePrice(BigInteger price) {
+        if (price.compareTo(BigInteger.ZERO) < 0) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "0 혹은 음수의 값이 들어왔습니다.");
+        }
+
+        this.pdPrice = price;
+    }
+
+    // 상태 변경
+    public void changeStatus(ProductStatus status) {
+        if (status == null) {
+            throw new ApiException(ErrorCode.NULL_POINT, "상태 값이 존재하지 않습니다.");
+        }
+
+        this.pdStatus = status;
+    }
+
+
+    // 업체 추천 변경
+    public void changeRec(BinaryChoice rec) {
+        if (rec == null) {
+            throw new ApiException(ErrorCode.NULL_POINT, "업체 추천 값이 존재하지 않습니다.");
+        }
+
+        this.pdRec = rec;
+    }
+
+    // 소요 시간 변경
+    public void changeTaskTime(int time) {
+        if (time <= 0) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "소요 시간 값이 0 혹은 음수 입니다.");
+        }
+
+        this.pdTaskTime = time;
+    }
+
+    // 상세 설명 변경
+    public void changeDescription(String description) {
+        this.pdDescription = description;
+    }
+
+
+    // 태그 리스트 삭제 후 새로 넣기
+    public void updateHashTagList(List<HashtagEntity> list) {
+        if (this.hashtagList != null) {
+            this.hashtagList.clear();
+        }
+
+        this.hashtagList.addAll(list);
+    }
 
 }

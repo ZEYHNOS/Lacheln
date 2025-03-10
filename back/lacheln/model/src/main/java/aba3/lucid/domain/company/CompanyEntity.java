@@ -89,34 +89,39 @@ public class CompanyEntity {
     @Column(name = "cp_fax", columnDefinition = "CHAR(20)")
     private String cpFax;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id")
-    private ReviewCommentEntity reviewComment;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cal_id")
-    private CalendarEntity calendarEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sns_id")
-    private SocialEntity socialEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cp_country_id")
-    private CompanyAlertEntity companyAlertEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rh_id")
-    private RegularHolidayEntity regularHolidayEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "th_id")
-    private TemporaryHolidayEntity temporaryHolidayEntity;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ws_id")
-    private WeekdaysScheduleEntity weekdaysScheduleEntity;
-
-
-
+    // TODO 나중에 필요하면 하나씩 사용하기
+//    // 리뷰 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "review_id")
+//    private ReviewCommentEntity reviewComment;
+//
+//    // 캘린더 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "cal_id")
+//    private CalendarEntity calendarEntity;
+//
+//    // 업체 SNS Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "sns_id")
+//    private SocialEntity socialEntity;
+//
+//    // 업체 알림 Mapping table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "cp_country_id")
+//    private CompanyAlertEntity companyAlertEntity;
+//
+//    // 정규 휴무일 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "rh_id")
+//    private RegularHolidayEntity regularHolidayEntity;
+//
+//    // 임시 휴무일 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "th_id")
+//    private TemporaryHolidayEntity temporaryHolidayEntity;
+//
+//    // 요일별 일정 Mapping Table
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "ws_id")
+//    private WeekdaysScheduleEntity weekdaysScheduleEntity;
 }

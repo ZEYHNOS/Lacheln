@@ -1,5 +1,6 @@
 package aba3.lucid.domain.board;
 
+import aba3.lucid.domain.user.UsersEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,9 +20,9 @@ public class PostViewEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long postViewId;
 
-    @Column(name = "post_id", nullable = false)
-    private long post; //게시글ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    private PostEntity post;
 
-    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
-    private String user; //소비자ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UsersEntity users;
 }

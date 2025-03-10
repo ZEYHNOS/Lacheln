@@ -1,5 +1,6 @@
 package aba3.lucid.domain.user;
 
+import aba3.lucid.domain.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,9 +18,9 @@ public class WishListEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long wishlistId; //찜ID
 
-    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
-    private String user; //소비자ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UsersEntity users;
 
-    @Column(name = "pd_id")
-    private long pd; //상품ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ProductEntity product;
 }

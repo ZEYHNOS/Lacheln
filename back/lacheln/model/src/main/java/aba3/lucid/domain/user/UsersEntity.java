@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -24,9 +25,8 @@ public class UsersEntity {
     @Column(name = "user_id", columnDefinition = "CHAR(36)") //UUID 36글자
     private String userId; //소비자ID
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "country_id", columnDefinition = "CHAR(2)", nullable = false)
-    private CountryEnum country; //국가명코드 ISO 3166-1 alpha-2
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CountryEntity country; //국가명코드 ISO 3166-1 alpha-2
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_language", columnDefinition = "CAHR(3)", nullable = false)
@@ -73,12 +73,15 @@ public class UsersEntity {
     @Column(name = "user_account_status", columnDefinition = "CHAR(20)", nullable = false)
     private AccountStatusEnum userAccountStatus; //활성화, 비활성화, 휴면, 정지
 
+    @CreationTimestamp
     @Column(name = "user_join_date", nullable = false)
     private LocalDate userJoinDate; //가입일
 
+    // TODO 기본값 설정하기
     @Column(name = "user_modify_date", nullable = false)
     private LocalDate userModifyDate; //비밀번호 변경일 비밀번호 변경 시간 체크용
 
+    @CreationTimestamp
     @Column(name = "user_access_time", nullable = false)
     private LocalDateTime userAccessTime; //마지막접속 휴면,해킹 체크용 마지막 접속일
 
@@ -86,7 +89,7 @@ public class UsersEntity {
     @Column(name = "user_gender", columnDefinition = "CHAR(1)", nullable = false)
     private GenderEnum userGender; //성별     남자 M 여자 F
 
-    @Column(name = "user_mileage", nullable = false)
+    @Column(name = "user_mileage", nullable = false, columnDefinition = "BIGINT")
     private BigInteger mileage; //마일리지
 
     /*

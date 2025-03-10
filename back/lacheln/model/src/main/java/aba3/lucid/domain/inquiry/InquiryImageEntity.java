@@ -18,8 +18,8 @@ public class InquiryImageEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long inquiryImageId;
 
-    @Column(name = "inquiry_id", nullable = false)
-    private long Inquiry; //문의ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    private InquiryEntity inquiry;
 
     @Column(name = "image_url", length = 255, nullable = false)
     private String imageUrl; //이미지URL

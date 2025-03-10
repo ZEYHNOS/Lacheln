@@ -1,14 +1,18 @@
 package aba3.lucid.domain.board;
 
 import aba3.lucid.domain.board.enums.PostStatus;
+import aba3.lucid.domain.user.UsersEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -23,11 +27,12 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long postId; //게시글ID
 
-    @Column(name = "board_id", nullable = false)
-    private long board; //게시판ID
+    // FETCH LAZY 달아야할려나 애매하네
+    @ManyToOne
+    private UsersEntity usersEntity;
 
-    @Column(name = "user_id", columnDefinition = "CHAR(36)", nullable = false)
-    private String user; //소비자ID
+    @ManyToOne
+    private BoardEntity board;
 
     @Column(name = "post_title", columnDefinition = "CHAR(100)", nullable = false)
     private String postTitle; //제목
@@ -35,13 +40,29 @@ public class PostEntity {
     @Column(name = "post_content", columnDefinition = "LONGTEXT", nullable = false)
     private String postContent; // 내용
 
+    // 최초 저장시 현재 시간으로 저장
+    @CreationTimestamp
     @Column(name = "post_create", nullable = false)
     private LocalDateTime postCreate; //작성일
 
+    @CreationTimestamp
     @Column(name = "post_update", nullable = false)
     private LocalDateTime postUpdate; //수정일
 
     @Enumerated(EnumType.STRING)
     @Column(name = "post_status", columnDefinition = "CHAR(20)", nullable = false)
     private PostStatus postStatus; //상태 enum 참고
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostViewEntity> postViewList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostLikeEntity> postLikeList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<CommentEntity> commentList;
+
 }

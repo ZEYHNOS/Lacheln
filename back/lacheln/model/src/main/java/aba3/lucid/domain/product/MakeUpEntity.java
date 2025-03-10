@@ -20,7 +20,7 @@ public class MakeUpEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long makeupId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ProductEntity product;
 
     // 출장 여부
@@ -32,7 +32,6 @@ public class MakeUpEntity {
     @Column(name = "makeup_visit", nullable = false)
     @Enumerated(EnumType.STRING)
     private BinaryChoice makeupVisit;
-
 
     // 담당자
     @Column(name = "makeup_manager", nullable = false, columnDefinition = "VARCHAR(10)")

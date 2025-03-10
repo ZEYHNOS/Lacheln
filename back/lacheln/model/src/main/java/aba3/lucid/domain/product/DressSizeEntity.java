@@ -18,16 +18,15 @@ public class DressSizeEntity {
     @Id
     @Column(name = "dress_size_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long dressSizeId;
+    private long dressSizeId; //드레스 사이즈 ID
 
-    @ManyToOne
-    private DressEntity dress;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DressEntity dress; //드레스 ID
 
     @Column(name = "size", nullable = false)
     @Enumerated(EnumType.STRING)
-    private DressSize size;
+    private DressSize size; //사이즈
 
-    @Column(name = "dress_size_stock", nullable = false)
-    private int dressSizeStock;
-
+    @Column(name = "dress_size_stock")
+    private int dressSizeStock; //재고
 }

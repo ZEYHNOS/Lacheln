@@ -31,16 +31,16 @@ public class CartDetailEntity {
     private long cartDtId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private CartEntity cart;
+    private CartEntity cart; //장바구니ID
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private ProductEntity product;
+    private ProductEntity product; //상품ID
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private OptionEntity option;
+    private OptionEntity option; //옵션ID
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private OptionDetailEntity optionDetail;
+    private OptionDetailEntity optionDetail; //옵션상세ID
 
     @Column(name = "cart_dt_quantity")
     private int cartDtQuantity; // 상세 옵션 갯수

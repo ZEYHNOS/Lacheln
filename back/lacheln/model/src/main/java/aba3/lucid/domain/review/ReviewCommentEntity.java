@@ -5,6 +5,7 @@ import aba3.lucid.domain.company.CompanyEntity;
 import aba3.lucid.domain.payment.PayManagementEntity;
 import aba3.lucid.domain.product.enums.ReviewCommentStatus;
 import aba3.lucid.domain.review.ReviewEntity;
+import aba3.lucid.domain.review.ReviewImageEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -40,6 +43,10 @@ public class ReviewCommentEntity {
     @OneToOne
     @JoinColumn(name = "pay_id")
     private PayManagementEntity payManagement;
+
+    //리뷰이미지
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    private List<ReviewImageEntity> imageList = new ArrayList<>();
 
     // 내용
     @Column(name = "rvc_content", columnDefinition = "char(255)", nullable = false)

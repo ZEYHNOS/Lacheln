@@ -3,6 +3,7 @@ package aba3.lucid.domain.schedule;
 
 import aba3.lucid.common.enums.Schedules;
 import aba3.lucid.domain.company.CompanyEntity;
+import aba3.lucid.domain.payment.PayManagementEntity;
 import aba3.lucid.domain.product.ProductEntity;
 import aba3.lucid.domain.user.UsersEntity;
 import jakarta.persistence.*;
@@ -32,7 +33,12 @@ public class ScheduleEntity {
     @JoinColumn(name = "user_id")
     private UsersEntity userId;
 
-    // 상품 ID
+    // 결제 ID
+    @OneToOne
+    @JoinColumn(name = "pay_id")
+    private PayManagementEntity payId;
+
+    //상품 ID
     @OneToOne
     @JoinColumn(name = "pd_id")
     private ProductEntity productId;

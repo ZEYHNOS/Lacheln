@@ -110,7 +110,7 @@ public class CompanyEntity {
     private RegularHolidayEntity regularHolidayEntity;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "th_id")h
+    @JoinColumn(name = "th_id")
     private TemporaryHolidayEntity temporaryHolidayEntity;
 
     @OneToMany(fetch = FetchType.LAZY)

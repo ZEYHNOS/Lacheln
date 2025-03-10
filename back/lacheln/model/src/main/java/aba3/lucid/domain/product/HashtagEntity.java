@@ -21,13 +21,10 @@ public class HashtagEntity {
     private long tagId;
 
     // 상품 ID(외래키) 상품 Entity 조회할 때 무조건 존재해야하는 테이블
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ProductEntity product;
 
     // 태그 이름
     @Column(name = "tag_name", nullable = false, columnDefinition = "VARCHAR(20)")
     private String tagName;
-
-        // 품 ID    @Column(nullable = false)
-    private long pdId;
 }

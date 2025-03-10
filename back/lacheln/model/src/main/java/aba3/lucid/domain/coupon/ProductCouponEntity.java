@@ -15,11 +15,11 @@ public class ProductCouponEntity {
     @Id
     @Column(name = "product_coupon_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long productCouponId;
+    private long productCouponId; //상품 쿠폰 ID
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private CouponEntity coupon;
+    private CouponEntity coupon; //쿠폰ID
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private ProductEntity product;
+    private ProductEntity product; //상품ID
 }

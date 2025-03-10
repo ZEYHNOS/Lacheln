@@ -25,7 +25,7 @@ public class OptionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long opId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ProductEntity product;
 
     // 옵션 이름
@@ -42,7 +42,7 @@ public class OptionEntity {
     @Column(name = "op_essential", columnDefinition = "CHAR(1)", nullable = false)
     private BinaryChoice opEssential;
 
-    // 옵션 상태(활성, 비활성)
+    // 옵션 상태(활성, 비활성) 사용자에게 노출하지 말 것
     @Enumerated(EnumType.STRING)
     @Column(name = "op_status", columnDefinition = "CHAR(20)", nullable = false)
     private ActiveEnum opStatus;

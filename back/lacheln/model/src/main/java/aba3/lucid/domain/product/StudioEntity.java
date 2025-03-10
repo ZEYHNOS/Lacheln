@@ -14,7 +14,7 @@ public class StudioEntity {
     // 스튜디오 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long stdId;
+    private long stdId;
 
     // 상품(외래키)
     @OneToOne

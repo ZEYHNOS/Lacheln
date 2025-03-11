@@ -92,6 +92,9 @@ public class UsersEntity {
     @Column(name = "user_mileage", nullable = false, columnDefinition = "BIGINT")
     private BigInteger mileage; //마일리지
 
+    @Column(name = "user_role", nullable = false, columnDefinition = "CHAR(4)")
+    private String userRole = "USER"; //유저 권한
+
     /*
      * 시간 기반 UUIDv1을 생성하여 userId로 설정한 새로운 UsersEntity 객체를 반환한다.
      *

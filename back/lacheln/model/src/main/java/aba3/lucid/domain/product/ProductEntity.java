@@ -147,7 +147,7 @@ public class ProductEntity {
             this.hashtagList.clear();
         }
 
-        this.hashtagList.addAll(list);
+        this.hashtagList.addAll(hashtagEntityList);
     }
 
 }

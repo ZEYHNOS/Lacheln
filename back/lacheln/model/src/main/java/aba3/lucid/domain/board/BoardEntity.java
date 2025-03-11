@@ -33,9 +33,9 @@ public class BoardEntity {
     @Column(name = "board_name", columnDefinition = "CHAR(20)", nullable = false)
     private BoardName boardName; //게시판이름
 
-    @Enumerated(EnumType.STRING)
+    /*@Enumerated(EnumType.STRING)
     @Column(name = "board_status", columnDefinition = "CHAR(20)", nullable = false)
-    private ActiveEnum boardStatus; //활성화여부 enum 참고
+    private ActiveEnum boardStatus; //활성화여부 enum 참고*/
 
     @JsonIgnore
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)

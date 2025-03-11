@@ -1,8 +1,12 @@
 package aba3.lucid.domain.user.service;
 
 import aba3.lucid.domain.board.BoardEntity;
+import aba3.lucid.domain.user.CountryEntity;
+import aba3.lucid.domain.user.enums.CountryEnum;
 import aba3.lucid.dto.board.BoardRequest;
+import aba3.lucid.dto.board.BoardResponse;
 import aba3.lucid.repository.board.BoardRepository;
+import aba3.lucid.repository.user.CountryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,14 +15,27 @@ import org.springframework.stereotype.Service;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final CountryRepository countryRepository;
 
-    /*public BoardEntity create(BoardRequest boardRequest) {
-        var entity = BoardEntity.builder()
-                .boardName(boardRequest.getBoardName()) // boardName 설정
+    //게시판 생성
+    public BoardResponse createBoard(BoardRequest request) {
+        CountryEntity country = countryRepository.findById(CountryEnum.valueOf(request.getCountryId()))
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 국가 코드입니다."));
+
+        BoardEntity board = BoardEntity.builder()
+                .country(country)
+                .boardName(request.getBoardName())
                 .build();
 
-        //TODO save 구현
-        //return boardRepository.save(entity); // 저장 처리
-    }*/
+        BoardEntity saveBoard = boardRepository.save(board);
+
+        return new BoardResponse(
+                saveBoard.getBoardId(),
+                saveBoard.getCountry().getCountryName(),
+                saveBoard.getBoardName()
+        );
+    }
+
 
 }
+

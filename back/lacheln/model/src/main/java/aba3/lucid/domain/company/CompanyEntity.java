@@ -90,6 +90,10 @@ public class CompanyEntity {
     @Column(name = "cp_fax", columnDefinition = "CHAR(20)")
     private String cpFax;
 
+    // 업체 권한
+    @Column(name = "company_role", nullable = false, columnDefinition = "CHAR(7)")
+    private String companyRole = "COMPANY";
+
     // TODO 나중에 필요하면 하나씩 사용하기
 //    // 리뷰 Mapping Table
 //    @OneToMany(fetch = FetchType.LAZY)

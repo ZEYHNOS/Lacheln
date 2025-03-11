@@ -5,6 +5,7 @@ import aba3.lucid.common.enums.Color;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.dto.product.dress.DressRequest;
+import aba3.lucid.dto.product.option.OptionDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Getter
 @Entity
@@ -78,23 +80,19 @@ public class DressEntity {
     }
 
 
+
+
     public void changeProductInfo(DressRequest dressRequest) {
-        this.product.changeDescription(dressRequest.getDescription());
-        this.product.changeProductName(dressRequest.getName());
-        this.product.changePrice(dressRequest.getPrice());
-        this.product.changeRec(dressRequest.getRec());
-        this.product.changeTaskTime(dressRequest.getTaskTime());
-        this.product.changeStatus(dressRequest.getStatus());
+        this.product.changeDescription(dressRequest.getDescription()); // 상세 설명 변경
+        this.product.changeProductName(dressRequest.getName()); // 상품 이름 변경
+        this.product.changePrice(dressRequest.getPrice()); // 가격 변경
+        this.product.changeRec(dressRequest.getRec()); // 추천 상품 변경
+        this.product.changeTaskTime(dressRequest.getTaskTime()); // 작업 시간 변경
+        this.product.changeStatus(dressRequest.getStatus()); // 상태 변경
+        this.product.changeHashTag(dressRequest.getHashTagList()); // 해시 태그 변경
 
-        List<HashtagEntity> hashtagEntityList = new ArrayList<>();
-        for (String hasTagName : dressRequest.getHashTagList()) {
-            hashtagEntityList.add(HashtagEntity.builder()
-                    .product(this.product)
-                    .tagName(hasTagName)
-                    .build());
-        }
+        // TODO 옵션 변경하기
 
-        this.product.updateHashTagList(hashtagEntityList);
+        // TODO 옵션 상세 변경하기
     }
-
 }

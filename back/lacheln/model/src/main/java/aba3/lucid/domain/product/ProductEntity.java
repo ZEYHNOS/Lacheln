@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -120,9 +121,28 @@ public class ProductEntity {
         this.pdDescription = description;
     }
 
+    public void changeOptionList(List<OptionEntity> optionEntityList) {
+        if (this.opList != null) {
+            this.opList.clear();
+        }
+
+        this.opList.addAll(optionEntityList);
+    }
 
     // 태그 리스트 삭제 후 새로 넣기
-    public void updateHashTagList(List<HashtagEntity> list) {
+    public void changeHashTag(List<String> hashTagList) {
+        if (hashTagList.size() == 0) {
+            return;
+        }
+
+        List<HashtagEntity> hashtagEntityList = new ArrayList<>();
+        for (String hasTagName : hashTagList) {
+            hashtagEntityList.add(HashtagEntity.builder()
+                    .product(this)
+                    .tagName(hasTagName)
+                    .build());
+        }
+
         if (this.hashtagList != null) {
             this.hashtagList.clear();
         }

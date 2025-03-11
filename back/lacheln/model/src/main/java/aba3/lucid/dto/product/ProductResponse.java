@@ -32,6 +32,10 @@ public class ProductResponse {
     // 설명
     private String description;
 
+    // 태그 리스트
     private List<String> hashTagList;
 
+    // 옵션 리스트
+
+    // 옵션 상세 리스트
 }

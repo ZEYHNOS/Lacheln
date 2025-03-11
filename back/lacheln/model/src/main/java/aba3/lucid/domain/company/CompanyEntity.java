@@ -8,10 +8,7 @@ import aba3.lucid.domain.schedule.RegularHolidayEntity;
 import aba3.lucid.domain.schedule.TemporaryHolidayEntity;
 import aba3.lucid.domain.schedule.WeekdaysScheduleEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Calendar;
 
@@ -21,6 +18,7 @@ import java.util.Calendar;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class CompanyEntity {
 
     @Id

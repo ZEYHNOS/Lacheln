@@ -2,15 +2,17 @@ package aba3.lucid.controller;
 
 import aba3.lucid.business.ProductBusiness;
 import aba3.lucid.common.api.API;
+import aba3.lucid.domain.company.CompanyEntity;
+import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.dto.product.dress.DressRequest;
 import aba3.lucid.dto.product.dress.DressResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/product")
@@ -44,6 +46,29 @@ public class ProductController {
         return API.OK(res);
     }
 
+    // 드레스 상품 삭제
+    @DeleteMapping("/dress/delete/{id}")
+    @Operation(summary = "드레스 상품 삭제", description = "드레스 업체가 상품을 삭제합니다.")
+    public API<String> dressDelete(
+            @PathVariable long id
+    ) {
+        // TODO 업체 정보 가지고 오기
+
+
+        productBusiness.dressProductDelete(id);
+
+        return API.OK("삭제되었습니다.");
+    }
+
+    // 드레스 상품 보기
+    @GetMapping("/dress/list")
+    @Operation(summary = "드레스 상품 리스트", description = "드레스 업체의 상품 리스트를 볼 수 있습니다.")
+    public API<List<DressResponse>> getDressList() {
+        List<DressResponse> dressResponseList = productBusiness.getDressList();
+
+        return API.OK(dressResponseList);
+    }
+
     // 드레스 상품 등록
     @PostMapping("/register")
     @Operation(summary = "메이크업 상품 등록", description = "메이크업 업체가 상품을 등록합니다.")
@@ -59,7 +84,5 @@ public class ProductController {
 
         return null;
     }
-
-
 
 }

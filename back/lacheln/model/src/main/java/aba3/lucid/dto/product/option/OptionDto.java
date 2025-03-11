@@ -1,12 +1,13 @@
 package aba3.lucid.dto.product.option;
 
-import aba3.lucid.common.annotation.valid.BinaryChoiceValid;
 import aba3.lucid.common.enums.ActiveEnum;
 import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.domain.product.OptionDetailEntity;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Negative;
 import jakarta.validation.constraints.NegativeOrZero;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigInteger;
@@ -17,45 +18,47 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
-public class OptionRequest {
+public class OptionDto {
 
     @NotBlank
     private String name;
 
     // 중복 여부
-    @BinaryChoiceValid
+    @NotNull
     private BinaryChoice overlap;
 
     // 필수 여부
-    @BinaryChoiceValid
+    @NotNull
     private BinaryChoice essential;
 
     // 활성화 여부
-    // todo 상태 관련 처리하기
+    @NotNull
     private ActiveEnum status;
 
     // 옵션 상세 정보
     @Valid
-    private List<OptionDetailRequest> optionDtList;
+    private List<OptionDetailDto> optionDtList;
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     @ToString
-    private static class OptionDetailRequest {
+    public static class OptionDetailDto {
 
         // 옵션 상세 이름
         @NotBlank
         private String opDtName;
 
         // 추가금
+        @NotNull
         @NegativeOrZero
         private BigInteger plusCost;
 
         // 추가 시간
         @Negative
         private int plusTime;
+
     }
 
 }

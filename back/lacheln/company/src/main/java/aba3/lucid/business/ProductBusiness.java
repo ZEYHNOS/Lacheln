@@ -11,6 +11,8 @@ import aba3.lucid.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Slf4j
 @Business
 @AllArgsConstructor
@@ -40,6 +42,7 @@ public class ProductBusiness {
         return res;
     }
 
+    // 드레스 수정하기
     public DressResponse update(long id, DressRequest dressRequest) {
         // TODO 업체 정보 매개변수로 받고 확인하기
 
@@ -55,5 +58,16 @@ public class ProductBusiness {
 
         return res;
 
+    }
+
+    // 드레스 삭제하기
+    public void dressProductDelete(long dressId) {
+        productService.dressDelete(dressId);
+    }
+
+
+    // 드레스 리스트 보기
+    public List<DressResponse> getDressList() {
+        return null;
     }
 }

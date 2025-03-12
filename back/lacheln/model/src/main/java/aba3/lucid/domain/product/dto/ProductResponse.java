@@ -3,6 +3,7 @@ package aba3.lucid.domain.product.dto;
 import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @ToString
 public class ProductResponse {
 

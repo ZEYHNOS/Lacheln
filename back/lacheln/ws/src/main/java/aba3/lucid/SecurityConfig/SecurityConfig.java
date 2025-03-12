@@ -33,9 +33,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // REST API를 이용한 서버임으로 csrf 보호 비활성화
                 .authorizeHttpRequests(auth -> auth // 특정 패턴에 해당하는 url이 요청될 경우 사용자의 권한을 확인하여 인증 여부 및 인증 진행
-                        .requestMatchers("/api/user/**").hasRole("USER")
-                        .requestMatchers("/api/company/**").hasRole("COMPANY")
-                        .requestMatchers("/api/board/**").permitAll() // 해당하는 요청은 모든 사용자들이 접근 할 수 있도록 허가(추가 예정)
+                        .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/company/**").hasRole("COMPANY")
+                        .requestMatchers("/api/**").permitAll() // 해당하는 요청은 모든 사용자들이 접근 할 수 있도록 허가(추가 예정)
                         .anyRequest().authenticated() //  그 외 모든 요청에 대해서는 인증을 마친 사용자만 접근 할 수 있도록 설정
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

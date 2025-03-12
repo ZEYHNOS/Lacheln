@@ -1,17 +1,19 @@
 package aba3.lucid.domain.board.dto;
 
 import aba3.lucid.domain.board.enums.BoardName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Builder
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BoardRequest {
 
-    private String countryId;
+    @NotNull(message = "게시판 이름은 필수입니다.")
     private BoardName boardName;
 }

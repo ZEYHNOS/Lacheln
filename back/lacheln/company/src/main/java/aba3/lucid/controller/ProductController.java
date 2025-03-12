@@ -2,11 +2,8 @@ package aba3.lucid.controller;
 
 import aba3.lucid.business.ProductBusiness;
 import aba3.lucid.common.api.API;
-import aba3.lucid.domain.company.CompanyEntity;
-import aba3.lucid.domain.company.enums.CompanyCategory;
-import aba3.lucid.domain.company.enums.CompanyStatus;
-import aba3.lucid.dto.product.dress.DressRequest;
-import aba3.lucid.dto.product.dress.DressResponse;
+import aba3.lucid.domain.product.dress.dto.DressRequest;
+import aba3.lucid.domain.product.dress.dto.DressResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -2,12 +2,12 @@ package aba3.lucid.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.domain.company.CompanyEntity;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
-import aba3.lucid.domain.product.DressEntity;
-import aba3.lucid.dto.product.dress.DressRequest;
-import aba3.lucid.repository.product.DressRepository;
+import aba3.lucid.domain.product.dress.entity.DressEntity;
+import aba3.lucid.domain.product.dress.dto.DressRequest;
+import aba3.lucid.domain.product.dress.repository.DressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

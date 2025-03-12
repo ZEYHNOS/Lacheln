@@ -1,4 +1,4 @@
-package aba3.lucid.domain.product.convertor;
+package aba3.lucid.common.ifs;
 
 public interface ConverterIfs<Entity, Req, Res> {
 

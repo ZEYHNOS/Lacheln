@@ -1,4 +1,4 @@
-package aba3.lucid.dto.company;
+package aba3.lucid.domain.company.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

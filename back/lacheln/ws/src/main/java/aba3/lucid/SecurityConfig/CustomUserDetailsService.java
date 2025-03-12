@@ -1,7 +1,7 @@
 package aba3.lucid.SecurityConfig;
 
-import aba3.lucid.domain.user.UsersEntity;
-import aba3.lucid.repository.user.UsersRepository;
+import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

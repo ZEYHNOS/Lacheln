@@ -1,12 +1,12 @@
 package aba3.lucid.domain.user.service;
 
-import aba3.lucid.domain.board.BoardEntity;
-import aba3.lucid.domain.user.CountryEntity;
+import aba3.lucid.domain.board.entity.BoardEntity;
+import aba3.lucid.domain.country.entity.CountryEntity;
 import aba3.lucid.domain.user.enums.CountryEnum;
-import aba3.lucid.dto.board.BoardRequest;
-import aba3.lucid.dto.board.BoardResponse;
-import aba3.lucid.repository.board.BoardRepository;
-import aba3.lucid.repository.user.CountryRepository;
+import aba3.lucid.domain.board.dto.BoardRequest;
+import aba3.lucid.domain.board.dto.BoardResponse;
+import aba3.lucid.domain.board.repository.BoardRepository;
+import aba3.lucid.domain.country.repository.CountryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

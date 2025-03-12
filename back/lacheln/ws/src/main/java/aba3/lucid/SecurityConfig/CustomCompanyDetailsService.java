@@ -1,7 +1,7 @@
 package aba3.lucid.SecurityConfig;
 
-import aba3.lucid.domain.company.CompanyEntity;
-import aba3.lucid.repository.company.CompanyRepository;
+import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.company.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

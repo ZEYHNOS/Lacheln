@@ -20,7 +20,7 @@ public class CustomCompanyDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String companyName) throws UsernameNotFoundException {
         // Company 가져오기
-        CompanyEntity company = companyRepository.findByCompanyName(companyName);
+        CompanyEntity company = companyRepository.findByCpName(companyName);
 
         // 만약 없으면 Exception 발생
         if(company == null) {

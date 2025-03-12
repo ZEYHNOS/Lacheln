@@ -22,9 +22,11 @@ public class CartEntity {
     private long cartId; //장바구니ID
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private UsersEntity users; //소비자ID
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
     private ProductEntity product; //상품ID
 
     @Column(name = "cart_date", nullable = false)

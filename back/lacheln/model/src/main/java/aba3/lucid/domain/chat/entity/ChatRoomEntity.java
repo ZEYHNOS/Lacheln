@@ -18,6 +18,7 @@ public class ChatRoomEntity {
 
     // 채팅방 ID
     @Id
+    @Column(name = "chat_room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatRoomId;
 

@@ -1,7 +1,6 @@
-package aba3.lucid.domain.payment.entity;
+package aba3.lucid.domain.company.entity;
 
 import aba3.lucid.adjustment.enums.Bank;
-import aba3.lucid.domain.company.entity.CompanyEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +19,10 @@ public class AdjustmentEntity {
 
     // 회사(1:1)
     @Id
+    @Column(name = "cp_id")
+    private long cpId;
+
+    @MapsId
     @JoinColumn(name = "cp_id")
     @OneToOne(fetch = FetchType.LAZY)
     private CompanyEntity company;

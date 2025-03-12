@@ -22,7 +22,7 @@ public class ReviewImageEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
-    private ReviewEntity reviewId;  //주후 테이블 관계 설정
+    private ReviewEntity review;  //주후 테이블 관계 설정
 
     @Column(name = "rv_image_url", columnDefinition = "VARCHAR(255)", nullable = false)
     private String rvImageUrl;

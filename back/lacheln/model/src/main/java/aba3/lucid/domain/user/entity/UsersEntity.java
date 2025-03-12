@@ -27,14 +27,15 @@ public class UsersEntity {
     private String userId; //소비자ID
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
     private CountryEntity country; //국가명코드 ISO 3166-1 alpha-2
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_language", columnDefinition = "CAHR(3)", nullable = false)
+    @Column(name = "user_language", columnDefinition = "CHAR(3)", nullable = false)
     private LanguageEnum userLanguage; //국가언어고유코드 ISO 639 alpha-3
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_currency", columnDefinition = "CAHR(3)", nullable = false)
+    @Column(name = "user_currency", columnDefinition = "CHAR(3)", nullable = false)
     private CurrencyEnum userCurrency; //화폐단위 ISO 4217
 
     @Column(name = "user_email", length = 255, nullable = false)

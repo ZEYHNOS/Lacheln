@@ -17,6 +17,7 @@ public class SocialEntity {
 
     // primary key
     @Id
+    @Column(name = "sns_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long snsId;
 

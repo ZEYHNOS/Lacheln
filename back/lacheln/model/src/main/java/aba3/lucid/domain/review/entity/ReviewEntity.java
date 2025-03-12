@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,6 +23,7 @@ public class ReviewEntity {
 
     // 리뷰 ID
     @Id
+    @Column(name = "review_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reviewId;
 
@@ -54,4 +57,8 @@ public class ReviewEntity {
     // 리뷰 평점
     @Column(name = "rv_score")
     private double rvScore;
+
+    //리뷰이미지
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    private List<ReviewImageEntity> imageList = new ArrayList<>();
 }

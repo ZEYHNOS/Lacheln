@@ -29,8 +29,8 @@ public class ReviewCommentEntity {
 
     // 리뷰
     @OneToOne
-    @JoinColumn(name = "reivew_id")
-    private ReviewEntity reivew;
+    @JoinColumn(name = "review_id")
+    private ReviewEntity review;
 
     // 업체
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,10 +41,6 @@ public class ReviewCommentEntity {
     @OneToOne
     @JoinColumn(name = "pay_id")
     private PayManagementEntity payManagement;
-
-    //리뷰이미지
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
-    private List<ReviewImageEntity> imageList = new ArrayList<>();
 
     // 내용
     @Column(name = "rvc_content", columnDefinition = "char(255)", nullable = false)

@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class InquiryImageEntity {
 
     @Id
+    @Column(name = "inquiry_image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long inquiryImageId;
 

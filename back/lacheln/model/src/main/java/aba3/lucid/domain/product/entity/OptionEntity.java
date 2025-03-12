@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Entity
-@Table(name = "option")
+@Table(name = "product_option")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -26,6 +26,7 @@ public class OptionEntity {
     private long opId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pd_id")
     private ProductEntity product;
 
     // 옵션 이름

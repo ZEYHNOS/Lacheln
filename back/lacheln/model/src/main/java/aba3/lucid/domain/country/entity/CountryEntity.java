@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class CountryEntity {
 
     @Id
-    @Enumerated(EnumType.STRING)
     @Column(name = "country_id", columnDefinition = "CHAR(2)")
+    @Enumerated(EnumType.STRING)
     private CountryEnum countryId; //국가명코드 ISO 3166-1 alpha-2
 
     @Column(name = "country_name", length = 100, nullable = false)

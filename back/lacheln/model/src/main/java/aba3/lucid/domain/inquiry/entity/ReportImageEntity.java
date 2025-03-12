@@ -15,10 +15,9 @@ import lombok.NoArgsConstructor;
 public class ReportImageEntity {
 
     @Id
+    @Column(name = "report_image_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long reportImageId;
-
-    // TODO ManyToOne
-    private long reportId;
 
     @Column(name = "report_image_url", columnDefinition = "CHAR(255)", nullable = false)
     private String reportImageUrl;

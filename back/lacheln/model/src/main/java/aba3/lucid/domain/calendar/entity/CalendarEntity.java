@@ -21,6 +21,7 @@ public class CalendarEntity {
 
     // 캘린더 기본 ID
     @Id
+    @Column(name = "cal_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long calId;
 

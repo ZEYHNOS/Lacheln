@@ -17,8 +17,13 @@ import java.time.LocalDateTime;
 @Builder
 public class UserExitEntity {
 
+    @Id
+    @Column(name = "user_id")
+    private String userId;
+
+    @MapsId
     @OneToOne
-    @PrimaryKeyJoinColumn // users의 기본 키를 외래 키로 설정
+    @JoinColumn(name = "user_id")
     private UsersEntity users;
 
     @CreationTimestamp

@@ -1,5 +1,6 @@
 package aba3.lucid.domain.inquiry.entity;
 
+import aba3.lucid.domain.inquiry.enums.InquiryStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -19,6 +20,7 @@ import java.util.List;
 public class InquiryEntity {
 
     @Id
+    @Column(name = "inquiry_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inquiryId;
 
@@ -41,7 +43,7 @@ public class InquiryEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "inquiry_status", columnDefinition = "CHAR(20)", nullable = false)
-    private String inquiryStatus; //상태 접수, 진행중, 완료
+    private InquiryStatus inquiryStatus; //상태 접수, 진행중, 완료
 
     @Column(name = "inquiry_answer", length = 255)
     private String inquiryAnswer; //답변

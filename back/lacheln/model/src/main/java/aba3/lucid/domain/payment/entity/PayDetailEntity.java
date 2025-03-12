@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class PayDetailEntity {
 
     @Id
+    @Column(name = "pay_detail_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long payDetailId;
 

@@ -2,12 +2,14 @@ package aba3.lucid.domain.inquiry.entity;
 
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.inquiry.enums.ReportCategory;
+import aba3.lucid.domain.user.entity.UsersEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.mapping.List;
+import java.util.List;
 
 import java.time.LocalDateTime;
 
@@ -27,12 +29,6 @@ public class ReportEntity {
     @Column(name = "report_id")
     private long reportId;
 
-    @Column(name = "user_id", columnDefinition = "char(36)", nullable = false)
-    private String userId; // 추후 ManyToOne으로 수정
-
-    @Column(name = "cp_id", nullable = false)
-    private long cpId;  // 추후 ManyToOne으로 수정
-
     @Column(name = "report_title", length = 100, nullable = false)
     private String reportTitle;
 
@@ -50,11 +46,15 @@ public class ReportEntity {
     @Column(name = "report_category", columnDefinition = "char(50)", nullable = false)
     private ReportCategory reportCategory;
 
-    @OneToMany( mappedBy = "report", cascade = CascadeType.ALL)
-    private List<ReportImageEntity> reportImageId;     //??????????
+    @JsonIgnore
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
+    private List<ReportImageEntity> reportImageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UsersEntity user;
 }

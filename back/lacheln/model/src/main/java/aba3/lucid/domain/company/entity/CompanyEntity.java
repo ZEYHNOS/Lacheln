@@ -15,8 +15,10 @@ import lombok.*;
 public class CompanyEntity {
 
     @Id
+    @Column(name = "cp_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cpId;
+
 
     // 회사 이메일
     @Column(name = "cp_email", columnDefinition = "VARCHAR(255)", nullable = false)

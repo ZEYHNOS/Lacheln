@@ -1,6 +1,6 @@
 package aba3.lucid.domain.company.entity;
 
-import aba3.lucid.domain.user.entity.UserCountryEntity;
+import aba3.lucid.domain.country.entity.CountryEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class CompanyCountryEntity {
 
     @Id
+    @Column(name = "cp_country_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cpCountryId;
 
@@ -25,6 +26,6 @@ public class CompanyCountryEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id" )
-    private UserCountryEntity country;
+    private CountryEntity country;
 
 }

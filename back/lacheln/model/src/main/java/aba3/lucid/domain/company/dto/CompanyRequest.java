@@ -1,5 +1,6 @@
 package aba3.lucid.domain.company.dto;
 
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,10 @@ public class CompanyRequest implements CompanyRequestIfs{
     @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해야 합니다.")
     private String cpPassword;
 
+    //비밀번호 확인
+    @NotEmpty(message = "비밀번호 확인은 필수 입력값입니다.")
+    private String cpPasswordConfirm;
+
     @NotEmpty
     private String cpName;
 
@@ -31,5 +36,23 @@ public class CompanyRequest implements CompanyRequestIfs{
     @NotEmpty(message = "대표자 전화번호는 필수 입력값입니다.")
     @Pattern(regexp = "^\\d{10,11}$",message = "전화번호는 10~11자리 숫자만 가능합니다.")
     private String cpMainContact;
+
+    //주소
+    private String cpAddress;
+
+    //Request DTO를 Entity로 바꾸기(Db에 저장하기 위해)
+    public CompanyEntity toEntity(String hashedPassword) {
+        return CompanyEntity.builder()
+                .cpEmail(cpEmail)
+                .cpPassword(hashedPassword)
+                .cpName(cpName)
+                .cpRepName(cpRepName)
+                .cpMainContact(cpMainContact)
+                .cpAddress(cpAddress)
+                .build();
+
+    }
+
+
 
 }

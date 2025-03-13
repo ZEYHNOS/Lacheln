@@ -62,7 +62,7 @@ public class DressRequest extends ProductRequest {
     @NoArgsConstructor
     @Builder
     @ToString
-    private static class DressSizeDto {
+    public static class DressSizeDto {
 
         // 드레스 사이즈
         @NotNull

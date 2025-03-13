@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -20,16 +21,9 @@ import java.util.List;
 @Table(name = "dress")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class DressEntity {
-
-    @Id
-    @Column(name = "dress_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long dressId; //드레스 ID
-
-    @OneToOne(fetch = FetchType.LAZY)
-    private ProductEntity product; //상품
+@SuperBuilder
+@DiscriminatorValue("dress")
+public class DressEntity extends ProductEntity {
 
     // 실내촬영여부
     @Column(name = "dress_in_available", nullable = false)
@@ -79,18 +73,4 @@ public class DressEntity {
 
 
 
-
-    public void changeProductInfo(DressRequest dressRequest) {
-        this.product.changeDescription(dressRequest.getDescription()); // 상세 설명 변경
-        this.product.changeProductName(dressRequest.getName()); // 상품 이름 변경
-        this.product.changePrice(dressRequest.getPrice()); // 가격 변경
-        this.product.changeRec(dressRequest.getRec()); // 추천 상품 변경
-        this.product.changeTaskTime(dressRequest.getTaskTime()); // 작업 시간 변경
-        this.product.changeStatus(dressRequest.getStatus()); // 상태 변경
-        this.product.changeHashTag(dressRequest.getHashTagList()); // 해시 태그 변경
-
-        // TODO 옵션 변경하기
-
-        // TODO 옵션 상세 변경하기
-    }
 }

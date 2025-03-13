@@ -8,6 +8,7 @@ import aba3.lucid.domain.product.enums.ProductStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -16,9 +17,11 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "product")
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "category")
 public class ProductEntity {
 
     // 상품 id(기본키)

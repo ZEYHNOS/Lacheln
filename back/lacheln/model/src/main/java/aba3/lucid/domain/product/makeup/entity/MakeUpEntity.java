@@ -7,22 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Entity
 @Table(name = "makeup")
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MakeUpEntity {
-
-    @Id
-    @Column(name = "makeup_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long makeupId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ProductEntity product;
+@SuperBuilder
+@DiscriminatorValue("studio")
+public class MakeUpEntity extends ProductEntity {
 
     // 출장 여부
     @Column(name = "makeup_bt", nullable = false)

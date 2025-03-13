@@ -4,23 +4,16 @@ import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "studio")
-public class StudioEntity {
-    // 스튜디오 ID
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long stdId;
-
-    // 상품(외래키)
-    @OneToOne
-    @JoinColumn(name = "pd_id")
-    private ProductEntity product;
+@SuperBuilder
+@DiscriminatorValue("studio")
+public class StudioEntity extends ProductEntity{
 
     // 실내촬영여부
     @Column(name = "std_in_available", nullable = false)

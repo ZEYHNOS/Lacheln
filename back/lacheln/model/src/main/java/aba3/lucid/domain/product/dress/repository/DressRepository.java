@@ -7,6 +7,4 @@ import java.util.List;
 
 public interface DressRepository extends JpaRepository<DressEntity, Long> {
 
-    List<DressEntity> findAllByProduct_Company_cpId(long id);
-
 }

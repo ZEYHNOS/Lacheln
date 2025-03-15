@@ -1,7 +1,7 @@
 package aba3.lucid.company.controller;
 
 
-import aba3.lucid.company.business.CompanyService;
+import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +22,5 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@Validated @RequestBody CompanyRequest request, BindingResult bindingResult) {
-
-        if(bindingResult.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errors);
-
-
-        }
-        if(!request.getCpAddress().equals(request.getCpPasswordConfirm()))
-    }
 
 }

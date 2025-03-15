@@ -31,16 +31,4 @@ public class CompanyResponse implements Serializable {
 
     private String cpAddress;
 
-    //Entity부터 Response DTO로 바꾸는 메서드
-    public static CompanyResponse fromEntity(CompanyEntity company) {
-        return CompanyResponse.builder()
-                .cpId(company.getCpId())
-                .cpEmail(company.getCpEmail())
-                .cpName(company.getCpName())
-                .cpRepName(company.getCpRepName())
-                .cpMainContact(company.getCpMainContact())
-                .cpAddress(company.getCpAddress())
-                .build();
-    }
-
 }

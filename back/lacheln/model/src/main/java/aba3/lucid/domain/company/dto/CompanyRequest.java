@@ -40,18 +40,6 @@ public class CompanyRequest implements CompanyRequestIfs{
     //주소
     private String cpAddress;
 
-    //Request DTO를 Entity로 바꾸기(Db에 저장하기 위해)
-    public CompanyEntity toEntity(String hashedPassword) {
-        return CompanyEntity.builder()
-                .cpEmail(cpEmail)
-                .cpPassword(hashedPassword)
-                .cpName(cpName)
-                .cpRepName(cpRepName)
-                .cpMainContact(cpMainContact)
-                .cpAddress(cpAddress)
-                .build();
-
-    }
 
 
 

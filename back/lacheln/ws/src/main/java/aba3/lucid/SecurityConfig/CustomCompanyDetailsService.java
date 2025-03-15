@@ -31,10 +31,10 @@ public class CustomCompanyDetailsService implements UserDetailsService {
         String role = company.getCompanyRole();
 
         // UserDetails 객체에 알맞게 Company 정보 저장
-        return User.builder()
+        return CustomUserDetails.builder()
                 .username(company.getCpName())
                 .password(company.getCpPassword())
-                .authorities(new SimpleGrantedAuthority(role))
+                .userType("COMPANY")
                 .build();
     }
 }

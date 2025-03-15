@@ -31,10 +31,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         String role = user.getUserRole();
 
         // UserDetails 객체에 알맞게 user 정보 저장
-        return User.builder()
+        return CustomUserDetails.builder()
                 .username(user.getUserName())
                 .password(user.getUserPassword())
-                .authorities(new SimpleGrantedAuthority(role))
+                .userType("USER")
                 .build();
     }
 }

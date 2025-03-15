@@ -9,7 +9,6 @@ import aba3.lucid.domain.product.dress.convertor.DressConverter;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
-import aba3.lucid.product.service.CompanyService;
 import aba3.lucid.product.service.DressService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

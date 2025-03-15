@@ -56,20 +56,4 @@ public class DressRequest extends ProductRequest {
 
         return true;
     }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    @ToString
-    public static class DressSizeDto {
-
-        // 드레스 사이즈
-        @NotNull
-        private DressSize size;
-
-        // 드레스 사이즈 별 재고
-        @Min(1)
-        private int stock;
-    }
 }

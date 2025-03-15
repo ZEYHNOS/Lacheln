@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "category")
-public class ProductEntity {
+public abstract class ProductEntity {
 
     // 상품 id(기본키)
     @Id
@@ -100,6 +100,13 @@ public class ProductEntity {
         this.pdStatus = status;
     }
 
+    // 해시 태그 변경
+    public void setHashtagList(List<HashtagEntity> list) {
+        hashtagList = new ArrayList<>();
+
+        hashtagList.addAll(list);
+    }
+
 
     // 업체 추천 변경
     public void changeRec(BinaryChoice rec) {
@@ -153,4 +160,8 @@ public class ProductEntity {
         this.hashtagList.addAll(hashtagEntityList);
     }
 
+    public void setOptionList(List<OptionEntity> list) {
+        opList = new ArrayList<>();
+        opList.addAll(list);
+    }
 }

@@ -4,6 +4,8 @@ import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.common.enums.Color;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.product.dress.dto.DressSizeDto;
+import aba3.lucid.domain.product.entity.HashtagEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -72,5 +75,7 @@ public class DressEntity extends ProductEntity {
     }
 
 
-
+    public void setDressSizeList(List<DressSizeEntity> dressSizeList) {
+        this.dressSizeList = new ArrayList<>(dressSizeList);
+    }
 }

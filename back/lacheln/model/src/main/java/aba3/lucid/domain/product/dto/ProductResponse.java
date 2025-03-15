@@ -1,6 +1,7 @@
 package aba3.lucid.domain.product.dto;
 
 import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.domain.product.dto.option.OptionDto;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -37,6 +38,5 @@ public class ProductResponse {
     private List<String> hashTagList;
 
     // 옵션 리스트
-
-    // 옵션 상세 리스트
+    private List<OptionDto> optionList;
 }

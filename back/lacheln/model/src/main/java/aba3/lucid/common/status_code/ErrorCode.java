@@ -18,7 +18,8 @@ public enum ErrorCode implements StatusCodeIfs {
 
     SERVER_ERROR(500, 500, "서버에서 에러가 발생했습니다."),
 
-    NULL_POINT(400, 400, "존재하지 않습니다.")
+    NULL_POINT(400, 400, "존재하지 않습니다."),
+    INVALID_PARAMETER(400, 4001, "잘못된 파라미터 값입니다."),
 
     ;
 

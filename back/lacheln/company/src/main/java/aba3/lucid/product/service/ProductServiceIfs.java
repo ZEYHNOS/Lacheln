@@ -4,13 +4,13 @@ import aba3.lucid.domain.product.entity.ProductEntity;
 
 import java.util.List;
 
-public interface ProductServiceIfs<T> {
+public interface ProductServiceIfs<T,REQ> {
 
     // 상품 등록
     T registerProduct(T entity);
 
     // 상품 수정
-    T updateProduct(T entity);
+    T updateProduct(T entity, REQ req);
 
     // 상품 삭제
     void deleteProduct(T entity);

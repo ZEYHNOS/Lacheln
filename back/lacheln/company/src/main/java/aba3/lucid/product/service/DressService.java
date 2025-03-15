@@ -2,6 +2,7 @@ package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ProductErrorCode;
+import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.dress.repository.DressRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DressService implements ProductServiceIfs<DressEntity> {
+public class DressService implements ProductServiceIfs<DressEntity,DressRequest> {
 
     private final DressRepository dressRepository;
 
@@ -23,8 +24,9 @@ public class DressService implements ProductServiceIfs<DressEntity> {
     }
 
     @Override
-    public DressEntity updateProduct(DressEntity entity) {
-        return dressRepository.save(entity);
+    public DressEntity updateProduct(DressEntity existingDress, DressRequest request) {
+        existingDress.updateFromRequest(request);
+        return dressRepository.save(existingDress);
     }
 
     @Override

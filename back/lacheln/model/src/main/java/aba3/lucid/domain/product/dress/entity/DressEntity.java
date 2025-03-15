@@ -78,4 +78,9 @@ public class DressEntity extends ProductEntity {
     public void setDressSizeList(List<DressSizeEntity> dressSizeList) {
         this.dressSizeList = new ArrayList<>(dressSizeList);
     }
+
+    // TODO updateFromRequest
+    public void updateFromRequest(DressRequest request) {
+
+    }
 }

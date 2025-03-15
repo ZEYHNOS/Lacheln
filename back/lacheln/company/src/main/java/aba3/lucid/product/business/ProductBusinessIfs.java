@@ -12,11 +12,11 @@ public interface ProductBusinessIfs<REQ extends ProductRequest, RES extends Prod
 
 
     // 상품(스,드,메) 수정
-    RES updateProduct(long companyId, REQ req);
+    RES updateProduct(long companyId, long productId, REQ req);
 
 
     // 상품(스,드,메) 삭제
-    void deleteProduct(long companyId);
+    void deleteProduct(long companyId, long productId);
 
 
     // 상품 리스트 보기

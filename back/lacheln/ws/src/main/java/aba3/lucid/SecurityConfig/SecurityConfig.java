@@ -50,25 +50,10 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 인증 프로세스를 담당하는 Bean 생성(사용자, 업체 각각 암호화된 상태로 비교)
+    // 인증 프로세스를 담당하는 Bean 생성(customAuthenticationProvider 클래스를 통해 사용자 또는 업체 어느 요청이 와도 인증 프로세스 원활하게 실행)
     @Bean
-    public AuthenticationManager authenticationManager() {
-        // 사용자 인증을 처리하는 인스턴스 생성
-        DaoAuthenticationProvider userAuthProvider = new DaoAuthenticationProvider();
-        // 해당하는 인스턴스에 사용자의 정보를 SET
-        userAuthProvider.setUserDetailsService(userDetailsService);
-        // 사용자의 비밀번호를 암호화시킴
-        userAuthProvider.setPasswordEncoder(passwordEncoder());
-
-        // 업체의 인증을 처리하는 인스턴스 생성
-        DaoAuthenticationProvider companyAuthProvider = new DaoAuthenticationProvider();
-        // 해당하는 인스턴스에 업체 정보를 SET
-        companyAuthProvider.setUserDetailsService(companyDetailsService);
-        // 업체의 비밀번호를 암호화 시킴
-        companyAuthProvider.setPasswordEncoder(passwordEncoder());
-
-        // 해당하는 인스턴스에 사용자와 업체 정보를 리스트에 저장하여 다중 인증 클래스 사용
-        return new ProviderManager(List.of(userAuthProvider, companyAuthProvider));
+    public AuthenticationManager authenticationManager(CustomAuthenticationProvider customAuthenticationProvider) {
+        return new ProviderManager(List.of(customAuthenticationProvider));
     }
 
     // 추후 axios 미들웨어 사용 예정으로 cors 설정을 위한 Bean 등록, 초기상태는 모든것을 허용하게 설정

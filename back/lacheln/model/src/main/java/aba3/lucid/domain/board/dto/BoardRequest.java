@@ -11,7 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BoardRequest {
 
     @NotNull(message = "게시판 이름은 필수입니다.")

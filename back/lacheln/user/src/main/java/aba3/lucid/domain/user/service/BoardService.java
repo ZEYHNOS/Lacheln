@@ -20,7 +20,7 @@ public class BoardService {
     public BoardEntity create(
             BoardRequest boardRequest
     ){
-        var entity = BoardEntity.builder()
+        BoardEntity entity = BoardEntity.builder()
                 .boardName(boardRequest.getBoardName())
                 .build();
 

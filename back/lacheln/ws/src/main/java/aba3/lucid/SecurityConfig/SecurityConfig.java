@@ -29,6 +29,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final CustomCompanyDetailsService companyDetailsService;
 
+
     // HTTP 요청을 가로채 인증 여부 결정 및 인증 진행
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

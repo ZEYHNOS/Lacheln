@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -51,4 +52,9 @@ public class OptionEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "option", cascade = CascadeType.REMOVE)
     private List<OptionDetailEntity> opDtList;
+
+    public void setOptionDetailList(List<OptionDetailEntity> list) {
+        opDtList = new ArrayList<>();
+        opDtList.addAll(list);
+    }
 }

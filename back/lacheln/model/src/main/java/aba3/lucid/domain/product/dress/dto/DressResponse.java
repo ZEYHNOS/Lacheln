@@ -6,6 +6,8 @@ import aba3.lucid.domain.product.dto.ProductResponse;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
@@ -23,10 +25,7 @@ public class DressResponse extends ProductResponse {
     // 드레스 색상
     private Color color;
 
-    // 드레스 수량
-    private int stock;
-
     // 드레스 사이즈
-    private String size;
+    private List<DressSizeDto> dressSizeList;
 
 }

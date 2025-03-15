@@ -3,6 +3,7 @@ package aba3.lucid.product.business;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.dress.convertor.DressConverter;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
@@ -31,14 +32,16 @@ public class DressBusiness implements ProductBusinessIfs<DressRequest, DressResp
             throw new ApiException(ErrorCode.BAD_REQUEST, "DressRequest 값을 받지 못했습니다.");
         }
 
-        // 업체 검수(존재 유무, 카테고리)
-        if (!companyService.matchCategory(companyId, CompanyCategory.D)) {
-            // 업체가 없거나 드레스 카테고리가 아니라면 Error
-            throw new ApiException(ErrorCode.BAD_REQUEST, "드레스 업체가 아니거나 업체가 존재하지 않습니다.");
-        }
+        CompanyEntity companyEntity = companyService.findByIdAndMatchCategoryWithThrow(companyId, CompanyCategory.D);
 
-        DressEntity dressEntity = dressConverter.toEntity(dressRequest);
+        // request -> entity
+        log.info("DressRequest : {}", dressRequest);
+        DressEntity dressEntity = dressConverter.toEntity(dressRequest, companyEntity);
+        log.info("DressEntity : {}", dressEntity);
+
+        // 드레스 저장
         DressEntity newDressEntity = dressService.registerProduct(dressEntity);
+        log.info("newDressEntity : {}", newDressEntity);
 
         return dressConverter.toResponse(newDressEntity);
     }

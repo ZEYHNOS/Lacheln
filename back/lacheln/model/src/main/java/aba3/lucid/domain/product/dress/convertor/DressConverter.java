@@ -7,10 +7,7 @@ import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
-import aba3.lucid.domain.product.dress.entity.DressSizeEntity;
-import aba3.lucid.domain.product.dto.option.OptionDto;
 import aba3.lucid.domain.product.entity.HashtagEntity;
-import aba3.lucid.domain.product.entity.OptionEntity;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -74,12 +71,12 @@ public class DressConverter implements ConverterIfs<DressEntity, DressRequest, D
                 ;
 
         // 기존 해시태그 삭제 후 다시 저장
-        entity.setHashtagList(toHashTagEntityList(req.getHashTagList(), entity));
+        entity.updateHashTag(req.getHashTagList());
         // 기존 옵션 삭제 후 저장
-        entity.setOptionList(req.getOptionList().stream()
+        entity.updateOptionList(req.getOptionList().stream()
                 .map(it -> optionConverter.toEntity(it, entity)).toList());
         // 기존 드레스 사이즈 리스트 삭제 후 저장
-        entity.setDressSizeList(req.getSizeList().stream()
+        entity.updateDressSizeList(req.getSizeList().stream()
                 .map(dressSizeConverter::toEntity)
                 .toList());
 
@@ -108,12 +105,12 @@ public class DressConverter implements ConverterIfs<DressEntity, DressRequest, D
 
 
         // 기존 해시태그 삭제 후 다시 저장
-        entity.setHashtagList(toHashTagEntityList(req.getHashTagList(), entity));
+        entity.updateHashtagList(toHashTagEntityList(req.getHashTagList(), entity));
         // 기존 옵션 삭제 후 저장
-        entity.setOptionList(req.getOptionList().stream()
+        entity.updateOptionList(req.getOptionList().stream()
                 .map(it -> optionConverter.toEntity(it, entity)).toList());
         // 기존 드레스 사이즈 리스트 삭제 후 저장
-        entity.setDressSizeList(req.getSizeList().stream()
+        entity.updateDressSizeList(req.getSizeList().stream()
                 .map(dressSizeConverter::toEntity)
                 .toList());
 

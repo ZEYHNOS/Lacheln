@@ -11,27 +11,68 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
-@Tag(name = "Dress Controller", description = "드레스 관련 API")
+@Tag(name = "Dress Controller", description = "드래스 관련 API")
 public class ProductController {
 
     private final DressBusiness dressBusiness;
 
-    @PostMapping("/dress/{companyId}")
-    @Operation(summary = "드레스 등록", description = "새로운 드레스 상품을 등록")
+    @PostMapping("/dress/register")
+    @Operation(summary = "드레스 등록", description = "새로운 드래스 상품을 등록")
     public API<DressResponse> registerDress(
-            @PathVariable long companyId,
             @Valid
             @RequestBody DressRequest req
         ) {
-        DressResponse res = dressBusiness.registerProduct(companyId, req);
-        log.info("DressResponse : {}", res);
+        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
+
+        DressResponse res = dressBusiness.registerProduct(1, req);
+        log.debug("Register DressResponse : {}", res);
 
         return API.OK(res);
     }
 
+    @PutMapping("/dress/update/{productId}")
+    @Operation(summary = "드래스 수정", description = "드래스 엔터티 수정")
+    public API<DressResponse> updateDress(
+            @PathVariable long productId,
+            @Valid
+            @RequestBody DressRequest request
+    ) {
+        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
+
+        DressResponse response = dressBusiness.updateProduct(1, productId, request);
+        log.debug("Update DressResponse : {}", response);
+
+        return API.OK(response);
+    }
+
+
+    @DeleteMapping("/dress/delete/{productId}")
+    @Operation(summary = "드래스 상품 삭제", description = "드래스 엔터티 삭제")
+    public API<String> deleteDress(
+            @PathVariable long productId
+    ) {
+        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
+
+        dressBusiness.deleteProduct(1, productId);
+        return API.OK("상품이 삭제되었습니다.");
+    }
+
+
+    @GetMapping("/dress/list/{companyId}")
+    @Operation(summary = "드래스 상품 리스트", description = "드래스 상품 리스트 보기")
+    public API<List<DressResponse>> getDressList(
+            @PathVariable long companyId
+    ) {
+        List<DressResponse> dressResponseList = dressBusiness.getProductList(companyId);
+        log.debug("DressList dressResponseList : {}", dressResponseList);
+
+        return API.OK(dressResponseList);
+    }
 
 }

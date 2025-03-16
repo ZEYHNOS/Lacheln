@@ -16,9 +16,9 @@ public interface ProductServiceIfs<T,REQ> {
     void deleteProduct(T entity);
 
     // 상품 리스트
-    List<T> getProductList(long id);
+    List<T> getProductList(long companyId);
 
     // 아이디로 entity 가지고 오기
-    T findByIdWithThrow(long id);
+    T findByIdWithThrow(long productId);
 
 }

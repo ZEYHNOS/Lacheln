@@ -14,6 +14,7 @@ public class API<T> {
 
     private Result result;
     private T data;
+    private String description;
     private Pagination pagination;
 
     public static <T>API<T> OK(){
@@ -28,6 +29,23 @@ public class API<T> {
         return API.<T>builder()
                 .result(Result.OK())
                 .data(data)
+                .build()
+                ;
+    }
+
+    public static <T>API<T> OK(String description) {
+        return API.<T>builder()
+                .result(Result.OK())
+                .description(description)
+                .build()
+                ;
+    }
+
+    public static <T>API<T> OK(T data, String description) {
+        return API.<T>builder()
+                .result(Result.OK())
+                .data(data)
+                .description(description)
                 .build()
                 ;
     }

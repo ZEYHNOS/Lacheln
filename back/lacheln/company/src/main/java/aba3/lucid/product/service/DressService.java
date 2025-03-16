@@ -2,21 +2,27 @@ package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ProductErrorCode;
+import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.dress.repository.DressRepository;
+import aba3.lucid.domain.product.entity.OptionEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class DressService implements ProductServiceIfs<DressEntity,DressRequest> {
 
     private final DressRepository dressRepository;
+
+    private final OptionConverter optionConverter;
 
     @Override
     public DressEntity registerProduct(DressEntity entity) {
@@ -25,7 +31,16 @@ public class DressService implements ProductServiceIfs<DressEntity,DressRequest>
 
     @Override
     public DressEntity updateProduct(DressEntity existingDress, DressRequest request) {
-        existingDress.updateFromRequest(request);
+        // 옵션 dto -> entity
+        List<OptionEntity> optionDtoList = request.getOptionList().stream()
+                .map(it -> optionConverter.toEntity(it, existingDress))
+                .toList()
+                ;
+
+        // 엔티티 정보 업데이트
+        existingDress.updateFromRequest(request, optionDtoList);
+
+        // DB 저장 후 반환
         return dressRepository.save(existingDress);
     }
 
@@ -35,8 +50,8 @@ public class DressService implements ProductServiceIfs<DressEntity,DressRequest>
     }
 
     @Override
-    public List<DressEntity> getProductList(long id) {
-        return List.of();
+    public List<DressEntity> getProductList(long companyId) {
+        return dressRepository.findAllByCompany_CpId(companyId);
     }
 
     @Override

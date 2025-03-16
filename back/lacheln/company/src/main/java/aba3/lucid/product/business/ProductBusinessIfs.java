@@ -20,7 +20,7 @@ public interface ProductBusinessIfs<REQ extends ProductRequest, RES extends Prod
 
 
     // 상품 리스트 보기
-    List<RES> getProductList(REQ req);
+    List<RES> getProductList(long companyId);
 
 
 

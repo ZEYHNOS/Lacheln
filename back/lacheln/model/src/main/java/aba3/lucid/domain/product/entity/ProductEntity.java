@@ -73,7 +73,7 @@ public abstract class ProductEntity {
 
 
     // TODO 상품 이름 길이 제약조건 이야기 하기
-    public void changeProductName(String name) {
+    public void updateProductName(String name) {
         if (name == null || (name.length() < 3 && name.length() > 100)) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "상품 이름 값이 없거나 조건에 맞지 않습니다.");
         }
@@ -83,7 +83,7 @@ public abstract class ProductEntity {
 
 
     // 가격 변경
-    public void changePrice(BigInteger price) {
+    public void updatePrice(BigInteger price) {
         if (price.compareTo(BigInteger.ZERO) < 0) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "0 혹은 음수의 값이 들어왔습니다.");
         }
@@ -92,7 +92,7 @@ public abstract class ProductEntity {
     }
 
     // 상태 변경
-    public void changeStatus(ProductStatus status) {
+    public void updateStatus(ProductStatus status) {
         if (status == null) {
             throw new ApiException(ErrorCode.NULL_POINT, "상태 값이 존재하지 않습니다.");
         }
@@ -101,7 +101,7 @@ public abstract class ProductEntity {
     }
 
     // 해시 태그 변경
-    public void setHashtagList(List<HashtagEntity> list) {
+    public void updateHashtagList(List<HashtagEntity> list) {
         hashtagList = new ArrayList<>();
 
         hashtagList.addAll(list);
@@ -109,7 +109,7 @@ public abstract class ProductEntity {
 
 
     // 업체 추천 변경
-    public void changeRec(BinaryChoice rec) {
+    public void updateRec(BinaryChoice rec) {
         if (rec == null) {
             throw new ApiException(ErrorCode.NULL_POINT, "업체 추천 값이 존재하지 않습니다.");
         }
@@ -118,7 +118,7 @@ public abstract class ProductEntity {
     }
 
     // 소요 시간 변경
-    public void changeTaskTime(int time) {
+    public void updateTaskTime(int time) {
         if (time <= 0) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "소요 시간 값이 0 혹은 음수 입니다.");
         }
@@ -127,11 +127,11 @@ public abstract class ProductEntity {
     }
 
     // 상세 설명 변경
-    public void changeDescription(String description) {
+    public void updateDescription(String description) {
         this.pdDescription = description;
     }
 
-    public void changeOptionList(List<OptionEntity> optionEntityList) {
+    public void updateOptionList(List<OptionEntity> optionEntityList) {
         if (this.opList != null) {
             this.opList.clear();
         }
@@ -140,7 +140,7 @@ public abstract class ProductEntity {
     }
 
     // 태그 리스트 삭제 후 새로 넣기
-    public void changeHashTag(List<String> hashTagList) {
+    public void updateHashTag(List<String> hashTagList) {
         if (hashTagList.size() == 0) {
             return;
         }
@@ -158,10 +158,5 @@ public abstract class ProductEntity {
         }
 
         this.hashtagList.addAll(hashtagEntityList);
-    }
-
-    public void setOptionList(List<OptionEntity> list) {
-        opList = new ArrayList<>();
-        opList.addAll(list);
     }
 }

@@ -1,4 +1,4 @@
-package aba3.lucid.JwtConfig;
+package aba3.lucid.jwtconfig;
 
 import lombok.Getter;
 import lombok.Setter;

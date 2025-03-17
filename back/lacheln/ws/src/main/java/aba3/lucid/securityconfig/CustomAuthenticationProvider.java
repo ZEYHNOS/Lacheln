@@ -1,4 +1,4 @@
-package aba3.lucid.SecurityConfig;
+package aba3.lucid.securityconfig;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;

@@ -3,6 +3,11 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from "react-route
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import LoginPage from "./components/Login/LoginPage";
+import UserRegisterPage from "./components/Login/Register/UserRegisterPage";
+import UserRegisterForm from "./components/Login/Register/UserRegisterForm";
+import CompanyRegisterPage from "./components/Login/Register/CompanyRegisterPage";
+import CompanyRegisterForm from "./components/Login/Register/CompanyRegisterForm";
+import RegistrationSuccess from "./components/Login/Register/RegistrationSuccess";
 
 function Home() {
     return (
@@ -12,16 +17,15 @@ function Home() {
     );
 }
 
-// ✅ 현재 경로를 확인하는 컴포넌트
 function Layout({ children }) {
-    const location = useLocation(); // 현재 경로 가져오기
-    const isLoginPage = location.pathname === "/login"; // 로그인 페이지 여부 확인
+    const location = useLocation();
+    const isAuthPage = location.pathname === "/login" || location.pathname === "/register/user" || location.pathname === "/register/company" || location.pathname === "/register/user/form" || location.pathname === "/register/company/form" || location.pathname === "/register/success"; // ✅ 로그인 & 회원가입 페이지 확인
 
     return (
         <div>
-            {!isLoginPage && <Header />}
-            {!isLoginPage &&  <Footer />}
+            {!isAuthPage && <Header />} {/* 로그인, 회원가입 페이지에서는 Header 제외 */}
             {children}
+            {<Footer />} {/* 로그인, 회원가입 페이지에서는 Footer 포함 */}
         </div>
     );
 }
@@ -37,6 +41,11 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register/user" element={<UserRegisterPage />} />
+                    <Route path="/register/user/form" element={<UserRegisterForm />} />
+                    <Route path="/register/company" element={<CompanyRegisterPage />} />
+                    <Route path="/register/company/form" element={<CompanyRegisterForm />} />
+                    <Route path="/register/success" element={<RegistrationSuccess />} /> 
                 </Routes>
             </Layout>
         </Router>

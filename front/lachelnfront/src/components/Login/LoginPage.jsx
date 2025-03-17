@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import SocialLogin from "./SocialLogin";
 
 const logindata = [
@@ -18,7 +18,7 @@ export default function LoginPage() {
 
     const handleLogin = () => {
         if (!email) {
-            setErrorMessage("이메일을 입력하시오");
+            setErrorMessage("아이디를 입력하시오");
             setShowPopup(true);
             return;
         }
@@ -40,20 +40,21 @@ export default function LoginPage() {
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <div className="w-[450px] p-10 bg-white shadow-lg rounded-2xl">
-                <h1 className="text-6xl font-bold text-center text-[#845ec2]">Lächeln</h1>
-                <p className="text-center text-[#845ec2] mb-6">스튜디오 드레스 메이크업</p>
+            <div className="w-[900px] p-10 bg-white shadow-lg rounded-2xl">
+                <Link to="/" className="block text-center">
+                    <h1 className="text-5xl font-inknut font-bold text-[#845ec2]">Lächeln</h1>
+                    <p className="text-[#845ec2] mb-6">스튜디오 드레스 메이크업</p>
+                </Link>
 
-                {/* 팝업 모달 */}
                 {showPopup && (
                     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-                        <div className="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
-                            <p className="text-red-500 font-semibold">{errorMessage}</p>
+                        <div className="bg-white p-10 rounded-lg shadow-lg w-80 text-center">
+                            <p className="text-black font-bold">{errorMessage}</p>
                             <button
                                 onClick={() => setShowPopup(false)}
-                                className="mt-4 px-6 py-2 bg-[#845EC2] text-white rounded-lg hover:bg-purple-800 transition"
+                                className="mt-8 px-6 py-2 bg-[#845EC2] text-white rounded-lg hover:bg-purple-800 transition"
                             >
-                                X
+                                확인
                             </button>
                         </div>
                     </div>
@@ -127,9 +128,14 @@ export default function LoginPage() {
                     </button>
                 </form>
 
-                {/* 회원가입 링크 */}
+                {/* 회원가입 userType에 따라 다른 경로로 이동 */}
                 <div className="mt-6 text-center">
-                    <a href="/register" className="text-[#845EC2] font-semibold hover:underline">회원가입</a>
+                    <Link
+                        to={userType === "user" ? "/register/user" : "/register/company"}
+                        className="text-[#845EC2] font-semibold hover:underline"
+                    >
+                        아직 계정이 없으신가요?
+                    </Link>
                 </div>
 
                 {/* 소셜 로그인 (고정 높이 유지) */}

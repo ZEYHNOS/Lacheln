@@ -1,4 +1,4 @@
-package aba3.lucid.JwtConfig;
+package aba3.lucid.jwtconfig;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,6 @@
-package aba3.lucid.JwtConfig;
+package aba3.lucid.jwtconfig;
 
-import aba3.lucid.SecurityConfig.CustomUserDetails;
+import aba3.lucid.securityconfig.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;

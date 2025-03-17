@@ -1,4 +1,4 @@
-package aba3.lucid.JwtConfig;
+package aba3.lucid.jwtconfig;
 
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;

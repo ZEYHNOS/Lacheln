@@ -1,15 +1,12 @@
-package aba3.lucid.JwtConfig;
+package aba3.lucid.jwtconfig;
 
 import aba3.lucid.LachelnWebServer;
-import aba3.lucid.SecurityConfig.CustomUserDetails;
+import aba3.lucid.securityconfig.CustomUserDetails;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.domain.company.repository.CompanyRepository;
-import aba3.lucid.domain.user.entity.UsersEntity;
-import aba3.lucid.domain.user.enums.*;
 import aba3.lucid.domain.user.repository.UsersRepository;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -17,12 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.math.BigInteger;
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 

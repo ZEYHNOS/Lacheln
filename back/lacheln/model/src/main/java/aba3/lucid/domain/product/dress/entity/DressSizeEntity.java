@@ -41,4 +41,9 @@ public class DressSizeEntity {
         this.dressSizeStock = stock;
     }
 
+    @Override
+    public int hashCode() {
+        return size != null ? size.ordinal() : 0;
+    }
+
 }

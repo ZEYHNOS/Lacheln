@@ -3,15 +3,13 @@ package aba3.lucid.domain.product.dress.convertor;
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.common.ifs.ConverterIfs;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
-import aba3.lucid.domain.product.dress.dto.DressSizeDto;
-import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
-import aba3.lucid.domain.product.dress.entity.DressSizeEntity;
+import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.entity.HashtagEntity;
-import aba3.lucid.domain.product.entity.ProductImageEntity;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -23,6 +21,7 @@ public class DressConverter implements ConverterIfs<DressEntity, DressRequest, D
     private final OptionConverter optionConverter;
     private final DressSizeConverter dressSizeConverter;
     private final ProductImageConverter productImageConverter;
+    private final HashtagConverter hashtagConverter;
 
     @Override
     public DressResponse toResponse(DressEntity entity) {
@@ -39,23 +38,11 @@ public class DressConverter implements ConverterIfs<DressEntity, DressRequest, D
                 .inAvailable(entity.getDressInAvailable())
                 .description(entity.getPdDescription())
                 .rec(entity.getPdRec())
-                // 해시태그 entity -> dto
-                .hashTagList(entity.getHashtagList().stream()
-                        .map(HashtagEntity::getTagName)
-                        .toList())
                 .taskTime(entity.getPdTaskTime())
-                // 옵션, 옵션 상세 entity -> dto
-                .optionList(entity.getOpList().stream()
-                        .map(optionConverter::toDto)
-                        .toList())
-                // 드레스 사이즈 entity -> Dto
-                .dressSizeList(entity.getDressSizeList().stream()
-                        .map(dressSizeConverter::toDto)
-                        .toList())
-                // 상품 이미지 entity -> String
-                .productImageUrl(entity.getImageList().stream()
-                        .map(ProductImageEntity::getPdImageUrl)
-                        .toList())
+                .hashTagList(hashtagConverter.toDtoList(entity.getHashtagList()))
+                .optionList(optionConverter.toDtoList(entity.getOpList()))
+                .dressSizeList(dressSizeConverter.toDtoList(entity.getDressSizeList()))
+                .productImageUrl(productImageConverter.toDtoList(entity.getImageList()))
                 .build()
                 ;
     }
@@ -79,32 +66,22 @@ public class DressConverter implements ConverterIfs<DressEntity, DressRequest, D
                 .build()
                 ;
 
-        // 기존 해시태그 삭제 후 다시 저장
-        entity.updateHashTag(req.getHashTagList());
-        // 기존 옵션 삭제 후 저장
-        entity.updateOptionList(req.getOptionList().stream()
-                .map(it -> optionConverter.toEntity(it, entity)).toList());
-        // 기존 드레스 사이즈 리스트 삭제 후 저장
-        entity.updateDressSizeList(req.getSizeList().stream()
-                .map(it -> dressSizeConverter.toEntity(it, entity))
-                .toList());
-        // 기존 드레스 사이즈 리스트 삭제 후 저장
-        entity.updateProductImage(req.getImageUrlList().stream()
-                .map(it -> productImageConverter.toEntity(it, entity))
-                .toList());
+        // 기존 해시태그 옵션, 드래스 사이즈, 이미지 리스트 초기화하고 저장
+        entity.updateHashTag(hashtagConverter.toEntityList(req.getHashTagList(), entity));
+        entity.updateOptionList(optionConverter.toEntityList(req.getOptionList(), entity));
+        entity.updateDressSizeList(dressSizeConverter.toEntityList(req.getSizeList(), entity));
+        entity.updateProductImage(productImageConverter.toEntityList(req.getImageUrlList(), entity));
 
         return entity;
     }
 
     // Company 정보 또한 저장해야 하기 때문에 오버로드
     public DressEntity toEntity(DressRequest req, CompanyEntity company) {
-
         if (req == null) {
             return null;
         }
 
         DressEntity entity = DressEntity.builder()
-                .company(company)
                 .pdName(req.getName())
                 .pdRec(req.getRec())
                 .pdPrice(req.getPrice())
@@ -117,21 +94,11 @@ public class DressConverter implements ConverterIfs<DressEntity, DressRequest, D
                 .build()
                 ;
 
-
-        // 기존 해시태그 삭제 후 다시 저장
-        entity.updateHashtagList(toHashTagEntityList(req.getHashTagList(), entity));
-        // 기존 옵션 삭제 후 저장
-        entity.updateOptionList(req.getOptionList().stream()
-                .map(it -> optionConverter.toEntity(it, entity)).toList());
-        // 기존 드레스 사이즈 리스트 삭제 후 저장
-        entity.updateDressSizeList(req.getSizeList().stream()
-                .map(it -> dressSizeConverter.toEntity(it, entity))
-                .toList());
-
-        // 기존 상품 이미지 업데이트
-        entity.updateProductImage(req.getImageUrlList().stream()
-                .map(it -> productImageConverter.toEntity(it, entity))
-                .toList());
+        // 기존 해시태그 옵션, 드래스 사이즈, 이미지 리스트 초기화하고 저장
+        entity.updateHashTag(hashtagConverter.toEntityList(req.getHashTagList(), entity));
+        entity.updateOptionList(optionConverter.toEntityList(req.getOptionList(), entity));
+        entity.updateDressSizeList(dressSizeConverter.toEntityList(req.getSizeList(), entity));
+        entity.updateProductImage(productImageConverter.toEntityList(req.getImageUrlList(), entity));
 
         return entity;
     }

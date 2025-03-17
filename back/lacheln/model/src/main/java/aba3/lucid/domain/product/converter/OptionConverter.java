@@ -6,8 +6,26 @@ import aba3.lucid.domain.product.entity.OptionDetailEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 
+import java.util.List;
+
 @Converter
 public class OptionConverter {
+
+
+    public List<OptionEntity> toEntityList(List<OptionDto> dtoList, ProductEntity entity) {
+        return dtoList.stream()
+                .map(it -> toEntity(it, entity))
+                .toList()
+                ;
+    }
+
+    public List<OptionDto> toDtoList(List<OptionEntity> entitieList) {
+        return entitieList.stream()
+                .map(this::toDto)
+                .toList()
+                ;
+    }
+
 
     // 옵션 dto -> entity
     public OptionEntity toEntity(OptionDto dto, ProductEntity entity) {

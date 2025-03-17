@@ -4,11 +4,11 @@ import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.common.enums.Color;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.product.dress.dto.DressRequest;
+import aba3.lucid.domain.product.entity.HashtagEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
-import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.entity.ProductImageEntity;
-import aba3.lucid.domain.product.enums.DressSize;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -84,37 +83,31 @@ public class DressEntity extends ProductEntity {
         }
 
         // 드래스 사이즈 중복 여부
-        Set<DressSize> dressSizeSet = new HashSet<>();
-        for (DressSizeEntity dressSizeEntity : dressSizeList) {
-            if (dressSizeSet.contains(dressSizeEntity.getSize())) {
-                throw new ApiException(ErrorCode.INVALID_PARAMETER, "중복된 드레스 사이즈가 있습니다.");
-            }
-
-            dressSizeSet.add(dressSizeEntity.getSize());
+        Set<DressSizeEntity> dressSizeSet = new HashSet<>(dressSizeList);
+        if (dressSizeSet.size() != dressSizeList.size()) {
+            throw new ApiException(ErrorCode.REQUIRED_FIELD_MISSING);
         }
 
-        if (this.dressSizeList != null) {
-            this.dressSizeList.clear();
-        } else {
-            this.dressSizeList = new ArrayList<>();
-        }
-        this.dressSizeList.addAll(dressSizeList);
+        clearAndAddAll(this.dressSizeList, dressSizeList);
     }
 
     // updateFormRequest
-    public void updateFromRequest(DressRequest request, List<OptionEntity> optionEntityList, List<DressSizeEntity> dressSizeList, List<ProductImageEntity> productImageEntityList) {
+    public void updateFormRequest(DressRequest request) {
         updateDescription(request.getDescription());
         updateOutAvailable(request.getOutAvailable());
         updateInAvailable(request.getInAvailable());
         updateProductName(request.getName());
         updateColor(request.getColor());
         updatePrice(request.getPrice());
-        updateHashTag(request.getHashTagList());
         updateStatus(request.getStatus());
         updateTaskTime(request.getTaskTime());
         updateRec(request.getRec());
+    }
+
+    public void updateFormList(List<DressSizeEntity> dressSizeEntityList, List<ProductImageEntity> productImageEntityList, List<OptionEntity> optionEntityList, List<HashtagEntity> hashtagEntityList) {
         updateOptionList(optionEntityList);
-        updateDressSizeList(dressSizeList);
+        updateDressSizeList(dressSizeEntityList);
         updateProductImage(productImageEntityList);
+        updateHashTag(hashtagEntityList);
     }
 }

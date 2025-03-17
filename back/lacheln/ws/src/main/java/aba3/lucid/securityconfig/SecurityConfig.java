@@ -34,10 +34,12 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .csrf(csrf -> csrf.disable()) // REST API를 이용한 서버임으로 csrf 보호 비활성화
+                .formLogin(formLogin -> formLogin.disable())
                 .authorizeHttpRequests(auth -> auth // 특정 패턴에 해당하는 url이 요청될 경우 사용자의 권한을 확인하여 인증 여부 및 인증 진행
                         .requestMatchers("/user/**").hasRole("USER") // 사용자측 요청이면 URL이 /user로 시작
                         .requestMatchers("/company/**").hasRole("COMPANY") // 업체측 요청이면 URL이 /company로 시작
                         .requestMatchers("/api/**").permitAll() // 해당하는 요청은 모든 사용자들이 접근 할 수 있도록 허가(추가 예정)
+                        .requestMatchers("/swagger-ui/**").permitAll()
                         .anyRequest().authenticated() //  그 외 모든 요청에 대해서는 인증을 마친 사용자만 접근 할 수 있도록 설정
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

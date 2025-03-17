@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@SpringBootTest
 public class JwtFactory {
     private String subject = "test";
     private long subject2 = 1231724;

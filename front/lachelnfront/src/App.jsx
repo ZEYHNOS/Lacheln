@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "./components/Basic/Header";
+import Footer from "./components/Basic/Footer";
 import LoginPage from "./components/Login/LoginPage";
 import UserRegisterPage from "./components/Login/Register/UserRegisterPage";
 import UserRegisterForm from "./components/Login/Register/UserRegisterForm";

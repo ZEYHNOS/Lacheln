@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import Sidebar from "./Sidebar"; 
-import SearchBar from "../components/SearchBar"; // 자동완성 검색창 추가
-import NationButton from "../components/Button/NationButton";
-import ProfileButton from "../components/Button/ProfileButton";
-import AlarmButton from "../components/Button/AlarmButton";
-import CartButton from "../components/Button/CartButton";
+import SearchBar from "./SearchBar";
+import NationButton from "../Button/NationButton";
+import ProfileButton from "../Button/ProfileButton";
+import AlarmButton from "../Button/AlarmButton";
+import CartButton from "../Button/CartButton";
 
 export default function Header() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);

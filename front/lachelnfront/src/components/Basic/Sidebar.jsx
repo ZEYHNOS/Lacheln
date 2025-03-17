@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaChevronLeft, FaChevronDown, FaChevronUp } from "react-icons/fa";
-import CompanyNav from "./CompanyNavgation/CompanyNav.jsx";
+import CompanyNav from "../CompanyNavgation/CompanyNav.jsx";
 
 
 export default function Sidebar({ isOpen, toggleSidebar }) {

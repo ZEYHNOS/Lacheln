@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface CompanyRefreshTokenRepository extends JpaRepository<CompanyRefreshToken, Long> {
-    Optional<CompanyRefreshToken> findByUserId(Long userId);
+    Optional<CompanyRefreshToken> findByCpId(Long CompanyId);
     Optional<CompanyRefreshToken> findByRefreshToken(String refreshToken);
 }

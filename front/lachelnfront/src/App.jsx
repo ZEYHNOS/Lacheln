@@ -19,22 +19,23 @@ function Home() {
 
 function Layout({ children }) {
     const location = useLocation();
-    const isAuthPage = location.pathname === "/login" || location.pathname === "/register/user" || location.pathname === "/register/company" || location.pathname === "/register/user/form" || location.pathname === "/register/company/form" || location.pathname === "/register/success"; // ✅ 로그인 & 회원가입 페이지 확인
+    const authPages = ["/login", "/register/user", "/register/company", "/register/user/form", "/register/company/form", "/register/success"];
+    const isAuthPage = authPages.includes(location.pathname);
+
+    useEffect(() => {
+        document.title = "Lächeln";
+    }, []);
 
     return (
         <div>
-            {!isAuthPage && <Header />} {/* 로그인, 회원가입 페이지에서는 Header 제외 */}
+            {!isAuthPage && <Header />}
             {children}
-            {<Footer />} {/* 로그인, 회원가입 페이지에서는 Footer 포함 */}
+            {!isAuthPage && <Footer />}
         </div>
     );
 }
 
 function App() {
-    useEffect(() => {
-        document.title = "Lächeln";
-    }, []);
-
     return (
         <Router>
             <Layout>

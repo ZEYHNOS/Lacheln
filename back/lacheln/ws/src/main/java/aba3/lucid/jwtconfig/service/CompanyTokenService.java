@@ -25,12 +25,12 @@ public class CompanyTokenService {
         if(!jwtProvider.validToken(refreshToken)) {
             throw new ApiException(TokenCode.TOKEN_NOT_FOUND, "token is not found");
         }
-        String companyId = companyRefreshTokenService.findByRefreshToken(refreshToken).getUserId();
+        Long companyId = companyRefreshTokenService.findByRefreshToken(refreshToken).getCpId();
         CompanyEntity company = companyService.findByIdWithThrow(companyId);
         CustomUserDetails customUser = CustomUserDetails.builder()
                 .companyId(company.getCpId())
                 .userEmail(company.getCpEmail())
-                .userType(company.getCompanyRole())
+                .userType(company.getCpRole())
                 .username(company.getCpName())
                 .build();
 

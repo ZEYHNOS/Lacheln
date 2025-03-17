@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long>   {
-    //CompanyEntity findByCpName(String name);
+    CompanyEntity findByCpName(String name);
 
     Optional<CompanyEntity> findByCpEmail(String cpEmail);
     boolean existsByCpEmail(String cpEmail);

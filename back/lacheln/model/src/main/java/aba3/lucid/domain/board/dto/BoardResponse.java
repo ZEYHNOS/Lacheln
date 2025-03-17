@@ -1,8 +1,18 @@
 package aba3.lucid.domain.board.dto;
 
-import aba3.lucid.domain.board.enums.BoardName;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
+@ToString
 public class BoardResponse {
 
-
+    private Long id;
+    private String boardName;
 }

@@ -27,10 +27,10 @@ public class PostEntity {
     private long postId; //게시글ID
 
     // FETCH LAZY 달아야할려나 애매하네
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private UsersEntity usersEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private BoardEntity board;
 
     @Column(name = "post_title", columnDefinition = "CHAR(100)", nullable = false)

@@ -60,5 +60,5 @@ public class ReviewEntity {
 
     //리뷰이미지
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
-    private List<ReviewImageEntity> imageList = new ArrayList<>();
+    private List<ReviewImageEntity> imageList;
 }

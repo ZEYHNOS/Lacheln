@@ -39,4 +39,7 @@ public class ProductResponse {
 
     // 옵션 리스트
     private List<OptionDto> optionList;
+
+    // 상품 이미지 리스트
+    private List<String> productImageUrl;
 }

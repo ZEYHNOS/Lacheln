@@ -7,6 +7,8 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
+import aba3.lucid.domain.product.entity.ProductImageEntity;
+import aba3.lucid.domain.product.enums.DressSize;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +17,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -42,7 +46,7 @@ public class DressEntity extends ProductEntity {
     private Color dressColor; //색상
 
     @JsonIgnore
-    @OneToMany(mappedBy = "dress")
+    @OneToMany(mappedBy = "dress", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DressSizeEntity> dressSizeList;
 
     // 내부 촬영 변경
@@ -73,12 +77,32 @@ public class DressEntity extends ProductEntity {
     }
 
 
+    // 드래스 사이즈 List Update
     public void updateDressSizeList(List<DressSizeEntity> dressSizeList) {
-        this.dressSizeList = new ArrayList<>(dressSizeList);
+        if (dressSizeList.isEmpty()) {
+            throw new ApiException(ErrorCode.INVALID_PARAMETER, "드래스 사이즈값이 없습니다.");
+        }
+
+        // 드래스 사이즈 중복 여부
+        Set<DressSize> dressSizeSet = new HashSet<>();
+        for (DressSizeEntity dressSizeEntity : dressSizeList) {
+            if (dressSizeSet.contains(dressSizeEntity.getSize())) {
+                throw new ApiException(ErrorCode.INVALID_PARAMETER, "중복된 드레스 사이즈가 있습니다.");
+            }
+
+            dressSizeSet.add(dressSizeEntity.getSize());
+        }
+
+        if (this.dressSizeList != null) {
+            this.dressSizeList.clear();
+        } else {
+            this.dressSizeList = new ArrayList<>();
+        }
+        this.dressSizeList.addAll(dressSizeList);
     }
 
-    // TODO updateFromRequest
-    public void updateFromRequest(DressRequest request, List<OptionEntity> optionEntityList) {
+    // updateFormRequest
+    public void updateFromRequest(DressRequest request, List<OptionEntity> optionEntityList, List<DressSizeEntity> dressSizeList, List<ProductImageEntity> productImageEntityList) {
         updateDescription(request.getDescription());
         updateOutAvailable(request.getOutAvailable());
         updateInAvailable(request.getInAvailable());
@@ -90,5 +114,7 @@ public class DressEntity extends ProductEntity {
         updateTaskTime(request.getTaskTime());
         updateRec(request.getRec());
         updateOptionList(optionEntityList);
+        updateDressSizeList(dressSizeList);
+        updateProductImage(productImageEntityList);
     }
 }

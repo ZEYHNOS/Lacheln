@@ -1,6 +1,6 @@
 import { FaInstagram } from "react-icons/fa";
 import { SiKakaotalk } from "react-icons/si";
-import CompanyNav from "./CompanyNavgation/CompanyNav.jsx";
+import CompanyNav from "../CompanyNavgation/CompanyNav.jsx";
 
 export default function Footer() {
   return (

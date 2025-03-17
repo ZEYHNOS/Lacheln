@@ -5,16 +5,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@SpringBootTest
 public class JwtFactory {
     private String subject = "test";
     private long subject2 = 1231724;
@@ -23,7 +20,8 @@ public class JwtFactory {
     private Map<String, Object> claims = new HashMap <>();
 
     @Builder
-    public JwtFactory(String _subject, Date _issuedAt, Date _expiration, Map<String, Object> _claims)   {
+    public JwtFactory(String _subject, Date _issuedAt, Date _expiration, Map<String, Object> _claims, String _role)   {
+        claims.put("role", _role);
         this.subject = _subject != null ? _subject : this.subject;
         this.issuedAt = _issuedAt != null ? _issuedAt : this.issuedAt;
         this.expiration = _expiration != null ? _expiration : this.expiration;

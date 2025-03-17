@@ -13,6 +13,7 @@ import java.util.Set;
 @Getter
 @Builder
 public class CustomUserDetails  implements UserDetails {
+    private final String userEmail;
     private final String username;
     private final String password;
     private final String userType;

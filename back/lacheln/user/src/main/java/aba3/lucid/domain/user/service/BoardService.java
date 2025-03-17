@@ -1,13 +1,13 @@
 package aba3.lucid.domain.user.service;
 
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.board.dto.BoardRequest;
 import aba3.lucid.domain.board.dto.BoardResponse;
 import aba3.lucid.domain.board.entity.BoardEntity;
 import aba3.lucid.domain.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,8 +32,7 @@ public class BoardService {
      * 특정 게시판 조회
      */
     public BoardResponse getBoardById(long boardId) {
-        BoardEntity board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시판이 존재하지 않습니다: " + boardId));
+        BoardEntity board = findBoardByIdWithThrow(boardId);
 
         return new BoardResponse(board.getBoardId(), board.getBoardName());
     }
@@ -49,7 +48,7 @@ public class BoardService {
         //게시판 이름 중복 검사
         Optional<BoardEntity> duplicationBoard = boardRepository.findByBoardName(boardRequest.getBoardName());
         if (duplicationBoard.isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 게시판 입니다.");
+            throw new ApiException(ErrorCode.BAD_REQUEST, "이미 존재하는 게시판 입니다: " + boardRequest.getBoardName());
         }
 
         //새 게시판 생성
@@ -69,11 +68,15 @@ public class BoardService {
      */
     public void deleteBoard(long boardId) {
         //게시판 존재 여부 확인
-        BoardEntity board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시판이 존재하지 않습니다: " + boardId));
+        BoardEntity board = findBoardByIdWithThrow(boardId);
 
         //게시판 삭제
         boardRepository.delete(board);
+    }
+
+    private BoardEntity findBoardByIdWithThrow(long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 게시판이 존재하지 않습니다: " + boardId));
     }
 }
 

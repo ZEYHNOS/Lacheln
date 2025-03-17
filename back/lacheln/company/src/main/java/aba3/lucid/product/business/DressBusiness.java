@@ -103,8 +103,6 @@ public class DressBusiness implements ProductBusinessIfs<DressRequest, DressResp
                 .map(dressConverter::toResponse)
                 .toList();
 
-        // TODO 옵션, 해시태그, 사이즈 리스트 받아야함
-
         log.debug("DressResponseList : {}", dressResponseList);
         return dressResponseList;
     }

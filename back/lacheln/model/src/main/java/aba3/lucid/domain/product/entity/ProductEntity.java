@@ -62,15 +62,36 @@ public abstract class ProductEntity {
 
     // 옵션 리스트
     @JsonIgnore
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OptionEntity> opList;
 
 
     // 상품 태그 리스트
     @JsonIgnore
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HashtagEntity> hashtagList;
 
+
+    // 상품 이미지 리스트
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImageEntity> imageList;
+
+
+    // 상품 이미지 리스트 업데이트
+    public void updateProductImage(List<ProductImageEntity> productImageEntityList) {
+        if (productImageEntityList.isEmpty()) {
+            throw new ApiException(ErrorCode.INVALID_PARAMETER, "상품 이미지가 존재하지 않습니다.");
+        }
+
+        if (this.imageList != null) {
+            this.imageList.clear();
+        } else {
+            this.imageList = new ArrayList<>();
+        }
+
+        this.imageList.addAll(productImageEntityList);
+    }
 
     // TODO 상품 이름 길이 제약조건 이야기 하기
     public void updateProductName(String name) {
@@ -132,16 +153,21 @@ public abstract class ProductEntity {
     }
 
     public void updateOptionList(List<OptionEntity> optionEntityList) {
-        if (this.opList != null) {
-            this.opList.clear();
+        if (optionEntityList.isEmpty()) {
+            return;
         }
 
+        if (this.opList != null) {
+            this.opList.clear();
+        } else {
+            this.opList = new ArrayList<>();
+        }
         this.opList.addAll(optionEntityList);
     }
 
     // 태그 리스트 삭제 후 새로 넣기
     public void updateHashTag(List<String> hashTagList) {
-        if (hashTagList.size() == 0) {
+        if (hashTagList.isEmpty()) {
             return;
         }
 
@@ -157,6 +183,10 @@ public abstract class ProductEntity {
             this.hashtagList.clear();
         }
 
-        this.hashtagList.addAll(hashtagEntityList);
+        if (this.hashtagList != null) {
+            this.hashtagList.addAll(hashtagEntityList);
+        } else {
+            this.hashtagList = new ArrayList<>(hashtagEntityList);
+        }
     }
 }

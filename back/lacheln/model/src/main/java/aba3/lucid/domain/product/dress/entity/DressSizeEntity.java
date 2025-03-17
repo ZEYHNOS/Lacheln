@@ -22,6 +22,7 @@ public class DressSizeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long dressSizeId; //드레스 사이즈 ID
 
+    @JoinColumn(name = "pd_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private DressEntity dress; //드레스 ID
 
@@ -39,4 +40,5 @@ public class DressSizeEntity {
 
         this.dressSizeStock = stock;
     }
+
 }

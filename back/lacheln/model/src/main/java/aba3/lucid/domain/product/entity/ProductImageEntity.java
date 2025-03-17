@@ -19,8 +19,9 @@ public class ProductImageEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long pdImageId;
 
-    // ManyToOne
-    private long pdId;
+    @JoinColumn(name = "pd_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ProductEntity product;
 
     @Column(name = "pd_image_url", columnDefinition = "CHAR(255)", nullable = false)
     private String pdImageUrl;

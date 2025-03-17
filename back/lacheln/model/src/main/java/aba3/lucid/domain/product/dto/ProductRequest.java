@@ -1,6 +1,7 @@
 package aba3.lucid.domain.product.dto;
 
 import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.domain.product.entity.ProductImageEntity;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.domain.product.dto.option.OptionDto;
 import jakarta.validation.constraints.*;
@@ -46,8 +47,16 @@ public class ProductRequest implements ProductRequestIfs {
     @NotBlank
     private String description;
 
+    private List<String> imageUrlList;
+
     private List<String> hashTagList;
 
     private List<OptionDto> optionList;
+
+
+    @AssertTrue(message = "이미지가 없습니다.")
+    public boolean imageUrlInvalidator() {
+        return !imageUrlList.isEmpty();
+    }
 
 }

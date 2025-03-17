@@ -50,7 +50,7 @@ public class OptionEntity {
     private ActiveEnum opStatus;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "option", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OptionDetailEntity> opDtList;
 
     public void setOptionDetailList(List<OptionDetailEntity> list) {

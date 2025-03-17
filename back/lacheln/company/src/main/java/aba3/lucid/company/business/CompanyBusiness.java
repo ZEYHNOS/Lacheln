@@ -1,41 +1,64 @@
 package aba3.lucid.company.business;
 
-
-import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.CompanyCode;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.convertor.CompanyConvertor;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.dto.CompanyResponse;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
-@Slf4j
-@Business
-@RequiredArgsConstructor
+//@Slf4j
+//@Business
+//@RequiredArgsConstructor
+@Component
 public class CompanyBusiness {
     private final CompanyService companyService;
     private final CompanyRepository companyRepository;
-    private CompanyConvertor companyConvertor;
-    private BCryptPasswordEncoder passwordEncoder;
+    private final CompanyConvertor companyConvertor;
+
+    //ApplicationContext를 생성자의 의존성 주입을 통해 받아오고 있습니다:
+    private final ApplicationContext applicationContext;
+
+    public CompanyBusiness(CompanyService companyService,
+                           CompanyRepository companyRepository,
+                           CompanyConvertor companyConvertor,
+                           ApplicationContext applicationContext) {
+        this.companyService = companyService;
+        this.companyRepository = companyRepository;
+        this.companyConvertor = companyConvertor;
+        this.applicationContext = applicationContext;
+    }
+
+    //encodePassword() 메서드가 호출될 때 applicationContext.getBean(PasswordEncoder.class)를
+    // 사용하여 Spring 컨테이너에서 PasswordEncoder 빈을 찾아 반환합니다
+    public String encodePassword(String rawPassword) {
+        PasswordEncoder passwordEncoder = applicationContext.getBean(PasswordEncoder.class);
+        return passwordEncoder.encode(rawPassword);
+    }
+    //passwordEncoder.encode(rawPassword)를 호출하여 비밀번호를 암호화합니다.
 
     public CompanyResponse registerCompany(CompanyRequest request) {
         if(request == null) {
             throw  new ApiException(ErrorCode.BAD_REQUEST, "CompanyRequest 값을 받지 못했습니다");
         }
 
+        if(!request.getCpPassword().equals(request.getCpPasswordConfirm())) {
+            throw  new ApiException(ErrorCode.BAD_REQUEST, "비밀번호와 비밀번호 확인 값이 일치하지 않습니다");
+        }
+
         validateDuplicateCompany(request.getCpEmail());
 
-        String hashedPassword = passwordEncoder.encode(request.getCpPassword());
+        String hashedPassword = encodePassword(request.getCpPassword());
         CompanyEntity companyEntity = companyConvertor.toEntity(request, hashedPassword);
 
         CompanyEntity savedCompanyEntity = companyRepository.save(companyEntity);
-        log.info("CompanyEntity saved {}", savedCompanyEntity);
+//        log.debug("CompanyEntity saved {}", savedCompanyEntity);
         return companyConvertor.toResponse(savedCompanyEntity);
     }
 

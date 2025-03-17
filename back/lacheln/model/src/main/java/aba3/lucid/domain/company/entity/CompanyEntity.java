@@ -85,7 +85,7 @@ public class CompanyEntity {
 
     // 업체 권한
     @Column(name = "company_role", nullable = false, columnDefinition = "CHAR(7)")
-    private String companyRole = "COMPANY";
+    private String cpRole = "COMPANY";
 
     // TODO 나중에 필요하면 하나씩 사용하기
 //    // 리뷰 Mapping Table

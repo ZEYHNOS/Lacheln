@@ -28,7 +28,7 @@ public class CustomCompanyDetailsService implements UserDetailsService {
         }
 
         // 가져온 Company의 Role 저장
-        String role = company.getCompanyRole();
+        String role = company.getCpRole();
 
         // UserDetails 객체에 알맞게 Company 정보 저장
         return CustomUserDetails.builder()

@@ -2,6 +2,7 @@ package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ProductErrorCode;
+import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
 import aba3.lucid.domain.product.dress.convertor.DressSizeConverter;
@@ -9,6 +10,7 @@ import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.dress.entity.DressSizeEntity;
 import aba3.lucid.domain.product.dress.repository.DressRepository;
+import aba3.lucid.domain.product.entity.HashtagEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductImageEntity;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class DressService implements ProductServiceIfs<DressEntity,DressRequest>
     private final OptionConverter optionConverter;
     private final DressSizeConverter dressSizeConverter;
     private final ProductImageConverter productImageConverter;
+    private final HashtagConverter hashtagConverter;
 
     @Override
     public DressEntity registerProduct(DressEntity entity) {
@@ -37,24 +40,21 @@ public class DressService implements ProductServiceIfs<DressEntity,DressRequest>
 
     @Override
     public DressEntity updateProduct(DressEntity existingDress, DressRequest request) {
-        // 옵션 dto -> entity
-        List<OptionEntity> optionDtoList = request.getOptionList().stream()
-                .map(it -> optionConverter.toEntity(it, existingDress))
-                .toList()
-                ;
+        // 옵션 Entity 리스트
+        List<OptionEntity> optionEntityList = optionConverter.toEntityList(request.getOptionList(), existingDress);
 
-        List<DressSizeEntity> dressSizeEntityList = request.getSizeList().stream()
-                .map(it -> dressSizeConverter.toEntity(it, existingDress))
-                .toList()
-                ;
+        // 드래스 사이즈 Entity 리스트
+        List<DressSizeEntity> dressSizeEntityList = dressSizeConverter.toEntityList(request.getSizeList(), existingDress);
 
-        List<ProductImageEntity> productImageEntityList = request.getImageUrlList().stream()
-                .map(it -> productImageConverter.toEntity(it, existingDress))
-                .toList()
-                ;
+        // 상품 Image Entity 리스트
+        List<ProductImageEntity> productImageEntityList = productImageConverter.toEntityList(request.getImageUrlList(), existingDress);
+
+        // 해시 태그 리스트
+        List<HashtagEntity> hashtagEntityList = hashtagConverter.toEntityList(request.getHashTagList(), existingDress);
 
         // 엔티티 정보 업데이트
-        existingDress.updateFromRequest(request, optionDtoList, dressSizeEntityList, productImageEntityList);
+        existingDress.updateFormRequest(request);
+        existingDress.updateFormList(dressSizeEntityList, productImageEntityList, optionEntityList, hashtagEntityList);
 
         // DB 저장 후 반환
         return dressRepository.save(existingDress);

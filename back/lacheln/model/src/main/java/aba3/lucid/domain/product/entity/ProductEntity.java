@@ -84,13 +84,7 @@ public abstract class ProductEntity {
             throw new ApiException(ErrorCode.INVALID_PARAMETER, "상품 이미지가 존재하지 않습니다.");
         }
 
-        if (this.imageList != null) {
-            this.imageList.clear();
-        } else {
-            this.imageList = new ArrayList<>();
-        }
-
-        this.imageList.addAll(productImageEntityList);
+        clearAndAddAll(this.imageList, productImageEntityList);
     }
 
     // TODO 상품 이름 길이 제약조건 이야기 하기
@@ -121,13 +115,6 @@ public abstract class ProductEntity {
         this.pdStatus = status;
     }
 
-    // 해시 태그 변경
-    public void updateHashtagList(List<HashtagEntity> list) {
-        hashtagList = new ArrayList<>();
-
-        hashtagList.addAll(list);
-    }
-
 
     // 업체 추천 변경
     public void updateRec(BinaryChoice rec) {
@@ -153,40 +140,27 @@ public abstract class ProductEntity {
     }
 
     public void updateOptionList(List<OptionEntity> optionEntityList) {
-        if (optionEntityList.isEmpty()) {
-            return;
-        }
-
-        if (this.opList != null) {
-            this.opList.clear();
-        } else {
-            this.opList = new ArrayList<>();
-        }
-        this.opList.addAll(optionEntityList);
+        clearAndAddAll(this.opList, optionEntityList);
     }
 
     // 태그 리스트 삭제 후 새로 넣기
-    public void updateHashTag(List<String> hashTagList) {
-        if (hashTagList.isEmpty()) {
+    public void updateHashTag(List<HashtagEntity> hashTagList) {
+        clearAndAddAll(this.hashtagList, hashTagList);
+    }
+
+
+    // 리스트 clear 및 addAll
+    protected <T> void clearAndAddAll(List<T> list, List<T> newList) {
+        if (newList.isEmpty()) {
             return;
         }
 
-        List<HashtagEntity> hashtagEntityList = new ArrayList<>();
-        for (String hasTagName : hashTagList) {
-            hashtagEntityList.add(HashtagEntity.builder()
-                    .product(this)
-                    .tagName(hasTagName)
-                    .build());
-        }
-
-        if (this.hashtagList != null) {
-            this.hashtagList.clear();
-        }
-
-        if (this.hashtagList != null) {
-            this.hashtagList.addAll(hashtagEntityList);
+        if (list != null) {
+            list.clear();
         } else {
-            this.hashtagList = new ArrayList<>(hashtagEntityList);
+            list = new ArrayList<>();
         }
+
+        list.addAll(newList);
     }
 }

@@ -35,6 +35,7 @@ public class DressBusiness implements ProductBusinessIfs<DressRequest, DressResp
         }
         // TODO 요청을 보낸 업체와 companyId 같은지 확인
 
+        // 요청한 업체가 드래스 업체인지
         CompanyEntity companyEntity = companyService.findByIdAndMatchCategoryWithThrow(companyId, CompanyCategory.D);
 
         // request -> entity

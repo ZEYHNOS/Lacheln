@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CompanyService {
     private final CompanyRepository companyRepository;
 
-
-
     public CompanyEntity findByIdAndMatchCategoryWithThrow(long companyId, CompanyCategory companyCategory) {
         CompanyEntity companyEntity = findByIdWithThrow(companyId);
 
@@ -35,4 +33,25 @@ public class CompanyService {
         return companyRepository.findById(companyId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
+
+
+    //삭제 과정에서 문제가 발생하면 롤백할 수 있도록 하기 위함- transactional 쓰는 이유
+    @Transactional
+    public void deleteCompany(Long cpId) {
+        CompanyEntity company = companyRepository.findById(cpId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+
+        companyRepository.delete(company);
+    }
+    public CompanyEntity findByIdWithThrow(Long cpId) {
+        return companyRepository.findById(cpId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+    }
+
+    public void updateCompany(CompanyRequest companyRequest) {
+
+
+    }
+
+
 }

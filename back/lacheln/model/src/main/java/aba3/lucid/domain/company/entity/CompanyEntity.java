@@ -87,6 +87,7 @@ public class CompanyEntity {
     @Column(name = "company_role", nullable = false, columnDefinition = "CHAR(7)")
     private String cpRole = "COMPANY";
 
+
     // TODO 나중에 필요하면 하나씩 사용하기
 //    // 리뷰 Mapping Table
 //    @OneToMany(fetch = FetchType.LAZY)

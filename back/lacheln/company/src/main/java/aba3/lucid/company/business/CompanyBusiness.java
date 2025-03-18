@@ -37,9 +37,11 @@ public class CompanyBusiness {
 
     //encodePassword() 메서드가 호출될 때 applicationContext.getBean(PasswordEncoder.class)를
     // 사용하여 Spring 컨테이너에서 PasswordEncoder 빈을 찾아 반환합니다
-    public String encodePassword(String rawPassword) {
-        PasswordEncoder passwordEncoder = applicationContext.getBean(PasswordEncoder.class);
-        return passwordEncoder.encode(rawPassword);
+    public String encodePassword(String rawPassword, String email) {
+        aba3.lucid.common.password.PasswordEncoder passwordEncoder =
+                applicationContext.getBean(aba3.lucid.common.password.PasswordEncoder.class);
+        return passwordEncoder.encrypt(email, rawPassword);
+
     }
     //passwordEncoder.encode(rawPassword)를 호출하여 비밀번호를 암호화합니다.
 
@@ -53,11 +55,12 @@ public class CompanyBusiness {
         }
 
         validateDuplicateCompany(request.getCpEmail());
-
-        String hashedPassword = encodePassword(request.getCpPassword());
+        //encodePassword 메서드로  email을 인자로 받도록 했습니다
+        String hashedPassword = encodePassword(request.getCpPassword(), request.getCpEmail());
         CompanyEntity companyEntity = companyConvertor.toEntity(request, hashedPassword);
 
-        CompanyEntity savedCompanyEntity = companyRepository.save(companyEntity);
+        CompanyEntity savedCompanyEntity = companyConvertor.toEntity(request, hashedPassword);
+        CompanyEntity savedCompanyEntitySaved = companyRepository.save(savedCompanyEntity);
 //        log.debug("CompanyEntity saved {}", savedCompanyEntity);
         return companyConvertor.toResponse(savedCompanyEntity);
     }

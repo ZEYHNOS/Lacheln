@@ -8,6 +8,9 @@ import UserRegisterForm from "./components/Login/Register/UserRegisterForm";
 import CompanyRegisterPage from "./components/Login/Register/CompanyRegisterPage";
 import CompanyRegisterForm from "./components/Login/Register/CompanyRegisterForm";
 import RegistrationSuccess from "./components/Login/Register/RegistrationSuccess";
+import CompanyHeader from "./components/Company/Basic/CompanyHeader";
+import CompanySidebar from "./components/Company/Basic/CompanySidebar";
+import MainCompany from "./components/Company/MainCompany";
 
 function Home() {
     return (
@@ -21,6 +24,7 @@ function Layout({ children }) {
     const location = useLocation();
     const authPages = ["/login", "/register/user", "/register/company", "/register/user/form", "/register/company/form", "/register/success"];
     const isAuthPage = authPages.includes(location.pathname);
+    const isCompanyPage = location.pathname.startsWith("/company");
 
     useEffect(() => {
         document.title = "Lächeln";
@@ -28,8 +32,14 @@ function Layout({ children }) {
 
     return (
         <div>
-            {!isAuthPage && <Header />}
-            {children}
+            {/* /company = companyheader+companysidebar+footer : /  = header+footer(필요사이트는 header표시 안함)*/}
+            {isCompanyPage ? <CompanyHeader /> : !isAuthPage && <Header />}
+            
+            <div className="flex">
+                {isCompanyPage && <CompanySidebar />}
+                <div className="flex-grow">{children}</div>
+            </div>
+
             {!isAuthPage && <Footer />}
         </div>
     );
@@ -38,17 +48,16 @@ function Layout({ children }) {
 function App() {
     return (
         <Router>
-            <Layout>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register/user" element={<UserRegisterPage />} />
-                    <Route path="/register/user/form" element={<UserRegisterForm />} />
-                    <Route path="/register/company" element={<CompanyRegisterPage />} />
-                    <Route path="/register/company/form" element={<CompanyRegisterForm />} />
-                    <Route path="/register/success" element={<RegistrationSuccess />} /> 
-                </Routes>
-            </Layout>
+            <Routes>
+                <Route path="/" element={<Layout><Home /></Layout>} />
+                <Route path="/login" element={<Layout><LoginPage /></Layout>} />
+                <Route path="/register/user" element={<Layout><UserRegisterPage /></Layout>} />
+                <Route path="/register/user/form" element={<Layout><UserRegisterForm /></Layout>} />
+                <Route path="/register/company" element={<Layout><CompanyRegisterPage /></Layout>} />
+                <Route path="/register/company/form" element={<Layout><CompanyRegisterForm /></Layout>} />
+                <Route path="/register/success" element={<Layout><RegistrationSuccess /></Layout>} />
+                <Route path="/company" element={<Layout><MainCompany /></Layout>} />
+            </Routes>
         </Router>
     );
 }

@@ -3,6 +3,7 @@ package aba3.lucid.company.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.company.convertor.CompanyConvertor;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.dto.CompanyResponse;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -12,11 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CompanyService {
     private final CompanyRepository companyRepository;
+    private final CompanyConvertor companyConvertor;
 
     public CompanyEntity findByIdAndMatchCategoryWithThrow(long companyId, CompanyCategory companyCategory) {
         CompanyEntity companyEntity = findByIdWithThrow(companyId);
@@ -48,10 +52,13 @@ public class CompanyService {
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
-    public void updateCompany(CompanyRequest companyRequest) {
-
-
-    }
+//    public CompanyEntity updateCompany( CompanyEntity existingCompany,CompanyRequest request) {
+//
+//        List<CompanyEntity> companyEntityList = companyConvertor.toEntityList(request.g)
+//        existingCompany.updateCompanyRequest(request);
+//        return companyRepository.save(existingCompany);
+//
+//    }
 
 
 }

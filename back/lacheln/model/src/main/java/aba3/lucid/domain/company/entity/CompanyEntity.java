@@ -1,5 +1,8 @@
 package aba3.lucid.domain.company.entity;
 
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.password.PasswordEncoder;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
@@ -9,6 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -95,25 +99,45 @@ public class CompanyEntity {
     private String cpRole = "COMPANY";
 
     public void updateCompanyRequest(CompanyRequest request, List<CompanyEntity> companyEntityList) {
-        updatecpPassword(request.getCpPassword());
-        updatecpMainContact(request.getCpMainContact());
-        updatecpAddress(request.getCpAddress());
+        updateCpPassword(request.getCpPassword());
+        updateCpMainContact(request.getCpMainContact());
+        updateCpAddress(request.getCpAddress());
         
     }
 
-    private void updatecpAddress(String cpAddress) {
+    public void updateCpAddress(String cpAddress) {
+        if(cpAddress == null || cpAddress.trim().isEmpty()) {
+            throw new ApiException(ErrorCode.INVALID_PARAMETER, "주소는 필수 입력값입니다.");
+        }
+        this.cpAddress = cpAddress;
+
 
     }
 
-    private void updatecpMainContact(@NotBlank(message = "대표자 전화번호는 필수 입력값입니다.") @Pattern(regexp = "^\\d{10,11}$", message = "전화번호는 10~11자리 숫자만 가능합니다.") String cpMainContact) {
+    public void updateCpMainContact(@NotBlank(message = "대표자 전화번호는 필수 입력값입니다.") String cpMainContact) {
+        if(!cpMainContact.matches("^\\d{10,11}$")) {
+            throw new ApiException(ErrorCode.INVALID_PARAMETER, " 대표자 전화번호는 10~11자리 숫자만 가능합니다.");
+        }
+        this.cpMainContact = cpMainContact;
         
     }
 
 
-    private void updatecpPassword(@NotBlank(message = "비밀번호는 필수 입력값입니다") @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해야 합니다.") String cpPassword) {
+
+    public  void updateCpPassword(@Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해야 합니다.")
+                                  String cpPassword) {
+        if(cpPassword == null || cpPassword.trim().isEmpty()) {
+            throw new ApiException(ErrorCode.INVALID_PARAMETER, "비밀번호는 필수 입력값입니다.");
+        }
+        String hashedPassword = hashPassword(cpPassword);
+        this.cpPassword = hashedPassword;
+        ///확실하게 안 했음
         
     }
 
+    private String hashPassword(String password) {
+        return password;
+    }
 
 
     // TODO 나중에 필요하면 하나씩 사용하기

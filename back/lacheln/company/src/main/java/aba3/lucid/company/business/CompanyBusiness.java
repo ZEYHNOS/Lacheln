@@ -3,6 +3,7 @@ package aba3.lucid.company.business;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.CompanyCode;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.convertor.CompanyConvertor;
 import aba3.lucid.domain.company.dto.CompanyRequest;
@@ -75,6 +76,23 @@ public class CompanyBusiness {
         return companyRepository.findById(companyId)
                 .orElseThrow(()-> new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 수 없습니다"));
     }
+
+//    public CompanyResponse updateCompany(CompanyRequest companyRequest, Long companyId) {
+//        if(companyRequest == null || Validator.isInvalidId(companyId)) {
+//            throw new ApiException(ErrorCode.INVALID_PARAMETER, "CompanyRequest 값을 받지 못했습니다");
+//        }
+//        CompanyEntity existingCompany = companyService.findByIdWithThrow(companyId);
+//        if(existingCompany == null) {
+//            throw new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다");
+//        }
+//
+//        CompanyEntity updateCompany = companyService.updateCompany(existingCompany, companyRequest);
+//
+//        return companyConvertor.toResponse(updateCompany);
+//
+//    }
+
+
 
 
 }

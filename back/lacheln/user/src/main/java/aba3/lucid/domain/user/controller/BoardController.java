@@ -2,7 +2,6 @@ package aba3.lucid.domain.user.controller;
 
 import aba3.lucid.domain.board.dto.BoardRequest;
 import aba3.lucid.domain.board.dto.BoardResponse;
-import aba3.lucid.domain.board.entity.BoardEntity;
 import aba3.lucid.domain.user.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -81,7 +80,7 @@ public class BoardController {
         @Valid
         @RequestBody BoardRequest boardRequest
     ){
-        return boardService.create(boardRequest);
+        return boardService.createBoard(boardRequest);
     }
 
     /**
@@ -105,7 +104,24 @@ public class BoardController {
 
     /**
      * 게시판 수정
+     * http://localhost:5052/board/{boardId}
      * TODO ADMIN 권한 확인 후 게시판 수정
      */
+    @PutMapping("/{boardId}")
+    @Operation(
+            summary = "게시판 수정",
+            description = "특정 게시판의 이름을 수정합니다. (ADMIN 권한 필요)",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "게시판 수정 성공"),
+                    @ApiResponse(responseCode = "400", description = "이미 존재하는 게시판 이름"),
+                    @ApiResponse(responseCode = "404", description = "해당 게시판이 존재하지 않습니다")
+            }
+    )
+    public ResponseEntity<BoardResponse> updateBoard(
+            @PathVariable long boardId,
+            @Valid @RequestBody BoardRequest boardRequest
+    ) {
+        return ResponseEntity.ok(boardService.updateBoard(boardId, boardRequest));
+    }
 }
 

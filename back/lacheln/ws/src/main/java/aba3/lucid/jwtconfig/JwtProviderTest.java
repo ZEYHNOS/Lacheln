@@ -111,14 +111,14 @@ public class JwtProviderTest    {
                 .cpCategory(CompanyCategory.D)
                 .cpContact("031-0358-2134")
                 .cpFax("54321333")
-                .companyRole("COMPANY")
+                .cpRole("COMPANY")
                 .build();
 
         customUser = CustomUserDetails.builder()
                 .userEmail(company.getCpEmail())
                 .password(company.getCpPassword())
                 .companyId(company.getCpId())
-                .userType(company.getCompanyRole())
+                .userType(company.getCpRole())
                 .build();
 
         // JwtProvider를 통해 Token을 생성한다.

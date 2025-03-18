@@ -1,9 +1,16 @@
 package aba3.lucid.domain.company.entity;
 
+import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Entity
@@ -86,6 +93,27 @@ public class CompanyEntity {
     // 업체 권한
     @Column(name = "company_role", nullable = false, columnDefinition = "CHAR(7)")
     private String cpRole = "COMPANY";
+
+    public void updateCompanyRequest(CompanyRequest request, List<CompanyEntity> companyEntityList) {
+        updatecpPassword(request.getCpPassword());
+        updatecpMainContact(request.getCpMainContact());
+        updatecpAddress(request.getCpAddress());
+        
+    }
+
+    private void updatecpAddress(String cpAddress) {
+
+    }
+
+    private void updatecpMainContact(@NotBlank(message = "대표자 전화번호는 필수 입력값입니다.") @Pattern(regexp = "^\\d{10,11}$", message = "전화번호는 10~11자리 숫자만 가능합니다.") String cpMainContact) {
+        
+    }
+
+
+    private void updatecpPassword(@NotBlank(message = "비밀번호는 필수 입력값입니다") @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해야 합니다.") String cpPassword) {
+        
+    }
+
 
 
     // TODO 나중에 필요하면 하나씩 사용하기

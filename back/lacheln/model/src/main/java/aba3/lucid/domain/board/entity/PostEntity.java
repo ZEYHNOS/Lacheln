@@ -64,4 +64,7 @@ public class PostEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<CommentEntity> commentList;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostImageEntity> postImageList;
 }

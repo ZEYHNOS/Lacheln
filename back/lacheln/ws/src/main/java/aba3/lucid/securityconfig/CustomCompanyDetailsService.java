@@ -32,7 +32,7 @@ public class CustomCompanyDetailsService implements UserDetailsService {
         return CustomUserDetails.builder()
                 .username(company.getCpName())
                 .password(company.getCpPassword())
-                .userType("COMPANY")
+                .userType(role)
                 .build();
     }
 }

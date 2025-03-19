@@ -25,47 +25,87 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
     private final ConverterIfs<ENTITY, REQ, RES> converterIfs;
     private final CompanyService companyService;
 
+    // 상품 등록
     @Override
     public RES registerProduct(long companyId, REQ req) {
+        // 매개변수 유효성 검사
         Validator.throwIfInvalidId(companyId);
         Validator.throwIfNull(req);
 
-        log.info("Request HashTag {} ", req.getHashTagList());
+        // 요청을 보낸 업체가 해당 카테고리에 맞는지
+        // Ex) 드래스 업체가 스튜디오 테이블에 저장하는 요청을 막는 용도
+        log.debug("Request HashTag {} ", req.getHashTagList());
         CompanyEntity companyEntity = companyService.findByIdAndMatchCategoryWithThrow(companyId, getCategory());
-        log.info("Request {}", req);
+        log.debug("Request {}", req);
 
+        // DTO -> Entity
         ENTITY entity = converterIfs.toEntity(req, companyEntity);
-        log.info("hashTag : {} ", entity.getHashtagList());
-        ENTITY newEntity = productService.registerProduct(entity);
-        log.info("newEntity : {}", newEntity);
+        log.debug("hashTag : {} ", entity.getHashtagList());
 
+        // Entity 저장
+        ENTITY newEntity = productService.registerProduct(entity);
+        log.debug("newEntity : {}", newEntity);
+
+        // Entity -> DTO
         return converterIfs.toResponse(newEntity);
     }
 
+    // 상품 업데이트
     @Override
     public RES updateProduct(long companyId, long productId, REQ req) {
+        // 매개변수 유효성 검사
         Validator.throwIfInvalidId(companyId, productId);
         Validator.throwIfNull(req);
 
+        // 카테고리 검증
         companyService.findByIdAndMatchCategoryWithThrow(companyId, getCategory());
 
+        // 요청을 보낸 업체의 상품인지
         ENTITY productEntity = productService.findByIdWithThrow(productId);
         productService.throwIfNotCompanyProduct(productEntity, companyId);
 
+        // 상품 업데이트
         ENTITY updateEntity = productService.updateProduct(productEntity, req);
+
+        // DTO -> Entity
         return converterIfs.toResponse(updateEntity);
     }
 
+    // 상품 삭제(상태만 변환)
     @Override
     public void deleteProduct(long companyId, long productId) {
+        // 유효성 검사
         Validator.throwIfInvalidId(companyId, productId);
 
+        // 요청을 보낸 업체의 상품인지
         ENTITY productEntity = productService.findByIdWithThrow(productId);
         productService.throwIfNotCompanyProduct(productEntity, companyId);
 
+        // 상품 삭제하기(상태만 변경)
         productService.deleteProduct(productEntity);
     }
 
-    public abstract List<RES> getProductList(long companyId);
+    // 유저용
+    // 활성화된 상품 리스트만 출력(패키지, 비공개, 삭제 제외)
+    public List<RES> getActiveProductList(long companyId) {
+        return productService.getActiveProductList(companyId).stream()
+                .map(converterIfs::toResponse)
+                .toList()
+                ;
+    }
+
+    // 업체용
+    // 삭제 된 상품을 제외한 모든 상품 리스트 출력
+    public List<RES> getValidProductList(long companyId) {
+
+        companyService.findByIdAndMatchCategoryWithThrow(companyId, getCategory());
+
+        return productService.getValidProductList(companyId).stream()
+                .map(converterIfs::toResponse)
+                .toList()
+                ;
+    }
+
+    // 현재 영역의 카테고리 반환(DressBusiness 면 CompanyCategory.D 반환)
     public abstract CompanyCategory getCategory();
 }

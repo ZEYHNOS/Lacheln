@@ -15,19 +15,19 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/product/dress")
 @RequiredArgsConstructor
 @Tag(name = "Dress Controller", description = "드래스 관련 API")
-public class ProductController {
+public class DressController {
 
     private final DressBusiness dressBusiness;
 
-    @PostMapping("/dress/register")
+    @PostMapping("/register")
     @Operation(summary = "드레스 등록", description = "새로운 드래스 상품을 등록")
     public API<DressResponse> registerDress(
             @Valid
             @RequestBody DressRequest req
-        ) {
+    ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
         DressResponse res = dressBusiness.registerProduct(1, req);
@@ -36,7 +36,7 @@ public class ProductController {
         return API.OK(res);
     }
 
-    @PutMapping("/dress/update/{productId}")
+    @PutMapping("/update/{productId}")
     @Operation(summary = "드래스 수정", description = "드래스 엔터티 수정")
     public API<DressResponse> updateDress(
             @PathVariable long productId,
@@ -52,7 +52,7 @@ public class ProductController {
     }
 
 
-    @DeleteMapping("/dress/delete/{productId}")
+    @DeleteMapping("/delete/{productId}")
     @Operation(summary = "드래스 상품 삭제", description = "드래스 엔터티 삭제")
     public API<String> deleteDress(
             @PathVariable long productId
@@ -64,15 +64,15 @@ public class ProductController {
     }
 
 
-    @GetMapping("/dress/list/{companyId}")
-    @Operation(summary = "드래스 상품 리스트", description = "드래스 상품 리스트 보기")
+    @GetMapping("/list/{companyId}")
+    @Operation(summary = "드래스 상품 리스트", description = "삭제된 상품 제외한 모든 상품 보여주기")
     public API<List<DressResponse>> getDressList(
             @PathVariable long companyId
     ) {
-        List<DressResponse> dressResponseList = dressBusiness.getProductList(companyId);
+        // TODO 요청한 업체의 리스트인지 확인해야함
+        List<DressResponse> dressResponseList = dressBusiness.getValidProductList(companyId);
         log.debug("DressList dressResponseList : {}", dressResponseList);
 
         return API.OK(dressResponseList);
     }
-
 }

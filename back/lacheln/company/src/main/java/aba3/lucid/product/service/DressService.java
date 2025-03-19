@@ -8,6 +8,7 @@ import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.dress.entity.DressSizeEntity;
 import aba3.lucid.domain.product.dress.repository.DressRepository;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +34,13 @@ public class DressService extends ProductService<DressEntity, DressRequest> {
     }
 
     @Override
-    public List<DressEntity> getProductList(long companyId) {
-        return dressRepository.findAllByCompany_CpId(companyId);
+    public List<DressEntity> getActiveProductList(long companyId) {
+        return dressRepository.findAllByCompany_CpIdAndPdStatus(companyId, ProductStatus.ACTIVE);
+    }
+
+    @Override
+    public List<DressEntity> getValidProductList(long companyId) {
+        return dressRepository.findAllByCompany_CpIdAndPdStatusNot(companyId, ProductStatus.REMOVE);
     }
 
     @Override

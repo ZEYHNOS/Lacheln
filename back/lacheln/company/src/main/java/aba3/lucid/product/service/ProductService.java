@@ -10,6 +10,7 @@ import aba3.lucid.domain.product.entity.HashtagEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.entity.ProductImageEntity;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,12 +31,14 @@ public abstract class ProductService<T extends ProductEntity,R extends ProductRe
     protected final HashtagConverter hashtagConverter;
     protected final ProductImageConverter productImageConverter;
 
+    // 상품 저장
     @Override
     public T registerProduct(T entity) {
-        log.info("Product Service {}", entity);
+        log.debug("Product Service {}", entity);
         return repository.save(entity);
     }
 
+    // 상품 정보 업데이트
     @Override
     public T updateProduct(T existingEntity, R req) {
         List<OptionEntity> optionEntityList = optionConverter.toEntityList(req.getOptionList(), existingEntity);
@@ -50,7 +53,7 @@ public abstract class ProductService<T extends ProductEntity,R extends ProductRe
 
     @Override
     public void deleteProduct(T entity) {
-        repository.delete(entity);
+        entity.updateStatus(ProductStatus.REMOVE);
     }
 
     @Override
@@ -66,6 +69,7 @@ public abstract class ProductService<T extends ProductEntity,R extends ProductRe
         }
     }
 
-    public abstract List<T> getProductList(long companyId);
+    public abstract List<T> getValidProductList(long companyId);
+    public abstract List<T> getActiveProductList(long companyId);
     protected abstract void updateAdditionalFields(T existingEntity, R request);
 }

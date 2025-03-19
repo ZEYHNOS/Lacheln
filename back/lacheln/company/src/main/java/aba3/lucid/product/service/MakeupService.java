@@ -3,6 +3,8 @@ package aba3.lucid.product.service;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
+import aba3.lucid.domain.product.dress.entity.DressEntity;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.domain.product.makeup.dto.MakeupRequest;
 import aba3.lucid.domain.product.makeup.entity.MakeupEntity;
 import aba3.lucid.domain.product.makeup.repository.MakeupRepository;
@@ -23,8 +25,13 @@ public class MakeupService extends ProductService<MakeupEntity, MakeupRequest> {
     }
 
     @Override
-    public List<MakeupEntity> getProductList(long companyId) {
-        return makeupRepository.findAllByCompany_cpId(companyId);
+    public List<MakeupEntity> getActiveProductList(long companyId) {
+        return makeupRepository.findAllByCompany_CpIdAndPdStatus(companyId, ProductStatus.ACTIVE);
+    }
+
+    @Override
+    public List<MakeupEntity> getValidProductList(long companyId) {
+        return makeupRepository.findAllByCompany_CpIdAndPdStatusNot(companyId, ProductStatus.REMOVE);
     }
 
     @Override

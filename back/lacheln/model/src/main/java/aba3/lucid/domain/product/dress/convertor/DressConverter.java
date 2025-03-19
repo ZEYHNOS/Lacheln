@@ -1,36 +1,52 @@
 package aba3.lucid.domain.product.dress.convertor;
 
 import aba3.lucid.common.annotation.Converter;
-import aba3.lucid.common.ifs.ConverterIfs;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
+import aba3.lucid.domain.product.converter.ProductConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
-import aba3.lucid.domain.product.entity.HashtagEntity;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 @Slf4j
 @Converter
-@RequiredArgsConstructor
-public class DressConverter implements ConverterIfs<DressEntity, DressRequest, DressResponse> {
+public class DressConverter extends ProductConverter<DressEntity, DressRequest, DressResponse> {
 
-    private final OptionConverter optionConverter;
     private final DressSizeConverter dressSizeConverter;
-    private final ProductImageConverter productImageConverter;
-    private final HashtagConverter hashtagConverter;
+
+    public DressConverter(OptionConverter optionConverter
+            , HashtagConverter hashtagConverter
+            , ProductImageConverter productImageConverter
+            , DressSizeConverter dressSizeConverter) {
+
+        super(optionConverter, hashtagConverter, productImageConverter);
+        this.dressSizeConverter = dressSizeConverter;
+    }
 
     @Override
-    public DressResponse toResponse(DressEntity entity) {
-        if (entity == null) {
-            return null;
-        }
+    protected DressEntity createEntity(DressRequest request, CompanyEntity company) {
+        DressEntity entity = DressEntity.builder()
+                .company(company)
+                .pdName(request.getName())
+                .pdRec(request.getRec())
+                .pdPrice(request.getPrice())
+                .pdStatus(request.getStatus())
+                .pdTaskTime(request.getTaskTime())
+                .pdDescription(request.getDescription())
+                .dressColor(request.getColor())
+                .dressInAvailable(request.getInAvailable())
+                .dressOutAvailable(request.getOutAvailable())
+                .build();
 
+        entity.updateDressSizeList(dressSizeConverter.toEntityList(request.getSizeList(), entity));
+        return entity;
+    }
+
+    @Override
+    protected DressResponse createResponse(DressEntity entity) {
         return DressResponse.builder()
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
@@ -46,51 +62,6 @@ public class DressConverter implements ConverterIfs<DressEntity, DressRequest, D
                 .dressSizeList(dressSizeConverter.toDtoList(entity.getDressSizeList()))
                 .productImageUrl(productImageConverter.toDtoList(entity.getImageList()))
                 .build()
-                ;
-    }
-
-    // Company 정보 또한 저장해야 하기 때문에 오버로드
-    @Override
-    public DressEntity toEntity(DressRequest req, CompanyEntity company) {
-        if (req == null) {
-            return null;
-        }
-
-        DressEntity entity = DressEntity.builder()
-                .company(company)
-                .pdName(req.getName())
-                .pdRec(req.getRec())
-                .pdPrice(req.getPrice())
-                .pdStatus(req.getStatus())
-                .pdTaskTime(req.getTaskTime())
-                .pdDescription(req.getDescription())
-                .dressColor(req.getColor())
-                .dressInAvailable(req.getInAvailable())
-                .dressOutAvailable(req.getOutAvailable())
-                .build()
-                ;
-
-
-        // 기존 해시태그 옵션, 드래스 사이즈, 이미지 리스트 초기화하고 저장
-        entity.updateHashTag(hashtagConverter.toEntityList(req.getHashTagList(), entity));
-        entity.updateOptionList(optionConverter.toEntityList(req.getOptionList(), entity));
-        entity.updateDressSizeList(dressSizeConverter.toEntityList(req.getSizeList(), entity));
-        entity.updateProductImage(productImageConverter.toEntityList(req.getImageUrlList(), entity));
-
-        return entity;
-    }
-
-    public List<HashtagEntity> toHashTagEntityList(List<String> hashTagDtoList, DressEntity dress) {
-        if (hashTagDtoList.isEmpty()) {
-            return List.of();
-        }
-
-        return hashTagDtoList.stream()
-                .map(tag -> HashtagEntity.builder()
-                .tagName(tag)
-                .product(dress)
-                .build())
-                .toList()
                 ;
     }
 }

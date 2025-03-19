@@ -49,9 +49,6 @@ public class CompanyService {
     //메소드에 전달된 existingCompany와 request가 null인지 확인하고
     //만약 둘 중 하나라도 null이면, ApiException을 발생시켜 잘못된 파라미터임을 알립니다. 이는 안정성을 위해 필수이다
     public CompanyEntity updateCompany( CompanyEntity existingCompany,CompanyRequest request) {
-        if(existingCompany == null || request == null) {
-            throw new ApiException(ErrorCode.INVALID_PARAMETER, "업데이트를 위한 잘못된 매개변수");
-        }
         existingCompany.updateCompanyRequest(request);
         return companyRepository.save(existingCompany);
 

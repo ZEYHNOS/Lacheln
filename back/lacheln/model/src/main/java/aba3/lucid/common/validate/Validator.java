@@ -12,7 +12,7 @@ public class Validator {
     }
 
     public static void throwIfInvalidId(Long id) {
-        if (id <= 0) {
+        if (id == null || id <= 0) {
             throw new ApiException(ErrorCode.INVALID_PARAMETER);
         }
     }

@@ -69,7 +69,7 @@ public class CompanyBusiness {
     }
 
 
-    public CompanyEntity findByIdWithThrow(Long companyId) {
+    public CompanyEntity findByIdWithThrow(long companyId) {
         return companyRepository.findById(companyId)
                 .orElseThrow(()-> new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 수 없습니다"));
     }
@@ -78,7 +78,7 @@ public class CompanyBusiness {
 
     //삭제 과정에서 문제가 발생하면 롤백할 수 있도록 하기 위함- transactional 쓰는 이유
     @Transactional
-    public void deleteCompany(Long cpId) {
+    public void deleteCompany(long cpId) {
         CompanyEntity company = companyRepository.findById(cpId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
 
@@ -86,10 +86,9 @@ public class CompanyBusiness {
     }
 
 
-    public CompanyResponse updateCompany(CompanyRequest companyRequest, Long companyId) {
-        if(companyRequest == null || Validator.isInvalidId(companyId)) {
-            throw new ApiException(ErrorCode.INVALID_PARAMETER, "CompanyRequest 값을 받지 못했습니다");
-        }
+    public CompanyResponse updateCompany(CompanyRequest companyRequest, long companyId) {
+        Validator.throwIfNull(companyRequest);
+        Validator.throwIfInvalidId(companyId);
         //companyService.findByIdWithThrow(companyId)를 호출하여, 주어진 companyId에 해당하는 회사를 조회합니다.
         CompanyEntity existingCompany = companyService.findByIdWithThrow(companyId);
         if(existingCompany == null) {

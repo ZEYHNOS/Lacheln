@@ -7,7 +7,9 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigInteger;
@@ -31,6 +33,7 @@ public abstract class ProductEntity {
     private long pdId;
 
     // 업체 ID
+    @JoinColumn(name = "cp_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private CompanyEntity company;
 
@@ -84,7 +87,13 @@ public abstract class ProductEntity {
             throw new ApiException(ErrorCode.INVALID_PARAMETER, "상품 이미지가 존재하지 않습니다.");
         }
 
-        clearAndAddAll(this.imageList, productImageEntityList);
+        if (this.imageList == null) {
+            this.imageList = new ArrayList<>();
+        }
+
+        this.imageList.clear();
+
+        this.imageList.addAll(productImageEntityList);
     }
 
     // TODO 상품 이름 길이 제약조건 이야기 하기
@@ -140,27 +149,35 @@ public abstract class ProductEntity {
     }
 
     public void updateOptionList(List<OptionEntity> optionEntityList) {
-        clearAndAddAll(this.opList, optionEntityList);
-    }
+        if (this.opList == null) {
+            this.opList = new ArrayList<>();
+        }
 
-    // 태그 리스트 삭제 후 새로 넣기
-    public void updateHashTag(List<HashtagEntity> hashTagList) {
-        clearAndAddAll(this.hashtagList, hashTagList);
-    }
-
-
-    // 리스트 clear 및 addAll
-    protected <T> void clearAndAddAll(List<T> list, List<T> newList) {
-        if (newList.isEmpty()) {
+        this.opList.clear();
+        if (optionEntityList == null) {
             return;
         }
 
-        if (list != null) {
-            list.clear();
-        } else {
-            list = new ArrayList<>();
+        this.opList.addAll(optionEntityList);
+    }
+
+    // 태그 리스트 삭제 후 새로 넣기
+    public void updateHashTag(List<HashtagEntity> hashtagList) {
+        if (this.hashtagList == null) {
+            this.hashtagList = new ArrayList<>();
         }
 
-        list.addAll(newList);
+        this.hashtagList.clear();
+        if (hashtagList == null) {
+            return;
+        }
+
+        this.hashtagList.addAll(hashtagList);
+    }
+
+    public void updateFormList(List<OptionEntity> opList, List<HashtagEntity> hashtagEntityList, List<ProductImageEntity> productImageEntityList) {
+        updateOptionList(opList);
+        updateProductImage(productImageEntityList);
+        updateHashTag(hashtagEntityList);
     }
 }

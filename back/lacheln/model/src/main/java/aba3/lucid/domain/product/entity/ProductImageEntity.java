@@ -1,10 +1,7 @@
 package aba3.lucid.domain.product.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Entity
@@ -19,6 +16,7 @@ public class ProductImageEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long pdImageId;
 
+    @ToString.Exclude
     @JoinColumn(name = "pd_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private ProductEntity product;

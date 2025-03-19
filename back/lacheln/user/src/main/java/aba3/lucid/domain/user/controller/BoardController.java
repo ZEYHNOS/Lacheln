@@ -1,5 +1,6 @@
 package aba3.lucid.domain.user.controller;
 
+import aba3.lucid.common.api.API;
 import aba3.lucid.domain.board.dto.BoardRequest;
 import aba3.lucid.domain.board.dto.BoardResponse;
 import aba3.lucid.domain.user.service.BoardService;
@@ -34,8 +35,8 @@ public class BoardController {
                 @ApiResponse(responseCode = "200", description = "성공")
             }
     )
-    public ResponseEntity<List<BoardResponse>> getAllBoards() {
-        return ResponseEntity.ok(boardService.getAllBoards());
+    public API<List<BoardResponse>> getAllBoards() {
+        return API.OK(boardService.getAllBoards());
     }
 
     /**
@@ -51,10 +52,10 @@ public class BoardController {
                 @ApiResponse(responseCode = "404", description = "해당 게시판이 존재하지 않습니다")
             }
     )
-    public ResponseEntity<BoardResponse> getBoardById(
+    public API<BoardResponse> getBoardById(
             @PathVariable @Min(1) int boardId
     ) {
-        return ResponseEntity.ok(boardService.getBoardById(boardId));
+        return API.OK(boardService.getBoardById(boardId));
     }
 
     /**
@@ -76,11 +77,12 @@ public class BoardController {
                     @ApiResponse(responseCode = "400", description = "이미 존재하는 게시판 이름")
             }
     )
-    public BoardResponse create(
+    public API<BoardResponse> create(
         @Valid
         @RequestBody BoardRequest boardRequest
     ){
-        return boardService.createBoard(boardRequest);
+        BoardResponse res = boardService.createBoard(boardRequest);
+        return API.OK(res);
     }
 
     /**
@@ -97,9 +99,9 @@ public class BoardController {
                     @ApiResponse(responseCode = "404", description = "해당 게시판이 존재하지 않습니다")
             }
     )
-    public ResponseEntity<String> deleteBoard(@PathVariable long boardId) {
+    public API<String> deleteBoard(@PathVariable long boardId) {
         boardService.deleteBoard(boardId);
-        return ResponseEntity.ok("게시판이 삭제되었습니다: " + boardId);
+        return API.OK("게시판이 삭제되었습니다: " + boardId);
     }
 
     /**
@@ -117,11 +119,11 @@ public class BoardController {
                     @ApiResponse(responseCode = "404", description = "해당 게시판이 존재하지 않습니다")
             }
     )
-    public ResponseEntity<BoardResponse> updateBoard(
+    public API<BoardResponse> updateBoard(
             @PathVariable long boardId,
             @Valid @RequestBody BoardRequest boardRequest
     ) {
-        return ResponseEntity.ok(boardService.updateBoard(boardId, boardRequest));
+        return API.OK(boardService.updateBoard(boardId, boardRequest));
     }
 }
 

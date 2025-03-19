@@ -42,11 +42,11 @@ public class PostEntity {
     // 최초 저장시 현재 시간으로 저장
     @CreationTimestamp
     @Column(name = "post_create", nullable = false)
-    private LocalDateTime postCreate; //작성일
+    private LocalDateTime postCreate; //작성일 (수정해도 변경되지 않음 시간 정렬 시 기준으로 사용)
 
     @CreationTimestamp
     @Column(name = "post_update", nullable = false)
-    private LocalDateTime postUpdate; //수정일
+    private LocalDateTime postUpdate; //수정일 (수정될 때마다 갱신)
 
     @Enumerated(EnumType.STRING)
     @Column(name = "post_status", columnDefinition = "CHAR(20)", nullable = false)

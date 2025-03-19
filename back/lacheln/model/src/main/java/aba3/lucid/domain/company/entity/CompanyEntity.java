@@ -98,7 +98,7 @@ public class CompanyEntity {
     @Column(name = "company_role", nullable = false, columnDefinition = "CHAR(7)")
     private String cpRole = "COMPANY";
 
-    public void updateCompanyRequest(CompanyRequest request, List<CompanyEntity> companyEntityList) {
+    public void updateCompanyRequest(CompanyRequest request) {
         updateCpPassword(request.getCpPassword());
         updateCpMainContact(request.getCpMainContact());
         updateCpAddress(request.getCpAddress());

@@ -11,12 +11,9 @@ import aba3.lucid.domain.company.dto.CompanyResponse;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-//@Slf4j
-//@Business
-//@RequiredArgsConstructor
 @Component
 public class CompanyBusiness {
     private final CompanyService companyService;
@@ -62,7 +59,6 @@ public class CompanyBusiness {
 
         CompanyEntity savedCompanyEntity = companyConvertor.toEntity(request, hashedPassword);
         CompanyEntity savedCompanyEntitySaved = companyRepository.save(savedCompanyEntity);
-//        log.debug("CompanyEntity saved {}", savedCompanyEntity);
         return companyConvertor.toResponse(savedCompanyEntity);
     }
 
@@ -72,25 +68,39 @@ public class CompanyBusiness {
         }
     }
 
+
     public CompanyEntity findByIdWithThrow(Long companyId) {
         return companyRepository.findById(companyId)
                 .orElseThrow(()-> new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 수 없습니다"));
     }
 
-//    public CompanyResponse updateCompany(CompanyRequest companyRequest, Long companyId) {
-//        if(companyRequest == null || Validator.isInvalidId(companyId)) {
-//            throw new ApiException(ErrorCode.INVALID_PARAMETER, "CompanyRequest 값을 받지 못했습니다");
-//        }
-//        CompanyEntity existingCompany = companyService.findByIdWithThrow(companyId);
-//        if(existingCompany == null) {
-//            throw new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다");
-//        }
-//
-//        CompanyEntity updateCompany = companyService.updateCompany(existingCompany, companyRequest);
-//
-//        return companyConvertor.toResponse(updateCompany);
-//
-//    }
+
+
+    //삭제 과정에서 문제가 발생하면 롤백할 수 있도록 하기 위함- transactional 쓰는 이유
+    @Transactional
+    public void deleteCompany(Long cpId) {
+        CompanyEntity company = companyRepository.findById(cpId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+
+        companyService.deleteCompany(company);
+    }
+
+
+    public CompanyResponse updateCompany(CompanyRequest companyRequest, Long companyId) {
+        if(companyRequest == null || Validator.isInvalidId(companyId)) {
+            throw new ApiException(ErrorCode.INVALID_PARAMETER, "CompanyRequest 값을 받지 못했습니다");
+        }
+        //companyService.findByIdWithThrow(companyId)를 호출하여, 주어진 companyId에 해당하는 회사를 조회합니다.
+        CompanyEntity existingCompany = companyService.findByIdWithThrow(companyId);
+        if(existingCompany == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다");
+        }
+
+        CompanyEntity updateCompany = companyService.updateCompany(existingCompany, companyRequest);
+
+        return companyConvertor.toResponse(updateCompany);
+
+    }
 
 
 

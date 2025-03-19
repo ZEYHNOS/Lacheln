@@ -39,26 +39,29 @@ public class CompanyService {
     }
 
 
-    //삭제 과정에서 문제가 발생하면 롤백할 수 있도록 하기 위함- transactional 쓰는 이유
-    @Transactional
-    public void deleteCompany(Long cpId) {
-        CompanyEntity company = companyRepository.findById(cpId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
 
-        companyRepository.delete(company);
-    }
     public CompanyEntity findByIdWithThrow(Long cpId) {
         return companyRepository.findById(cpId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
-//    public CompanyEntity updateCompany( CompanyEntity existingCompany,CompanyRequest request) {
-//
-//        List<CompanyEntity> companyEntityList = companyConvertor.toEntityList(request.g)
-//        existingCompany.updateCompanyRequest(request);
-//        return companyRepository.save(existingCompany);
-//
-//    }
+
+    //메소드에 전달된 existingCompany와 request가 null인지 확인하고
+    //만약 둘 중 하나라도 null이면, ApiException을 발생시켜 잘못된 파라미터임을 알립니다. 이는 안정성을 위해 필수이다
+    public CompanyEntity updateCompany( CompanyEntity existingCompany,CompanyRequest request) {
+        if(existingCompany == null || request == null) {
+            throw new ApiException(ErrorCode.INVALID_PARAMETER, "업데이트를 위한 잘못된 매개변수");
+        }
+        existingCompany.updateCompanyRequest(request);
+        return companyRepository.save(existingCompany);
+
+    }
+
+    public void deleteCompany(CompanyEntity company) {
+        companyRepository.delete(company);
+    }
+
+
 
 
 }

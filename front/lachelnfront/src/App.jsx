@@ -11,12 +11,35 @@ import RegistrationSuccess from "./components/Login/Register/RegistrationSuccess
 import CompanyHeader from "./components/Company/Basic/CompanyHeader";
 import CompanySidebar from "./components/Company/Basic/CompanySidebar";
 import MainCompany from "./components/Company/MainCompany";
+import ModifyInfo from "./components/Company/Companyinfo/Modifyinfo";
+import Statistics from "./components/Company/Companyinfo/Statistics";
+import ProductManagement from "./components/Company/Management/Product";
+import OrderManagement from "./components/Company/Management/Order";
+import ReviewManagement from "./components/Company/Management/Review";
+import Collaboration from "./components/Company/Work/Collaboration";
+import Messenger from "./components/Company/Work/Messenger";
+import Notification from "./components/Company/Work/Notification";
+import Schedule from "./components/Company/Work/Schedule";
 
 function Home() {
     return (
         <main className="p-6 flex flex-col items-center">
             <h1 className="text-3xl font-bold">메인페이지</h1>
         </main>
+    );
+}
+
+// ✅ `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
+function CompanyLayout({ children }) {
+    return (
+        <div>
+            <CompanyHeader />
+            <div className="flex">
+                <CompanySidebar />
+                <div className="flex-grow p-4">{children}</div>
+            </div>
+            <Footer />
+        </div>
     );
 }
 
@@ -32,11 +55,10 @@ function Layout({ children }) {
 
     return (
         <div>
-            {/* /company = companyheader+companysidebar+footer : /  = header+footer(필요사이트는 header표시 안함)*/}
-            {isCompanyPage ? <CompanyHeader /> : !isAuthPage && <Header />}
+            {/* 기본 페이지에서 Header와 Footer 관리 */}
+            {isCompanyPage ? null : !isAuthPage && <Header />}
             
             <div className="flex">
-                {isCompanyPage && <CompanySidebar />}
                 <div className="flex-grow">{children}</div>
             </div>
 
@@ -49,6 +71,7 @@ function App() {
     return (
         <Router>
             <Routes>
+                {/* 기본 홈페이지 및 인증 관련 페이지 */}
                 <Route path="/" element={<Layout><Home /></Layout>} />
                 <Route path="/login" element={<Layout><LoginPage /></Layout>} />
                 <Route path="/register/user" element={<Layout><UserRegisterPage /></Layout>} />
@@ -56,7 +79,18 @@ function App() {
                 <Route path="/register/company" element={<Layout><CompanyRegisterPage /></Layout>} />
                 <Route path="/register/company/form" element={<Layout><CompanyRegisterForm /></Layout>} />
                 <Route path="/register/success" element={<Layout><RegistrationSuccess /></Layout>} />
-                <Route path="/company" element={<Layout><MainCompany /></Layout>} />
+
+                {/* ✅ /company 페이지 그룹화 및 Nested Routes 적용 */}
+                <Route path="/company" element={<CompanyLayout><MainCompany /></CompanyLayout>} />
+                <Route path="/company/modifyinfo" element={<CompanyLayout><ModifyInfo /></CompanyLayout>} />
+                <Route path="/company/statistics" element={<CompanyLayout><Statistics /></CompanyLayout>} />
+                <Route path="/company/product" element={<CompanyLayout><ProductManagement /></CompanyLayout>} />
+                <Route path="/company/order" element={<CompanyLayout><OrderManagement /></CompanyLayout>} />
+                <Route path="/company/review" element={<CompanyLayout><ReviewManagement /></CompanyLayout>} />
+                <Route path="/company/collaboration" element={<CompanyLayout><Collaboration /></CompanyLayout>} />
+                <Route path="/company/messenger" element={<CompanyLayout><Messenger /></CompanyLayout>} />
+                <Route path="/company/notification" element={<CompanyLayout><Notification /></CompanyLayout>} />
+                <Route path="/company/schedule" element={<CompanyLayout><Schedule /></CompanyLayout>} />
             </Routes>
         </Router>
     );

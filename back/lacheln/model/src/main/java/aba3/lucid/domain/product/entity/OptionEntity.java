@@ -4,10 +4,7 @@ import aba3.lucid.common.enums.ActiveEnum;
 import aba3.lucid.common.enums.BinaryChoice;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class OptionEntity {
 
     // 상품 옵션
@@ -26,6 +24,7 @@ public class OptionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long opId;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pd_id")
     private ProductEntity product;

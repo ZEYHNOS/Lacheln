@@ -20,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@ToString
+@ToString(callSuper = true)
 public class DressRequest extends ProductRequest {
 
     // 실내 여부

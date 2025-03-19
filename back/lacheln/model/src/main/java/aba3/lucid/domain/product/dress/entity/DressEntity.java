@@ -5,17 +5,16 @@ import aba3.lucid.common.enums.Color;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
-import aba3.lucid.domain.product.entity.HashtagEntity;
-import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
-import aba3.lucid.domain.product.entity.ProductImageEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +26,7 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @DiscriminatorValue("dress")
+@ToString(callSuper = true)
 public class DressEntity extends ProductEntity {
 
     // 실내촬영여부
@@ -88,11 +88,16 @@ public class DressEntity extends ProductEntity {
             throw new ApiException(ErrorCode.REQUIRED_FIELD_MISSING);
         }
 
-        clearAndAddAll(this.dressSizeList, dressSizeList);
+        if (this.dressSizeList == null) {
+            this.dressSizeList = new ArrayList<>();
+        }
+
+        this.dressSizeList.clear();
+        this.dressSizeList.addAll(dressSizeList);
     }
 
     // updateFormRequest
-    public void updateFormRequest(DressRequest request) {
+    public void updateAdditionalField(DressRequest request, List<DressSizeEntity> dressSizeList) {
         updateDescription(request.getDescription());
         updateOutAvailable(request.getOutAvailable());
         updateInAvailable(request.getInAvailable());
@@ -102,12 +107,6 @@ public class DressEntity extends ProductEntity {
         updateStatus(request.getStatus());
         updateTaskTime(request.getTaskTime());
         updateRec(request.getRec());
-    }
-
-    public void updateFormList(List<DressSizeEntity> dressSizeEntityList, List<ProductImageEntity> productImageEntityList, List<OptionEntity> optionEntityList, List<HashtagEntity> hashtagEntityList) {
-        updateOptionList(optionEntityList);
-        updateDressSizeList(dressSizeEntityList);
-        updateProductImage(productImageEntityList);
-        updateHashTag(hashtagEntityList);
+        updateDressSizeList(dressSizeList);
     }
 }

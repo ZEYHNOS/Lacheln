@@ -11,9 +11,11 @@ import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.entity.HashtagEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 @Converter
 @RequiredArgsConstructor
 public class DressConverter implements ConverterIfs<DressEntity, DressRequest, DressResponse> {
@@ -47,41 +49,15 @@ public class DressConverter implements ConverterIfs<DressEntity, DressRequest, D
                 ;
     }
 
-    @Override
-    public DressEntity toEntity(DressRequest req) {
-        if (req == null) {
-            return null;
-        }
-
-        DressEntity entity = DressEntity.builder()
-                .pdName(req.getName())
-                .pdRec(req.getRec())
-                .pdPrice(req.getPrice())
-                .pdStatus(req.getStatus())
-                .pdTaskTime(req.getTaskTime())
-                .pdDescription(req.getDescription())
-                .dressColor(req.getColor())
-                .dressInAvailable(req.getInAvailable())
-                .dressOutAvailable(req.getOutAvailable())
-                .build()
-                ;
-
-        // 기존 해시태그 옵션, 드래스 사이즈, 이미지 리스트 초기화하고 저장
-        entity.updateHashTag(hashtagConverter.toEntityList(req.getHashTagList(), entity));
-        entity.updateOptionList(optionConverter.toEntityList(req.getOptionList(), entity));
-        entity.updateDressSizeList(dressSizeConverter.toEntityList(req.getSizeList(), entity));
-        entity.updateProductImage(productImageConverter.toEntityList(req.getImageUrlList(), entity));
-
-        return entity;
-    }
-
     // Company 정보 또한 저장해야 하기 때문에 오버로드
+    @Override
     public DressEntity toEntity(DressRequest req, CompanyEntity company) {
         if (req == null) {
             return null;
         }
 
         DressEntity entity = DressEntity.builder()
+                .company(company)
                 .pdName(req.getName())
                 .pdRec(req.getRec())
                 .pdPrice(req.getPrice())
@@ -93,6 +69,7 @@ public class DressConverter implements ConverterIfs<DressEntity, DressRequest, D
                 .dressOutAvailable(req.getOutAvailable())
                 .build()
                 ;
+
 
         // 기존 해시태그 옵션, 드래스 사이즈, 이미지 리스트 초기화하고 저장
         entity.updateHashTag(hashtagConverter.toEntityList(req.getHashTagList(), entity));

@@ -2,10 +2,9 @@ package aba3.lucid.product.business;
 
 import aba3.lucid.domain.product.dto.ProductRequest;
 import aba3.lucid.domain.product.dto.ProductResponse;
+import aba3.lucid.domain.product.entity.ProductEntity;
 
-import java.util.List;
-
-public interface ProductBusinessIfs<REQ extends ProductRequest, RES extends ProductResponse> {
+public interface ProductBusinessIfs<REQ extends ProductRequest, RES extends ProductResponse, ENTITY extends ProductEntity> {
 
     // 상품(스,드,메) 등록
     RES registerProduct(long companyId, REQ req);
@@ -17,11 +16,5 @@ public interface ProductBusinessIfs<REQ extends ProductRequest, RES extends Prod
 
     // 상품(스,드,메) 삭제
     void deleteProduct(long companyId, long productId);
-
-
-    // 상품 리스트 보기
-    List<RES> getProductList(long companyId);
-
-
 
 }

@@ -4,10 +4,7 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.product.enums.DressSize;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Entity
@@ -15,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class DressSizeEntity {
 
     @Id
@@ -22,6 +20,7 @@ public class DressSizeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long dressSizeId; //드레스 사이즈 ID
 
+    @ToString.Exclude
     @JoinColumn(name = "pd_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private DressEntity dress; //드레스 ID

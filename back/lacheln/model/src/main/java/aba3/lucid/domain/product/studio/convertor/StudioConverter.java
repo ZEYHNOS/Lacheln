@@ -38,6 +38,7 @@ public class StudioConverter extends ProductConverter<StudioEntity, StudioReques
     @Override
     protected StudioResponse createResponse(StudioEntity entity) {
         return StudioResponse.builder()
+                .id(entity.getPdId())
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
                 .status(entity.getPdStatus())

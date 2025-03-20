@@ -35,6 +35,9 @@ public abstract class ProductService<T extends ProductEntity,R extends ProductRe
     @Override
     public T registerProduct(T entity) {
         log.debug("Product Service {}", entity);
+
+        // TODO 구독한 유저에게 알림 보내기
+
         return repository.save(entity);
     }
 

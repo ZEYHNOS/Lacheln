@@ -16,6 +16,9 @@ import java.util.List;
 @ToString
 public class ProductResponse {
 
+    // 상품 아이디(웹에서 정렬을 위해 사용
+    private long id;
+
     // 상품 이름
     private String name;
 

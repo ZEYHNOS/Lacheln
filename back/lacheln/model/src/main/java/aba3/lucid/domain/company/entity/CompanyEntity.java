@@ -59,7 +59,7 @@ public class CompanyEntity {
     @Column(name = "cp_postal_code", columnDefinition = "CHAR(5)", nullable = false)
     private String cpPostalCode;
 
-    // 사업자등록번호
+//     사업자등록번호
     @Column(name = "cp_bn_reg_no", columnDefinition = "CHAR(10)", nullable = false)
     private String cpBnRegNo;
 
@@ -86,7 +86,7 @@ public class CompanyEntity {
     @Column(name = "cp_category", columnDefinition = "CHAR(1)", nullable = false)
     private CompanyCategory cpCategory;
 
-    // 업체 전화번호
+//     업체 전화번호
     @Column(name = "cp_contact", columnDefinition = "CHAR(11)")
     private String cpContact;
 

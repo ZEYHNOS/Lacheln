@@ -21,6 +21,16 @@ public class CompanyConvertor {
                 .cpRepName(request.getCpRepName())
                 .cpMainContact(request.getCpMainContact())
                 .cpAddress(request.getCpAddress())
+                .cpRole(request.getCpRole())
+                .cpPostalCode(request.getCpPostalCode())
+                .cpBnRegNo(request.getCpBnRegNo())
+                .cpMos(request.getCpMos())
+                .cpStatus(request.getCpStatus())
+                .cpProfile(request.getCpProfile())
+                .cpExplain(request.getCpExplain())
+                .cpCategory(request.getCpCategory())
+                .cpContact(request.getCpContact())
+                .cpFax(request.getCpFax())
                 .build();
     }
 
@@ -36,6 +46,16 @@ public class CompanyConvertor {
                 .cpRepName(entity.getCpRepName())
                 .cpMainContact(entity.getCpMainContact())
                 .cpAddress(entity.getCpAddress())
+                .cpRole(entity.getCpRole())
+                .cpPostalCode(entity.getCpPostalCode())
+                .cpBnRegNo(entity.getCpBnRegNo())
+                .cpMos(entity.getCpMos())
+                .cpStatus(entity.getCpStatus())
+                .cpProfile(entity.getCpProfile())
+                .cpExplain(entity.getCpExplain())
+                .cpCategory(entity.getCpCategory())
+                .cpContact(entity.getCpContact())
+                .cpFax(entity.getCpFax())
                 .build();
 
     }

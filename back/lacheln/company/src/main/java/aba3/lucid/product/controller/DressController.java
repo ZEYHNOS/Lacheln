@@ -75,4 +75,14 @@ public class DressController {
 
         return API.OK(dressResponseList);
     }
+
+    @GetMapping("/{productId}")
+    @Operation(summary = "드래스 상품 상세")
+    public API<DressResponse> getDressDetailInfo(
+            @PathVariable long productId
+    ) {
+        DressResponse dressResponse = dressBusiness.getProductDetailInfo(productId);
+
+        return API.OK(dressResponse);
+    }
 }

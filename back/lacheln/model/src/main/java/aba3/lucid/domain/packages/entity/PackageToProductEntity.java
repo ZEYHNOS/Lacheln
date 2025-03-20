@@ -1,5 +1,6 @@
-package aba3.lucid.domain.product.entity;
+package aba3.lucid.domain.packages.entity;
 
+import aba3.lucid.domain.product.entity.ProductEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

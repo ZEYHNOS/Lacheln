@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +81,9 @@ public abstract class ProductEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImageEntity> imageList;
 
+    @Column(name = "delete_date")
+    private LocalDateTime deleteDate;
+
 
     // 상품 이미지 리스트 업데이트
     public void updateProductImage(List<ProductImageEntity> productImageEntityList) {
@@ -105,15 +109,6 @@ public abstract class ProductEntity {
         this.pdName = name;
     }
 
-
-    // 가격 변경
-    public void updatePrice(BigInteger price) {
-        if (price.compareTo(BigInteger.ZERO) < 0) {
-            throw new ApiException(ErrorCode.BAD_REQUEST, "0 혹은 음수의 값이 들어왔습니다.");
-        }
-
-        this.pdPrice = price;
-    }
 
     // 상태 변경
     public void updateStatus(ProductStatus status) {
@@ -179,5 +174,13 @@ public abstract class ProductEntity {
         updateOptionList(opList);
         updateProductImage(productImageEntityList);
         updateHashTag(hashtagEntityList);
+    }
+
+    public void deleteProduct(LocalDateTime now) {
+        if (now == null) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        this.deleteDate = now;
     }
 }

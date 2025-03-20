@@ -29,4 +29,10 @@ public class Validator {
         }
     }
 
+    public static void throwIfNull(Object obj1, Object obj2) {
+        if (obj1 == null || obj2 == null) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+    }
+
 }

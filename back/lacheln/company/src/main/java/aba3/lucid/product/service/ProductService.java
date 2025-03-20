@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -57,6 +58,7 @@ public abstract class ProductService<T extends ProductEntity,R extends ProductRe
     @Override
     public void deleteProduct(T entity) {
         entity.updateStatus(ProductStatus.REMOVE);
+        entity.deleteProduct(LocalDateTime.now());
     }
 
     @Override

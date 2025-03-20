@@ -99,14 +99,13 @@ public class DressEntity extends ProductEntity {
     // updateFormRequest
     public void updateAdditionalField(DressRequest request, List<DressSizeEntity> dressSizeList) {
         updateDescription(request.getDescription());
-        updateOutAvailable(request.getOutAvailable());
-        updateInAvailable(request.getInAvailable());
         updateProductName(request.getName());
-        updateColor(request.getColor());
-        updatePrice(request.getPrice());
         updateStatus(request.getStatus());
         updateTaskTime(request.getTaskTime());
         updateRec(request.getRec());
+        updateColor(request.getColor());
         updateDressSizeList(dressSizeList);
+        updateOutAvailable(request.getOutAvailable());
+        updateInAvailable(request.getInAvailable());
     }
 }

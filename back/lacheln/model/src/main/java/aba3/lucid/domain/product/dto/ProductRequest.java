@@ -1,9 +1,8 @@
 package aba3.lucid.domain.product.dto;
 
 import aba3.lucid.common.enums.BinaryChoice;
-import aba3.lucid.domain.product.entity.ProductImageEntity;
-import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.domain.product.dto.option.OptionDto;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

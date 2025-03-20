@@ -3,7 +3,6 @@ package aba3.lucid.product.service;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
-import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.domain.product.makeup.dto.MakeupRequest;
 import aba3.lucid.domain.product.makeup.entity.MakeupEntity;

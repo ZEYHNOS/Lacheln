@@ -1,7 +1,9 @@
 package aba3.lucid.product.business;
 
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.ifs.ConverterIfs;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -13,6 +15,7 @@ import aba3.lucid.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Slf4j
@@ -64,6 +67,9 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
         ENTITY productEntity = productService.findByIdWithThrow(productId);
         productService.throwIfNotCompanyProduct(productEntity, companyId);
 
+        // 가격 수정 금지
+        throwIfNotEquals(productEntity.getPdPrice(), req.getPrice());
+
         // 상품 업데이트
         ENTITY updateEntity = productService.updateProduct(productEntity, req);
 
@@ -80,6 +86,7 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
         // 요청을 보낸 업체의 상품인지
         ENTITY productEntity = productService.findByIdWithThrow(productId);
         productService.throwIfNotCompanyProduct(productEntity, companyId);
+
 
         // 상품 삭제하기(상태만 변경)
         productService.deleteProduct(productEntity);
@@ -104,6 +111,13 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
                 .map(converterIfs::toResponse)
                 .toList()
                 ;
+    }
+
+    public void throwIfNotEquals(BigInteger n1, BigInteger n2) {
+        // BigInteger 값 비교할 때 작으면 -1, 같으면 0, 더 크면 1
+        if (n1.compareTo(n2) != 0) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "상품 가격은 수정할 수 없습니다.");
+        }
     }
 
     // 현재 영역의 카테고리 반환(DressBusiness 면 CompanyCategory.D 반환)

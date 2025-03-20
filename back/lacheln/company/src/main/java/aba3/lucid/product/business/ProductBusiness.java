@@ -8,6 +8,7 @@ import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.domain.product.dto.ProductRequest;
 import aba3.lucid.domain.product.dto.ProductResponse;
 import aba3.lucid.domain.product.entity.ProductEntity;
@@ -122,4 +123,12 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
 
     // 현재 영역의 카테고리 반환(DressBusiness 면 CompanyCategory.D 반환)
     public abstract CompanyCategory getCategory();
+
+    public RES getProductDetailInfo(long productId) {
+        Validator.throwIfInvalidId(productId);
+
+        ENTITY existingProduct = productService.findByIdWithThrow(productId);
+
+        return converterIfs.toResponse(existingProduct);
+    }
 }

@@ -73,4 +73,14 @@ public class MakeupController {
 
         return API.OK(makeupResponseList);
     }
+
+    @GetMapping("/{productId}")
+    @Operation(summary = "메이크업 상품 상세")
+    public API<MakeUpResponse> getStudioDetailInfo(
+            @PathVariable long productId
+    ) {
+        MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(productId);
+
+        return API.OK(makeUpResponse);
+    }
 }

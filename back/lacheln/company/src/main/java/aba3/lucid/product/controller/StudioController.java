@@ -76,4 +76,14 @@ public class StudioController {
         return API.OK(studioResponseList);
     }
 
+    @GetMapping("/{productId}")
+    @Operation(summary = "스튜디오 상품 상세")
+    public API<StudioResponse> getStudioDetailInfo(
+            @PathVariable long productId
+    ) {
+        StudioResponse studioResponse = studioBusiness.getProductDetailInfo(productId);
+
+        return API.OK(studioResponse);
+    }
+
 }

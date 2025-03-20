@@ -1,4 +1,4 @@
-package aba3.lucid.domain.product.entity;
+package aba3.lucid.domain.packages.entity;
 
 import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -39,4 +41,8 @@ public class PackageToCompanyEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "pack_cp_map_pass", columnDefinition = "CHAR(1)", nullable = false)
     private BinaryChoice packCpMapPass;
+
+    // 생성 일자
+    @Column(name = "create_at", nullable = false)
+    private LocalDateTime createAt;
 }

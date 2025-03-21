@@ -40,22 +40,4 @@ public class DressRequest extends ProductRequest {
     private List<DressSizeDto> sizeList;
 
 
-    // todo 여기서 필터링이 안되고 있는 것 같음
-    @AssertTrue(message = "드레스 사이즈가 중복되거나 사이즈가 존재하지 않습니다.")
-    public boolean dressSizeValidator() {
-        // 사이즈가 없을 때 false
-        if (sizeList.isEmpty()) {
-            return false;
-        }
-
-        // 사이즈가 중복이 있다면 false
-        Set<DressSize> set = new HashSet<>();
-        for (DressSizeDto size : sizeList) {
-            if (!set.add(size.getSize())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }

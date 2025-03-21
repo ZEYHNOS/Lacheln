@@ -2,13 +2,12 @@ package aba3.lucid.product.business;
 
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.ifs.ConverterIfs;
+import aba3.lucid.common.ifs.ProductConverterIfs;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
-import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.domain.product.dto.ProductRequest;
 import aba3.lucid.domain.product.dto.ProductResponse;
 import aba3.lucid.domain.product.entity.ProductEntity;
@@ -26,7 +25,7 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
         implements ProductBusinessIfs<REQ, RES, ENTITY> {
 
     private final ProductService<ENTITY, REQ> productService;
-    private final ConverterIfs<ENTITY, REQ, RES> converterIfs;
+    private final ProductConverterIfs<ENTITY, REQ, RES> productConverterIfs;
     private final CompanyService companyService;
 
     // 상품 등록
@@ -43,7 +42,7 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
         log.debug("Request {}", req);
 
         // DTO -> Entity
-        ENTITY entity = converterIfs.toEntity(req, companyEntity);
+        ENTITY entity = productConverterIfs.toEntity(req, companyEntity);
         log.debug("hashTag : {} ", entity.getHashtagList());
 
         // Entity 저장
@@ -51,7 +50,7 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
         log.debug("newEntity : {}", newEntity);
 
         // Entity -> DTO
-        return converterIfs.toResponse(newEntity);
+        return productConverterIfs.toResponse(newEntity);
     }
 
     // 상품 업데이트
@@ -75,7 +74,7 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
         ENTITY updateEntity = productService.updateProduct(productEntity, req);
 
         // DTO -> Entity
-        return converterIfs.toResponse(updateEntity);
+        return productConverterIfs.toResponse(updateEntity);
     }
 
     // 상품 삭제(상태만 변환)
@@ -97,7 +96,7 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
     // 활성화된 상품 리스트만 출력(패키지, 비공개, 삭제 제외)
     public List<RES> getActiveProductList(long companyId) {
         return productService.getActiveProductList(companyId).stream()
-                .map(converterIfs::toResponse)
+                .map(productConverterIfs::toResponse)
                 .toList()
                 ;
     }
@@ -109,7 +108,7 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
         companyService.findByIdAndMatchCategoryWithThrow(companyId, getCategory());
 
         return productService.getValidProductList(companyId).stream()
-                .map(converterIfs::toResponse)
+                .map(productConverterIfs::toResponse)
                 .toList()
                 ;
     }
@@ -129,6 +128,6 @@ public abstract class ProductBusiness<REQ extends ProductRequest, RES extends Pr
 
         ENTITY existingProduct = productService.findByIdWithThrow(productId);
 
-        return converterIfs.toResponse(existingProduct);
+        return productConverterIfs.toResponse(existingProduct);
     }
 }

@@ -38,6 +38,7 @@ public class PackageEntity {
     @Column(name = "pack_image_url", columnDefinition = "CHAR(255)", nullable = false)
     private String packImageUrl; // 패키지 대표 이미지
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "pack_status", columnDefinition = "CHAR(10)", nullable = false)
     private PackageStatus packStatus; // 패키지 상태(등록, 미등록, 삭제)
 

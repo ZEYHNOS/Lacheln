@@ -8,9 +8,10 @@ import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.converter.PackToCpConverter;
 import aba3.lucid.domain.packages.converter.PackageConverter;
-import aba3.lucid.domain.packages.dto.PackageGroupCreateRequest;
+import aba3.lucid.domain.packages.dto.PackageProductRequest;
 import aba3.lucid.domain.packages.dto.PackageRequest;
 import aba3.lucid.domain.packages.dto.PackageResponse;
+import aba3.lucid.domain.packages.dto.PackageToProductConverter;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToCompanyEntity;
 import aba3.lucid.packages.service.PackageService;
@@ -27,18 +28,7 @@ public class PackageBusiness {
 
     private final PackageConverter packageConverter;
     private final PackToCpConverter packToCpConverter;
-
-    // 패키지 그룹 만들기
-    public void createPackageGroup(PackageGroupCreateRequest request, long requestedCpId) {
-        // 유효성 검사
-        validatePackageGroupRequest(request, requestedCpId);
-
-
-        PackageToCompanyEntity entity = packToCpConverter.toEntity(request);
-        PackageToCompanyEntity newEntity = packageService.createPackageGroup(entity);
-    }
-
-
+    private final PackageToProductConverter packageToProductConverter;
 
     // 패키지 등록
     public PackageResponse packageRegister(PackageRequest packageRequest, long companyId) {
@@ -55,52 +45,86 @@ public class PackageBusiness {
         log.info("Saved PackageEntity : {}", entity);
 
         PackageResponse packageResponse = packageConverter.toResponse(newEntity);
+
+
+        // 패키지 방에 저장하기
+        PackageToCompanyEntity packageToCompany = packToCpConverter.toEntity(newEntity, companyEntity);
+        packageService.invitationPackageGroup(packageToCompany);
         log.info("PackageEntity To PackageResponse : {}", packageResponse);
 
         return packageResponse;
     }
 
 
-    // 패키지 그룹 생성 유효성 검사
-    private void validatePackageGroupRequest(PackageGroupCreateRequest request, long requestedCpId) {
-        Validator.throwIfNull(request);
+    // 패키지 그룹 초대하기(강제 초대)
+    public void invitationPackageGroup(long packageId, long companyId) {
+        // 방장 제외하고도 초대 가능하나?
 
-        // 중복 ID 검사
-        validateIdsAreUnique(request);
+        log.info("packId : {}", packageId);
+        log.info("companyID : {}", companyId);
+        Validator.throwIfInvalidId(packageId, companyId);
 
-        // 카테고리 검사 및 요청한 업체가 포함되어 있는지
-        validateCategoriesAreUnique(request, requestedCpId);
-    }
-
-    // 중복된 ID가 있는지 검사
-    private void validateIdsAreUnique(PackageGroupCreateRequest request) {
-        long id1 = request.getCompanyId1();
-        long id2 = request.getCompanyId2();
-        long id3 = request.getCompanyId3();
-
-        Validator.throwIfInvalidId(id1, id2, id3);
-
-        if (id1 == id2 || id2 == id3 || id1 == id3) {
-            throw new ApiException(ErrorCode.INVALID_PARAMETER, "중복된 아이디 값이 존재합니다.");
-        }
-    }
-
-    // 중복된 카테고리가 있는지 검사 및 요청을 보낸 업체가 요청 데이터에 존재하는지
-    private void validateCategoriesAreUnique(PackageGroupCreateRequest request, long requestedCpId) {
-        long id1 = request.getCompanyId1();
-        long id2 = request.getCompanyId2();
-        long id3 = request.getCompanyId3();
-
-        CompanyEntity cp1 = companyService.findByIdWithThrow(id1);
-        CompanyEntity cp2 = companyService.findByIdWithThrow(id2);
-        CompanyEntity cp3 = companyService.findByIdWithThrow(id3);
-
-        if (cp1.getCpCategory() == cp2.getCpCategory() || cp2.getCpCategory() == cp3.getCpCategory() || cp1.getCpCategory() == cp3.getCpCategory()) {
-            throw new ApiException(ErrorCode.BAD_REQUEST, "중복된 카테고리의 업체가 둘 이상 존재합니다.");
+        long count = packageService.countByPackageInCompany(packageId);
+        log.info("PackageInCompanyCount : {}", count);
+        if (count >= 3) {
+            throw new ApiException(ErrorCode.UNAUTHORIZED, "패키지 하나에 3개의 업체만 존재할 수 있습니다");
         }
 
-        if (!(requestedCpId == id1 || requestedCpId == id2 || requestedCpId == id3)) {
-            throw new ApiException(ErrorCode.INVALID_PARAMETER);
-        }
+        // TODO 이미 초대가 되어있는지 확인하기
+
+        // 패키지, 업체 Entity 가지고 오기
+        PackageEntity packageEntity = packageService.findPackageEntityById(packageId);
+        CompanyEntity companyEntity = companyService.findByIdWithThrow(companyId);
+
+        PackageToCompanyEntity entity = packToCpConverter.toEntity(packageEntity, companyEntity);
+
+        // 저장하기
+        PackageToCompanyEntity newEntity = packageService.invitationPackageGroup(entity);
+        log.info("PackageToCompanyEntity : {}", newEntity);
     }
+
+    // 패키지 상품 등록하기
+    public void productRegister(PackageProductRequest request, long companyId) {
+//        // 유효성 검사
+//        Validator.throwIfNull(request);
+//        Validator.throwIfInvalidId(companyId);
+//
+//        // 해당 업체의 상품인지 확인하기
+//        CompanyEntity companyEntity = companyService.findByIdWithThrow(companyId);
+//        ProductEntity productEntity = productService.findByIdWithThrow(request.getPdId());
+//        productService.throwIfNotCompanyProduct(productEntity, companyId);
+//
+//
+//        // 패키지에 소속된 업체인지 확인하기
+//        PackageEntity packageEntity = packageService.findPackageEntityById(request.getPackageId());
+//        PackageToCompanyEntity packageToCompany = packageService.findByPackageEntityAndCompanyWithThrow(packageEntity, companyEntity);
+//
+//        // 이미 다른 상품이 등록되었는지
+//        if (!packageService.existsByPackageAndProduct(packageEntity, productEntity)) {
+//            throw new ApiException(ErrorCode.BAD_REQUEST, "이미 상품이 등록되었습니다.");
+//        }
+//
+//        // toEntity
+//        PackageToProductEntity packageToProductEntity = packageToProductConverter.toEntity(productEntity, packageEntity);
+//
+//
+//
+//        // save
+//        PackageToProductEntity newPackageToProductEntity = packageService.registerProduct(packageToProductEntity);
+//
+//        // ProductStatus -> package
+//        productEntity.updateStatus(ProductStatus.PACKAGE);
+//
+//        // TODO return Response
+
+    }
+
+
+    // 패키지 상품 삭제
+
+
+
+
+
+
 }

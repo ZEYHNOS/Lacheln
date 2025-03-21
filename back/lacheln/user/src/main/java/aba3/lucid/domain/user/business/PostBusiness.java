@@ -3,6 +3,7 @@ package aba3.lucid.domain.user.business;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.board.convertor.PostConvertor;
 import aba3.lucid.domain.board.dto.PostRequest;
 import aba3.lucid.domain.board.dto.PostResponse;
 import aba3.lucid.domain.board.entity.BoardEntity;
@@ -31,6 +32,7 @@ public class PostBusiness {
     private final BoardRepository boardRepository;
     //TODO 아직 JWT 구현이 안 돼서 일단 직접 userId 들고와서 기능 구현하고 확인 함
     private final UsersRepository usersRepository;
+    private final PostConvertor postConvertor;
 
     /**
      * 게시글 생성

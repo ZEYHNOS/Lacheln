@@ -2,7 +2,7 @@ package aba3.lucid.domain.product.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.ifs.ConverterIfs;
+import aba3.lucid.common.ifs.ProductConverterIfs;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.dto.ProductRequest;
@@ -18,7 +18,7 @@ import java.util.List;
 @Converter
 @RequiredArgsConstructor
 public abstract class ProductConverter<ENTITY extends ProductEntity, REQ extends ProductRequest, RES extends ProductResponse>
-        implements ConverterIfs<ENTITY, REQ, RES> {
+        implements ProductConverterIfs<ENTITY, REQ, RES> {
 
     protected final OptionConverter optionConverter;
     protected final HashtagConverter hashtagConverter;

@@ -77,4 +77,6 @@ public abstract class ProductService<T extends ProductEntity,R extends ProductRe
     public abstract List<T> getValidProductList(long companyId);
     public abstract List<T> getActiveProductList(long companyId);
     protected abstract void updateAdditionalFields(T existingEntity, R request);
+
+
 }

@@ -41,8 +41,4 @@ public class PackageToCompanyEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "pack_cp_map_pass", columnDefinition = "CHAR(1)", nullable = false)
     private BinaryChoice packCpMapPass;
-
-    // 생성 일자
-    @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
 }

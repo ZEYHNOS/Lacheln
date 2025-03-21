@@ -2,6 +2,7 @@ package aba3.lucid.product.service;
 
 import aba3.lucid.domain.product.dto.ProductRequest;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.enums.ProductStatus;
 
 public interface ProductServiceIfs<T extends ProductEntity,REQ extends ProductRequest> {
 
@@ -18,5 +19,4 @@ public interface ProductServiceIfs<T extends ProductEntity,REQ extends ProductRe
     T findByIdWithThrow(long productId);
 
     void throwIfNotCompanyProduct(T entity, long companyId);
-
 }

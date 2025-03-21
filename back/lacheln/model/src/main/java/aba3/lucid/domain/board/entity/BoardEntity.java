@@ -29,4 +29,9 @@ public class BoardEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<PostEntity> postList;
+
+    //게시판 이름 수정
+    public void changeBoardName(String newName) {
+        this.boardName = newName;
+    }
 }

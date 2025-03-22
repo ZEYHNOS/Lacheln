@@ -6,6 +6,7 @@ import aba3.lucid.domain.product.converter.ProductConverter;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.product.service.ProductService;
+import aba3.lucid.rabbitmq.Producer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,10 +21,19 @@ public class ProductBusiness {
 
     private final ProductConverter productConverter;
 
+    private final Producer producer;
+
     public List<ProductResponse> getProductList(CompanyCategory category, int minimum, int maximum, boolean isDesc) {
         List<ProductEntity> productEntityList = productService.getProductList(category, minimum, maximum, isDesc);
 
         return productConverter.toResponseList(productEntityList);
     }
+
+    public void sendMessage(String message) {
+        producer.sendMessage(message);
+    }
+
+
+
 
 }

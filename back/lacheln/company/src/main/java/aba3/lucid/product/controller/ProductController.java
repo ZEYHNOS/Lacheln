@@ -32,4 +32,12 @@ public class ProductController {
 
         return API.OK(productResponseList);
     }
+
+
+    @GetMapping("/send/message")
+    public void sendMessage(
+            @RequestParam String message
+    ) {
+        productBusiness.sendMessage(message);
+    }
 }

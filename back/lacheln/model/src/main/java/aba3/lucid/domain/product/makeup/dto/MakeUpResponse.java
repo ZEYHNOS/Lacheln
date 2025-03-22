@@ -1,7 +1,7 @@
 package aba3.lucid.domain.product.makeup.dto;
 
 import aba3.lucid.common.enums.BinaryChoice;
-import aba3.lucid.domain.product.dto.ProductResponse;
+import aba3.lucid.domain.product.dto.ProductDetailResponse;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class MakeUpResponse extends ProductResponse {
+public class MakeUpResponse extends ProductDetailResponse {
 
     // 출장 여부
     private BinaryChoice businessTrip;

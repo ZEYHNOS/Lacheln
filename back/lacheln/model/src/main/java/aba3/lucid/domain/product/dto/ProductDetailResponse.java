@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @ToString
-public class ProductResponse {
+public class ProductDetailResponse {
 
     // 상품 아이디(웹에서 정렬을 위해 사용
     private long id;

@@ -4,14 +4,14 @@ import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
-import aba3.lucid.domain.product.converter.ProductConverter;
+import aba3.lucid.domain.product.converter.ProductAbstractConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
 import aba3.lucid.domain.product.makeup.dto.MakeUpResponse;
 import aba3.lucid.domain.product.makeup.dto.MakeupRequest;
 import aba3.lucid.domain.product.makeup.entity.MakeupEntity;
 
 @Converter
-public class MakeUpConverter extends ProductConverter<MakeupEntity, MakeupRequest, MakeUpResponse> {
+public class MakeUpConverter extends ProductAbstractConverter<MakeupEntity, MakeupRequest, MakeUpResponse> {
 
     public MakeUpConverter(OptionConverter optionConverter
             , HashtagConverter hashtagConverter

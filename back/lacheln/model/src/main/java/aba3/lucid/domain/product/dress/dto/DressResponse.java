@@ -2,7 +2,7 @@ package aba3.lucid.domain.product.dress.dto;
 
 import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.common.enums.Color;
-import aba3.lucid.domain.product.dto.ProductResponse;
+import aba3.lucid.domain.product.dto.ProductDetailResponse;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @ToString
-public class DressResponse extends ProductResponse {
+public class DressResponse extends ProductDetailResponse {
 
     // 실내 여부
     private BinaryChoice inAvailable;

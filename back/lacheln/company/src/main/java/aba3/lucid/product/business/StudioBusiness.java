@@ -10,7 +10,7 @@ import aba3.lucid.domain.product.studio.entity.StudioEntity;
 import aba3.lucid.product.service.StudioService;
 
 @Business
-public class StudioBusiness extends ProductBusiness<StudioRequest, StudioResponse, StudioEntity> {
+public class StudioBusiness extends ProductAbstractBusiness<StudioRequest, StudioResponse, StudioEntity> {
 
 
     public StudioBusiness(StudioService studioService

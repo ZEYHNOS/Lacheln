@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/product/package")
@@ -45,13 +47,29 @@ public class PackageController {
        return API.OK(packageResponse);
     }
 
-    // 패키지 리스트 보기
+    // 패키지 리스트 보기 (사용자용)
+    @GetMapping("/list")
+    public API<List<PackageResponse>> getPackageList() {
+        List<PackageResponse> packageResponseList = packageBusiness.getPackageList();
+
+        return API.OK(packageResponseList);
+    }
 
 
     // 패키지 수정하기
+    @PutMapping("/update")
+    public API<String> updatePackage() {
+        return API.OK("수정됨");
+    }
 
 
     // 패키지 삭제하기
+    @DeleteMapping("/{packageId}")
+    public API<String> deletePackage() {
+
+
+        return API.OK("패키지가 삭제되었습니다.");
+    }
 
 
     // 업체(방장)가 다른 업체 초대하기

@@ -10,7 +10,7 @@ import aba3.lucid.domain.product.makeup.entity.MakeupEntity;
 import aba3.lucid.product.service.MakeupService;
 
 @Business
-public class MakeupBusiness extends ProductBusiness<MakeupRequest, MakeUpResponse, MakeupEntity> {
+public class MakeupBusiness extends ProductAbstractBusiness<MakeupRequest, MakeUpResponse, MakeupEntity> {
 
     public MakeupBusiness(MakeupService makeupService, MakeUpConverter makeUpConverter, CompanyService companyService) {
         super(makeupService, makeUpConverter, companyService);

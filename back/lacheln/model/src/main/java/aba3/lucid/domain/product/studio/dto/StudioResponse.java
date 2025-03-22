@@ -1,7 +1,7 @@
 package aba3.lucid.domain.product.studio.dto;
 
 import aba3.lucid.common.enums.BinaryChoice;
-import aba3.lucid.domain.product.dto.ProductResponse;
+import aba3.lucid.domain.product.dto.ProductDetailResponse;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-public class StudioResponse extends ProductResponse {
+public class StudioResponse extends ProductDetailResponse {
 
     // 실내촬영여부
     private BinaryChoice stdInAvailable;

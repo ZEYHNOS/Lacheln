@@ -4,7 +4,7 @@ import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
-import aba3.lucid.domain.product.converter.ProductConverter;
+import aba3.lucid.domain.product.converter.ProductAbstractConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Converter
-public class DressConverter extends ProductConverter<DressEntity, DressRequest, DressResponse> {
+public class DressConverter extends ProductAbstractConverter<DressEntity, DressRequest, DressResponse> {
 
     private final DressSizeConverter dressSizeConverter;
 

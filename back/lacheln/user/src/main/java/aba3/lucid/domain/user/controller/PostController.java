@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PostController {
 
-    private final PostService postService;
+    private final PostBusiness postBusiness;
 
     /**
      * 게시글 생성
@@ -39,7 +39,27 @@ public class PostController {
             @Valid @RequestBody PostRequest postRequest,
             @RequestParam String userId // TODO 임시로 userId 파라미터로 이용 (JWT 전)
     ) {
-        PostResponse res = postService.createPost(postRequest, userId);
+        PostResponse res = postBusiness.createPost(postRequest, userId);
+        return API.OK(res);
+    }
+
+    /**
+     * 특정 게시글 조회
+     * 게시글 ID 이용해서 조회
+     * @param postId 조회할 게시글 ID
+     * @return 해당 게시글 상세 정보
+     */
+    @GetMapping("/{postId}")
+    @Operation(
+            summary = "게시글 조회",
+            description = "특정 게시글을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "게시글 조회 성공"),
+                    @ApiResponse(responseCode = "404", description = "해당 게시글이 존재하지 않음")
+        }
+    )
+    public API<PostResponse> getPostById(@PathVariable long postId) {
+        PostResponse res = postBusiness.getPostById(postId);
         return API.OK(res);
     }
 }

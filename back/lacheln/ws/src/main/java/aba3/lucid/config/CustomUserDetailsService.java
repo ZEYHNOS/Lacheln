@@ -19,13 +19,18 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UsersRepository usersRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UsersEntity user = usersRepository.findByUserName(username);
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UsersEntity user = usersRepository.findByUserEmail(username);
 
         if(user == null) {
             throw new ApiException(UserCode.USER_NOT_FOUND, "User Not Found");
         }
 
-        return new User(user.getUserName(), user.getUserPassword(), AuthorityUtils.createAuthorityList(user.getUserRole()));
+        return CustomUserDetails.builder()
+                .userId(user.getUserId())
+                .email(user.getUserEmail())
+                .role("ROLE_" + user.getUserRole())
+                .password(user.getUserPassword())
+                .build();
     }
 }

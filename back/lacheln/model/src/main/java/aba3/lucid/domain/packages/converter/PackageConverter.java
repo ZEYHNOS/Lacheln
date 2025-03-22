@@ -7,6 +7,7 @@ import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.product.enums.PackageStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Converter
 public class PackageConverter {
@@ -34,6 +35,13 @@ public class PackageConverter {
                 .packImageUrl(request.getImageUrlOrDefaultUrl())
                 .packStatus(request.getStatusOrDefaultStatus())
                 .build()
+                ;
+    }
+
+    public List<PackageResponse> toResponseList(List<PackageEntity> packageList) {
+        return packageList.stream()
+                .map(this::toResponse)
+                .toList()
                 ;
     }
 }

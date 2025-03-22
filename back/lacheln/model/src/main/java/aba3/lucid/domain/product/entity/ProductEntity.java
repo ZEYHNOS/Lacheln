@@ -15,7 +15,9 @@ import lombok.experimental.SuperBuilder;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -167,7 +169,16 @@ public abstract class ProductEntity {
             return;
         }
 
-        this.hashtagList.addAll(hashtagList);
+        // 중복 제거
+        Set<String> hashTagSet = new HashSet<>();
+        List<HashtagEntity> uniqueList = new ArrayList<>();
+        for (HashtagEntity entity : hashtagList) {
+            if (hashTagSet.add(entity.getTagName())) {
+                uniqueList.add(entity);
+            }
+        }
+
+        this.hashtagList.addAll(uniqueList);
     }
 
     public void updateFormList(List<OptionEntity> opList, List<HashtagEntity> hashtagEntityList, List<ProductImageEntity> productImageEntityList) {

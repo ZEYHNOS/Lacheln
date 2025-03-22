@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Business
-public class DressBusiness extends ProductBusiness<DressRequest, DressResponse, DressEntity> {
+public class DressBusiness extends ProductAbstractBusiness<DressRequest, DressResponse, DressEntity> {
 
     public DressBusiness(DressService dressService
             , DressConverter dressConverter

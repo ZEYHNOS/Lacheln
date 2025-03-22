@@ -3,6 +3,7 @@ package aba3.lucid.packages.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToCompanyEntity;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
@@ -77,22 +78,26 @@ public class PackageService {
         return packToCpRepository.countByPackageEntity_PackId(packageId);
     }
 
+    // 패키지에 업체가 속해있는지 여부
     public PackageToCompanyEntity findByPackageEntityAndCompanyWithThrow(PackageEntity packageEntity, CompanyEntity companyEntity) {
         return packToCpRepository.findByPackageEntityAndCompany(packageEntity, companyEntity)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
+    // 상품 등록
     public PackageToProductEntity registerProduct(PackageToProductEntity packageToProductEntity) {
         return packageToProductRepository.save(packageToProductEntity);
     }
 
+    // 패키지에 상품 존재 여부
     public boolean existsByPackageAndProduct(PackageEntity packageEntity, ProductEntity product) {
         return packageToProductRepository.existsByPackageEntityAndProduct(packageEntity, product);
     }
 
 
+    // todo sql에서 where 절로 필터링 걸기
     // 모든 패키지 리스트 출력
-    public List<PackageEntity> findAllPackageList() {
+    public List<PackageEntity> getPackageList() {
         return packageRepository.findAll();
     }
 }

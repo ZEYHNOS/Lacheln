@@ -18,6 +18,8 @@ import aba3.lucid.packages.service.PackageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Slf4j
 @Business
 @RequiredArgsConstructor
@@ -85,38 +87,29 @@ public class PackageBusiness {
 
     // 패키지 상품 등록하기
     public void productRegister(PackageProductRequest request, long companyId) {
-//        // 유효성 검사
-//        Validator.throwIfNull(request);
-//        Validator.throwIfInvalidId(companyId);
-//
-//        // 해당 업체의 상품인지 확인하기
-//        CompanyEntity companyEntity = companyService.findByIdWithThrow(companyId);
-//        ProductEntity productEntity = productService.findByIdWithThrow(request.getPdId());
-//        productService.throwIfNotCompanyProduct(productEntity, companyId);
-//
-//
-//        // 패키지에 소속된 업체인지 확인하기
-//        PackageEntity packageEntity = packageService.findPackageEntityById(request.getPackageId());
-//        PackageToCompanyEntity packageToCompany = packageService.findByPackageEntityAndCompanyWithThrow(packageEntity, companyEntity);
-//
-//        // 이미 다른 상품이 등록되었는지
-//        if (!packageService.existsByPackageAndProduct(packageEntity, productEntity)) {
-//            throw new ApiException(ErrorCode.BAD_REQUEST, "이미 상품이 등록되었습니다.");
-//        }
-//
-//        // toEntity
-//        PackageToProductEntity packageToProductEntity = packageToProductConverter.toEntity(productEntity, packageEntity);
-//
-//
-//
-//        // save
-//        PackageToProductEntity newPackageToProductEntity = packageService.registerProduct(packageToProductEntity);
-//
-//        // ProductStatus -> package
-//        productEntity.updateStatus(ProductStatus.PACKAGE);
-//
-//        // TODO return Response
+        // 유효성 검사
+        Validator.throwIfNull(request);
+        Validator.throwIfInvalidId(companyId);
 
+        // 해당 업체의 상품인지 확인하기
+
+        // 패키지에 소속된 업체인지 확인하기
+
+        // 이미 다른 상품이 등록되었는지
+
+        // toEntity
+
+        // save
+
+        // ProductStatus -> package
+
+        // TODO return Response
+
+    }
+
+    // TODO Filter
+    public List<PackageResponse> getPackageList() {
+        return packageConverter.toResponseList(packageService.getPackageList());
     }
 
 
@@ -124,6 +117,7 @@ public class PackageBusiness {
 
 
 
+    // 패키지 승인 요청(PackageToCompany Status 변경?)
 
 
 

@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class MakeupService extends ProductService<MakeupEntity, MakeupRequest> {
+public class MakeupService extends ProductAbstractService<MakeupEntity, MakeupRequest> {
 
     private final MakeupRepository makeupRepository;
 

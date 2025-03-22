@@ -15,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class StudioService extends ProductService<StudioEntity, StudioRequest> {
+public class StudioService extends ProductAbstractService<StudioEntity, StudioRequest> {
 
     private final StudioRepository studioRepository;
 

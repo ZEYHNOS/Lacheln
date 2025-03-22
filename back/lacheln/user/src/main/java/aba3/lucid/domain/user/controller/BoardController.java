@@ -3,6 +3,7 @@ package aba3.lucid.domain.user.controller;
 import aba3.lucid.common.api.API;
 import aba3.lucid.domain.board.dto.BoardRequest;
 import aba3.lucid.domain.board.dto.BoardResponse;
+import aba3.lucid.domain.user.business.BoardBusiness;
 import aba3.lucid.domain.user.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardController {
 
-    private final BoardService boardService;
+    private final BoardBusiness boardBusiness;
 
     /**
      * 전체 게시판 목록 조회
@@ -36,7 +37,7 @@ public class BoardController {
             }
     )
     public API<List<BoardResponse>> getAllBoards() {
-        return API.OK(boardService.getAllBoards());
+        return API.OK(boardBusiness.getAllBoards());
     }
 
     /**
@@ -55,7 +56,7 @@ public class BoardController {
     public API<BoardResponse> getBoardById(
             @PathVariable @Min(1) int boardId
     ) {
-        return API.OK(boardService.getBoardById(boardId));
+        return API.OK(boardBusiness.getBoardById(boardId));
     }
 
     /**
@@ -81,7 +82,7 @@ public class BoardController {
         @Valid
         @RequestBody BoardRequest boardRequest
     ){
-        BoardResponse res = boardService.createBoard(boardRequest);
+        BoardResponse res = boardBusiness.createBoard(boardRequest);
         return API.OK(res);
     }
 
@@ -100,7 +101,7 @@ public class BoardController {
             }
     )
     public API<String> deleteBoard(@PathVariable long boardId) {
-        boardService.deleteBoard(boardId);
+        boardBusiness.deleteBoard(boardId);
         return API.OK("게시판이 삭제되었습니다: " + boardId);
     }
 
@@ -123,7 +124,7 @@ public class BoardController {
             @PathVariable long boardId,
             @Valid @RequestBody BoardRequest boardRequest
     ) {
-        return API.OK(boardService.updateBoard(boardId, boardRequest));
+        return API.OK(boardBusiness.updateBoard(boardId, boardRequest));
     }
 }
 

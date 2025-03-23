@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Post Controller", description = "게시글 관련 API")
 @RestController
 @RequestMapping("/post")
@@ -52,7 +54,7 @@ public class PostController {
     @GetMapping("/{postId}")
     @Operation(
             summary = "게시글 조회",
-            description = "특정 게시글을 조회합니다.",
+            description = "게시글의 상세 내용을 조회합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "게시글 조회 성공"),
                     @ApiResponse(responseCode = "404", description = "해당 게시글이 존재하지 않음")
@@ -61,5 +63,39 @@ public class PostController {
     public API<PostResponse> getPostById(@PathVariable long postId) {
         PostResponse res = postBusiness.getPostById(postId);
         return API.OK(res);
+    }
+
+    /**
+     * 게시판별 게시글 목록 조회
+     * http://localhost:5052/post/list?boardId=1
+     */
+    @GetMapping("/list")
+    @Operation(
+            summary = "특정 게시판 조회",
+            description = "특정 게시판에 작성된 모든 게시글 목록을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공"),
+                    @ApiResponse(responseCode = "404", description = "해당 게시판이 존재하지 않음")
+            }
+    )
+    public API<List<PostResponse>> getPostListByBoardId(@RequestParam long boardId) {
+        List<PostResponse> responseList = postBusiness.getPostListByBoardId(boardId);
+        return API.OK(responseList);
+    }
+
+    /**
+     * 전체 게시판 조회 (자유, 질문, 리뷰 게시판 포함)
+     * http://localhost:5052/post/all
+     */
+    @GetMapping("/all")
+    @Operation(
+            summary = "전체 게시판 조회",
+            description = "자유/질문/리뷰 게시판의 모든 글을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "전체 게시판 목록 조회 성공")
+            }
+    )
+    public API<List<PostResponse>> getAllCategoryPosts() {
+        return API.OK(postBusiness.getAllCategoryPosts());
     }
 }

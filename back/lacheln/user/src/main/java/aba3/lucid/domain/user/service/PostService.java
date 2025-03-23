@@ -111,4 +111,52 @@ public class PostService {
         // Entity -> DTO 변환
         return postConvertor.toResponse(post, imageUrls);
     }
+
+    /**
+     * 게시판 ID로 게시글 목록 조회
+     * 1. 게시판 존재 여부 확인
+     * 2. 해당 게시판에 속한 모든 게시글을 조회
+     * 3. 게시글 + 이미지 목록을 DTO(PostResponse)로 변환
+     */
+    @Transactional(readOnly = true)
+    public List<PostResponse> getPostListByBoardId(long boardId) {
+        // 1. 게시판 존재 여부 확인
+        BoardEntity board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 게시판이 존재하지 않습니다."));
+
+        // 2. 게시판에 속한 게시글 조회
+        List<PostEntity> postList = postRepository.findAllByBoard(board);
+
+        // 3. 각 게시글에 대한 이미지 URL 리스트와 함께 PostResponse로 변환
+        return postList.stream().map(post -> {
+            List<String> imageUrls = post.getPostImageList().stream()
+                    .map(PostImageEntity::getPostImageUrl)
+                    .toList();
+
+            return postConvertor.toResponse(post, imageUrls);
+        }).toList();
+    }
+
+    /**
+     * 전체 게시판 목록 조회 (자유/질문/리뷰 게시판)
+     */
+    public List<PostResponse> getAllCategoryPosts() {
+        // 자유, 질문, 리뷰 게시판만 포함
+        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
+
+        List<PostEntity> posts = postRepository.findByBoard_BoardNameIn(boardNames);
+
+        return posts.stream()
+                .map(post -> postConvertor.toResponse(post, extractImageUrls(post)))
+                .toList();
+    }
+
+    /**
+     * 게시글에 포함된 이미지 URL 리스트 추출
+     */
+    private List<String> extractImageUrls(PostEntity post) {
+        return post.getPostImageList().stream()
+                .map(PostImageEntity::getPostImageUrl)
+                .toList();
+    }
 }

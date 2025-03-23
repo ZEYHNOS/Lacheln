@@ -2,16 +2,10 @@ package aba3.lucid.domain.user.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.domain.board.convertor.PostConvertor;
-import aba3.lucid.domain.board.dto.PostRequest;
-import aba3.lucid.domain.board.dto.PostResponse;
-import aba3.lucid.domain.board.entity.BoardEntity;
-import aba3.lucid.domain.board.entity.PostEntity;
-import aba3.lucid.domain.board.entity.PostImageEntity;
+import aba3.lucid.domain.board.dto.PostUpdateRequest;
+import aba3.lucid.domain.board.entity.*;
 import aba3.lucid.domain.board.enums.PostStatus;
-import aba3.lucid.domain.board.repository.BoardRepository;
-import aba3.lucid.domain.board.repository.PostImageRepository;
-import aba3.lucid.domain.board.repository.PostRepository;
+import aba3.lucid.domain.board.repository.*;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,132 +24,116 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final BoardRepository boardRepository;
-    //TODO 아직 JWT 구현이 안 돼서 일단 직접 userId 들고와서 기능 구현하고 확인 함
     private final UsersRepository usersRepository;
-    private final PostConvertor postConvertor;
 
     /**
-     * 게시글 생성
+     * 게시글 생성 - PostEntity 저장 + 이미지 저장
+     * @return 저장된 PostEntity
      */
     @Transactional
-    public PostResponse createPost(PostRequest postRequest, String userId) {
-        // 1. 게시판 존재 여부 확인
-        BoardEntity board = boardRepository.findById(postRequest.getBoardId())
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시판이 존재하지 않습니다: " + postRequest.getBoardId()));
+    public PostEntity createPost(String userId, String title, String content, Long boardId, List<String> imageUrls) {
+        // 1. 게시판 확인
+        BoardEntity board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시판이 존재하지 않습니다."));
 
-        // 2. 사용자 존재 여부 확인
+        // 2. 사용자 확인
         UsersEntity user = usersRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "사용자가 존재하지 않습니다: " + userId));
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "사용자가 존재하지 않습니다."));
 
-        // 3. 전체 & 인기 게시판은 글 직접 작성할 수 없음
+        // 3. 전체/인기 게시판 작성 제한
         if (board.getBoardName().equals("전체") || board.getBoardName().equals("인기")) {
-            throw new ApiException(ErrorCode.BAD_REQUEST, "전체 게시판과 인기 게시판에는 글을 작성할 수 없습니다.");
+            throw new ApiException(ErrorCode.BAD_REQUEST, "전체/인기 게시판에는 글을 작성할 수 없습니다.");
         }
 
         // 4. 게시글 저장
         PostEntity post = PostEntity.builder()
-                .postTitle(postRequest.getPostTitle())
-                .postContent(postRequest.getPostContent())
+                .postTitle(title)
+                .postContent(content)
                 .board(board)
-                .usersEntity(user) //TODO JWT, 로그인 구현 전까지만
-                .postCreate(LocalDateTime.now())
-                .postUpdate(LocalDateTime.now()) // 작성하면 수정일도 동일하게 설정
+                .usersEntity(user)
                 .postStatus(PostStatus.CREATED)
+                .postCreate(LocalDateTime.now())
+                .postUpdate(LocalDateTime.now())
                 .build();
+        PostEntity savedPost = postRepository.save(post);
 
-        PostEntity savePost = postRepository.save(post);
-
-        // 5. 이미지 URL 저장
-        List<PostImageEntity> postImages = postRequest.getImageUrls().stream()
+        // 5. 이미지 저장
+        List<PostImageEntity> images = imageUrls.stream()
                 .map(url -> PostImageEntity.builder()
-                        .post(savePost)
+                        .post(savedPost)
                         .postImageUrl(url)
                         .build())
-                .collect(Collectors.toList());
-
-        postImageRepository.saveAll(postImages);
-
-        // 6. 저장된 게시글과 이미지 URL 반환
-        List<String> imageUrls = postImages.stream().map(PostImageEntity::getPostImageUrl).toList();
-
-        return new PostResponse(
-                savePost.getPostId(),
-                savePost.getPostTitle(),
-                savePost.getPostContent(),
-                savePost.getPostCreate(),
-                savePost.getPostUpdate(),
-                savePost.getPostStatus(),
-                savePost.getBoard().getBoardId(),
-                savePost.getBoard().getBoardName(),
-                savePost.getUsersEntity().getUserId(),
-                imageUrls
-        );
-    }
-
-    /**
-     * 게시글 조회(단건)
-     * @param postId 게시글 ID
-     * @return 조회된 게시글 응답 DTO
-     */
-    public PostResponse getPostById(long postId) {
-        // 게시글 조회(없으면 404)
-        PostEntity post = postRepository.findById(postId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 게시글이 존재하지 않습니다: " + postId));
-
-        // 게시글에 포함된 이미지 URL 추출
-        List<String> imageUrls = post.getPostImageList().stream()
-                .map(PostImageEntity::getPostImageUrl)
                 .toList();
+        postImageRepository.saveAll(images);
 
-        // Entity -> DTO 변환
-        return postConvertor.toResponse(post, imageUrls);
+        return savedPost;
     }
 
     /**
-     * 게시판 ID로 게시글 목록 조회
-     * 1. 게시판 존재 여부 확인
-     * 2. 해당 게시판에 속한 모든 게시글을 조회
-     * 3. 게시글 + 이미지 목록을 DTO(PostResponse)로 변환
+     * 단일 게시글 조회
+     */
+    public PostEntity getPostById(long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 게시글이 존재하지 않습니다."));
+    }
+
+    /**
+     * 특정 게시판의 게시글 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<PostResponse> getPostListByBoardId(long boardId) {
-        // 1. 게시판 존재 여부 확인
+    public List<PostEntity> getPostListByBoardId(long boardId) {
         BoardEntity board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 게시판이 존재하지 않습니다."));
-
-        // 2. 게시판에 속한 게시글 조회
-        List<PostEntity> postList = postRepository.findAllByBoard(board);
-
-        // 3. 각 게시글에 대한 이미지 URL 리스트와 함께 PostResponse로 변환
-        return postList.stream().map(post -> {
-            List<String> imageUrls = post.getPostImageList().stream()
-                    .map(PostImageEntity::getPostImageUrl)
-                    .toList();
-
-            return postConvertor.toResponse(post, imageUrls);
-        }).toList();
+        return postRepository.findAllByBoard(board);
     }
 
     /**
-     * 전체 게시판 목록 조회 (자유/질문/리뷰 게시판)
+     * 자유/질문/리뷰 전체 게시판 목록 조회
      */
-    public List<PostResponse> getAllCategoryPosts() {
-        // 자유, 질문, 리뷰 게시판만 포함
+    public List<PostEntity> getAllCategoryPosts() {
         List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
-
-        List<PostEntity> posts = postRepository.findByBoard_BoardNameIn(boardNames);
-
-        return posts.stream()
-                .map(post -> postConvertor.toResponse(post, extractImageUrls(post)))
-                .toList();
+        return postRepository.findByBoard_BoardNameIn(boardNames);
     }
 
     /**
-     * 게시글에 포함된 이미지 URL 리스트 추출
+     * 추천수 15 이상 인기 게시글 조회
      */
-    private List<String> extractImageUrls(PostEntity post) {
-        return post.getPostImageList().stream()
-                .map(PostImageEntity::getPostImageUrl)
+    public List<PostEntity> getPopularPosts() {
+        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
+        return postRepository.findPopularPosts(boardNames);
+    }
+
+    /**
+     * 게시글 수정
+     */
+    @Transactional
+    public PostEntity updatePost(PostUpdateRequest request, String userId) {
+        PostEntity post = postRepository.findById(request.getPostId())
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 게시글이 존재하지 않습니다."));
+
+        if (!post.getUsersEntity().getUserId().equals(userId)) {
+            throw new ApiException(ErrorCode.FORBIDDEN, "게시글 수정 권한이 없습니다.");
+        }
+
+        // 기존 이미지 삭제
+        postImageRepository.deleteAll(post.getPostImageList());
+
+        // 도메인 메서드 방식으로 수정
+        post.updatePost(
+                request.getPostTitle(),
+                request.getPostContent(),
+                LocalDateTime.now()
+        );
+
+        // 이미지 다시 저장
+        List<PostImageEntity> newImages = request.getImageUrls().stream()
+                .map(url -> PostImageEntity.builder()
+                        .post(post)
+                        .postImageUrl(url)
+                        .build())
                 .toList();
+        postImageRepository.saveAll(newImages);
+
+        return post;
     }
 }

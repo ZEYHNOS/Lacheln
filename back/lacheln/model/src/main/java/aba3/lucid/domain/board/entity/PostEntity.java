@@ -67,4 +67,11 @@ public class PostEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImageEntity> postImageList;
+
+    // 게시글 수정
+    public void updatePost(String newTitle, String newContent, LocalDateTime updateTime) {
+        this.postTitle = newTitle;
+        this.postContent = newContent;
+        this.postUpdate = updateTime;
+    }
 }

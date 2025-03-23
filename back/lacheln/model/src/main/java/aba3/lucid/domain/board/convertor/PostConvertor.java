@@ -1,7 +1,6 @@
 package aba3.lucid.domain.board.convertor;
 
-import aba3.lucid.domain.board.dto.PostRequest;
-import aba3.lucid.domain.board.dto.PostResponse;
+import aba3.lucid.domain.board.dto.*;
 import aba3.lucid.domain.board.entity.BoardEntity;
 import aba3.lucid.domain.board.entity.PostEntity;
 import aba3.lucid.domain.board.enums.PostStatus;
@@ -14,12 +13,7 @@ import java.util.List;
 public class PostConvertor {
 
     /**
-     * PostRequest -> PostEntity 변환
-     * 사용자가 보낸 게시글 작성 요청 데이터를 DB 저장용 Entity로 변환
-     * @param request 사용자의 게시글 작성 요청 DTO
-     * @param board 게시판 엔티티(어떤 게시판에 글 쓰는지)
-     * @param user 사용자 엔티티 (글 작성자 번호)
-     * @return 저장 가능한 PostEntity
+     * 게시글 작성 요청(PostRequest) → DB 저장용 Entity로 변환
      */
     public PostEntity toEntity(PostRequest request, BoardEntity board, UsersEntity user) {
         return PostEntity.builder()
@@ -32,23 +26,34 @@ public class PostConvertor {
     }
 
     /**
-     * PostEntity -> PostResponse 변환
-     * DB에서 조회한 게시글 엔티티를 클라이언트에 응답할 DTO로 변환
-     * @param entity 게시글 엔티티
-     * @param imageUrls 게시글에 첨부된 이미지 URL 리스트
-     * @return 클라이언트에 응답할 DTO
+     * 게시글 목록 조회용 변환 (이미지 제외)
      */
-    public PostResponse toResponse(PostEntity entity, List<String> imageUrls) {
-        return PostResponse.builder()
-                .postId(entity.getPostId())
-                .postTitle(entity.getPostTitle())
-                .postContent(entity.getPostContent())
-                .postCreate(entity.getPostCreate())
-                .postUpdate(entity.getPostUpdate())
-                .postStatus(entity.getPostStatus())
-                .BoardId(entity.getBoard().getBoardId())
-                .category(entity.getBoard().getBoardName())
-                .userId(entity.getUsersEntity().getUserId())
+    public PostListResponse toListResponse(PostEntity post, int likeCount, int viewCount) {
+        return PostListResponse.builder()
+                .postId(post.getPostId())
+                .postTitle(post.getPostTitle())
+                .userId(post.getUsersEntity().getUserId())
+                .category(post.getBoard().getBoardName())
+                .postCreate(post.getPostCreate())
+                .likeCount(likeCount)
+                .viewCount(viewCount)
+                .build();
+    }
+
+    /**
+     * 게시글 상세 조회용 변환 (이미지 포함)
+     */
+    public PostDetailResponse toDetailResponse(PostEntity post, List<String> imageUrls) {
+        return PostDetailResponse.builder()
+                .postId(post.getPostId())
+                .postTitle(post.getPostTitle())
+                .postContent(post.getPostContent())
+                .postCreate(post.getPostCreate())
+                .postUpdate(post.getPostUpdate())
+                .postStatus(post.getPostStatus())
+                .boardId(post.getBoard().getBoardId())
+                .category(post.getBoard().getBoardName())
+                .userId(post.getUsersEntity().getUserId())
                 .imageUrls(imageUrls)
                 .build();
     }

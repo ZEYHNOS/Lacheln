@@ -11,7 +11,7 @@ public class HashtagConverter {
 
     public List<HashtagEntity> toEntityList(List<String> hashtagList, ProductEntity product) {
         return hashtagList.stream()
-                .map(it -> toEntity(it, product))
+                .map(it -> toEntity(it.trim(), product))
                 .toList()
                 ;
     }

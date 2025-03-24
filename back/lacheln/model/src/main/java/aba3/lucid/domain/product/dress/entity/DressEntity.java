@@ -45,7 +45,7 @@ public class DressEntity extends ProductEntity {
     private Color dressColor; //색상
 
     @JsonIgnore
-    @OneToMany(mappedBy = "dress", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "dress", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DressSizeEntity> dressSizeList;
 
     // 내부 촬영 변경

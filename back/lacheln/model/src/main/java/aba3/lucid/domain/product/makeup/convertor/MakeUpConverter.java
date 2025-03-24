@@ -23,7 +23,7 @@ public class MakeUpConverter extends ProductAbstractConverter<MakeupEntity, Make
     protected MakeupEntity createEntity(MakeupRequest request, CompanyEntity company) {
         return MakeupEntity.builder()
                 .company(company)
-                .pdName(request.getName())
+                .pdName(request.getName().trim())
                 .pdRec(request.getRec())
                 .pdPrice(request.getPrice())
                 .pdStatus(request.getStatus())

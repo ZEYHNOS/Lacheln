@@ -30,7 +30,7 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
     protected DressEntity createEntity(DressRequest request, CompanyEntity company) {
         DressEntity entity = DressEntity.builder()
                 .company(company)
-                .pdName(request.getName())
+                .pdName(request.getName().trim())
                 .pdRec(request.getRec())
                 .pdPrice(request.getPrice())
                 .pdStatus(request.getStatus())

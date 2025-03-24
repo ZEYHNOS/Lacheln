@@ -35,7 +35,7 @@ public class OptionConverter {
 
         OptionEntity optionEntity = OptionEntity.builder()
                 .product(entity)
-                .opName(dto.getName())
+                .opName(dto.getName().trim())
                 .opOverlap(dto.getOverlap())
                 .opEssential(dto.getEssential())
                 .opStatus(dto.getStatus())
@@ -78,7 +78,7 @@ public class OptionConverter {
 
         return OptionDetailEntity.builder()
                 .option(entity)
-                .opDtName(dto.getOpDtName())
+                .opDtName(dto.getOpDtName().trim())
                 .opDtPlusCost(dto.getPlusCost())
                 .opDtPlusTime(dto.getPlusTime())
                 .build()

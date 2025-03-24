@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(userEmail);
         claims.put("role", "ROLE_" + role);
         Date now = new Date();
-        Date validity = new Date(now.getTime() + Duration.ofSeconds(1).toMillis()); // 2시간 유효
+        Date validity = new Date(now.getTime() + Duration.ofDays(1).toMillis()); // 1시간 유효
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -45,7 +47,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.claims().setSubject(userEmail);
         claims.put("role", "ROLE_" + role);
         Date now = new Date();
-        Date validity = new Date(now.getTime() + Duration.ofDays(1).toMillis()); // 7일 유효
+        Date validity = new Date(now.getTime() + Duration.ofDays(7).toMillis()); // 1일 유효
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -64,8 +66,16 @@ public class JwtTokenProvider {
 
     // 토큰에서 유저 이메일 추출
     public String getUserEmail(String token) {
-        System.out.println(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+        System.out.println("getUserEmail = " + Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    // 토큰에서 유저 권한 추출
+    public String getUserRole(String token) {
+        Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        String role = claim.get("role").toString();
+        System.out.println("role = " + role);
+        return role;
     }
 
     // 토큰 유효성 검증
@@ -79,28 +89,39 @@ public class JwtTokenProvider {
             return false;
         }
     }
-
+ 
+    // 토큰 만료시간 검증
     public boolean isExpired(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            System.out.println("claims.getBody() = " + claims.getBody().getExpiration().before(new Date()));
             return claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
-            return false;
+            System.out.println("혹시 여기로 오니?");
+            return true;
         }
     }
 
     // 헤더에서 JWT 추출
-    public String resolveToken(HttpServletRequest request) {
+    public Map<String, String> resolveTokens(HttpServletRequest request) {
         Cookie[] bearerTokens = request.getCookies();
-        String bearerToken = null;
+        Map<String, String> tokens = new HashMap<>();
+        String accessToken = null;
+        String refreshToken = null;
+
         if(bearerTokens != null){
             for(Cookie cookie : bearerTokens) {
-                if(cookie.getName().equals("Authorization")) {
-                    bearerToken = cookie.getValue();
+                if(cookie.getName().equals("AccessToken")) {
+                    accessToken = cookie.getValue();
+                } else if(cookie.getName().equals("RefreshToken")) {
+                    refreshToken = cookie.getValue();
                 }
             }
         }
-        System.out.println("bearerToken : " + bearerToken);
-        return bearerToken;
+
+        tokens.put("AccessToken", accessToken);
+        tokens.put("RefreshToken", refreshToken);
+
+        return tokens;
     }
 }

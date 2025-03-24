@@ -24,54 +24,70 @@ public class PostEntity {
     @Id
     @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postId; //게시글ID
-
-    // FETCH LAZY 달아야할려나 애매하네
-    @ManyToOne(fetch = FetchType.LAZY)
-    private UsersEntity usersEntity;
+    private long postId; // 게시글 ID
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private BoardEntity board;
+    private UsersEntity usersEntity; // 작성자 정보 (회원)
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BoardEntity board; // 게시판 정보
 
     @Column(name = "post_title", columnDefinition = "CHAR(100)", nullable = false)
-    private String postTitle; //제목
+    private String postTitle; // 게시글 제목
 
     @Column(name = "post_content", columnDefinition = "LONGTEXT", nullable = false)
-    private String postContent; // 내용
+    private String postContent; // 게시글 내용
 
-    // 최초 저장시 현재 시간으로 저장
     @CreationTimestamp
     @Column(name = "post_create", nullable = false)
-    private LocalDateTime postCreate; //작성일 (수정해도 변경되지 않음 시간 정렬 시 기준으로 사용)
+    private LocalDateTime postCreate; // 작성일 (최초 저장 시간)
 
     @CreationTimestamp
     @Column(name = "post_update", nullable = false)
-    private LocalDateTime postUpdate; //수정일 (수정될 때마다 갱신)
+    private LocalDateTime postUpdate; // 수정일 (갱신 시간)
 
     @Enumerated(EnumType.STRING)
     @Column(name = "post_status", columnDefinition = "CHAR(20)", nullable = false)
-    private PostStatus postStatus; //상태 enum 참고
+    private PostStatus postStatus; // 게시글 상태 (예: CREATED, DELETED 등)
 
+    // 연관 관계 설정 (게시글 → 조회 기록)
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<PostViewEntity> postViewList;
 
+    // 연관 관계 설정 (게시글 → 좋아요)
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<PostLikeEntity> postLikeList;
 
+    // 연관 관계 설정 (게시글 → 댓글)
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<CommentEntity> commentList;
 
+    // 연관 관계 설정 (게시글 → 이미지)
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImageEntity> postImageList;
 
-    // 게시글 수정
+    // 게시글 수정 메서드 (도메인 메서드)
     public void updatePost(String newTitle, String newContent, LocalDateTime updateTime) {
         this.postTitle = newTitle;
         this.postContent = newContent;
         this.postUpdate = updateTime;
+    }
+
+    // 논리 삭제를 위한 필드 (기본값 false)
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false; // true면 삭제된 게시글로 간주함
+
+    // 논리 삭제 처리 메서드
+    public void delete() {
+        this.deleted = true;
+    }
+
+    // 외부에서 삭제 상태 확인용 getter
+    public boolean isDeleted() {
+        return this.deleted;
     }
 }

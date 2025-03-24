@@ -74,6 +74,15 @@ public class PackageEntity {
     public void updatePackageStatus(PackageStatus status) {
         Validator.throwIfNull(status);
 
+        // curStatus = 미등록, changeStatus = 등록
+        // 패키지에 등록된 업체 모두 상품을 등록해야함
+
+        // curStatus = 등록, changeStatus = 미등록
+        // 패키지 예약을 비활성화한다
+
+        // curStatus = 미등록, changeStatus = 삭제
+        // 미등록된 상태여야하며 모든 예약이 완료되어야함(취소도 상관없음)
+
         this.packStatus = status;
     }
 

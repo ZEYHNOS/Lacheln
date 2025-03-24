@@ -13,4 +13,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     List<ProductEntity> findAllByDeleteDateBefore(LocalDateTime now);
 
+    List<ProductEntity> findAllByHashtagList_TagName(String tagName);
+
 }

@@ -20,8 +20,8 @@ public class ExpiredDataRemover {
 //          "0 0 9-17 * * MON-FRI" = 오전 9시부터 오후 5시까지 주중(월~금)에 실행한다.
 //          "0 0 0 25 12 ?" = every Christmas Day at midnight
 
-    // 삭제 상태인 상품 1달 뒤 삭제 TODO (1달 뒤로 변경하기)
-    @Scheduled(cron = "*/10 * * * * *", zone = "Asia/Seoul")
+    // 삭제 상태인 상품 1달 뒤 삭제
+    @Scheduled(cron = "0 0 19 * * *", zone = "Asia/Seoul")
     public void productRemove() {
         productService.removeData();
     }

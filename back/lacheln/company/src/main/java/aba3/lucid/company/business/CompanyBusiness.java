@@ -6,6 +6,8 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.convertor.CompanyConvertor;
+import aba3.lucid.domain.company.dto.CompanyLoginRequest;
+import aba3.lucid.domain.company.dto.CompanyLoginResponse;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.dto.CompanyResponse;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -13,6 +15,8 @@ import aba3.lucid.domain.company.repository.CompanyRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Component
 public class CompanyBusiness {
@@ -99,6 +103,40 @@ public class CompanyBusiness {
 
         return companyConvertor.toResponse(updateCompany);
 
+    }
+
+    public CompanyResponse searchCompany (CompanyRequest companyRequest, String cpEmail) {
+//        Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(cpEmail);
+//        if(companyOpt.isPresent()) {
+//            CompanyEntity company = companyOpt.get();
+//
+//            //엔티티를 DTO로 매핑
+//            CompanyResponse response = new CompanyResponse();
+//            response.setId(company.getCpId());
+//            response.setName(company.getCpName());
+//            return response;
+//
+//
+//        }
+
+    }
+
+    public CompanyLoginResponse login (CompanyLoginRequest request) {
+        if(request == null) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "LoginRequest 값을 받지 못했습니다");
+        }
+        CompanyEntity companyEntity = companyService.findByCpEmailWithThrow(request.getCpEmail());
+
+        String hashedPassword = encodePassword(request.getCpPassword(), request.getCpEmail());
+        if(!companyEntity.getCpPassword().equals(hashedPassword)) {
+            throw new ApiException(ErrorCode.INVALID_PARAMETER, "비밀번호가 틀렸습니다");
+        }
+
+        return CompanyLoginResponse.builder()
+                .cpId(companyEntity.getCpId())
+                .cpEmail(companyEntity.getCpEmail())
+                .cpName(companyEntity.getCpName())
+                .build();
     }
 
 

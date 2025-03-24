@@ -45,6 +45,11 @@ public class CompanyService {
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
+    public CompanyEntity findByCpEmailWithThrow(String cpEmail) {
+        return companyRepository.findByCpEmail(cpEmail)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+    }
+
 
     //메소드에 전달된 existingCompany와 request가 null인지 확인하고
     //만약 둘 중 하나라도 null이면, ApiException을 발생시켜 잘못된 파라미터임을 알립니다. 이는 안정성을 위해 필수이다
@@ -57,6 +62,7 @@ public class CompanyService {
     public void deleteCompany(CompanyEntity company) {
         companyRepository.delete(company);
     }
+
 
 
 

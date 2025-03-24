@@ -4,6 +4,7 @@ package aba3.lucid.company.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.company.business.CompanyBusiness;
+import aba3.lucid.domain.company.dto.CompanyLoginRequest;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
@@ -64,4 +65,17 @@ public class CompanyServiceTest {
         assertEquals(companyRequest.getCpContact(), savedCompany.getCpContact());
         assertEquals(companyRequest.getCpFax(), savedCompany.getCpFax());
     }
+
+//    @Test
+//    @Rollback
+//    public void loginCompany() throws Exception {
+//        CompanyLoginRequest companyLoginRequest = CompanyLoginRequest.builder()
+//                .cpEmail("Ceri@gmail.com")
+//                .cpPassword("84u4848hf")
+//                .build();
+//    Long savedId = companyBusiness.login(companyLoginRequest).getCpId();
+//    CompanyEntity savedCompany = companyRepository.findById(savedId).orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "업체가 없습니다"));
+//    assertEquals(companyLoginRequest.getCpEmail(),savedCompany.getCpEmail());
+//    assertEquals(companyLoginRequest.getCpPassword(),savedCompany.getCpPassword());
+//    }
 }

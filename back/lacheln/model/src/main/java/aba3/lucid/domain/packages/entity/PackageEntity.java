@@ -32,19 +32,20 @@ public class PackageEntity {
     private String packName; // 패키지 이름
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pd_id", nullable = false)
+    @JoinColumn(name = "pack_admin_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CompanyEntity packAdmin; // 패키지 방장
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pd_id")
+    @JoinColumn(name = "pack_company1_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CompanyEntity packCompany1; // 패키지 업체 1
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pd_id")
+    @JoinColumn(name = "pack_company2_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CompanyEntity packCompany2; // 패키지 업체 2
+
 
     @Column(name = "pack_comment", columnDefinition = "TEXT", nullable = false)
     private String packComment; // 패키지 설명

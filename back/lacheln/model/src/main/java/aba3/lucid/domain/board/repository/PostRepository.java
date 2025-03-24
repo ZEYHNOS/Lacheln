@@ -5,27 +5,27 @@ import aba3.lucid.domain.board.entity.PostEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
-    /**
-     * 특정 게시판에 속한 모든 게시글을 조회
-     */
-    List<PostEntity> findAllByBoard(BoardEntity board);
 
-    // 자유/질문/리뷰 게시판에 속한 글만 조회
-    List<PostEntity> findByBoard_BoardNameIn(List<String> boardNames);
+    // 삭제되지 않은 게시글 단건 조회
+    Optional<PostEntity> findByPostIdAndDeletedFalse(Long postId);
 
-    /**
-     * 자유, 질문, 리뷰 게시판 중 추천수 15 이상인 게시글만 조회
-     * (인기 게시판 조회용)
-     */
-    @Query("SELECT p FROM PostEntity p " +
-            "WHERE p.board.boardName IN :boardNames " +
-            "AND (SELECT COUNT(pl) FROM PostLikeEntity pl WHERE pl.post = p) >= 15 " +
-            "ORDER BY (SELECT COUNT(pl) FROM PostLikeEntity pl WHERE pl.post = p) DESC")
+    // 특정 게시판의 삭제되지 않은 게시글 전체 조회
+    List<PostEntity> findAllByBoardAndDeletedFalse(BoardEntity board);
+
+    // 자유/질문/리뷰 게시판 전체 조회 (삭제되지 않은 글만)
+    List<PostEntity> findByBoard_BoardNameInAndDeletedFalse(List<String> boardNames);
+
+    // 추천 수가 15 이상인 인기 게시글 조회 (삭제되지 않은 글만)
+    @Query("""
+        SELECT p FROM PostEntity p
+        WHERE p.board.boardName IN :boardNames
+        AND p.deleted = false
+        AND SIZE(p.postLikeList) >= 15
+    """)
     List<PostEntity> findPopularPosts(@Param("boardNames") List<String> boardNames);
 }

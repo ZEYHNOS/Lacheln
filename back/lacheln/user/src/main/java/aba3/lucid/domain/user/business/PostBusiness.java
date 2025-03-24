@@ -1,6 +1,8 @@
 package aba3.lucid.domain.user.business;
 
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.board.entity.PostImageEntity;
 import aba3.lucid.domain.board.convertor.PostConvertor;
 import aba3.lucid.domain.board.dto.*;
@@ -79,9 +81,38 @@ public class PostBusiness {
      */
     public PostDetailResponse updatePost(PostUpdateRequest request, String userId) {
         PostEntity updated = postService.updatePost(request, userId);
+
+        // 최종 이미지 URL 목록 추출
         List<String> imageUrls = updated.getPostImageList().stream()
                 .map(PostImageEntity::getPostImageUrl)
                 .toList();
+
         return postConvertor.toDetailResponse(updated, imageUrls);
     }
+
+    /**
+     * 게시글 삭제 요청 처리 (작성자 본인만 삭제 가능)
+     */
+    public void deletePost(long postId, String userId) {
+        PostEntity post = postService.getPostById(postId);
+
+        // 작성자 또는 관리자 권한 확인
+        boolean isWriter = post.getUsersEntity().getUserId().equals(userId);
+        boolean isAdmin = isAdmin(userId); // ★ 임시 관리자 판별
+
+        if (!isWriter && !isAdmin) {
+            throw new ApiException(ErrorCode.FORBIDDEN, "게시글 삭제 권한이 없습니다.");
+        }
+
+        postService.deletePost(postId, userId);
+    }
+
+    /**
+     * 관리자 권한 여부 임시 체크
+     * - 추후 회원 등급 기능이 구현되면 Role 기반으로 수정
+     */
+    private boolean isAdmin(String userId) {
+        return userId.equals("admin123"); // ★ 임시 관리자 계정 지정
+    }
+
 }

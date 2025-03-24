@@ -1,14 +1,11 @@
 package aba3.lucid.controller;
 
 import aba3.lucid.service.AuthService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.LinkedMultiValueMap;
@@ -46,24 +43,47 @@ public class GateWayController {
         return routeRequest("http://localhost:5052", request);
     }
 
+    // 토큰 생성 메서드 (needs => userEmail, Role)
     @GetMapping("/addToken")
-    public ResponseEntity<String> routeToLogin() {
-        String token = authService.login("user1@example.com");
-        ResponseCookie cookie = ResponseCookie.from("Authorization", token)
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("None") // 개발단계에서는 None 배포 시 strict
-                .path("/")
-                .maxAge(75400)
-                .build();
-        return ResponseEntity.ok()
-                .header("Set-Cookie", cookie.toString())
-                .body(HttpStatus.OK.toString());
+    public ResponseEntity<String> routeToLogin(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, ResponseCookie> cookies = authService.login("user1@example.com");
+
+        // 쿠키들을 Set-Cookie 헤더에 추가
+        for (ResponseCookie cookie : cookies.values()) {
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        }
+
+        // 응답 본문 반환
+        return ResponseEntity.ok("엑세스, 리프레시 토큰 생성 완료");
     }
 
+    // 토큰 지우기 (needs => userEmail, Role)
     @GetMapping("/delToken")
-    public ResponseEntity routeToLogout(HttpServletResponse response) {
-        return authService.logout(response, "JohnDoe");
+    public ResponseEntity<String> routeToLogout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        String jwtToken = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("RefreshToken".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                }
+            }
+        }
+
+        if (jwtToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰이 존재하지 않습니다.");
+        }
+
+        Map<String, ResponseCookie> tokens = authService.logout(jwtToken);
+
+        if(tokens != null)  {
+            for (ResponseCookie cookie : tokens.values()) {
+                response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            }
+        }
+        
+        return ResponseEntity.ok("토큰 삭제완료");
     }
 
 
@@ -83,7 +103,7 @@ public class GateWayController {
                 .headers(headers -> headers.addAll(headersMap))
                 .retrieve()
                 .toEntity(String.class)
-                .block(); // 동기 방식 처리
+                .block();
     }
 
 }

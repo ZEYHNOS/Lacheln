@@ -21,7 +21,7 @@ public class StudioConverter extends ProductAbstractConverter<StudioEntity, Stud
     protected StudioEntity createEntity(StudioRequest request, CompanyEntity company) {
         return StudioEntity.builder()
                 .company(company)
-                .pdName(request.getName())
+                .pdName(request.getName().trim())
                 .pdRec(request.getRec())
                 .pdPrice(request.getPrice())
                 .pdStatus(request.getStatus())

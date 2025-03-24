@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,4 +25,12 @@ public class ProductService {
         return List.of();
     }
 
+    // 삭제 상태인 상품 1달 뒤 삭제
+    public void removeData() {
+
+        List<ProductEntity> removeProductEntityList = productRepository.findAllByDeleteDateBefore(LocalDateTime.now());
+
+        log.info("Remove Product Entity List : {}", removeProductEntityList);
+        productRepository.deleteAll(removeProductEntityList);
+    }
 }

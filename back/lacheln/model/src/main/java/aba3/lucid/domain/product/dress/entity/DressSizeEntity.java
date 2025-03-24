@@ -22,7 +22,7 @@ public class DressSizeEntity {
 
     @ToString.Exclude
     @JoinColumn(name = "pd_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private DressEntity dress; //드레스 ID
 
     @Column(name = "size", nullable = false)

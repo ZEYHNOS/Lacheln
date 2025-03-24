@@ -5,6 +5,7 @@ import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.converter.ProductConverter;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.product.service.ProductService;
 import aba3.lucid.rabbitmq.Producer;
 import lombok.RequiredArgsConstructor;

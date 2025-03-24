@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/product/package")
+@RequestMapping("/package")
 @RequiredArgsConstructor
 @Tag(name = "Package Controller", description = "패키지 관련 API")
 public class PackageController {

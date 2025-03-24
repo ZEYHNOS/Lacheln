@@ -2,9 +2,10 @@ package aba3.lucid.company.controller;
 
 
 import aba3.lucid.common.api.API;
-import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.company.business.CompanyBusiness;
 import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.domain.company.dto.CompanyLoginRequest;
+import aba3.lucid.domain.company.dto.CompanyLoginResponse;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.dto.CompanyResponse;
 import jakarta.validation.Valid;
@@ -20,6 +21,19 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyController {
     private final CompanyBusiness companyBusiness;
     private final CompanyService companyService;
+
+
+
+
+    @PostMapping("/login")
+    public API<CompanyLoginResponse> login(
+            @Valid
+            @RequestBody CompanyLoginRequest companyLoginRequest
+    ) {
+        CompanyLoginResponse companyLoginResponse = companyBusiness.login(companyLoginRequest);
+        log.debug("Login CompanyResponse: {}", companyLoginResponse);
+        return API.OK(companyLoginResponse);
+    }
 
     @PostMapping("/signup")
     public API<CompanyResponse> registerCompany (
@@ -42,6 +56,16 @@ public class CompanyController {
 
     ){
         CompanyResponse companyResponse = companyBusiness.updateCompany(companyRequest, companyId);
+        return API.OK(companyResponse);
+    }
+
+    @GetMapping("/search")
+    public API<CompanyResponse> searchCompany (
+            @PathVariable String cpEmail,
+            @Valid
+            @RequestBody CompanyRequest companyRequest
+    ) {
+        CompanyResponse companyResponse = companyBusiness.searchCompany(companyRequest,cpEmail);
         return API.OK(companyResponse);
     }
 

@@ -153,11 +153,17 @@ public class PostService {
 
         // 삭제 요청된 이미지가 있다면 삭제
         if (request.getDeleteImageUrls() != null && !request.getDeleteImageUrls().isEmpty()) {
+            // 삭제 대상 이미지 목록 필터링
             List<PostImageEntity> toDelete = post.getPostImageList().stream()
                     .filter(img -> request.getDeleteImageUrls().contains(img.getPostImageUrl()))
                     .toList();
-            postImageRepository.deleteAll(toDelete);
+
+            // 실제 DB에서 이미지 삭제 처리 (배치 삭제로 성능 최적화)
+            postImageRepository.deleteAllInBatch(toDelete);
         }
+
+
+
 
         // 제목, 내용, 수정일 갱신
         post.updatePost(

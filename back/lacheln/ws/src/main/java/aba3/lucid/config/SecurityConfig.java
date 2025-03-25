@@ -28,6 +28,7 @@ public class SecurityConfig {
     private final String[] roleUser = {"/user/**", "/board/**"};
     private final String[] roleCompany = {"/company/**", "/product/**"};
 
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)

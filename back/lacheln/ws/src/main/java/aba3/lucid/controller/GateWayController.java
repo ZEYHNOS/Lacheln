@@ -9,11 +9,17 @@ import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +31,7 @@ public class GateWayController {
     // 유저 서비스로 요청을 전달하는 메서드
     @GetMapping("/user/**")
     public ResponseEntity<String> routeToUser(HttpServletRequest request) {
-        return routeRequest("http://localhost:5051", request);
+        return routeRequest("http://localhost:5052", request);
     }
 
     // 게시판 요청을 전달하는 메서드
@@ -36,9 +42,21 @@ public class GateWayController {
     }
 
     // 업체 서비스로 요청을 전달하는 메서드
-    @GetMapping("/company/**")
+    @RequestMapping(value = "/company/**", method = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.GET})
     public ResponseEntity<String> routeToCompany(HttpServletRequest request) {
-        return routeRequest("http://localhost:5052", request);
+        System.out.println("===== routeToCompany 호출 =====");
+        System.out.println("요청 URI: " + request.getRequestURI());
+        System.out.println("요청 메서드: " + request.getMethod());
+
+        try {
+            BufferedReader reader = request.getReader();
+            String body = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+            System.out.println("요청 본문: " + body);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return routeRequest("http://localhost:5051", request);
     }
 
     // 토큰 생성 메서드 (needs => userEmail, Role)
@@ -95,8 +113,17 @@ public class GateWayController {
                 headers.add(headerName, request.getHeader(headerName))
         );
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        HttpMethod method = HttpMethod.valueOf(request.getMethod());
 
-        return restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        // Body 읽기
+        String body = "";
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
+            body = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        HttpEntity<String> entity = new HttpEntity<>(body, headers);
+        return restTemplate.exchange(url, method, entity, String.class);
     }
 }

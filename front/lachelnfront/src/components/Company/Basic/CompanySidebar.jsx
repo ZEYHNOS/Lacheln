@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import Companyinfo from "../../../image/Company/SideBar/company_info.png";
 import Modifyinfo from "../../../image/Company/SideBar/modify_info.png";
@@ -56,49 +56,50 @@ const bottomMenu = [
 ];
 
 function CompanySidebar() {
+    const location = useLocation();
+
     return (
-        <div className="flex justify-center items-center min-h-screen">
-            <aside className="bg-white w-60 h-screen shadow-md p-4 border-r-2 border-[#845ec2] flex flex-col mx-auto">
-                <div className="space-y-6">
-                    {menuSections.map((section) => (
-                        <div key={section.title}>
-                            <div className="flex items-center text-purple-600 font-bold text-lg mb-2">
-                                <img src={section.icon} alt={section.title} className="w-9 h-9 mr-2" />
-                                <span>{section.title}</span>
-                            </div>
-                            <ul className="space-y-2 text-gray-600 text-base pl-8">
-                                {section.items.map((item) => (
+        <aside className="bg-white w-60 h-full shadow-md p-4 border-r-2 border-[#845ec2] flex flex-col overflow-y-auto custom-scroll">
+            <div className="space-y-8 flex-grow">
+                {menuSections.map((section) => (
+                    <div key={section.title} className="mb-6">
+                        <div className="flex items-center text-purple-600 font-bold text-lg mb-2">
+                            <img src={section.icon} alt={section.title} className="w-9 h-9 mr-2" />
+                            <span>{section.title}</span>
+                        </div>
+                        <ul className="space-y-3 text-gray-600 text-base pl-8">
+                            {section.items.map((item) => {
+                                const isActive = location.pathname.includes(`${BASE_PATH}/${item.path}`);
+                                return (
                                     <Link
                                         key={item.path}
                                         to={`${BASE_PATH}/${item.path}`}
-                                        className="flex items-center text-purple-600 cursor-pointer hover:text-blue-600"
+                                        className={`flex items-center text-purple-600 cursor-pointer rounded-md transition-all 
+                                        ${isActive ? "bg-purple-200 text-purple-700 font-bold" : "hover:text-blue-600"}`}
                                     >
                                         <img src={item.icon} alt={item.label} className="w-7 h-7 mr-2" />
                                         {item.label}
                                     </Link>
-                                ))}
-                            </ul>
-                        </div>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+
+            <div className="mt-12 space-y-6">
+                <ul className="space-y-2 text-gray-600 text-sm">
+                    {bottomMenu.map((item) => (
+                        <li key={item.label} className="flex items-center text-purple-600 font-bold cursor-pointer hover:text-blue-600">
+                            <img src={item.icon} alt={item.label} className="w-9 h-9 mr-2" />
+                            {item.label}
+                        </li>
                     ))}
-                </div>
-
-                <div className="mt-auto space-y-4">
-                    <ul className="space-y-2 text-gray-600 text-sm">
-                        {bottomMenu.map((item) => (
-                            <li
-                                key={item.label}
-                                className="flex items-center text-purple-600 font-bold cursor-pointer hover:text-blue-600"
-                            >
-                                <img src={item.icon} alt={item.label} className="w-9 h-9 mr-2" />
-                                {item.label}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-            </aside>
-        </div>
+                </ul>
+            </div>
+        </aside>
     );
 }
+
 
 export default CompanySidebar;

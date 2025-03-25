@@ -1,6 +1,7 @@
 package aba3.lucid.company.business;
 
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.password.CustomPasswordEncoder;
 import aba3.lucid.common.status_code.CompanyCode;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
@@ -16,11 +17,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Component
 public class CompanyBusiness {
     private final CompanyService companyService;
     private final CompanyRepository companyRepository;
     private final CompanyConvertor companyConvertor;
+    private final CustomPasswordEncoder customPasswordEncoder;
 
     //ApplicationContext를 생성자의 의존성 주입을 통해 받아오고 있습니다:
     private final ApplicationContext applicationContext;
@@ -28,19 +32,21 @@ public class CompanyBusiness {
     public CompanyBusiness(CompanyService companyService,
                            CompanyRepository companyRepository,
                            CompanyConvertor companyConvertor,
-                           ApplicationContext applicationContext) {
+                           ApplicationContext applicationContext,
+                           CustomPasswordEncoder customPasswordEncoder)
+    {
+
         this.companyService = companyService;
         this.companyRepository = companyRepository;
         this.companyConvertor = companyConvertor;
         this.applicationContext = applicationContext;
+        this.customPasswordEncoder = customPasswordEncoder;
     }
 
     //encodePassword() 메서드가 호출될 때 applicationContext.getBean(PasswordEncoder.class)를
     // 사용하여 Spring 컨테이너에서 PasswordEncoder 빈을 찾아 반환합니다
     public String encodePassword(String rawPassword, String email) {
-        aba3.lucid.common.password.PasswordEncoder passwordEncoder =
-                applicationContext.getBean(aba3.lucid.common.password.PasswordEncoder.class);
-        return passwordEncoder.encrypt(email, rawPassword);
+        return customPasswordEncoder.encrypt(email, rawPassword);
 
     }
     //passwordEncoder.encode(rawPassword)를 호출하여 비밀번호를 암호화합니다.
@@ -102,20 +108,23 @@ public class CompanyBusiness {
 
     }
 
-//    public CompanyResponse searchCompany (CompanyRequest companyRequest, String cpEmail) {
-//        Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(cpEmail);
-//        if(companyOpt.isPresent()) {
-//            CompanyEntity company = companyOpt.get();
-//
-//            //엔티티를 DTO로 매핑
-//            CompanyResponse response = new CompanyResponse();
-//            response.setId(company.getCpId());
-//            response.setName(company.getCpName());
-//            return response;
-//
-//
-//        }
+    public CompanyResponse searchCompany(CompanyRequest companyRequest,String email) {
+        Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(email);
+        if(companyOpt.isPresent()) {
+            CompanyEntity company = companyOpt.get();
+            return companyConvertor.toResponse(company);
+        }else {
+            throw new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 수 앖습니다");
+        }
+    }
 
+
+//    public List<CompanyRequest> searchCompany(CompanyRequest companyRequest, String email) {
+//        List<CompanyEntity> companyEntityList = companyRepository.findAll();
+//        List<CompanyRequest> companyRequestList = new ArrayList<>();
+//        for(CompanyEntity companyEntity : companyEntityList) {
+//            companyRequestList.add(
+//        }
 //    }
 
     public CompanyLoginResponse login (CompanyLoginRequest request) {

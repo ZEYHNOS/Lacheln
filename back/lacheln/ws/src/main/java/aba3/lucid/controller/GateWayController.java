@@ -8,11 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Map;
@@ -21,7 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GateWayController {
 
-    private final WebClient webClient;
+    private final RestTemplate restTemplate;
     private final AuthService authService;
 
     // 유저 서비스로 요청을 전달하는 메서드
@@ -87,23 +85,18 @@ public class GateWayController {
     }
 
 
-    // 공통 HTTP 요청 전달 메서드
-    private ResponseEntity<String> routeRequest(String baseUrl, HttpServletRequest request) {
+    // 공통 HTTP 요청 전달 메서드 (RestTemplate 사용)
+    public ResponseEntity<String> routeRequest(String baseUrl, HttpServletRequest request) {
         String path = request.getRequestURI();
         String url = baseUrl + path;
 
-        MultiValueMap<String, String> headersMap = new LinkedMultiValueMap<>();
-
+        HttpHeaders headers = new HttpHeaders();
         Collections.list(request.getHeaderNames()).forEach(headerName ->
-                headersMap.add(headerName, request.getHeader(headerName))
+                headers.add(headerName, request.getHeader(headerName))
         );
 
-        return webClient.get()
-                .uri(url)
-                .headers(headers -> headers.addAll(headersMap))
-                .retrieve()
-                .toEntity(String.class)
-                .block();
-    }
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
+        return restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+    }
 }

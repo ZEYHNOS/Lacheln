@@ -1,6 +1,8 @@
 package aba3.lucid.config;
 
 import aba3.lucid.jwt.JwtAuthenticationFilter;
+import aba3.lucid.jwt.JwtTokenProvider;
+import aba3.lucid.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +19,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] permitAlls = {"/v3/api-docs/**",
-                                         "/swagger-ui/**",
-                                         "/swagger-ui.html"};
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final CustomOAuth2UserService customOAuth2UserService;
+
+    private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
     private final String[] roleUser = {"/user/**", "/board/**"};
     private final String[] roleCompany = {"/company/**", "/product/**"};
-
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,9 +35,16 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(permitAlls).permitAll()
-                        .requestMatchers(roleUser).hasRole("USER")
-                        .requestMatchers(roleCompany).hasRole("COMPANY")
+                        .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
+                        .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
                         .anyRequest().permitAll()// 그 외 모든 요청은 인증 필요
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(new CustomOAuth2SuccessHandler(jwtTokenProvider))
+                        .failureHandler(new CustomOAuth2FailureHandler())
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)

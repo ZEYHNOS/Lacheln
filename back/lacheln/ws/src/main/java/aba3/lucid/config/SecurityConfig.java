@@ -12,6 +12,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -25,21 +28,27 @@ public class SecurityConfig {
     private final String[] roleUser = {"/user/**", "/board/**"};
     private final String[] roleCompany = {"/company/**", "/product/**"};
 
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(request -> { // TODO AbstractHttpConfigurer::disable
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of("http://localhost:3000")); // 클라이언트 URL 지정
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(permitAlls).permitAll()
-                        .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
-                        .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
-                        .anyRequest().permitAll()// 그 외 모든 요청은 인증 필요
+//                        .requestMatchers(permitAlls).permitAll()
+//                        .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
+//                        .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
+                                .anyRequest().permitAll()// 그 외 모든 요청은 인증 필요
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 적용
+                .httpBasic(AbstractHttpConfigurer::disable);
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 적용
         return http.build();
     }
 

@@ -59,15 +59,15 @@ public class CompanyController {
         return API.OK(companyResponse);
     }
 
-    @GetMapping("/search")
-    public API<CompanyResponse> searchCompany (
-            @PathVariable String cpEmail,
-            @Valid
-            @RequestBody CompanyRequest companyRequest
-    ) {
-        CompanyResponse companyResponse = companyBusiness.searchCompany(companyRequest,cpEmail);
-        return API.OK(companyResponse);
-    }
+//    @GetMapping("/search")
+//    public API<CompanyResponse> searchCompany (
+//            @PathVariable String cpEmail,
+//            @Valid
+//            @RequestBody CompanyRequest companyRequest
+//    ) {
+//        CompanyResponse companyResponse = companyBusiness.searchCompany(companyRequest,cpEmail);
+//        return API.OK(companyResponse);
+//    }
 
     @DeleteMapping("/delete/{companyId}")
     public API<CompanyResponse> deleteCompany (

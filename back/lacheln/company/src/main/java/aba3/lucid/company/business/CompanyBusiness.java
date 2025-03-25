@@ -105,7 +105,7 @@ public class CompanyBusiness {
 
     }
 
-    public CompanyResponse searchCompany (CompanyRequest companyRequest, String cpEmail) {
+//    public CompanyResponse searchCompany (CompanyRequest companyRequest, String cpEmail) {
 //        Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(cpEmail);
 //        if(companyOpt.isPresent()) {
 //            CompanyEntity company = companyOpt.get();
@@ -119,7 +119,7 @@ public class CompanyBusiness {
 //
 //        }
 
-    }
+//    }
 
     public CompanyLoginResponse login (CompanyLoginRequest request) {
         if(request == null) {

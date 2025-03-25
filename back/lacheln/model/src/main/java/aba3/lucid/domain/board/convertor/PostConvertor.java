@@ -13,7 +13,7 @@ import java.util.List;
 public class PostConvertor {
 
     /**
-     * 게시글 작성 요청(PostRequest) → DB 저장용 Entity로 변환
+     * 게시글 작성 요청 → Entity 변환
      */
     public PostEntity toEntity(PostRequest request, BoardEntity board, UsersEntity user) {
         return PostEntity.builder()
@@ -26,13 +26,14 @@ public class PostConvertor {
     }
 
     /**
-     * 게시글 목록 조회용 변환 (이미지 제외)
+     * 게시글 목록 응답 DTO 변환
+     * UUID는 제외하고 닉네임만 포함
      */
     public PostListResponse toListResponse(PostEntity post, int likeCount, int viewCount) {
         return PostListResponse.builder()
                 .postId(post.getPostId())
                 .postTitle(post.getPostTitle())
-                .userId(post.getUsersEntity().getUserId())
+                .userNickName(post.getUsersEntity().getUserNickName())
                 .category(post.getBoard().getBoardName())
                 .postCreate(post.getPostCreate())
                 .likeCount(likeCount)
@@ -41,7 +42,8 @@ public class PostConvertor {
     }
 
     /**
-     * 게시글 상세 조회용 변환 (이미지 포함)
+     * 게시글 상세 응답 DTO 변환
+     * UUID는 제외하고 닉네임만 포함
      */
     public PostDetailResponse toDetailResponse(PostEntity post, List<String> imageUrls) {
         return PostDetailResponse.builder()
@@ -53,7 +55,7 @@ public class PostConvertor {
                 .postStatus(post.getPostStatus())
                 .boardId(post.getBoard().getBoardId())
                 .category(post.getBoard().getBoardName())
-                .userId(post.getUsersEntity().getUserId())
+                .userNickName(post.getUsersEntity().getUserNickName())
                 .imageUrls(imageUrls)
                 .build();
     }

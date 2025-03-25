@@ -37,7 +37,6 @@ public class CompanyController {
 
     @PostMapping("/signup")
     public API<CompanyResponse> registerCompany (
-            @Valid
             @RequestBody CompanyRequest companyRequest
 
     ) {
@@ -59,15 +58,15 @@ public class CompanyController {
         return API.OK(companyResponse);
     }
 
-//    @GetMapping("/search")
-//    public API<CompanyResponse> searchCompany (
-//            @PathVariable String cpEmail,
-//            @Valid
-//            @RequestBody CompanyRequest companyRequest
-//    ) {
-//        CompanyResponse companyResponse = companyBusiness.searchCompany(companyRequest,cpEmail);
-//        return API.OK(companyResponse);
-//    }
+    @GetMapping("/search/{email}")
+    public API<CompanyResponse> searchCompany (
+            @PathVariable String email,
+            @Valid
+            @RequestBody CompanyRequest companyRequest
+    ) {
+        CompanyResponse companyResponse = companyBusiness.searchCompany(companyRequest, email);
+        return API.OK(companyResponse);
+    }
 
     @DeleteMapping("/delete/{companyId}")
     public API<CompanyResponse> deleteCompany (

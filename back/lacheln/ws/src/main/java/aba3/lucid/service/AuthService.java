@@ -31,7 +31,7 @@ public class AuthService {
                 .secure(true)
                 .sameSite("None") // 개발단계에서는 None 배포 시 strict
                 .path("/")
-                .maxAge(75400)
+                .maxAge(1000*60*60*24*14)
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", refreshToken)
@@ -39,7 +39,7 @@ public class AuthService {
                 .secure(true)
                 .sameSite("None") // 개발단계에서는 None 배포 시 strict
                 .path("/")
-                .maxAge(75400)
+                .maxAge(1000*60*60*24*14)
                 .build();
 
         responseCookies.put("AccessToken", accessCookie);

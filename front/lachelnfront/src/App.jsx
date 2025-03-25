@@ -13,13 +13,14 @@ import CompanySidebar from "./components/Company/Basic/CompanySidebar";
 import MainCompany from "./components/Company/MainCompany";
 import ModifyInfo from "./components/Company/Companyinfo/Modifyinfo";
 import Statistics from "./components/Company/Companyinfo/Statistics";
-import ProductManagement from "./components/Company/Management/Product";
+import ProductManagement from "./components/Company/Management/Product/Product";
 import OrderManagement from "./components/Company/Management/Order";
 import ReviewManagement from "./components/Company/Management/Review";
 import Collaboration from "./components/Company/Work/Collaboration";
 import Messenger from "./components/Company/Work/Messenger";
 import Notification from "./components/Company/Work/Notification";
 import Schedule from "./components/Company/Work/Schedule";
+import AddProduct from "./components/Company/Management/Product/AddProduct.jsx";
 
 function Home() {
     return (
@@ -29,19 +30,29 @@ function Home() {
     );
 }
 
-// ✅ `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
+// `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
 function CompanyLayout({ children }) {
     return (
-        <div>
-            <CompanyHeader />
-            <div className="flex">
-                <CompanySidebar />
-                <div className="flex-grow p-4">{children}</div>
+        <div className="min-h-screen flex flex-col bg-white">
+            <CompanyHeader className="h-12 min-h-[48px] max-h-[48px] flex-shrink-0" />
+
+            <div className="flex flex-1 overflow-auto">
+                <div className="w-60 flex flex-col min-h-full overflow-y-auto overflow-x-hidden flex-shrink-0 bg-gray-100 border-r border-gray-300 box-border">
+                    <CompanySidebar />
+                </div>
+
+                <div className="flex flex-grow p-4 bg-white min-h-full overflow-auto">
+                    {children}
+                </div>
             </div>
-            <Footer />
+
+            <Footer className="h-12 min-h-[48px] max-h-[48px] flex-shrink-0 mt-auto" />
         </div>
     );
 }
+
+
+
 
 function Layout({ children }) {
     const location = useLocation();
@@ -85,6 +96,7 @@ function App() {
                 <Route path="/company/modifyinfo" element={<CompanyLayout><ModifyInfo /></CompanyLayout>} />
                 <Route path="/company/statistics" element={<CompanyLayout><Statistics /></CompanyLayout>} />
                 <Route path="/company/product" element={<CompanyLayout><ProductManagement /></CompanyLayout>} />
+                <Route path="/company/product/add" element={<CompanyLayout><AddProduct/></CompanyLayout>} />
                 <Route path="/company/order" element={<CompanyLayout><OrderManagement /></CompanyLayout>} />
                 <Route path="/company/review" element={<CompanyLayout><ReviewManagement /></CompanyLayout>} />
                 <Route path="/company/collaboration" element={<CompanyLayout><Collaboration /></CompanyLayout>} />

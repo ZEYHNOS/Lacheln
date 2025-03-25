@@ -4,12 +4,12 @@ import CompanyNav from "./CompanyNavgation/CompanyNav.jsx";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#845EC2] text-white py-6 px-12">
-      <div className="grid grid-cols-3 gap-4 pl-20 items-start"> {/* items-start 추가됨 */}
+    <footer className="bg-[#845EC2] text-white h-auto py-2 px-8">
+      <div className="grid grid-cols-3 gap-2 pl-10 items-start"> 
         
         {/* 좌측 */}
         <div className="space-y-2 mt-2">
-          <h2 className="text-3xl font-inknut font-semibold mb-2">L ä c h e l n</h2>
+          <h2 className="text-2xl font-inknut font-semibold mb-2">L ä c h e l n</h2>
           <p className="text-sm">레 헬 른</p>
           <p className="text-sm">㈜영진전문대학교</p>
           <p className="text-sm">대표이사 손지훈</p>

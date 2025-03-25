@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 
 function CompanyHeader() {
     return (
-        <header className="bg-white shadow-md flex flex-col justify-between items-center relative border-b-2 border-[#845ec2] w-full py-8">
+        <header className="bg-white flex flex-col justify-between items-center relative border-b-2 border-[#845ec2] w-full py-8">
             <div className="flex justify-between items-center w-full px-6">
                 <div className="w-16"></div>
                 <Link to="/company" className="text-center my-1">

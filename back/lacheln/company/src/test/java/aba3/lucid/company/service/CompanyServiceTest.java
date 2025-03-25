@@ -4,7 +4,6 @@ package aba3.lucid.company.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.company.business.CompanyBusiness;
-import aba3.lucid.domain.company.dto.CompanyLoginRequest;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
@@ -33,37 +32,37 @@ public class CompanyServiceTest {
     @Rollback
     public void registerCompany() throws Exception {
         CompanyRequest companyRequest = CompanyRequest.builder()
-                .cpEmail("Ceri@gmail.com")
-                .cpPassword("84u4848hf")
-                .cpPasswordConfirm("84u4848hf")
-                .cpName("Shahid")
-                .cpRepName("Ganbarov")
-                .cpMainContact("00105447795")
-                .cpAddress("Daegu City")
-                .cpRole("COMPANY")
-                .cpBnRegNo("879hdhdhhd")
-                .cpMos("1234567890")
-                .cpProfile("default_profile.jpg")
-                .cpExplain("A company for testing purposes.")
-                .cpCategory(CompanyCategory.D)
-                .cpStatus(CompanyStatus.ACTIVATE)
-                .cpContact("01012345678")
-                .cpFax("02-1234-5678")
-                .cpPostalCode("12345")
+                .email("Ceri88@gmail.com")
+                .password("84u4848hf")
+                .passwordConfirm("84u4848hf")
+                .name("Shahid")
+                .repName("Ganbarov")
+                .mainContact("00105447795")
+                .address("Daegu City")
+                .role("COMPANY")
+                .bnRegNo("123-45-67890")
+                .mos("2019-서울강남-01234")
+                .profile("default_profile.jpg")
+                .explain("A company for testing purposes.")
+                .category(CompanyCategory.D)
+                .status(CompanyStatus.ACTIVATE)
+                .contact("01012345678")
+                .fax("02-1234-5678")
+                .postalCode("12345")
                 .build();
-        Long savedId = companyBusiness.registerCompany(companyRequest).getCpId();
+        Long savedId = companyBusiness.registerCompany(companyRequest).getId();
         CompanyEntity savedCompany = companyRepository.findById(savedId).orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND,"업체가 없습니다"));
-        assertEquals(companyRequest.getCpName(), savedCompany.getCpName());
-        assertEquals(companyRequest.getCpEmail(), savedCompany.getCpEmail());
-        assertEquals(companyRequest.getCpRole(), savedCompany.getCpRole());
-        assertEquals(companyRequest.getCpBnRegNo(), savedCompany.getCpBnRegNo());
-        assertEquals(companyRequest.getCpMos(), savedCompany.getCpMos());
-        assertEquals(companyRequest.getCpStatus(), savedCompany.getCpStatus());
-        assertEquals(companyRequest.getCpProfile(), savedCompany.getCpProfile());
-        assertEquals(companyRequest.getCpExplain(), savedCompany.getCpExplain());
-        assertEquals(companyRequest.getCpCategory(), savedCompany.getCpCategory());
-        assertEquals(companyRequest.getCpContact(), savedCompany.getCpContact());
-        assertEquals(companyRequest.getCpFax(), savedCompany.getCpFax());
+        assertEquals(companyRequest.getName(), savedCompany.getCpName());
+        assertEquals(companyRequest.getEmail(), savedCompany.getCpEmail());
+        assertEquals(companyRequest.getRole(), savedCompany.getCpRole());
+        assertEquals(companyRequest.getBnRegNo(), savedCompany.getCpBnRegNo());
+        assertEquals(companyRequest.getMos(), savedCompany.getCpMos());
+        assertEquals(companyRequest.getStatus(), savedCompany.getCpStatus());
+        assertEquals(companyRequest.getProfile(), savedCompany.getCpProfile());
+        assertEquals(companyRequest.getExplain(), savedCompany.getCpExplain());
+        assertEquals(companyRequest.getCategory(), savedCompany.getCpCategory());
+        assertEquals(companyRequest.getContact(), savedCompany.getCpContact());
+        assertEquals(companyRequest.getFax(), savedCompany.getCpFax());
     }
 
 //    @Test

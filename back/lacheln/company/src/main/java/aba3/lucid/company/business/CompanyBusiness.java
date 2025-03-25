@@ -16,8 +16,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Component
 public class CompanyBusiness {
     private final CompanyService companyService;
@@ -52,14 +50,13 @@ public class CompanyBusiness {
             throw  new ApiException(ErrorCode.BAD_REQUEST, "CompanyRequest 값을 받지 못했습니다");
         }
 
-        if(!request.getCpPassword().equals(request.getCpPasswordConfirm())) {
+        if(!request.getPassword().equals(request.getPasswordConfirm())) {
             throw  new ApiException(ErrorCode.BAD_REQUEST, "비밀번호와 비밀번호 확인 값이 일치하지 않습니다");
         }
 
-        validateDuplicateCompany(request.getCpEmail());
+        validateDuplicateCompany(request.getEmail());
         //encodePassword 메서드로  email을 인자로 받도록 했습니다
-        String hashedPassword = encodePassword(request.getCpPassword(), request.getCpEmail());
-        CompanyEntity companyEntity = companyConvertor.toEntity(request, hashedPassword);
+        String hashedPassword = encodePassword(request.getPassword(), request.getEmail());
 
         CompanyEntity savedCompanyEntity = companyConvertor.toEntity(request, hashedPassword);
         CompanyEntity savedCompanyEntitySaved = companyRepository.save(savedCompanyEntity);

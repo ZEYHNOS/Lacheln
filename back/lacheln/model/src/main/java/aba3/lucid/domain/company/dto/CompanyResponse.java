@@ -21,36 +21,36 @@ public class CompanyResponse implements Serializable {
     //todo list
     //CompanyResponse 만들기
 
-    private Long cpId;
+    private Long id;
 
-    private String cpEmail;
+    private String email;
 
-    private String cpName;
+    private String name;
 
-    private String cpRepName;
+    private String repName;
 
-    private String cpMainContact;
+    private String mainContact;
 
-    private String cpAddress;
+    private String address;
 
-    private String cpRole;
+    private String role;
 
-    private String cpPostalCode;
+    private String postalCode;
 
-    private String cpBnRegNo;
+    private String bnRegNo;
 
-    private String cpMos;
+    private String mos;
 
-    private CompanyStatus cpStatus;
+    private CompanyStatus status;
 
-    private String cpProfile;
+    private String profile;
 
-    private String cpExplain;
+    private String explain;
 
-    private CompanyCategory cpCategory;
+    private CompanyCategory category;
 
-    private String cpContact;
+    private String contact;
 
-    private String cpFax;
+    private String fax;
 
 }

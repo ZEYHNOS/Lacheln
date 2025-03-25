@@ -1,20 +1,15 @@
 package aba3.lucid.domain.company.entity;
 
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.password.PasswordEncoder;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 @Getter
 @Entity
@@ -60,11 +55,17 @@ public class CompanyEntity {
     private String cpPostalCode;
 
 //     사업자등록번호
-    @Column(name = "cp_bn_reg_no", columnDefinition = "CHAR(10)", nullable = false)
+    @Column(name = "cp_bn_reg_no", columnDefinition = "CHAR(15)", nullable = false)
+    @Pattern( regexp = "^\\d{3}-\\d{2}-\\d{5}$",
+            message = "사업자등록번호 현식은 'xxx-xx-xxxx'로 입력해야 합니다.")
     private String cpBnRegNo;
 
     // 통신판매업신고번호
     @Column(name = "cp_mos", columnDefinition = "VARCHAR(20)", nullable = false)
+    @Pattern(
+            regexp = "^\\d{4}-[\\uAC00-\\uD7A3]+-\\d{5}$",
+            message = "통신판매업신고번호 형식은 '2019-서울강남-01234'로 입력해야 합니다."
+    )
     private String cpMos;
 
     // 입점 상태
@@ -99,9 +100,9 @@ public class CompanyEntity {
     private String cpRole = "COMPANY";
 
     public void updateCompanyRequest(CompanyRequest request) {
-        updateCpPassword(request.getCpPassword());
-        updateCpMainContact(request.getCpMainContact());
-        updateCpAddress(request.getCpAddress());
+        updateCpPassword(request.getPassword());
+        updateCpMainContact(request.getMainContact());
+        updateCpAddress(request.getAddress());
         
     }
 

@@ -8,20 +8,20 @@ export default function CompanyRegisterForm() {
   const [businessAuthMessage, setBusinessAuthMessage] = useState("");
   const [salesAuthMessage, setSalesAuthMessage] = useState("");
   const [isVerifiedPhone, setIsVerifiedPhone] = useState(false);
-  const [phoneAuthMessage, setPhoneAuthMessage] = useState("");  const [email, setEmail] = useState("");
+  const [phoneAuthMessage, setPhoneAuthMessage] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordConfirm, setConfirmPassword] = useState("");
+  const [repName, setRepName] = useState("");
   const [name, setName] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [mainContact, setMainContact] = useState("");
   const [authCode, setAuthCode] = useState("");
-  const [businessNumber, setBusinessNumber] = useState("");
+  const [bnRegNo, setBnRegNo] = useState("");
   const [address, setAddress] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
-  const [zipCode, setZipCode] = useState("");
+  const [postalCode, setPostalCode] = useState("");
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [sentCode, setSentCode] = useState("");
   const [firstNum, setFirstNum] = useState("");
   const [koreanText, setKoreanText] = useState("");
@@ -29,47 +29,75 @@ export default function CompanyRegisterForm() {
 
   useEffect(() => {
     validateForm();
-  }, [email, password, confirmPassword, phone, authCode, businessNumber, address, zipCode, detailAddress, isVerifiedPhone, isVerifiedBusiness, isVerifiedSales]);
+  }, [email, password, passwordConfirm, mainContact, authCode, bnRegNo, address, postalCode, detailAddress, isVerifiedPhone, isVerifiedBusiness, isVerifiedSales]);
 
   const validateForm = () => {
     let newErrors = {};
-  
     const isSalesNumberValid = firstNum.length === 4 && koreanText.length > 0 && lastNum.length >= 1;
-  
     if (!email.trim()) newErrors.email = "이메일을 입력해주세요.";
     if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "사용할 수 없는 이메일입니다.";
     if (!password.trim()) newErrors.password = "비밀번호를 입력해주세요.";
-    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+|~=`{}\[\]:";'<>?,.\/]{8,20}$/.test(password)) newErrors.password = "사용할 수 없는 비밀번호입니다.";
-    if (password !== confirmPassword) newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
-    if (!phone.trim()) newErrors.phone = "전화번호를 입력해주세요.";
+    if (!passwordConfirm.trim()) newErrors.passwordConfirm = "비밀번호 확인을 입력해주세요.";
+    if (password !== passwordConfirm) newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
+    if (!mainContact.trim()) newErrors.mainContact = "대표자 전화번호를 입력해주세요.";
     if (!isVerifiedPhone) newErrors.authCode = "전화번호 인증을 완료해주세요.";
-    if (!businessNumber.trim()) newErrors.businessNumber = "사업자 등록번호를 입력해주세요.";
-    if (!isVerifiedBusiness) newErrors.businessNumber = "사업자 등록번호 인증을 완료해주세요.";
-    if (!isSalesNumberValid) newErrors.salesNumber = "통신판매업 신고 번호를 올바르게 입력해주세요.";
-    if (!isVerifiedSales) newErrors.salesNumber = "통신판매업 신고 번호 인증을 완료해주세요.";
-    if (!address.trim() || !zipCode.trim() || !detailAddress.trim()) newErrors.address = "주소를 입력해주세요.";
-  
+    if (!bnRegNo.trim()) newErrors.bnRegNo = "사업자등록번호를 입력해주세요.";
+    if (!isVerifiedBusiness) newErrors.bnRegNo = "사업자등록번호 인증을 완료해주세요.";
+    if (!isSalesNumberValid) newErrors.mos = "통신판매업 신고 번호를 올바르게 입력해주세요.";
+    if (!isVerifiedSales) newErrors.mos = "통신판매업 신고 번호 인증을 완료해주세요.";
+    if (!address.trim() || !postalCode.trim() || !detailAddress.trim()) newErrors.address = "주소를 입력해주세요.";
     setErrors(newErrors);
     setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
-
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!isFormValid) {
-      alert("모든 필수 항목을 올바르게 입력해주세요.");
-      return;
+        alert("모든 필수 항목을 올바르게 입력해주세요.");
+        return;
     }
-    navigate("/register/success");
-  };
+    const requestData = {
+        email,
+        password,
+        passwordConfirm,
+        name,
+        repName,
+        mainContact,
+        bnRegNo,
+        mos: `${firstNum}-${koreanText}-${lastNum}`,
+        address,
+        postalCode,
+        profile: "default-profile-image.jpg", // 기본 프로필 이미지 또는 파일 경로
+        category: "S", // 기본 카테고리 값
+        status: "ACTIVATE",   // 기본 상태 값
+        role: "USER"        // 기본 역할 값
+    };
+    try {
+        const response = await fetch("http://192.168.0.121:5050/company/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData)
+        });
+        if (response.ok) {
+            alert("회원가입이 성공적으로 완료되었습니다!");
+            navigate("/register/success");
+        } else {
+            const errorData = await response.json();
+            alert(`회원가입 실패: ${errorData.message}`);
+        }
+    } catch (error) {
+        alert("서버와의 통신 중 문제가 발생했습니다.");
+    }
+    };
+
 
   // 인증 코드 전송 (더미 데이터)
   const handleSendAuthCode = () => {
     setSentCode(""); // 기존 코드 초기화
 
-    if (phone === "01037552866") {
+    if (mainContact === "01037552866") {
       setSentCode("000000");  // 더미 인증 코드 설정
       setPhoneAuthMessage("인증번호가 전송되었습니다.");
-      setErrors((prevErrors) => ({ ...prevErrors, phone: "" }));
+      setErrors((prevErrors) => ({ ...prevErrors, mainContact: "" }));
     } else {
       setPhoneAuthMessage("❌ 인증 실패: 올바른 전화번호를 입력해주세요.");
     }
@@ -100,7 +128,7 @@ export default function CompanyRegisterForm() {
     new window.daum.Postcode({
         oncomplete: function (data) {
             setAddress(data.roadAddress);
-            setZipCode(data.zonecode);
+            setPostalCode(data.zonecode);
         },
     }).open();
   };
@@ -108,12 +136,12 @@ export default function CompanyRegisterForm() {
   // 사업자 등록번호 자동 하이픈 삽입
   const formatBusinessNumber = (value) => {
     value = value.replace(/\D/g, "").slice(0, 10); // 숫자만 입력, 10자리 제한
-    return value.replace(/^(\d{3})(\d{2})(\d{0,5})$/, (_, p1, p2, p3) => {
+    return value.replace(/^([0-9]{3})([0-9]{2})([0-9]{0,5})$/, (_, p1, p2, p3) => {
       return `${p1}-${p2}-${p3}`;
     });
   };
   const handleBusinessNumberChange = (e) => {
-    setBusinessNumber(formatBusinessNumber(e.target.value));
+    setBnRegNo(formatBusinessNumber(e.target.value));
   };
 
   // 통신판매업신고번호 입력
@@ -132,7 +160,7 @@ export default function CompanyRegisterForm() {
   
   // 사업자 등록번호 인증 
   const handleVerifyBusinessNumber = () => {
-    const formattedBusinessNumber = businessNumber.replace(/-/g, "");
+    const formattedBusinessNumber = bnRegNo.replace(/-/g, "");
 
     if (formattedBusinessNumber === "0000000000") {
       setIsVerifiedBusiness(true);
@@ -159,6 +187,7 @@ export default function CompanyRegisterForm() {
     setKoreanText(e.target.value);
   };
 
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-white p-4">
       <div className="w-[900px] p-10 bg-white shadow-lg rounded-2xl border border-gray-200">
@@ -170,13 +199,11 @@ export default function CompanyRegisterForm() {
         <h2 className="text-xl text-[#845EC2] font-semibold mt-6">업체 회원가입</h2>
 
         <div className="mt-4 space-y-4">
-          {/* 이메일, 비밀번호, 회사명 */}
-          {[
-            { label: "이메일", value: email, setValue: setEmail, type: "email", error: errors.email, placeholder: "이메일 입력" },
+          {[  { label: "이메일", value: email, setValue: setEmail, type: "email", error: errors.email, placeholder: "이메일 입력" },
             { label: "비밀번호", value: password, setValue: setPassword, type: "password", error: errors.password, placeholder: "비밀번호 입력 (영문, 숫자, 특수문자 포함 8~20자)" },
-            { label: "비밀번호 확인", value: confirmPassword, setValue: setConfirmPassword, type: "password", error: errors.confirmPassword, placeholder: "비밀번호 재입력" },
-            { label: "이름", value: name, setValue: setName, type: "text", placeholder: "이름 입력" },
-            { label: "업체명", value: companyName, setValue: setCompanyName, type: "text", placeholder: "업체명 입력" },
+            { label: "비밀번호 확인", value: passwordConfirm, setValue: setConfirmPassword, type: "password", error: errors.confirmPassword, placeholder: "비밀번호 재입력" },
+            { label: "이름", value: repName, setValue: setRepName, type: "text", placeholder: "이름 입력" },
+            { label: "업체명", value: name, setValue: setName, type: "text", placeholder: "업체명 입력" },
           ].map(({ label, value, setValue, type, error, placeholder }) => (
             <div key={label}>
               <label className="text-sm text-[#845EC2]">{label}</label>
@@ -191,21 +218,20 @@ export default function CompanyRegisterForm() {
             </div>
           ))}
 
-          {/* 전화번호 입력 + 인증번호 전송 버튼 */}
           <div>
             <label className="text-sm text-[#845EC2]">전화번호</label>
             <div className="flex space-x-2">
               <input
                 type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                value={mainContact}
+                onChange={(e) => setMainContact(e.target.value)}
                 className="flex-1 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1"
                 placeholder="전화번호 입력"
                 disabled={isVerifiedPhone}
               />
               <button
-                className={`px-4 py-2 rounded-md mt-1 ${phone ? "bg-[#845EC2] text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
-                disabled={!phone || isVerifiedPhone}
+                className={`px-4 py-2 rounded-md mt-1 ${mainContact ? "bg-[#845EC2] text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                disabled={!mainContact || isVerifiedPhone}
                 onClick={handleSendAuthCode}
               >
                 {isVerifiedPhone ? "✅ 인증 완료" : "인증 코드 보내기"}
@@ -214,7 +240,6 @@ export default function CompanyRegisterForm() {
             {phoneAuthMessage && <p className="text-green-500 text-xs mt-1">{phoneAuthMessage}</p>}
           </div>
 
-          {/* 인증번호 입력 + 인증 확인 버튼 */}
           <div>
             <label className="text-sm text-[#845EC2]">인증번호</label>
             <div className="flex space-x-2">
@@ -254,7 +279,7 @@ export default function CompanyRegisterForm() {
             </div>
             <input
               type="text"
-              value={zipCode}
+              value={postalCode}
               readOnly
               className="w-full p-2 border border-[#845EC2] bg-white text-black rounded-md mt-2"
               placeholder="우편번호"
@@ -274,7 +299,7 @@ export default function CompanyRegisterForm() {
             <div className="flex space-x-2">
               <input
                 type="text"
-                value={businessNumber}
+                value={bnRegNo}
                 onChange={handleBusinessNumberChange}
                 className="flex-1 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1"
                 placeholder="사업자 등록 번호 입력 (예: 123-45-67890)"
@@ -283,7 +308,7 @@ export default function CompanyRegisterForm() {
               <button
                 className="px-4 py-2 rounded-md bg-[#845EC2] text-white"
                 onClick={handleVerifyBusinessNumber}
-                disabled={isVerifiedSales}
+                disabled={isVerifiedBusiness}
               >
                 {isVerifiedBusiness ? "✅ 인증 완료" : "조회하기"}
               </button>
@@ -305,7 +330,6 @@ export default function CompanyRegisterForm() {
               disabled={isVerifiedSales}
             />
             <span className="text-[#845EC2]">-</span>
-
             <select
               value={koreanText}
               onChange={handleKoreanTextChange}
@@ -314,14 +338,10 @@ export default function CompanyRegisterForm() {
             >
               <option value="" disabled>지역 선택</option>
               {koreanOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
+                <option key={option} value={option}>{option}</option>
               ))}
             </select>
-
             <span className="text-[#845EC2]">-</span>
-
             <input
               type="text"
               value={lastNum}
@@ -331,7 +351,6 @@ export default function CompanyRegisterForm() {
               maxLength={5}
               disabled={isVerifiedSales}
             />
-
             <button
               className="px-4 py-2 rounded-md bg-[#845EC2] text-white"
               onClick={handleVerifySalesNumber}
@@ -356,47 +375,3 @@ export default function CompanyRegisterForm() {
       </div>
   );
 }
-
-// const handleRegister = async () => {
-//   if (!isFormValid) {
-//     alert("모든 필수 항목을 올바르게 입력해주세요.");
-//     return;
-//   }
-
-//   // 백엔드로 보낼 데이터 구성
-//   const requestData = {
-//     email,
-//     password,
-//     name,
-//     companyName,
-//     phone,
-//     businessNumber,
-//     salesNumber: `${firstNum}-${koreanText}-${lastNum}`, // 통신판매업 신고번호
-//     address: {
-//       roadAddress: address,
-//       zipCode,
-//       detailAddress
-//     }
-//   };
-
-//   try {
-//     const response = await fetch("https://lacheln.com/register/company", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json"
-//       },
-//       body: JSON.stringify(requestData)
-//     });
-
-//     if (response.ok) {
-//       alert("회원가입이 성공적으로 완료되었습니다!");
-//       navigate("/register/success"); // 회원가입 성공 시 이동
-//     } else {
-//       const errorData = await response.json();
-//       alert(`회원가입 실패: ${errorData.message}`);
-//     }
-//   } catch (error) {
-//     console.error("회원가입 중 오류 발생:", error);
-//     alert("서버와의 통신 중 문제가 발생했습니다.");
-//   }
-// };

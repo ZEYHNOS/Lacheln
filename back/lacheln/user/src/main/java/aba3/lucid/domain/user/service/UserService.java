@@ -7,13 +7,18 @@ import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UsersRepository usersRepository;
 
-    public UsersEntity findById(String userId) {
-        return usersRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(UserCode.USER_NOT_FOUND, "User Not Found"));
+    public Optional<UsersEntity> findById(String userId) {
+        return usersRepository.findById(userId);
+    }
+
+    public void saveOAuthUser(UsersEntity usersEntity) {
+        usersRepository.save(usersEntity);
     }
 }

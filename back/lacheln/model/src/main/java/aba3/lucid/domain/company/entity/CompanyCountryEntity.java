@@ -1,6 +1,6 @@
 package aba3.lucid.domain.company.entity;
 
-import aba3.lucid.domain.country.entity.CountryEntity;
+import aba3.lucid.domain.user.enums.CountryEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "cp_country_mapping")
+@Table(name = "cp_country")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -24,8 +24,8 @@ public class CompanyCountryEntity {
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_id" )
-    private CountryEntity country;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cp_country" )
+    private CountryEnum country;
 
 }

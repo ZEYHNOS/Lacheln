@@ -62,7 +62,17 @@ public class SecurityConfig {
                         .failureHandler(Oauth2LoginFailureHandler))
                 .formLogin(form -> form
                         .loginPage("/login")  // 로그인 페이지 직접 지정
-                        .permitAll())
+                        .permitAll()
+                        .defaultSuccessUrl("/home", true)  // 로그인 성공 시 이동할 페이지
+                        .failureUrl("/login")  // 로그인 실패 시 이동할 페이지
+                        .successHandler((request, response, authentication) -> {
+                            // 로그인 성공 시 추가 처리 (예: 성공 로그 출력 등)
+                            response.sendRedirect("/home");  // 예: 홈 페이지로 리다이렉트
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            // 로그인 실패 시 추가 처리 (예: 실패 로그 출력 등)
+                            response.sendRedirect("/login");  // 실패 시 로그인 페이지로 리다이렉트
+                        }))
                 .httpBasic(AbstractHttpConfigurer::disable);
 //                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 적용
         return http.build();

@@ -1,6 +1,5 @@
 package aba3.lucid.domain.user.entity;
 
-import aba3.lucid.domain.country.entity.CountryEntity;
 import aba3.lucid.domain.user.enums.*;
 import com.fasterxml.uuid.Generators;
 import jakarta.persistence.*;
@@ -26,9 +25,9 @@ public class UsersEntity {
     @Column(name = "user_id", columnDefinition = "CHAR(36)") //UUID 36글자
     private String userId; //소비자ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_id")
-    private CountryEntity country; //국가명코드 ISO 3166-1 alpha-2
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_country", columnDefinition = "CHAR(2)", nullable = false)
+    private CountryEnum userCountry; //국가명코드 ISO 3166-1 alpha-2
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_language", columnDefinition = "CHAR(3)", nullable = false)
@@ -50,7 +49,7 @@ public class UsersEntity {
     @Column(name = "user_nickname", columnDefinition = "CHAR(255)", nullable = false)
     private String userNickName; //닉네임
 
-    @Column(name = "user_birthday", nullable = false)
+    @Column(name = "user_birthday")
     private LocalDate userBirthday; //생년월일
 
     @Enumerated(EnumType.STRING)
@@ -92,7 +91,7 @@ public class UsersEntity {
     private GenderEnum userGender; //성별     남자 M 여자 F
 
     @Column(name = "user_mileage", nullable = false, columnDefinition = "BIGINT")
-    private BigInteger mileage; //마일리지
+    private BigInteger userMileage; //마일리지
 
     @Column(name = "user_role", nullable = false, columnDefinition = "CHAR(4)")
     private String userRole = "USER"; //유저 권한

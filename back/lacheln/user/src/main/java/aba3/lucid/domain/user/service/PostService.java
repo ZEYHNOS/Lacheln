@@ -162,9 +162,6 @@ public class PostService {
             postImageRepository.deleteAllInBatch(toDelete);
         }
 
-
-
-
         // 제목, 내용, 수정일 갱신
         post.updatePost(
                 request.getPostTitle(),

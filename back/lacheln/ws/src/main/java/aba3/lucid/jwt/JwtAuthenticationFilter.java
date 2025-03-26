@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Map;
 
 @Component
@@ -42,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .secure(true)
                         .sameSite("None") // 개발단계에서는 None 배포 시 strict
                         .path("/")
-                        .maxAge(75400)
+                        .maxAge(Duration.ofDays(10))
                         .build();
                 response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
             }

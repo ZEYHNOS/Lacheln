@@ -8,6 +8,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class AuthService {
                 .secure(true)
                 .sameSite("None") // 개발단계에서는 None 배포 시 strict
                 .path("/")
-                .maxAge(1000*60*60*24*14)
+                .maxAge(Duration.ofDays(10))
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", refreshToken)
@@ -39,7 +40,7 @@ public class AuthService {
                 .secure(true)
                 .sameSite("None") // 개발단계에서는 None 배포 시 strict
                 .path("/")
-                .maxAge(1000*60*60*24*14)
+                .maxAge(Duration.ofDays(10))
                 .build();
 
         responseCookies.put("AccessToken", accessCookie);

@@ -21,6 +21,14 @@ public class ProductService {
     private final ProductRepository productRepository;
 
 
+    public List<ProductEntity> getCompanyProductList(long companyId) {
+        log.info("CompanyProductList : {}", companyId);
+        List<ProductEntity> productEntityList = productRepository.findAllByCompany_CpId(companyId);
+
+        log.info("CompanyProductList : {}", productEntityList);
+        return productEntityList;
+    }
+
     // todo 검색어 만들기
     public List<ProductEntity> getProductList(CompanyCategory category, int minimum, int maximum, boolean isDesc) {
         Sort sort = isDesc ? Sort.by(Sort.Order.desc("id")) : Sort.by(Sort.Order.asc("id"));
@@ -46,5 +54,11 @@ public class ProductService {
     public ProductEntity findByIdWithThrow(long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+    }
+
+    public void updateStatusToPackage(ProductEntity product) {
+        product.updateStatusToPackage();
+
+        productRepository.save(product);
     }
 }

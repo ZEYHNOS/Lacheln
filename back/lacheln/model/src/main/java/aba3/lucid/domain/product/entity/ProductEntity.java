@@ -111,14 +111,47 @@ public abstract class ProductEntity {
         this.pdName = name;
     }
 
+    // 상품 삭제 복구하기
+    // TODO 권한 부여하기
+    public void recoverProduct(String role) {
+        if (!role.equals("ADMIN")) {
+            throw new ApiException(ErrorCode.UNAUTHORIZED);
+        }
+
+        this.pdStatus = ProductStatus.INACTIVE;
+    }
+
 
     // 상태 변경
-    public void updateStatus(ProductStatus status) {
-        if (status == null) {
+    public void updateStatus(ProductStatus changeStatus) {
+        if (changeStatus == null) {
             throw new ApiException(ErrorCode.NULL_POINT, "상태 값이 존재하지 않습니다.");
         }
 
-        this.pdStatus = status;
+
+        // 비공개 -> 삭제
+        // TODO 예약 현황 확인하기 만약 예약자가 있다면 삭제 불가능
+        if (this.pdStatus == ProductStatus.INACTIVE
+                && changeStatus == ProductStatus.ACTIVE) {
+
+        }
+
+        this.pdStatus = changeStatus;
+    }
+
+    // 상품을 패키지에 등록
+    public void updateStatusToPackage() {
+        // 삭제 상태이거나 패키지 상태일 때(똑같은 상품이 2개의 패키지에 들어갔을 때 유효기간에 따라 관리가 어려움)
+        if (this.pdStatus == ProductStatus.REMOVE || this.pdStatus == ProductStatus.PACKAGE) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+
+        // 공개 상태일 때
+        if (this.pdStatus == ProductStatus.ACTIVE) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "비공개 상태로 변경해주세요");
+        }
+
+        this.pdStatus = ProductStatus.PACKAGE;
     }
 
 

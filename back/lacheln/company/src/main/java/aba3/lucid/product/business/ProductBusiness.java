@@ -12,6 +12,8 @@ import aba3.lucid.domain.packages.entity.PackageToProductEntity;
 import aba3.lucid.domain.product.converter.ProductConverter;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.enums.ProductStatus;
+import aba3.lucid.domain.product.studio.dto.StudioResponse;
 import aba3.lucid.packages.service.PackageService;
 import aba3.lucid.product.service.ProductService;
 import aba3.lucid.rabbitmq.Producer;
@@ -33,36 +35,43 @@ public class ProductBusiness {
 
     private final Producer producer;
 
+    // 특정 업체의 상품 리스트 todo 로직 제대로 짜기
     public List<ProductResponse> getProductList(CompanyCategory category, int minimum, int maximum, boolean isDesc) {
         List<ProductEntity> productEntityList = productService.getProductList(category, minimum, maximum, isDesc);
 
         return productConverter.toResponseList(productEntityList);
     }
 
+    // todo 메시지 보내기
     public void sendMessage(String message) {
         producer.sendMessage(message);
     }
 
 
+    // 상품을 패키지에 등록하기
     public ProductPackageInsertResponse packageRegister(long packageId, long companyId, long productId) {
         Validator.throwIfInvalidId(packageId, companyId);
 
         // 패키지 존재 유무 파악 및 해당 업체가 포함되는지
         PackageEntity packageEntity = packageService.findByPackIdAndCompanyIdWithThrow(packageId, companyId);
-
-        // 이미 해당 업체가 상품을 등록했는지
-
-
-        // 등록하려는 상품이 해당 업체의 것인지 TODO 리팩토링
         ProductEntity productEntity = productService.findByIdWithThrow(productId);
-        if (productEntity.getCompany().getCpId() != companyId) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
-        }
 
-        // 패키지에 상품 등록하기
+
+        // DTO -> Entity
         PackageToProductEntity packageToProductEntity = packageToProductConverter.toEntity(packageEntity, productEntity);
-        PackageToProductEntity newPackageToProductEntity = packageService.productPackageInsert(packageToProductEntity);
+        // 패키지에 상품 등록하기
+        PackageToProductEntity newPackageToProductEntity = packageService.productPackageInsert(packageToProductEntity, companyId, packageEntity, productEntity);
 
+        // Entity -> DTO
         return productConverter.toResponse(newPackageToProductEntity);
+    }
+
+    public List<ProductResponse> getValidProductList(long companyId) {
+        return productService.getCompanyProductList(companyId).stream()
+                // 삭제된 상품 제외하고 보여주기
+                .filter(it -> !it.getPdStatus().equals(ProductStatus.REMOVE))
+                .map(productConverter::toResponse)
+                .toList()
+                ;
     }
 }

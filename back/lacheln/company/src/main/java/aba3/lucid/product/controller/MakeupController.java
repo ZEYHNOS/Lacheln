@@ -1,9 +1,11 @@
 package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.makeup.dto.MakeUpResponse;
 import aba3.lucid.domain.product.makeup.dto.MakeupRequest;
 import aba3.lucid.product.business.MakeupBusiness;
+import aba3.lucid.product.business.ProductBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,6 +23,7 @@ import java.util.List;
 public class MakeupController {
 
     private final MakeupBusiness makeupBusiness;
+    private final ProductBusiness productBusiness;
 
     @PostMapping("/register")
     @Operation(summary = "메이크업 등록", description = "새로운 메이크업 상품을 등록")
@@ -64,11 +67,11 @@ public class MakeupController {
 
     @GetMapping("/list/{companyId}")
     @Operation(summary = "메이크업 상품 리스트", description = "삭제된 상품 제외한 모든 상품 보여주기")
-    public API<List<MakeUpResponse>> getMakeupList(
+    public API<List<ProductResponse>> getMakeupList(
             @PathVariable long companyId
     ) {
         // TODO 요청한 업체의 리스트인지 확인해야함
-        List<MakeUpResponse> makeupResponseList = makeupBusiness.getValidProductList(companyId);
+        List<ProductResponse> makeupResponseList = productBusiness.getValidProductList(companyId);
         log.debug("MakeupList makeupResponseList : {}", makeupResponseList);
 
         return API.OK(makeupResponseList);

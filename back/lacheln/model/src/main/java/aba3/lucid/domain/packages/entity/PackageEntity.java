@@ -70,20 +70,11 @@ public class PackageEntity {
     @Column(name = "pack_del_date", columnDefinition = "DATETIME")
     private LocalDateTime packDelDate; // 패키지 삭제 일
 
-    // TODO 상태 변경 로직
-    public void updatePackageStatus(PackageStatus status) {
-        Validator.throwIfNull(status);
+    // 상태 변경
+    public void updatePackageStatus(PackageStatus changeStatus) {
+        Validator.throwIfNull(changeStatus);
 
-        // curStatus = 미등록, changeStatus = 등록
-        // 패키지에 등록된 업체 모두 상품을 등록해야함
-
-        // curStatus = 등록, changeStatus = 미등록
-        // 패키지 예약을 비활성화한다
-
-        // curStatus = 미등록, changeStatus = 삭제
-        // 미등록된 상태여야하며 모든 예약이 완료되어야함(취소도 상관없음)
-
-        this.packStatus = status;
+        this.packStatus = changeStatus;
     }
 
 
@@ -106,6 +97,7 @@ public class PackageEntity {
     }
 
 
+    // 패키지를 같이하는 업체들이 다른 카테고리인지 확인하기
     private boolean isNotUniqueCompanyCategory(CompanyEntity packAdmin, CompanyEntity company1, CompanyEntity company2) {
         return packAdmin.getCpCategory() != company1.getCpCategory() &&
                 company1.getCpCategory() != company2.getCpCategory() &&
@@ -113,23 +105,29 @@ public class PackageEntity {
     }
 
 
+    // 중복으로 등록한 업체가 있는지 유무
     private boolean isNotDiffCompany(CompanyEntity packAdmin, CompanyEntity company1, CompanyEntity company2) {
         return packAdmin.equals(company1) || company1.equals(company2) || company2.equals(packAdmin);
     }
 
+    // 패키지명 변경
     public void updatePackageName(String name) {
         Validator.assertStringValid(name, 5,  30);
 
         this.packName = name;
     }
 
+    // 패키지 설명 변경
     public void updatePackageComment(String packComment) {
         Validator.assertStringValid(packComment, 10, 255);
 
         this.packComment = packComment;
     }
 
+    // 패키지 종료일 변경
     public void updatePackageEndDate(LocalDateTime endDate) {
+        // TODO 종료일 후에 예약이 존재하는지 유무 확인하기
+
         // 현재 날짜 + 1보다 커야함
         if (LocalDate.now().plusDays(1).isAfter(endDate.toLocalDate())) {
             throw new ApiException(ErrorCode.INVALID_PARAMETER);
@@ -138,12 +136,14 @@ public class PackageEntity {
         this.packEndDate = endDate;
     }
 
+    // 패키지 이미지 업데이트
     public void updatePackageImageUrl(String url) {
         Validator.assertStringValid(url, 0, url.length());
 
         this.packImageUrl = url;
     }
 
+    // 패키지 할인율 변경
     public void updatePackageDiscountrate(int packDiscountrate) {
         if (packDiscountrate < 0 || packDiscountrate > 100) {
             throw new ApiException(ErrorCode.INVALID_PARAMETER);
@@ -154,13 +154,10 @@ public class PackageEntity {
 
 
     public void updateAdditionalField(PackageUpdateRequest request) {
-        // TODO 상태 변경 로직
-        updatePackageStatus(request.getStatus());
         updatePackageName(request.getName());
         updatePackageComment(request.getComment());
         updatePackageEndDate(request.getEndDate());
         updatePackageImageUrl(request.getImageUrl());
         updatePackageDiscountrate(request.getDiscountrate());
-
     }
 }

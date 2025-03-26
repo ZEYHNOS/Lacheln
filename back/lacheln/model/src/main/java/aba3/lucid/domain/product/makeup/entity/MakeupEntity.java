@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@DiscriminatorValue("studio")
+@DiscriminatorValue("makeup")
 public class MakeupEntity extends ProductEntity {
 
     // 출장 여부

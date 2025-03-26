@@ -1,6 +1,7 @@
 package aba3.lucid.domain.product.dto.option;
 
 import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import lombok.*;
 
 import java.math.BigInteger;
@@ -15,17 +16,11 @@ public class ProductResponse {
     // 정렬을 위한 id
     private long id;
 
-    // 업체 명
-    private String companyName;
-
-    // 카테고리
-    private CompanyCategory companyCategory;
-
     // 상품 가격
-    private String productName;
+    private String name;
 
     // 설명
-    private String description;
+    private ProductStatus status;
 
     // 가격
     private BigInteger price;

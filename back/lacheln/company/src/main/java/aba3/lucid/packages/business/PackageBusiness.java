@@ -28,6 +28,7 @@ public class PackageBusiness {
     // 패키지 등록
     public PackageResponse packageRegister(PackageRegisterRequest request, long adminId) {
         Validator.throwIfNull(request);
+        Validator.throwIfInvalidId(adminId);
 
         CompanyEntity admin = companyService.findByIdWithThrow(adminId);
         PackageEntity packageEntity = packageConverter.toEntity(request, admin);
@@ -44,6 +45,10 @@ public class PackageBusiness {
 
     // 패키지 정보 수정하기
     public PackageResponse packageUpdate(PackageUpdateRequest request, long adminId, long packageId) {
+        Validator.throwIfNull(request);
+        Validator.throwIfInvalidId(adminId, packageId);
+
+
         PackageEntity packageEntity = packageService.findByIdWithThrow(packageId);
 
         // 방장의 요청이 아닐 때

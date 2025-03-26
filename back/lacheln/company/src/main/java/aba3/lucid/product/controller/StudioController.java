@@ -1,8 +1,10 @@
 package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.studio.dto.StudioRequest;
 import aba3.lucid.domain.product.studio.dto.StudioResponse;
+import aba3.lucid.product.business.ProductBusiness;
 import aba3.lucid.product.business.StudioBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +23,7 @@ import java.util.List;
 public class StudioController {
 
     private final StudioBusiness studioBusiness;
+    private final ProductBusiness productBusiness;
 
     @PostMapping("/register")
     @Operation(summary = "스튜디오 등록", description = "새로운 스튜디오 상품을 등록")
@@ -45,7 +48,7 @@ public class StudioController {
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        StudioResponse response = studioBusiness.updateProduct(1, productId, request);
+        StudioResponse response = studioBusiness.updateProduct(2, productId, request);
         log.debug("Update StudioResponse : {}", response);
 
         return API.OK(response);
@@ -66,11 +69,11 @@ public class StudioController {
 
     @GetMapping("/list/{companyId}")
     @Operation(summary = "스튜디오 상품 리스트", description = "삭제된 상품 제외한 모든 상품 보여주기")
-    public API<List<StudioResponse>> getStudioList(
+    public API<List<ProductResponse>> getStudioList(
             @PathVariable long companyId
     ) {
         // TODO 요청한 업체의 리스트인지 확인해야함
-        List<StudioResponse> studioResponseList = studioBusiness.getValidProductList(companyId);
+        List<ProductResponse> studioResponseList = productBusiness.getValidProductList(companyId);
         log.debug("DressList StudioResponseList : {}", studioResponseList);
 
         return API.OK(studioResponseList);

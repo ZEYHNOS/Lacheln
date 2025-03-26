@@ -11,6 +11,7 @@ import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.dto.ProductRequest;
 import aba3.lucid.domain.product.dto.ProductDetailResponse;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.product.service.ProductAbstractService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,9 +68,6 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
         ENTITY productEntity = productService.findByIdWithThrow(productId);
         productService.throwIfNotCompanyProduct(productEntity, companyId);
 
-        // 가격 수정 금지
-        throwIfNotEquals(productEntity.getPdPrice(), req.getPrice());
-
         // 상품 업데이트
         ENTITY updateEntity = productService.updateProduct(productEntity, req);
 
@@ -101,25 +99,6 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
                 ;
     }
 
-    // 업체용
-    // 삭제 된 상품을 제외한 모든 상품 리스트 출력
-    public List<RES> getValidProductList(long companyId) {
-
-        companyService.findByIdAndMatchCategoryWithThrow(companyId, getCategory());
-
-        return productService.getValidProductList(companyId).stream()
-                .map(productConverterIfs::toResponse)
-                .toList()
-                ;
-    }
-
-    public void throwIfNotEquals(BigInteger n1, BigInteger n2) {
-        // BigInteger 값 비교할 때 작으면 -1, 같으면 0, 더 크면 1
-        if (n1.compareTo(n2) != 0) {
-            throw new ApiException(ErrorCode.BAD_REQUEST, "상품 가격은 수정할 수 없습니다.");
-        }
-    }
-
     // 현재 영역의 카테고리 반환(DressBusiness 면 CompanyCategory.D 반환)
     public abstract CompanyCategory getCategory();
 
@@ -127,6 +106,11 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
         Validator.throwIfInvalidId(productId);
 
         ENTITY existingProduct = productService.findByIdWithThrow(productId);
+
+        // 삭제된 상품일 때
+        if (existingProduct.getPdStatus() == ProductStatus.REMOVE) {
+            throw new ApiException(ErrorCode.GONE);
+        }
 
         return productConverterIfs.toResponse(existingProduct);
     }

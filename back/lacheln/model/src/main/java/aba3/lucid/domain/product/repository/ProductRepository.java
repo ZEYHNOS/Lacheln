@@ -15,4 +15,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     List<ProductEntity> findAllByHashtagList_TagName(String tagName);
 
+    List<ProductEntity> findAllByCompany_CpId(long cpId);
+
 }

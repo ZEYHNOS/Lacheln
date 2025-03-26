@@ -4,6 +4,8 @@ package aba3.lucid.domain.company.convertor;
 import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.dto.CompanyResponse;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.company.enums.CompanyStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,19 +20,17 @@ public class CompanyConvertor {
                 .cpEmail(request.getEmail())
                 .cpPassword(hashedPassword)
                 .cpName(request.getName())
-                .cpRepName(request.getRepName())
-                .cpMainContact(request.getMainContact())
                 .cpAddress(request.getAddress())
                 .cpRole(request.getRole())
                 .cpPostalCode(request.getPostalCode())
                 .cpBnRegNo(request.getBnRegNo())
                 .cpMos(request.getMos())
-                .cpStatus(request.getStatus())
-                .cpProfile(request.getProfile())
-                .cpExplain(request.getExplain())
-                .cpCategory(request.getCategory())
                 .cpContact(request.getContact())
-                .cpFax(request.getFax())
+                .cpRepName("임시대표")
+                .cpMainContact("01055569887")
+                .cpStatus(CompanyStatus.SUSPENSION)
+                .cpProfile("default.png")
+                .cpCategory(CompanyCategory.S)
                 .build();
     }
 
@@ -43,22 +43,16 @@ public class CompanyConvertor {
                 .id(entity.getCpId())
                 .email(entity.getCpEmail())
                 .name(entity.getCpName())
-                .repName(entity.getCpRepName())
-                .mainContact(entity.getCpMainContact())
                 .address(entity.getCpAddress())
                 .role(entity.getCpRole())
                 .postalCode(entity.getCpPostalCode())
                 .bnRegNo(entity.getCpBnRegNo())
                 .mos(entity.getCpMos())
-                .status(entity.getCpStatus())
-                .profile(entity.getCpProfile())
-                .explain(entity.getCpExplain())
-                .category(entity.getCpCategory())
                 .contact(entity.getCpContact())
-                .fax(entity.getCpFax())
                 .build();
 
     }
+
 
 
 

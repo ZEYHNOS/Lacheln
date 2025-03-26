@@ -12,7 +12,7 @@ import java.security.spec.KeySpec;
 import java.util.Base64;
 
 @Component
-public class PasswordEncoder {
+public class CustomPasswordEncoder {
     public String encrypt(String email, String password) {
         try {
             //getSalt 메서드를 통해 이메일을 기반으로 salt를 생성하고, 이를 비밀번호 해싱에 사용합니다.

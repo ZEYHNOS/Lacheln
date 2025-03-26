@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "company")
 @AllArgsConstructor
@@ -84,7 +85,7 @@ public class CompanyEntity {
 
     // 카테고리
     @Enumerated(EnumType.STRING)
-    @Column(name = "cp_category", columnDefinition = "CHAR(1)", nullable = false)
+    @Column(name = "cp_category", columnDefinition = "CHAR(1)", nullable = true)
     private CompanyCategory cpCategory;
 
 //     업체 전화번호
@@ -101,7 +102,7 @@ public class CompanyEntity {
 
     public void updateCompanyRequest(CompanyRequest request) {
         updateCpPassword(request.getPassword());
-        updateCpMainContact(request.getMainContact());
+//        updateCpMainContact(request.getMainContact());
         updateCpAddress(request.getAddress());
         
     }

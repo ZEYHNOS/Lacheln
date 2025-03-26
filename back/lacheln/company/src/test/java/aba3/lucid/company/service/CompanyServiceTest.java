@@ -36,18 +36,18 @@ public class CompanyServiceTest {
                 .password("84u4848hf")
                 .passwordConfirm("84u4848hf")
                 .name("Shahid")
-                .repName("Ganbarov")
-                .mainContact("00105447795")
+//                .repName("Ganbarov")
+//                .mainContact("00105447795")
                 .address("Daegu City")
                 .role("COMPANY")
                 .bnRegNo("123-45-67890")
                 .mos("2019-서울강남-01234")
-                .profile("default_profile.jpg")
-                .explain("A company for testing purposes.")
-                .category(CompanyCategory.D)
-                .status(CompanyStatus.ACTIVATE)
+//                .profile("default_profile.jpg")
+//                .explain("A company for testing purposes.")
+//                .category(CompanyCategory.D)
+//                .status(CompanyStatus.ACTIVATE)
                 .contact("01012345678")
-                .fax("02-1234-5678")
+//                .fax("02-1234-5678")
                 .postalCode("12345")
                 .build();
         Long savedId = companyBusiness.registerCompany(companyRequest).getId();
@@ -57,12 +57,12 @@ public class CompanyServiceTest {
         assertEquals(companyRequest.getRole(), savedCompany.getCpRole());
         assertEquals(companyRequest.getBnRegNo(), savedCompany.getCpBnRegNo());
         assertEquals(companyRequest.getMos(), savedCompany.getCpMos());
-        assertEquals(companyRequest.getStatus(), savedCompany.getCpStatus());
-        assertEquals(companyRequest.getProfile(), savedCompany.getCpProfile());
-        assertEquals(companyRequest.getExplain(), savedCompany.getCpExplain());
-        assertEquals(companyRequest.getCategory(), savedCompany.getCpCategory());
+//        assertEquals(companyRequest.getStatus(), savedCompany.getCpStatus());
+//        assertEquals(companyRequest.getProfile(), savedCompany.getCpProfile());
+//        assertEquals(companyRequest.getExplain(), savedCompany.getCpExplain());
+//        assertEquals(companyRequest.getCategory(), savedCompany.getCpCategory());
         assertEquals(companyRequest.getContact(), savedCompany.getCpContact());
-        assertEquals(companyRequest.getFax(), savedCompany.getCpFax());
+//        assertEquals(companyRequest.getFax(), savedCompany.getCpFax());
     }
 
 //    @Test

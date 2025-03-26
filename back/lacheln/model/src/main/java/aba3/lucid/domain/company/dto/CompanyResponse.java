@@ -27,9 +27,6 @@ public class CompanyResponse implements Serializable {
 
     private String name;
 
-    private String repName;
-
-    private String mainContact;
 
     private String address;
 
@@ -41,16 +38,7 @@ public class CompanyResponse implements Serializable {
 
     private String mos;
 
-    private CompanyStatus status;
-
-    private String profile;
-
-    private String explain;
-
-    private CompanyCategory category;
-
     private String contact;
 
-    private String fax;
 
 }

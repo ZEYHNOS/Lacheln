@@ -1,46 +1,54 @@
 package aba3.lucid.company.business;
 
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.password.CustomPasswordEncoder;
 import aba3.lucid.common.status_code.CompanyCode;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.convertor.CompanyConvertor;
-import aba3.lucid.domain.company.dto.CompanyLoginRequest;
-import aba3.lucid.domain.company.dto.CompanyLoginResponse;
-import aba3.lucid.domain.company.dto.CompanyRequest;
-import aba3.lucid.domain.company.dto.CompanyResponse;
+import aba3.lucid.domain.company.convertor.CompanySetConvertor;
+import aba3.lucid.domain.company.dto.*;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Component
 public class CompanyBusiness {
     private final CompanyService companyService;
     private final CompanyRepository companyRepository;
     private final CompanyConvertor companyConvertor;
+    private final CustomPasswordEncoder customPasswordEncoder;
 
     //ApplicationContext를 생성자의 의존성 주입을 통해 받아오고 있습니다:
     private final ApplicationContext applicationContext;
+    private final CompanySetConvertor companySetConvertor;
 
     public CompanyBusiness(CompanyService companyService,
                            CompanyRepository companyRepository,
                            CompanyConvertor companyConvertor,
-                           ApplicationContext applicationContext) {
+                           ApplicationContext applicationContext,
+                           CustomPasswordEncoder customPasswordEncoder, CompanySetConvertor companySetConvertor)
+    {
+
         this.companyService = companyService;
         this.companyRepository = companyRepository;
         this.companyConvertor = companyConvertor;
         this.applicationContext = applicationContext;
+        this.customPasswordEncoder = customPasswordEncoder;
+        this.companySetConvertor = companySetConvertor;
     }
 
     //encodePassword() 메서드가 호출될 때 applicationContext.getBean(PasswordEncoder.class)를
     // 사용하여 Spring 컨테이너에서 PasswordEncoder 빈을 찾아 반환합니다
     public String encodePassword(String rawPassword, String email) {
-        aba3.lucid.common.password.PasswordEncoder passwordEncoder =
-                applicationContext.getBean(aba3.lucid.common.password.PasswordEncoder.class);
-        return passwordEncoder.encrypt(email, rawPassword);
+        return customPasswordEncoder.encrypt(email, rawPassword);
 
     }
     //passwordEncoder.encode(rawPassword)를 호출하여 비밀번호를 암호화합니다.
@@ -58,9 +66,34 @@ public class CompanyBusiness {
         //encodePassword 메서드로  email을 인자로 받도록 했습니다
         String hashedPassword = encodePassword(request.getPassword(), request.getEmail());
 
-        CompanyEntity savedCompanyEntity = companyConvertor.toEntity(request, hashedPassword);
-        CompanyEntity savedCompanyEntitySaved = companyRepository.save(savedCompanyEntity);
-        return companyConvertor.toResponse(savedCompanyEntity);
+//        CompanyEntity savedCompanyEntity = companyConvertor.toEntity(request, hashedPassword);
+//        CompanyEntity savedCompanyEntitySaved = companyRepository.save(savedCompanyEntity);
+        CompanyEntity companyEntity = companyConvertor.toEntity(request, hashedPassword);
+
+        companyEntity.setCpRepName("임시대표");
+        companyEntity.setCpMainContact("01000000000");
+        companyEntity.setCpStatus(CompanyStatus.SUSPENSION);
+        companyEntity.setCpProfile("default.png");
+        companyEntity.setCpCategory(CompanyCategory.S);
+
+
+        CompanyEntity savedEntity = companyRepository.save(companyEntity);
+        return companyConvertor.toResponse(savedEntity);
+    }
+    public CompanyProfileSetResponse updateCompanyProfile(Long companyId, CompanyProfileSetRequest request) {
+        CompanyEntity entity = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "회사 정보를 찾을 수 없습니다."));
+
+        entity.setCpRepName(request.getRepName());
+        entity.setCpMainContact(request.getMainContact());
+        entity.setCpStatus(request.getStatus());
+        entity.setCpProfile(request.getProfile());
+        entity.setCpExplain(request.getExplain());
+        entity.setCpCategory(request.getCategory());
+        entity.setCpFax(request.getFax());
+
+        CompanyEntity updated = companyRepository.save(entity);
+        return companySetConvertor.toResponse(updated);
     }
 
     private void validateDuplicateCompany(String email) {
@@ -102,20 +135,23 @@ public class CompanyBusiness {
 
     }
 
-//    public CompanyResponse searchCompany (CompanyRequest companyRequest, String cpEmail) {
-//        Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(cpEmail);
-//        if(companyOpt.isPresent()) {
-//            CompanyEntity company = companyOpt.get();
-//
-//            //엔티티를 DTO로 매핑
-//            CompanyResponse response = new CompanyResponse();
-//            response.setId(company.getCpId());
-//            response.setName(company.getCpName());
-//            return response;
-//
-//
-//        }
+    public CompanyResponse searchCompany(CompanyRequest companyRequest,String email) {
+        Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(email);
+        if(companyOpt.isPresent()) {
+            CompanyEntity company = companyOpt.get();
+            return companyConvertor.toResponse(company);
+        }else {
+            throw new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 수 앖습니다");
+        }
+    }
 
+
+//    public List<CompanyRequest> searchCompany(CompanyRequest companyRequest, String email) {
+//        List<CompanyEntity> companyEntityList = companyRepository.findAll();
+//        List<CompanyRequest> companyRequestList = new ArrayList<>();
+//        for(CompanyEntity companyEntity : companyEntityList) {
+//            companyRequestList.add(
+//        }
 //    }
 
     public CompanyLoginResponse login (CompanyLoginRequest request) {

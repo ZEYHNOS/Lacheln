@@ -4,10 +4,7 @@ package aba3.lucid.company.controller;
 import aba3.lucid.common.api.API;
 import aba3.lucid.company.business.CompanyBusiness;
 import aba3.lucid.company.service.CompanyService;
-import aba3.lucid.domain.company.dto.CompanyLoginRequest;
-import aba3.lucid.domain.company.dto.CompanyLoginResponse;
-import aba3.lucid.domain.company.dto.CompanyRequest;
-import aba3.lucid.domain.company.dto.CompanyResponse;
+import aba3.lucid.domain.company.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +34,24 @@ public class CompanyController {
 
     @PostMapping("/signup")
     public API<CompanyResponse> registerCompany (
-            @Valid
             @RequestBody CompanyRequest companyRequest
 
     ) {
             CompanyResponse companyResponse = companyBusiness.registerCompany( companyRequest);
             log.debug("Register CompanyResponse: {}", companyResponse);
             return API.OK(companyResponse);
+
+    }
+
+    @PostMapping("/{companyId}/profile")
+    public API<CompanyProfileSetResponse> setCompanyProfile(
+            @PathVariable Long companyId,
+            @RequestBody CompanyProfileSetRequest request
+
+    ) {
+          CompanyProfileSetResponse response = companyBusiness.updateCompanyProfile(companyId,request);
+          log.debug("Update CompanyProfileSetResponse: {}", response);
+          return API.OK(response);
 
     }
 
@@ -59,15 +67,15 @@ public class CompanyController {
         return API.OK(companyResponse);
     }
 
-//    @GetMapping("/search")
-//    public API<CompanyResponse> searchCompany (
-//            @PathVariable String cpEmail,
-//            @Valid
-//            @RequestBody CompanyRequest companyRequest
-//    ) {
-//        CompanyResponse companyResponse = companyBusiness.searchCompany(companyRequest,cpEmail);
-//        return API.OK(companyResponse);
-//    }
+    @GetMapping("/search/{email}")
+    public API<CompanyResponse> searchCompany (
+            @PathVariable String email,
+            @Valid
+            @RequestBody CompanyRequest companyRequest
+    ) {
+        CompanyResponse companyResponse = companyBusiness.searchCompany(companyRequest, email);
+        return API.OK(companyResponse);
+    }
 
     @DeleteMapping("/delete/{companyId}")
     public API<CompanyResponse> deleteCompany (

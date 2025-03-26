@@ -31,16 +31,9 @@ public class CompanyRequest implements CompanyRequestIfs{
     private String name;
 
     @NotBlank
-    private String repName;
-
-    @NotBlank(message = "대표자 전화번호는 필수 입력값입니다.")
-    @Pattern(regexp = "^\\d{10,11}$",message = "전화번호는 10~11자리 숫자만 가능합니다.")
-    private String mainContact;
-
-    @NotBlank(message = "Role 필수 입력값입니다.")
     private String role;
 
-    @NotBlank(message = "우편번호 필수 입력값입니다.")
+
     private String postalCode;
 
     @NotBlank(message = "사업자번호 필수 입력값입니다.")
@@ -55,20 +48,9 @@ public class CompanyRequest implements CompanyRequestIfs{
     )
     private String mos;
 
-    @NotNull(message = "입점 상태 필수 입력값입니다 ")
-    private CompanyStatus status;
 
-    @NotBlank(message = "업체소개 이미지 필수 입력값입니다")
-    private String profile;
-
-    private String explain;
-
-    @NotNull(message = "카테고리 필수 입력값입니다 ")
-    private CompanyCategory category;
 
     private String contact;
-
-    private String fax;
 
     //주소
     private String address;

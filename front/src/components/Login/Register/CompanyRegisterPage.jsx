@@ -174,16 +174,6 @@ export default function CompanyRegisterPage() {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={marketingChecked}
-            onChange={() => setMarketingChecked(!marketingChecked)}
-            className="w-5 h-5 border border-[#845EC2] rounded-sm appearance-none checked:bg-[#845EC2] checked:after:content-['✔'] checked:after:text-white checked:after:text-xs checked:after:flex checked:after:justify-center checked:after:items-center cursor-pointer"
-          />
-          <span className="text-sm text-[#845EC2]">마케팅 활용 및 광고성 정보 수신 동의 (선택)</span>
-        </div>
-
         <div className="mt-6 flex space-x-2">
           <button className="w-full bg-gray-200 text-gray-600 py-2 rounded" onClick={() => navigate("/")}>취소</button>
           <button

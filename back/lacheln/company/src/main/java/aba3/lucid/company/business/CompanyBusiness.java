@@ -13,10 +13,24 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.domain.company.repository.CompanyRepository;
+import lombok.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.http.HttpHeaders;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -25,6 +39,8 @@ public class CompanyBusiness {
     private final CompanyRepository companyRepository;
     private final CompanyConvertor companyConvertor;
     private final CustomPasswordEncoder customPasswordEncoder;
+//    @Value("${openapi.serviceKey}")
+    private String serviceKey;
 
     //ApplicationContext를 생성자의 의존성 주입을 통해 받아오고 있습니다:
     private final ApplicationContext applicationContext;
@@ -172,6 +188,59 @@ public class CompanyBusiness {
                 .build();
     }
 
+//    public Map<String, Object> checkBusinessStatus(String bNo) {
+//        // bNo: 조회할 사업자등록번호
+//        if (bNo == null || bNo.trim().isEmpty()) {
+//            throw new ApiException(ErrorCode.BAD_REQUEST, "사업자등록번호가 유효하지 않습니다.");
+//        }
+//
+//        Map<String, Object> result = new HashMap<>();
+//        try {
+//            // 1) RestTemplate 생성
+//            RestTemplate restTemplate = new RestTemplate();
+//
+//            // 2) serviceKey 디코딩 (중복 인코딩 방지)
+//            String decodedServiceKey = URLDecoder.decode(serviceKey, StandardCharsets.UTF_8.name());
+//
+//            // 3) API 요청 URL
+//            //    serviceKey는 query param으로 전달
+//            String url = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=" + decodedServiceKey;
+//
+//            // 4) HTTP Header 세팅
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.APPLICATION_JSON);
+//            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//
+//            // 5) 요청 Body(b_no 배열 형태)
+//            Map<String, Object> requestBody = new HashMap<>();
+//            requestBody.put("b_no", Collections.singletonList(bNo));
+//
+//            // 6) HttpEntity 생성
+//            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+//
+//            // 7) API 호출 (POST)
+//            ResponseEntity<Map> response = restTemplate.exchange(
+//                    url,
+//                    HttpMethod.POST,
+//                    entity,
+//                    Map.class
+//            );
+//
+//            // 8) 응답 파싱
+//            result = response.getBody(); // JSON -> Map 형태로 매핑됨
+//            if (result == null) {
+//                throw new ApiException(ErrorCode.NOT_FOUND, "OpenAPI 응답이 비어있습니다.");
+//            }
+//
+//            return result;
+//
+//        } catch (HttpClientErrorException e) {
+//            // 4xx, 5xx 에러 등
+//            throw new ApiException(ErrorCode.NOT_FOUND, "OpenAPI 호출 중 오류: " + e.getResponseBodyAsString());
+//        } catch (UnsupportedEncodingException e) {
+//            throw new ApiException(ErrorCode.NOT_FOUND, "serviceKey 디코딩 오류: " + e.getMessage());
+//        }
+//    }
 
 
 

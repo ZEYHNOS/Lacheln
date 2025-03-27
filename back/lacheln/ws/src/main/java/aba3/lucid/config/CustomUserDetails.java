@@ -14,18 +14,11 @@ import java.util.Map;
 
 @Getter
 @Builder
-public class CustomUserDetails implements UserDetails, OAuth2User {
+public class CustomUserDetails implements UserDetails {
 
     private String email;
     private String password;
     private String role;
-    private String userId;
-    private long companyId;
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return Map.of();
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -40,10 +33,5 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
     @Override
     public String getUsername() {
         return email;
-    }
-
-    @Override
-    public String getName() {
-        return "";
     }
 }

@@ -1,5 +1,7 @@
 package aba3.lucid.config;
 
+import aba3.lucid.handler.LocalLoginFailureHandler;
+import aba3.lucid.handler.LocalLoginSuccessHandler;
 import aba3.lucid.handler.OAuth2LoginFailureHandler;
 import aba3.lucid.handler.OAuth2LoginSuccessHandler;
 import aba3.lucid.jwt.JwtAuthenticationFilter;
@@ -27,10 +29,11 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final JwtTokenProvider jwtTokenProvider;
     private final OAuth2UserService Oauth2UserService;
     private final OAuth2LoginSuccessHandler Oauth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler Oauth2LoginFailureHandler;
+    private final LocalLoginSuccessHandler localLoginSuccessHandler;
+    private final LocalLoginFailureHandler localLoginFailureHandler;
 
     private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
     private final String[] roleUser = {"/user/**", "/board/**"};
@@ -61,20 +64,19 @@ public class SecurityConfig {
                         .successHandler(Oauth2LoginSuccessHandler)
                         .failureHandler(Oauth2LoginFailureHandler))
                 .formLogin(form -> form
-                        .loginPage("/login")  // 로그인 페이지 직접 지정
+                        .loginPage("/user/login")  // 로그인 페이지 직접 지정
                         .permitAll()
-                        .defaultSuccessUrl("/home", true)  // 로그인 성공 시 이동할 페이지
-                        .failureUrl("/login")  // 로그인 실패 시 이동할 페이지
-                        .successHandler((request, response, authentication) -> {
-                            // 로그인 성공 시 추가 처리 (예: 성공 로그 출력 등)
-                            response.sendRedirect("/home");  // 예: 홈 페이지로 리다이렉트
-                        })
-                        .failureHandler((request, response, exception) -> {
-                            // 로그인 실패 시 추가 처리 (예: 실패 로그 출력 등)
-                            response.sendRedirect("/login");  // 실패 시 로그인 페이지로 리다이렉트
-                        }))
-                .httpBasic(AbstractHttpConfigurer::disable);
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 적용
+                        .successHandler(localLoginSuccessHandler)   // 로그인 성공 핸들러
+                        .failureHandler(localLoginFailureHandler)  // 로그인 실패 핸들러
+                        )
+                .formLogin(form -> form
+                        .loginPage("/company/login")  // 로그인 페이지 직접 지정
+                        .permitAll()
+                        .successHandler(localLoginSuccessHandler)   // 로그인 성공 핸들러
+                        .failureHandler(localLoginFailureHandler)  // 로그인 실패 핸들러
+                )
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 적용
         return http.build();
     }
 

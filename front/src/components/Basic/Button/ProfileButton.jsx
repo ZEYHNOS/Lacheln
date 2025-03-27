@@ -2,31 +2,31 @@ import { useState, useRef } from "react";
 import { FaUser, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-export default function ProfileButton() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // 🔹 로그인 상태 관리
-    const timeoutRef = useRef(null);
+export default function ProfileButton({ isActive, onMouseEnter, onMouseLeave }) {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
+    const timeoutId = useRef(null);
 
     const handleMouseEnter = () => {
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        setIsOpen(true);
+        clearTimeout(timeoutId.current);
+        onMouseEnter();
     };
 
     const handleMouseLeave = () => {
-        timeoutRef.current = setTimeout(() => setIsOpen(false), 200);
+        timeoutId.current = setTimeout(() => onMouseLeave(), 100);
     };
 
     return (
-        <div className="relative">
+        <div 
+            className="relative"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}>
+
             {/* 프로필 버튼 */}
-            <div
-                className="flex items-center gap-1 cursor-pointer hover:bg-gray-200 p-2 rounded-lg transition"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-            >
+            <div className={`flex items-center gap-1 cursor-pointer hover:bg-gray-200 p-2 rounded-lg transition ${
+                    isActive ? "bg-gray-300" : ""}`}>
                 <FaUser className="text-3xl text-[#845EC2]" />
-                {isOpen ? (
+                {isActive ? (
                     <FaChevronUp className="text-2xl text-[#845EC2]" />
                 ) : (
                     <FaChevronDown className="text-2xl text-[#845EC2]" />
@@ -34,40 +34,36 @@ export default function ProfileButton() {
             </div>
 
             {/* 드롭다운 메뉴 */}
-            {isOpen && (
+            {isActive && (
                 <div
-                    className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50"
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    {/* 로그인 버튼 */}
+                    className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50">
+                        
+                    {/* 로그인/로그아웃 버튼 */}
                     {!isLoggedIn ? (
                         <button
                             className="w-full text-black text-lg font-semibold py-3 bg-gray-100 rounded-t-lg"
-                            onClick={() => {
-                                setIsOpen(false);
-                                navigate("/login");
-                            }}
-                        >
+                            onClick={() => {setIsLoggedIn(true);
+                                            navigate("/login");}}>
                             로그인
                         </button>
                     ) : (
                         <button
                             className="w-full text-black text-lg font-semibold py-3 bg-gray-100 rounded-t-lg"
-                            onClick={() => setIsLoggedIn(false)} // 🔹 로그아웃 기능 추가
-                        >
+                            onClick={() => setIsLoggedIn(false)}>
                             로그아웃
                         </button>
                     )}
 
+                    {/* 회원가입 버튼 */}
                     {!isLoggedIn && (
-                        <p className="text-gray-500 text-center py-1 cursor-pointer hover:underline">
+                        <p className="text-gray-500 text-center py-1 cursor-pointer hover:underline"
+                            onClick={() => navigate("/signup")}>
                             회원가입하기
                         </p>
                     )}
 
-                    {isLoggedIn && (
-                        <>
+                    {/* 로그인 상태일 때 표시되는 메뉴 */}
+                    {isLoggedIn && ( <>
                             <hr />
                             <ul className="text-black text-sm">
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">📦 내 주문</li>

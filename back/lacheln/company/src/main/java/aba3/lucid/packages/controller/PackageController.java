@@ -53,4 +53,16 @@ public class PackageController {
     }
 
 
+    // 패키지 업로드하기
+    @PostMapping("/upload/{packageId}")
+    @Operation(summary = "패키지 업로드하기", description = "모든 상품이 등록되었을 때 private -> public으로 변경")
+    public API<PackageResponse> packageUpload(
+            @PathVariable long packageId
+    ) {
+        PackageResponse response = packageBusiness.packageUpload(packageId, 1);
+
+        return API.OK(response);
+    }
+
+
 }

@@ -41,7 +41,7 @@ public class ProductController {
     }
 
 
-    @PutMapping("/package/register/{packageId}")
+    @PostMapping("/package/register/{packageId}")
     @Operation(summary = "패키지에 상품 등록", description = "패키지에 등록된 업체가 상품을 1개 등록하기")
     public API<ProductPackageInsertResponse> packageRegister(
             @PathVariable long packageId,
@@ -51,5 +51,16 @@ public class ProductController {
         ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, 1, productId);
 
         return API.OK(response);
+    }
+
+    @GetMapping("/list/{companyId}")
+    @Operation(summary = "해당 번호의 업체 상품 리스트 반환", description = "상품 리스트 반환 (삭제된 상품 제외)")
+    // TODO 요청한 업체의 리스트인지 확인해야함
+    public API<List<ProductResponse>> getProductList(
+            @PathVariable long companyId
+    ) {
+        List<ProductResponse> productResponseList = productBusiness.getValidProductList(companyId);
+
+        return API.OK(productResponseList);
     }
 }

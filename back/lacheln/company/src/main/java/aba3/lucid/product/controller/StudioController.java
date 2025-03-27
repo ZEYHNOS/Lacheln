@@ -67,18 +67,6 @@ public class StudioController {
     }
 
 
-    @GetMapping("/list/{companyId}")
-    @Operation(summary = "스튜디오 상품 리스트", description = "삭제된 상품 제외한 모든 상품 보여주기")
-    public API<List<ProductResponse>> getStudioList(
-            @PathVariable long companyId
-    ) {
-        // TODO 요청한 업체의 리스트인지 확인해야함
-        List<ProductResponse> studioResponseList = productBusiness.getValidProductList(companyId);
-        log.debug("DressList StudioResponseList : {}", studioResponseList);
-
-        return API.OK(studioResponseList);
-    }
-
     @GetMapping("/{productId}")
     @Operation(summary = "스튜디오 상품 상세")
     public API<StudioResponse> getStudioDetailInfo(

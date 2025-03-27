@@ -65,18 +65,6 @@ public class MakeupController {
         return API.OK("상품이 삭제되었습니다.");
     }
 
-    @GetMapping("/list/{companyId}")
-    @Operation(summary = "메이크업 상품 리스트", description = "삭제된 상품 제외한 모든 상품 보여주기")
-    public API<List<ProductResponse>> getMakeupList(
-            @PathVariable long companyId
-    ) {
-        // TODO 요청한 업체의 리스트인지 확인해야함
-        List<ProductResponse> makeupResponseList = productBusiness.getValidProductList(companyId);
-        log.debug("MakeupList makeupResponseList : {}", makeupResponseList);
-
-        return API.OK(makeupResponseList);
-    }
-
     @GetMapping("/{productId}")
     @Operation(summary = "메이크업 상품 상세")
     public API<MakeUpResponse> getStudioDetailInfo(

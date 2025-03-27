@@ -99,9 +99,9 @@ public class PackageEntity {
 
     // 패키지를 같이하는 업체들이 다른 카테고리인지 확인하기
     private boolean isNotUniqueCompanyCategory(CompanyEntity packAdmin, CompanyEntity company1, CompanyEntity company2) {
-        return packAdmin.getCpCategory() != company1.getCpCategory() &&
-                company1.getCpCategory() != company2.getCpCategory() &&
-                company2.getCpCategory() != packAdmin.getCpCategory();
+        return packAdmin.getCpCategory() == company1.getCpCategory() ||
+                company1.getCpCategory() == company2.getCpCategory() ||
+                company2.getCpCategory() == packAdmin.getCpCategory();
     }
 
 

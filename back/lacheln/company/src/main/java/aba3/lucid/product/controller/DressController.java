@@ -67,18 +67,6 @@ public class DressController {
     }
 
 
-    @GetMapping("/list/{companyId}")
-    @Operation(summary = "드래스 상품 리스트", description = "삭제된 상품 제외한 모든 상품 보여주기")
-    public API<List<ProductResponse>> getDressList(
-            @PathVariable long companyId
-    ) {
-        // TODO 요청한 업체의 리스트인지 확인해야함
-        List<ProductResponse> dressResponseList = productBusiness.getValidProductList(companyId);
-        log.debug("DressList dressResponseList : {}", dressResponseList);
-
-        return API.OK(dressResponseList);
-    }
-
     @GetMapping("/{productId}")
     @Operation(summary = "드래스 상품 상세")
     public API<DressResponse> getDressDetailInfo(

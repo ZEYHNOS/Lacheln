@@ -4,6 +4,8 @@ import aba3.lucid.domain.board.dto.CommentResponse;
 import aba3.lucid.domain.board.entity.CommentEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
 /**
  * CommentEntity를 응답용 DTO로 변환하는 역할
  */
@@ -25,6 +27,7 @@ public class CommentConvertor {
                 .cmtCreate(comment.getCmtCreate()) // 작성 시간
                 .isPostWriter(isPostWriter) // 게시글 작성자인지 여부
                 .cmtDegree(comment.getCmtDegree()) // 댓글 차수
+                .children(new ArrayList<>()) // 기본은 비어 있는 자식 리스트
                 .build();
     }
 }

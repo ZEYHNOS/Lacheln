@@ -38,9 +38,9 @@ public class PackageService {
     // 패키지에 상품 등록하기
     @Transactional
     public PackageToProductEntity productPackageInsert(PackageToProductEntity packToPdEntity
-                                                        , long companyId
-                                                        , PackageEntity packageEntity
-                                                        , ProductEntity productEntity) {
+            , long companyId
+            , PackageEntity packageEntity
+            , ProductEntity productEntity) {
         // 이미 해당 업체가 상품을 등록했는지
         if (existsByPackageEntityAndProduct(packageEntity, productEntity)) {
             throw new ApiException(ErrorCode.BAD_REQUEST);
@@ -83,6 +83,9 @@ public class PackageService {
                     break;
                 case REMOVE:
                     // todo 삭제하기 전 예약 현황 확인하기
+                    break;
+                case PRIVATE:
+                    // todo PUBLIC 일 때 막기
                     break;
             }
 
@@ -157,6 +160,8 @@ public class PackageService {
         if (packageEntity.getPackStatus().equals(PackageStatus.PUBLIC)) {
             throw new ApiException(ErrorCode.BAD_REQUEST);
         }
+
+        // todo 모든 패키지 정보가 잘 저장되었는지
 
         // 상태 변경 후 저장
         packageEntity.updatePackageStatus(PackageStatus.PUBLIC);

@@ -1,11 +1,8 @@
 package aba3.lucid.service;
 
 import aba3.lucid.jwt.JwtTokenProvider;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -20,7 +17,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
     // 로그인 성공 시 토큰 발급
-    public Map<String, ResponseCookie> login(String userEmail)  {
+    public Map<String, ResponseCookie> userLogin(String userEmail)  {
         String accessToken = jwtTokenProvider.createAccessToken(userEmail, "USER");
         String refreshToken = jwtTokenProvider.createRefreshToken(userEmail, "USER");
         Map<String, ResponseCookie> responseCookies = new HashMap<>();

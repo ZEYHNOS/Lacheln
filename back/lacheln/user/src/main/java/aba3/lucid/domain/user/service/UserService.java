@@ -21,4 +21,8 @@ public class UserService {
     public void saveOAuthUser(UsersEntity usersEntity) {
         usersRepository.save(usersEntity);
     }
+
+    public Optional<UsersEntity> findByEmail(String userEmail) {
+        return usersRepository.findByUserEmail(userEmail);
+    }
 }

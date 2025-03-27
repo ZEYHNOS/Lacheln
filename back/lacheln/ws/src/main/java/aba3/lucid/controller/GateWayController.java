@@ -62,7 +62,7 @@ public class GateWayController {
     // 토큰 생성 메서드 (needs => userEmail, Role)
     @GetMapping("/addToken")
     public ResponseEntity<String> routeToLogin(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, ResponseCookie> cookies = authService.login("user1@example.com");
+        Map<String, ResponseCookie> cookies = authService.userLogin("user1@example.com");
 
         // 쿠키들을 Set-Cookie 헤더에 추가
         for (ResponseCookie cookie : cookies.values()) {

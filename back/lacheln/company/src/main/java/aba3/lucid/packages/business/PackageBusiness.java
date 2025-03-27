@@ -1,8 +1,6 @@
 package aba3.lucid.packages.business;
 
 import aba3.lucid.common.annotation.Business;
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -51,13 +49,19 @@ public class PackageBusiness {
 
         PackageEntity packageEntity = packageService.findByIdWithThrow(packageId);
 
-        // 방장의 요청이 아닐 때
-        if (packageEntity.getPackAdmin().getCpId() != adminId) {
-            throw new ApiException(ErrorCode.UNAUTHORIZED);
-        }
-
-        PackageEntity updateEntity = packageService.packageUpdate(packageEntity, request);
+        PackageEntity updateEntity = packageService.packageUpdate(packageEntity, request, adminId);
 
         return packageConverter.toResponse(updateEntity);
+    }
+
+    // 패키지 업로드
+    public PackageResponse packageUpload(long packageId, long adminId) {
+        Validator.throwIfInvalidId(packageId, adminId);
+
+        PackageEntity packageEntity = packageService.findByIdWithThrow(packageId);
+
+        PackageEntity uploadEntity = packageService.packageUpload(packageEntity, adminId);
+
+        return packageConverter.toResponse(uploadEntity);
     }
 }

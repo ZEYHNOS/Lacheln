@@ -67,7 +67,9 @@ public class PackageService {
 
     // 패키지 정보 수정
     @Transactional
-    public PackageEntity packageUpdate(PackageEntity packageEntity, PackageUpdateRequest request) {
+    public PackageEntity packageUpdate(PackageEntity packageEntity, PackageUpdateRequest request, long adminId) {
+        // 방장의 요청이 아닐 때
+        throwIfNotAdminRequest(packageEntity, adminId);
 
         // 정보 변경(상태는 변경 X)
         packageEntity.updateAdditionalField(request);
@@ -119,7 +121,7 @@ public class PackageService {
         }
 
         // 모든 상품이 등록되어야 한다.
-        if (packageToProductRepository.countDistinctProductsByPackage(entity.getPackId()) != 3) {
+        if (countDistinctProductsByPackage(entity.getPackId()) != 3) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "모든 상품이 등록되어야 합니다.");
         }
 
@@ -130,5 +132,41 @@ public class PackageService {
         }
     }
 
+    // 현재 패키지에 등록된 상품 갯수
+    public long countDistinctProductsByPackage(long packageId) {
+        return packageToProductRepository.countDistinctProductsByPackage(packageId);
+    }
 
+
+    // 패키지 업로드
+    public PackageEntity packageUpload(PackageEntity packageEntity, long adminId) {
+        // 방장이 아닐 때
+        throwIfNotAdminRequest(packageEntity, adminId);
+
+        // 모든 상품이 등록되었는지
+        if (countDistinctProductsByPackage(packageEntity.getPackId()) != 3) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+
+        // 패키지가 삭제되었을 때
+        if (packageEntity.getPackStatus().equals(PackageStatus.REMOVE)) {
+            throw new ApiException(ErrorCode.GONE);
+        }
+
+        // 패키지가 이미 공개 상태일 때
+        if (packageEntity.getPackStatus().equals(PackageStatus.PUBLIC)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+
+        // 상태 변경 후 저장
+        packageEntity.updatePackageStatus(PackageStatus.PUBLIC);
+        return packageRepository.save(packageEntity);
+    }
+
+    // 방장의 요청이 아닐 때 에러 발생
+    public void throwIfNotAdminRequest(PackageEntity packageEntity, long adminId) {
+        if (packageEntity.getPackAdmin().getCpId() != adminId) {
+            throw new ApiException(ErrorCode.UNAUTHORIZED);
+        }
+    }
 }

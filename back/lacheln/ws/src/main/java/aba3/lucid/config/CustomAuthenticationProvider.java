@@ -19,20 +19,32 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
-        String password = authentication.getCredentials().toString();
+        CustomAuthenticationToken customAuth = (CustomAuthenticationToken) authentication;
+        String userEmail = customAuth.getName();
+        String password = customAuth.getCredentials().toString();
+        String loginType = customAuth.getLoginType(); // 추가된 인자 사용
 
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+        // 로그인 타입에 따라 다른 로직 수행 가능
+        UserDetails userDetails;
+        if ("USER".equals(loginType)) {
+            userDetails = customUserDetailsService.loadUserByUsername(userEmail);
+        } else if ("COMPANY".equals(loginType)) {
+            userDetails = customUserDetailsService.loadUserByUsername(userEmail); // 업체 로그인 처리 (예시)
+        } else {
+            throw new BadCredentialsException("Invalid login type");
+        }
 
-        if(!passwordEncoder.matches(password, userDetails.getPassword()))   {
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Bad credentials");
         }
 
-        return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+        // 인증 성공 시 새로운 CustomAuthenticationToken 반환
+        return new CustomAuthenticationToken(userDetails, password, loginType, userDetails.getAuthorities());
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+        return CustomAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

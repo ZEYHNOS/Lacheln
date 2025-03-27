@@ -102,7 +102,6 @@ public class GateWayController {
         return ResponseEntity.ok("토큰 삭제완료");
     }
 
-
     // 공통 HTTP 요청 전달 메서드 (RestTemplate 사용)
     public ResponseEntity<String> routeRequest(String baseUrl, HttpServletRequest request) {
         String path = request.getRequestURI();

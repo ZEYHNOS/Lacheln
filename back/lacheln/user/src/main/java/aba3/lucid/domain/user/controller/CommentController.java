@@ -71,4 +71,32 @@ public class CommentController {
         List<CommentResponse> comments = commentBusiness.getComments(postId, userId);
         return API.OK(comments);
     }
+
+    /**
+     * 댓글 또는 대댓글 삭제 API
+     *
+     * - 댓글 작성자 본인 또는 운영자만 삭제 가능
+     * - 실제 삭제가 아닌 Soft Delete (상태만 DELETED로 변경)
+     *
+     * @param cmtId   삭제할 댓글 ID (PathVariable)
+     * @param userId  삭제 요청자 ID (RequestParam) ← JWT 적용 전 임시
+     * @return 삭제 성공 메시지 응답
+     */
+    @DeleteMapping("/{cmtId}")
+    @Operation(
+            summary = "댓글/답글 삭제",
+            description = "댓글 또는 대댓글을 삭제합니다. (Soft Delete)",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "삭제 성공"),
+                    @ApiResponse(responseCode = "403", description = "삭제 권한 없음"),
+                    @ApiResponse(responseCode = "404", description = "댓글 또는 사용자 정보 없음")
+            }
+    )
+    public API<String> deleteComment(
+            @PathVariable Long cmtId,
+            @RequestParam String userId // TODO: JWT 적용 전까지 사용
+    ) {
+        commentBusiness.deleteComment(cmtId, userId);
+        return API.OK("댓글이 삭제되었습니다.");
+    }
 }

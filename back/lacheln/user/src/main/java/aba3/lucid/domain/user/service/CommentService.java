@@ -1,4 +1,4 @@
-package aba3.lucid.domain.board.service;
+package aba3.lucid.domain.user.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
@@ -33,6 +33,11 @@ public class CommentService {
     /**
      * 댓글 또는 대댓글 저장
      *
+     * - 게시글과 사용자 정보를 확인 후 댓글 저장
+     * - 부모 댓글이 존재할 경우: 대댓글로 처리
+     * - 대댓글은 최대 4단계까지만 허용
+     * - 삭제된 부모 댓글에는 대댓글 작성 불가
+     *
      * @param postId        대상 게시글 ID
      * @param parentCmtId   부모 댓글 ID (null이면 일반 댓글)
      * @param content       댓글 내용
@@ -41,37 +46,44 @@ public class CommentService {
      */
     @Transactional
     public CommentEntity saveComment(Long postId, Long parentCmtId, String content, String userId) {
-        // 게시글 조회
+        // 1. 게시글 존재 여부 확인 (삭제된 게시글은 예외 처리)
         PostEntity post = postRepository.findByPostIdAndDeletedFalse(postId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 게시글이 존재하지 않거나 삭제되었습니다."));
 
-        // 작성자 조회
+        // 2. 작성자(사용자) 정보 조회
         UsersEntity user = usersRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 사용자가 존재하지 않습니다."));
 
-        CommentEntity parent = null;
-        int degree = 1; // 기본 댓글 차수는 1
+        CommentEntity parent = null; // 부모 댓글 (대댓글일 경우 필요)
+        int degree = 1; // 기본 댓글 차수는 1 (일반 댓글)
 
-        // 부모 댓글이 있는 경우 → 대댓글
+        // 3. 부모 댓글이 존재할 경우 → 대댓글 작성 흐름
         if (parentCmtId != null) {
             parent = commentRepository.findById(parentCmtId)
                     .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "부모 댓글이 존재하지 않습니다."));
+
+            // 삭제된 댓글에는 대댓글 작성 불가
+            if (parent.getCmtStatus() == CommentStatus.DELETED) {
+                throw new ApiException(ErrorCode.BAD_REQUEST, "삭제된 댓글에는 대댓글을 작성할 수 없습니다.");
+            }
+
+            // 대댓글 차수 계산 (부모 차수 + 1)
             degree = parent.getCmtDegree() + 1;
 
-            // 차수 제한: 최대 4까지만 허용
+            // 최대 4단계까지만 허용 (5단계 이상은 차단)
             if (degree > 4) {
-                throw new ApiException(ErrorCode.BAD_REQUEST, "대댓글은 4개까지만 허용됩니다.");
+                throw new ApiException(ErrorCode.BAD_REQUEST, "대댓글은 최대 4단계까지만 허용됩니다.");
             }
         }
 
-        // 댓글 Entity 생성 및 저장
+        // 4. 댓글 Entity 생성 및 저장
         CommentEntity comment = CommentEntity.builder()
-                .post(post)                  // 어떤 게시글에 단 댓글인지
-                .users(user)                // 댓글 작성자
-                .cmtContent(content)        // 내용
-                .parent(parent)             // 부모 댓글 (null이면 일반 댓글)
-                .cmtDegree(degree)          // 댓글 차수
-                .cmtStatus(CommentStatus.CREATED) // 댓글 상태
+                .post(post)                           // 소속 게시글
+                .users(user)                         // 댓글 작성자
+                .cmtContent(content)                 // 내용
+                .parent(parent)                      // 부모 댓글 (없으면 null)
+                .cmtDegree(degree)                   // 차수 설정 (1~4)
+                .cmtStatus(CommentStatus.CREATED)    // 기본 상태는 CREATED
                 .build();
 
         return commentRepository.save(comment);
@@ -123,5 +135,37 @@ public class CommentService {
         }
 
         return result;
+    }
+
+    /**
+     * 댓글 또는 대댓글 삭제 (Soft Delete 방식)
+     *
+     * - 삭제는 댓글 작성자 또는 운영자(관리자 권한)가 가능함
+     * - 실제로 데이터를 삭제하지 않고, 상태만 DELETED로 변경
+     * - 대댓글은 별도로 삭제하지 않으며 그대로 유지
+     *
+     * @param cmtId   삭제할 댓글 ID
+     * @param userId  삭제 요청자 ID
+     */
+    @Transactional
+    public void deleteComment(Long cmtId, String userId) {
+        // 1. 댓글 존재 여부 확인
+        CommentEntity comment = commentRepository.findById(cmtId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 댓글이 존재하지 않습니다."));
+
+        // 2. 작성자와 관리자 여부 확인
+        UsersEntity writer = comment.getUsers();
+        UsersEntity requester = usersRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "삭제 요청자가 존재하지 않습니다."));
+
+        boolean isWriter = writer.getUserId().equals(requester.getUserId());
+        boolean isAdmin = requester.getUserTier().toString().equalsIgnoreCase("ADMIN"); // 등급 기반 관리자 판단
+
+        if (!isWriter && !isAdmin) {
+            throw new ApiException(ErrorCode.FORBIDDEN, "해당 댓글을 삭제할 권한이 없습니다.");
+        }
+
+        // 3. 댓글 상태를 DELETED로 변경 (Soft Delete)
+        comment.delete();
     }
 }

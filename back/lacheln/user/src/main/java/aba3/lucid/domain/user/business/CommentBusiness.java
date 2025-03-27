@@ -5,7 +5,7 @@ import aba3.lucid.domain.board.convertor.CommentConvertor;
 import aba3.lucid.domain.board.dto.CommentRequest;
 import aba3.lucid.domain.board.dto.CommentResponse;
 import aba3.lucid.domain.board.entity.CommentEntity;
-import aba3.lucid.domain.board.service.CommentService;
+import aba3.lucid.domain.user.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,5 +49,18 @@ public class CommentBusiness {
      */
     public List<CommentResponse> getComments(Long postId, String userId) {
         return commentService.getCommentsByPostId(postId, userId);
+    }
+
+    /**
+     * 댓글 또는 대댓글 삭제 요청 처리
+     *
+     * - 댓글 작성자 본인 또는 운영자만 삭제 가능
+     * - Soft Delete 방식으로 댓글 상태만 변경
+     *
+     * @param cmtId   삭제 대상 댓글 ID
+     * @param userId  요청자(삭제 시도자) ID
+     */
+    public void deleteComment(Long cmtId, String userId) {
+        commentService.deleteComment(cmtId, userId);
     }
 }

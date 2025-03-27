@@ -58,4 +58,9 @@ public class CommentEntity {
     @Range(min = 1, max = 4)
     @Column(name = "cmt_degree", nullable = false)
     private int cmtDegree; //차수 1~4
+
+    // 댓글 삭제
+    public void delete() {
+        this.cmtStatus = CommentStatus.DELETED;
+    }
 }

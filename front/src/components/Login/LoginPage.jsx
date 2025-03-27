@@ -3,11 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import googleLogo from "../../image/SocialLogin/google-logo.png";
 import kakaoLogo from "../../image/SocialLogin/kakaotalk-logo.png";
 
-const logindata = [
-    { email: "user@example.com", password: "user1234", type: "user" },
-    { email: "company@example.com", password: "company1234", type: "company" }
-];
-
 export default function LoginPage() {
     const [userType, setUserType] = useState("user");
     const [email, setEmail] = useState("");
@@ -17,7 +12,7 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (!email) {
             setErrorMessage("아이디를 입력하시오");
             setShowPopup(true);
@@ -29,15 +24,41 @@ export default function LoginPage() {
             return;
         }
 
-        const user = logindata.find(u => u.email === email && u.password === password && u.type === userType);
-        if (!user) {
-            setErrorMessage("아이디 또는 비밀번호가 올바르지 않습니다");
-            setShowPopup(true);
-            return;
-        }
+        try {
+            const endpoint = userType === "user" ? "/user/login" : "/company/login";
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userType, email, password }),
+            });
 
-        navigate(user.type === "user" ? "/" : "/company");
+            if (response.ok) {
+                const data = await response.json();
+                setErrorMessage("");
+                setShowPopup(false);
+                localStorage.setItem("userInfo", JSON.stringify(data)); // 로그인 상태를 브라우저에 저장 (예: 로컬 스토리지)
+                navigate(userType === "user" ? "/" : "/company"); 
+            } else {
+                const errorData = await response.json();
+                setErrorMessage(errorData.message || "아이디 또는 비밀번호가 올바르지 않습니다");
+                setShowPopup(true);
+            }
+        } catch (error) {
+            setErrorMessage("로그인 요청 중 오류가 발생했습니다.");
+            setShowPopup(true);
+        }
     };
+    
+    // 카카오 소셜 로그인 처리
+    const OAuth2KakaoLogin = () => {
+        window.location.href = 'http://localhost:5050/oauth2/authorization/kakao' 
+    }
+    // 구글 소셜 로그인 처리
+    const OAuth2GoogleLogin = () => {
+        window.location.href = 'http://localhost:5050/oauth2/authorization/google'
+    }
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -65,30 +86,26 @@ export default function LoginPage() {
                 <div className="flex mb-6">
                     <button
                         className={`flex-1 py-3 text-lg font-semibold transition border-2 border-transparent hover:border-[#845EC2] 
-                    focus:outline-none focus:ring-0 ${
+                                    focus:outline-none focus:ring-0 ${
                             userType === "user"
-                                ? "bg-[#845EC2] text-white"
-                                : "bg-white text-[#845EC2]"
-                        }`}
+                                ? "bg-[#845EC2] text-white" : "bg-white text-[#845EC2]"}`}
                         onClick={() => setUserType("user")}
                     >
                         회원
                     </button>
                     <button
                         className={`flex-1 py-3 text-lg font-semibold transition border-2 border-transparent hover:border-[#845EC2] 
-                    focus:outline-none focus:ring-0 ${
+                                    focus:outline-none focus:ring-0 ${
                             userType === "company"
-                                ? "bg-[#845EC2] text-white"
-                                : "bg-white text-[#845EC2]"
-                        }`}
+                                ? "bg-[#845EC2] text-white" : "bg-white text-[#845EC2]"}`}
                         onClick={() => setUserType("company")}
                     >
                         업체
                     </button>
                 </div>
 
-                {/* 입력 폼 */}
                 <form className="space-y-4">
+                    {/* 아이디 & 비밀번호 입력 폼 */}
                     <div>
                         <label className="block text-gray-700 font-semibold">이메일</label>
                         <input
@@ -96,8 +113,7 @@ export default function LoginPage() {
                             placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-3 border-2 border-[#845EC2] rounded-lg bg-white text-black focus:ring-1 focus:ring-purple-400 outline-none"
-                        />
+                            className="w-full px-4 py-3 border-2 border-[#845EC2] rounded-lg bg-white text-black focus:ring-1 focus:ring-purple-400 outline-none"/>
                     </div>
                     <div>
                         <label className="block text-gray-700 font-semibold">비밀번호</label>
@@ -106,8 +122,7 @@ export default function LoginPage() {
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3 border-2 border-[#845EC2] rounded-lg bg-white text-black focus:ring-1 focus:ring-purple-400 outline-none"
-                        />
+                            className="w-full px-4 py-3 border-2 border-[#845EC2] rounded-lg bg-white text-black focus:ring-1 focus:ring-purple-400 outline-none"/>
                     </div>
 
                     {/* 아이디 저장 & 비밀번호 찾기 */}
@@ -123,8 +138,7 @@ export default function LoginPage() {
                     <button
                         type="button"
                         onClick={handleLogin}
-                        className="w-full py-3 bg-[#845ec2] text-white rounded-lg hover:bg-purple-800 transition"
-                    >
+                        className="w-full py-3 bg-[#845ec2] text-white rounded-lg hover:bg-purple-800 transition">
                         로그인
                     </button>
                 </form>
@@ -133,8 +147,7 @@ export default function LoginPage() {
                 <div className="mt-6 text-center">
                     <Link
                         to={userType === "user" ? "/register/user" : "/register/company"}
-                        className="text-[#845EC2] font-semibold hover:underline"
-                    >
+                        className="text-[#845EC2] font-semibold hover:underline">
                         아직 계정이 없으신가요?
                     </Link>
                 </div>
@@ -148,14 +161,14 @@ export default function LoginPage() {
                                 {/* 카카오 로그인 버튼 */}
                                 <button className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-md
                                                     border-2 border-transparent hover:border-[#845EC2] transition"
-                                                    onClick={() => (window.location.href = 'http://localhost:5050/oauth2/authorization/kakao')}>
+                                                    onClick={(OAuth2KakaoLogin)}>
                                     <img src={kakaoLogo} alt="카카오 로그인" className="w-14 h-14 object-contain" />
                                 </button>
                 
                                 {/* 구글 로그인 버튼 */}
                                 <button className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-md
                                                     border-2 border-transparent hover:border-[#845EC2] transition"
-                                                    onClick={() => (window.location.href = 'http://localhost:5050/oauth2/authorization/google')}>
+                                                    onClick={(OAuth2GoogleLogin)}>
                                     <img src={googleLogo} alt="구글 로그인" className="w-14 h-14 object-contain" />
                                 </button>
                             </div>

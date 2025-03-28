@@ -39,7 +39,7 @@ public class CompanyBusiness {
     private final CompanyRepository companyRepository;
     private final CompanyConvertor companyConvertor;
     private final CustomPasswordEncoder customPasswordEncoder;
-//    @Value("${openapi.serviceKey}")
+
     private String serviceKey;
 
     //ApplicationContext를 생성자의 의존성 주입을 통해 받아오고 있습니다:
@@ -119,7 +119,7 @@ public class CompanyBusiness {
     }
 
 
-    public CompanyEntity findByIdWithThrow(long companyId) {
+    public CompanyEntity findByIdWithThrow(Long companyId) {
         return companyRepository.findById(companyId)
                 .orElseThrow(()-> new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 수 없습니다"));
     }
@@ -128,7 +128,7 @@ public class CompanyBusiness {
 
     //삭제 과정에서 문제가 발생하면 롤백할 수 있도록 하기 위함- transactional 쓰는 이유
     @Transactional
-    public void deleteCompany(long cpId) {
+    public void deleteCompany(Long cpId) {
         CompanyEntity company = companyRepository.findById(cpId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
 
@@ -136,7 +136,7 @@ public class CompanyBusiness {
     }
 
 
-    public CompanyResponse updateCompany(CompanyRequest companyRequest, long companyId) {
+    public CompanyResponse updateCompany(CompanyRequest companyRequest, Long companyId) {
         Validator.throwIfNull(companyRequest);
         Validator.throwIfInvalidId(companyId);
         //companyService.findByIdWithThrow(companyId)를 호출하여, 주어진 companyId에 해당하는 회사를 조회합니다.
@@ -151,7 +151,7 @@ public class CompanyBusiness {
 
     }
 
-    public CompanyResponse searchCompany(CompanyRequest companyRequest,String email) {
+    public CompanyResponse searchCompany(String email) {
         Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(email);
         if(companyOpt.isPresent()) {
             CompanyEntity company = companyOpt.get();

@@ -69,11 +69,9 @@ public class CompanyController {
 
     @GetMapping("/search/{email}")
     public API<CompanyResponse> searchCompany (
-            @PathVariable String email,
-            @Valid
-            @RequestBody CompanyRequest companyRequest
+            @PathVariable String email
     ) {
-        CompanyResponse companyResponse = companyBusiness.searchCompany(companyRequest, email);
+        CompanyResponse companyResponse = companyBusiness.searchCompany(email);
         return API.OK(companyResponse);
     }
 

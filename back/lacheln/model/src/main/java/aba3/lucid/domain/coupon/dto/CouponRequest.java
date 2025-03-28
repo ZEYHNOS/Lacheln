@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CouponIssueForCompanyRequest {
+public class CouponRequest {
 
     // 쿠폰 이름
     @Length(min = 5, max = 50)
@@ -25,7 +25,7 @@ public class CouponIssueForCompanyRequest {
 
     // 쿠폰 할인율
     @Min(5) @Max(90)
-    private int discountRate;
+    private BigInteger discountRate;
 
     // 쿠폰 가격 하한선
     @Min(0)

@@ -24,7 +24,7 @@ public class CommentEntity {
     @Id
     @Column(name = "cmt_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long cmtId;
+    private Long cmtId;
 
     // 부모 댓글을 가리키는 자기참조 관계
     @ManyToOne(fetch = FetchType.LAZY)

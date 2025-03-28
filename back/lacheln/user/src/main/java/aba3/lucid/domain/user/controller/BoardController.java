@@ -54,7 +54,7 @@ public class BoardController {
             }
     )
     public API<BoardResponse> getBoardById(
-            @PathVariable @Min(1) int boardId
+            @PathVariable @Min(1) long boardId
     ) {
         return API.OK(boardBusiness.getBoardById(boardId));
     }

@@ -25,7 +25,7 @@ public class PostController {
      * 게시글 생성 API
      */
     @PostMapping("")
-    @Operation(
+    @Operation( 
             summary = "게시글 생성",
             description = "새로운 게시글을 생성합니다. (세미프로 이상부터 작성 가능)",
             responses = {

@@ -19,7 +19,7 @@ public class BoardEntity {
     @Id
     @Column(name = "board_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long boardId;
+    private Long boardId;
 
 //    @Enumerated(EnumType.STRING)
 //    private CountryEnum country; // 게시판 국가 설정
@@ -28,7 +28,7 @@ public class BoardEntity {
     private String boardName; //게시판이름
 
     @JsonIgnore
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostEntity> postList;
 
     //게시판 이름 수정

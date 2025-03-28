@@ -24,7 +24,7 @@ public class PostEntity {
     @Id
     @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postId; // 게시글 ID
+    private Long postId; // 게시글 ID
 
     @ManyToOne(fetch = FetchType.LAZY)
     private UsersEntity usersEntity; // 작성자 정보 (회원)
@@ -51,15 +51,15 @@ public class PostEntity {
     private PostStatus postStatus; // 게시글 상태 (예: CREATED, DELETED 등)
 
     @JsonIgnore
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostViewEntity> postViewList; // 게시글 조회 기록 연관관계
 
     @JsonIgnore
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostLikeEntity> postLikeList; // 게시글 좋아요 연관관계
 
     @JsonIgnore
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> commentList; // 게시글 댓글 연관관계
 
     @JsonIgnore

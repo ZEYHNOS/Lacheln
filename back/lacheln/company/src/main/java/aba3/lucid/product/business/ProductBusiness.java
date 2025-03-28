@@ -49,7 +49,7 @@ public class ProductBusiness {
 
 
     // 상품을 패키지에 등록하기
-    public ProductPackageInsertResponse packageRegister(long packageId, long companyId, long productId) {
+    public ProductPackageInsertResponse packageRegister(Long packageId, Long companyId, Long productId) {
         Validator.throwIfInvalidId(packageId, companyId);
 
         // 패키지 존재 유무 파악 및 해당 업체가 포함되는지
@@ -66,7 +66,7 @@ public class ProductBusiness {
         return productConverter.toResponse(newPackageToProductEntity);
     }
 
-    public List<ProductResponse> getValidProductList(long companyId) {
+    public List<ProductResponse> getValidProductList(Long companyId) {
         return productService.getCompanyProductList(companyId).stream()
                 // 삭제된 상품 제외하고 보여주기
                 .filter(it -> !it.getPdStatus().equals(ProductStatus.REMOVE))

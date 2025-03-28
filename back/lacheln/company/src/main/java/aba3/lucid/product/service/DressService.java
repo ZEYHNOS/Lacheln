@@ -34,12 +34,12 @@ public class DressService extends ProductAbstractService<DressEntity, DressReque
     }
 
     @Override
-    public List<DressEntity> getActiveProductList(long companyId) {
+    public List<DressEntity> getActiveProductList(Long companyId) {
         return dressRepository.findAllByCompany_CpIdAndPdStatus(companyId, ProductStatus.ACTIVE);
     }
 
     @Override
-    public List<DressEntity> getValidProductList(long companyId) {
+    public List<DressEntity> getValidProductList(Long companyId) {
         return dressRepository.findAllByCompany_CpIdAndPdStatusNot(companyId, ProductStatus.REMOVE);
     }
 

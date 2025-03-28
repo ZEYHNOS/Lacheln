@@ -24,12 +24,12 @@ public class MakeupService extends ProductAbstractService<MakeupEntity, MakeupRe
     }
 
     @Override
-    public List<MakeupEntity> getActiveProductList(long companyId) {
+    public List<MakeupEntity> getActiveProductList(Long companyId) {
         return makeupRepository.findAllByCompany_CpIdAndPdStatus(companyId, ProductStatus.ACTIVE);
     }
 
     @Override
-    public List<MakeupEntity> getValidProductList(long companyId) {
+    public List<MakeupEntity> getValidProductList(Long companyId) {
         return makeupRepository.findAllByCompany_CpIdAndPdStatusNot(companyId, ProductStatus.REMOVE);
     }
 

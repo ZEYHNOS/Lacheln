@@ -14,9 +14,9 @@ public class Validator {
     }
 
 
-    public static void throwIfInvalidId(long... ids) {
-        for (long id : ids) {
-            if (id <= 0) {
+    public static void throwIfInvalidId(Long... ids) {
+        for (Long id : ids) {
+            if (id == null || id <= 0) {
                 throw new ApiException(ErrorCode.INVALID_PARAMETER);
             }
         }

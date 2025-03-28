@@ -18,7 +18,7 @@ public class DressSizeEntity {
     @Id
     @Column(name = "dress_size_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long dressSizeId; //드레스 사이즈 ID
+    private Long dressSizeId; //드레스 사이즈 ID
 
     @ToString.Exclude
     @JoinColumn(name = "pd_id")

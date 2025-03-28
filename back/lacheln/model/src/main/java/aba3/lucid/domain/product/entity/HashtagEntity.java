@@ -16,7 +16,7 @@ public class HashtagEntity {
     @Id
     @Column(name = "tag_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long tagId;
+    private Long tagId;
 
     // 상품 ID(외래키) 상품 Entity 조회할 때 무조건 존재해야하는 테이블
     @ToString.Exclude

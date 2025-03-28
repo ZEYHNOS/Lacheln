@@ -31,7 +31,7 @@ public class PackageController {
             PackageRegisterRequest request
     ) {
         // TODO 요청 업체 정보
-        PackageResponse response = packageBusiness.packageRegister(request, 1);
+        PackageResponse response = packageBusiness.packageRegister(request, 1L);
 
         return API.OK(response);
     }
@@ -44,10 +44,10 @@ public class PackageController {
             @Valid
             @RequestBody
             PackageUpdateRequest request,
-            @PathVariable long packageId
+            @PathVariable Long packageId
     ) {
         // TODO 요청 업체 정보
-        PackageResponse response = packageBusiness.packageUpdate(request, 1, packageId);
+        PackageResponse response = packageBusiness.packageUpdate(request, 1L, packageId);
 
         return API.OK("");
     }
@@ -57,9 +57,9 @@ public class PackageController {
     @PostMapping("/upload/{packageId}")
     @Operation(summary = "패키지 업로드하기", description = "모든 상품이 등록되었을 때 private -> public으로 변경")
     public API<PackageResponse> packageUpload(
-            @PathVariable long packageId
+            @PathVariable Long packageId
     ) {
-        PackageResponse response = packageBusiness.packageUpload(packageId, 1);
+        PackageResponse response = packageBusiness.packageUpload(packageId, 1L);
 
         return API.OK(response);
     }

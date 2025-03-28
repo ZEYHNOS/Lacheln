@@ -17,7 +17,7 @@ import java.util.List;
 public class ProductDetailResponse {
 
     // 상품 아이디(웹에서 정렬을 위해 사용
-    private long id;
+    private Long id;
 
     // 상품 이름
     private String name;

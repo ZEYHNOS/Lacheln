@@ -31,7 +31,7 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
 
     // 상품 등록
     @Override
-    public RES registerProduct(long companyId, REQ req) {
+    public RES registerProduct(Long companyId, REQ req) {
         // 매개변수 유효성 검사
         Validator.throwIfInvalidId(companyId);
         Validator.throwIfNull(req);
@@ -56,7 +56,7 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
 
     // 상품 업데이트
     @Override
-    public RES updateProduct(long companyId, long productId, REQ req) {
+    public RES updateProduct(Long companyId, Long productId, REQ req) {
         // 매개변수 유효성 검사
         Validator.throwIfInvalidId(companyId, productId);
         Validator.throwIfNull(req);
@@ -77,7 +77,7 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
 
     // 상품 삭제(상태만 변환)
     @Override
-    public void deleteProduct(long companyId, long productId) {
+    public void deleteProduct(Long companyId, Long productId) {
         // 유효성 검사
         Validator.throwIfInvalidId(companyId, productId);
 
@@ -92,7 +92,7 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
 
     // 유저용
     // 활성화된 상품 리스트만 출력(패키지, 비공개, 삭제 제외)
-    public List<RES> getActiveProductList(long companyId) {
+    public List<RES> getActiveProductList(Long companyId) {
         return productService.getActiveProductList(companyId).stream()
                 .map(productConverterIfs::toResponse)
                 .toList()
@@ -102,7 +102,7 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
     // 현재 영역의 카테고리 반환(DressBusiness 면 CompanyCategory.D 반환)
     public abstract CompanyCategory getCategory();
 
-    public RES getProductDetailInfo(long productId) {
+    public RES getProductDetailInfo(Long productId) {
         Validator.throwIfInvalidId(productId);
 
         ENTITY existingProduct = productService.findByIdWithThrow(productId);

@@ -18,7 +18,7 @@ public class ProductInfoEntity {
     // 기본키
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long pdInfoId;
+    private Long pdInfoId;
 
     // 외래키(상품)
     @ManyToOne(fetch = FetchType.LAZY)

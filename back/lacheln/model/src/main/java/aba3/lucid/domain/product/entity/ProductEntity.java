@@ -33,7 +33,7 @@ public abstract class ProductEntity {
     @Id
     @Column(name = "pd_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long pdId;
+    private Long pdId;
 
     // 업체 ID
     @JoinColumn(name = "cp_id")

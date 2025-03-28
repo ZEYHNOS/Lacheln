@@ -28,12 +28,12 @@ public class StudioService extends ProductAbstractService<StudioEntity, StudioRe
     }
 
     @Override
-    public List<StudioEntity> getValidProductList(long companyId) {
+    public List<StudioEntity> getValidProductList(Long companyId) {
         return studioRepository.findAllByCompany_CpIdAndPdStatusNot(companyId, ProductStatus.REMOVE);
     }
 
     @Override
-    public List<StudioEntity> getActiveProductList(long companyId) {
+    public List<StudioEntity> getActiveProductList(Long companyId) {
         return studioRepository.findAllByCompany_CpIdAndPdStatus(companyId, ProductStatus.ACTIVE);
     }
 

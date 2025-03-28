@@ -24,7 +24,7 @@ public class PackageBusiness {
     private final PackageConverter packageConverter;
 
     // 패키지 등록
-    public PackageResponse packageRegister(PackageRegisterRequest request, long adminId) {
+    public PackageResponse packageRegister(PackageRegisterRequest request, Long adminId) {
         Validator.throwIfNull(request);
         Validator.throwIfInvalidId(adminId);
 
@@ -42,7 +42,7 @@ public class PackageBusiness {
     }
 
     // 패키지 정보 수정하기
-    public PackageResponse packageUpdate(PackageUpdateRequest request, long adminId, long packageId) {
+    public PackageResponse packageUpdate(PackageUpdateRequest request, Long adminId, Long packageId) {
         Validator.throwIfNull(request);
         Validator.throwIfInvalidId(adminId, packageId);
 
@@ -55,7 +55,7 @@ public class PackageBusiness {
     }
 
     // 패키지 업로드
-    public PackageResponse packageUpload(long packageId, long adminId) {
+    public PackageResponse packageUpload(Long packageId, Long adminId) {
         Validator.throwIfInvalidId(packageId, adminId);
 
         PackageEntity packageEntity = packageService.findByIdWithThrow(packageId);

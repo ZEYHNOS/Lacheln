@@ -33,7 +33,7 @@ public class DressController {
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        DressResponse res = dressBusiness.registerProduct(1, req);
+        DressResponse res = dressBusiness.registerProduct(1L, req);
         log.debug("Register DressResponse : {}", res);
 
         return API.OK(res);
@@ -42,13 +42,13 @@ public class DressController {
     @PutMapping("/update/{productId}")
     @Operation(summary = "드래스 수정", description = "드래스 엔터티 수정")
     public API<DressResponse> updateDress(
-            @PathVariable long productId,
+            @PathVariable Long productId,
             @Valid
             @RequestBody DressRequest request
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        DressResponse response = dressBusiness.updateProduct(1, productId, request);
+        DressResponse response = dressBusiness.updateProduct(1L, productId, request);
         log.debug("Update DressResponse : {}", response);
 
         return API.OK(response);
@@ -58,11 +58,11 @@ public class DressController {
     @DeleteMapping("/delete/{productId}")
     @Operation(summary = "드래스 상품 삭제", description = "드래스 엔터티 삭제")
     public API<String> deleteDress(
-            @PathVariable long productId
+            @PathVariable Long productId
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        dressBusiness.deleteProduct(1, productId);
+        dressBusiness.deleteProduct(1L, productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 
@@ -70,7 +70,7 @@ public class DressController {
     @GetMapping("/{productId}")
     @Operation(summary = "드래스 상품 상세")
     public API<DressResponse> getDressDetailInfo(
-            @PathVariable long productId
+            @PathVariable Long productId
     ) {
         DressResponse dressResponse = dressBusiness.getProductDetailInfo(productId);
 

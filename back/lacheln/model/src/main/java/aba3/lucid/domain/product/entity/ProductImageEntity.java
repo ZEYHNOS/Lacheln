@@ -14,7 +14,7 @@ public class ProductImageEntity {
     @Id
     @Column(name = "pd_image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long pdImageId;
+    private Long pdImageId;
 
     @ToString.Exclude
     @JoinColumn(name = "pd_id")

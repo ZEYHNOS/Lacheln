@@ -62,20 +62,20 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
     }
 
     @Override
-    public T findByIdWithThrow(long productId) {
+    public T findByIdWithThrow(Long productId) {
         return repository.findById(productId)
                 .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
     }
 
     @Override
-    public void throwIfNotCompanyProduct(T entity, long companyId) {
+    public void throwIfNotCompanyProduct(T entity, Long companyId) {
         if (entity.getCompany().getCpId() != companyId) {
             throw new ApiException(ErrorCode.BAD_REQUEST);
         }
     }
 
-    public abstract List<T> getValidProductList(long companyId);
-    public abstract List<T> getActiveProductList(long companyId);
+    public abstract List<T> getValidProductList(Long companyId);
+    public abstract List<T> getActiveProductList(Long companyId);
     protected abstract void updateAdditionalFields(T existingEntity, R request);
 
 

@@ -1,10 +1,9 @@
 package aba3.lucid.domain.coupon.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.product.entity.ProductEntity;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigInteger;
@@ -21,6 +20,14 @@ public class CouponEntity {
     @Id
     @Column(name = "coupon_id", columnDefinition = "CHAR(15)")
     private String couponId; //'-' 하이폰은 저장하지 않음
+
+    @JoinColumn(name = "cp_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CompanyEntity company;
+
+    @JoinColumn(name = "pd_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ProductEntity product;
 
     @Column(name = "coupon_name", length = 50, nullable = false)
     private String couponName; //쿠폰이름

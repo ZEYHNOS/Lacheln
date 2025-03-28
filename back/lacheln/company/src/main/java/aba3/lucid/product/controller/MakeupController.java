@@ -33,7 +33,7 @@ public class MakeupController {
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        MakeUpResponse res = makeupBusiness.registerProduct(3, req);
+        MakeUpResponse res = makeupBusiness.registerProduct(3L, req);
         log.debug("Register MakeupResponse : {}", res);
 
         return API.OK(res);
@@ -42,13 +42,13 @@ public class MakeupController {
     @PutMapping("/update/{productId}")
     @Operation(summary = "메이크업 수정", description = "메이크업 엔터티 수정")
     public API<MakeUpResponse> updateMakeup(
-            @PathVariable long productId,
+            @PathVariable Long productId,
             @Valid
             @RequestBody MakeupRequest request
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        MakeUpResponse response = makeupBusiness.updateProduct(3, productId, request);
+        MakeUpResponse response = makeupBusiness.updateProduct(3L, productId, request);
         log.debug("Update MakeupResponse : {}", response);
 
         return API.OK(response);
@@ -57,18 +57,18 @@ public class MakeupController {
     @DeleteMapping("/delete/{productId}")
     @Operation(summary = "메이크업 상품 삭제", description = "메이크업 엔터티 삭제")
     public API<String> deleteMakeup(
-            @PathVariable long productId
+            @PathVariable Long productId
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        makeupBusiness.deleteProduct(1, productId);
+        makeupBusiness.deleteProduct(1L, productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 
     @GetMapping("/{productId}")
     @Operation(summary = "메이크업 상품 상세")
     public API<MakeUpResponse> getStudioDetailInfo(
-            @PathVariable long productId
+            @PathVariable Long productId
     ) {
         MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(productId);
 

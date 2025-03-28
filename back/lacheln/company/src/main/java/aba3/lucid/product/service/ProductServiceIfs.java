@@ -16,7 +16,7 @@ public interface ProductServiceIfs<T extends ProductEntity,REQ extends ProductRe
     void deleteProduct(T entity);
 
     // 아이디로 entity 가지고 오기
-    T findByIdWithThrow(long productId);
+    T findByIdWithThrow(Long productId);
 
-    void throwIfNotCompanyProduct(T entity, long companyId);
+    void throwIfNotCompanyProduct(T entity, Long companyId);
 }

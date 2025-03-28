@@ -22,7 +22,7 @@ public class OptionEntity {
     @Id
     @Column(name = "op_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long opId;
+    private Long opId;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

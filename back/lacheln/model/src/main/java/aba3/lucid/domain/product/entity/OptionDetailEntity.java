@@ -17,7 +17,7 @@ public class OptionDetailEntity {
     @Id
     @Column(name = "op_dt_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long opDtId; // 옵션 상세 ID
+    private Long opDtId; // 옵션 상세 ID
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

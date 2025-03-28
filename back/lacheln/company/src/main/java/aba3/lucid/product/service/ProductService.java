@@ -21,7 +21,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
 
-    public List<ProductEntity> getCompanyProductList(long companyId) {
+    public List<ProductEntity> getCompanyProductList(Long companyId) {
         log.info("CompanyProductList : {}", companyId);
         List<ProductEntity> productEntityList = productRepository.findAllByCompany_CpId(companyId);
 
@@ -51,7 +51,7 @@ public class ProductService {
     }
 
     // 상품 찾기
-    public ProductEntity findByIdWithThrow(long productId) {
+    public ProductEntity findByIdWithThrow(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }

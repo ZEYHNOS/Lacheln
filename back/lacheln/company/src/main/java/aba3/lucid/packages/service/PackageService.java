@@ -38,7 +38,7 @@ public class PackageService {
     // 패키지에 상품 등록하기
     @Transactional
     public PackageToProductEntity productPackageInsert(PackageToProductEntity packToPdEntity
-            , long companyId
+            , Long companyId
             , PackageEntity packageEntity
             , ProductEntity productEntity) {
         // 이미 해당 업체가 상품을 등록했는지
@@ -67,7 +67,7 @@ public class PackageService {
 
     // 패키지 정보 수정
     @Transactional
-    public PackageEntity packageUpdate(PackageEntity packageEntity, PackageUpdateRequest request, long adminId) {
+    public PackageEntity packageUpdate(PackageEntity packageEntity, PackageUpdateRequest request, Long adminId) {
         // 방장의 요청이 아닐 때
         throwIfNotAdminRequest(packageEntity, adminId);
 
@@ -98,13 +98,13 @@ public class PackageService {
     }
 
     // 패키지에 해당 회사가 존재하는지
-    public PackageEntity findByPackIdAndCompanyIdWithThrow(long packId, long companyId) {
+    public PackageEntity findByPackIdAndCompanyIdWithThrow(Long packId, Long companyId) {
         return packageRepository.findByPackageIdAndCompanyId(packId, companyId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
     // 패키지가 존재하는지
-    public PackageEntity findByIdWithThrow(long packageId) {
+    public PackageEntity findByIdWithThrow(Long packageId) {
         return packageRepository.findById(packageId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
@@ -136,13 +136,13 @@ public class PackageService {
     }
 
     // 현재 패키지에 등록된 상품 갯수
-    public long countDistinctProductsByPackage(long packageId) {
+    public long countDistinctProductsByPackage(Long packageId) {
         return packageToProductRepository.countDistinctProductsByPackage(packageId);
     }
 
 
     // 패키지 업로드
-    public PackageEntity packageUpload(PackageEntity packageEntity, long adminId) {
+    public PackageEntity packageUpload(PackageEntity packageEntity, Long adminId) {
         // 방장이 아닐 때
         throwIfNotAdminRequest(packageEntity, adminId);
 
@@ -169,7 +169,7 @@ public class PackageService {
     }
 
     // 방장의 요청이 아닐 때 에러 발생
-    public void throwIfNotAdminRequest(PackageEntity packageEntity, long adminId) {
+    public void throwIfNotAdminRequest(PackageEntity packageEntity, Long adminId) {
         if (packageEntity.getPackAdmin().getCpId() != adminId) {
             throw new ApiException(ErrorCode.UNAUTHORIZED);
         }

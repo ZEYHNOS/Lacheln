@@ -1,6 +1,8 @@
 package aba3.lucid.domain.coupon.entity;
 
 
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import jakarta.persistence.*;
@@ -25,7 +27,7 @@ public class CouponEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private CompanyEntity company;
 
-    @JoinColumn(name = "pd_id", nullable = false)
+    @JoinColumn(name = "pd_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private ProductEntity product;
 
@@ -49,4 +51,13 @@ public class CouponEntity {
 
     @Column(name = "coupon_expiration_date", nullable = false)
     private LocalDateTime couponExpirationDate; //만료일 2099-12-31
+
+
+    public void setCouponId(String id) {
+        if (id == null) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        this.couponId = id;
+    }
 }

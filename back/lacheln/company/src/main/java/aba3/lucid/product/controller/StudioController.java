@@ -1,7 +1,6 @@
 package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
-import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.studio.dto.StudioRequest;
 import aba3.lucid.domain.product.studio.dto.StudioResponse;
 import aba3.lucid.product.business.ProductBusiness;
@@ -12,8 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController

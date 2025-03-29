@@ -39,6 +39,7 @@ public class WeekdaysScheduleEntity {
     private LocalTime wsStart;
 
     // 종료 시간
-    @Column(name = "ws_end", columnDefinition = "DATETIME", nullable = false)
+    //“오픈/마감 시각”만 필요하다면 DB 컬럼 타입을 TIME으로 변경하는 것이 자연스럽습니다.
+    @Column(name = "ws_end", columnDefinition = "TIME", nullable = false)
     private LocalTime wsEnd;
 }

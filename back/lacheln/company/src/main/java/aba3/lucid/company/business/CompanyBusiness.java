@@ -170,23 +170,7 @@ public class CompanyBusiness {
 //        }
 //    }
 
-    public CompanyLoginResponse login (CompanyLoginRequest request) {
-        if(request == null) {
-            throw new ApiException(ErrorCode.BAD_REQUEST, "LoginRequest 값을 받지 못했습니다");
-        }
-        CompanyEntity companyEntity = companyService.findByCpEmailWithThrow(request.getCpEmail());
 
-        String hashedPassword = encodePassword(request.getCpPassword(), request.getCpEmail());
-        if(!companyEntity.getCpPassword().equals(hashedPassword)) {
-            throw new ApiException(ErrorCode.INVALID_PARAMETER, "비밀번호가 틀렸습니다");
-        }
-
-        return CompanyLoginResponse.builder()
-                .cpId(companyEntity.getCpId())
-                .cpEmail(companyEntity.getCpEmail())
-                .cpName(companyEntity.getCpName())
-                .build();
-    }
 
 //    public Map<String, Object> checkBusinessStatus(String bNo) {
 //        // bNo: 조회할 사업자등록번호

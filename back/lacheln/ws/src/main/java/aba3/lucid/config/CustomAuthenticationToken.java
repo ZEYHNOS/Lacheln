@@ -5,6 +5,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
+@Getter
 public class CustomAuthenticationToken extends UsernamePasswordAuthenticationToken {
     private final String loginType; // 추가 인자
 
@@ -16,9 +17,5 @@ public class CustomAuthenticationToken extends UsernamePasswordAuthenticationTok
     public CustomAuthenticationToken(Object principal, Object credentials, String loginType, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);
         this.loginType = loginType;
-    }
-
-    public String getLoginType() {
-        return loginType;
     }
 }

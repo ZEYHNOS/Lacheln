@@ -59,23 +59,9 @@ public class GateWayController {
         return routeRequest("http://localhost:5051", request);
     }
 
-    // 토큰 생성 메서드 (needs => userEmail, Role)
-    @GetMapping("/addToken")
-    public ResponseEntity<String> routeToLogin(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, ResponseCookie> cookies = authService.userLogin("user1@example.com");
-
-        // 쿠키들을 Set-Cookie 헤더에 추가
-        for (ResponseCookie cookie : cookies.values()) {
-            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        }
-
-        // 응답 본문 반환
-        return ResponseEntity.ok("엑세스, 리프레시 토큰 생성 완료");
-    }
-
     // 토큰 지우기 (needs => userEmail, Role)
     @GetMapping("/delToken")
-    public ResponseEntity<String> routeToLogout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> routeToLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
 

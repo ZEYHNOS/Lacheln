@@ -17,9 +17,9 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
     // 로그인 성공 시 토큰 발급
-    public Map<String, ResponseCookie> userLogin(String userEmail)  {
-        String accessToken = jwtTokenProvider.createAccessToken(userEmail, "USER");
-        String refreshToken = jwtTokenProvider.createRefreshToken(userEmail, "USER");
+    public Map<String, ResponseCookie> login(String userEmail, String role)  {
+        String accessToken = jwtTokenProvider.createAccessToken(userEmail, role);
+        String refreshToken = jwtTokenProvider.createRefreshToken(userEmail, role);
         Map<String, ResponseCookie> responseCookies = new HashMap<>();
 
         refreshTokenService.saveRefreshToken(userEmail, refreshToken);

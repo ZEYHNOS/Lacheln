@@ -2,6 +2,7 @@ package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.repository.ProductRepository;
@@ -54,7 +55,7 @@ public class ProductService {
     // 상품 찾기
     public ProductEntity findByIdWithThrow(Long productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ApiException(ProductErrorCode.PRODUCT_NOT_FOUND));
     }
 
     public void updateStatusToPackage(ProductEntity product) {

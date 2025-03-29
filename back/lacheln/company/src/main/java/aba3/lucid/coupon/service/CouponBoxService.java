@@ -1,6 +1,7 @@
 package aba3.lucid.coupon.service;
 
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.CouponErrorCode;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.coupon.convertor.CouponBoxConverter;
@@ -32,12 +33,12 @@ public class CouponBoxService {
     public void claimCoupon(UsersEntity user, CouponEntity coupon) {
         // 유효기간 확인하기
         if (couponService.isNotCouponExpired(coupon)) {
-            throw new ApiException(ErrorCode.GONE);
+            throw new ApiException(CouponErrorCode.EXPIRED_COUPON);
         }
 
         // 쿠폰을 가지고 있는지
         if (doesUserOwnCoupon(user, coupon)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
+            throw new ApiException(CouponErrorCode.NO_COUPON_OWNERSHIP);
         }
 
         // 쿠폰 등록하기
@@ -51,12 +52,12 @@ public class CouponBoxService {
 
         // 사용자가 가지고 있는 쿠폰인지
         if (!doesUserOwnCoupon(user, coupon)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
+            throw new ApiException(CouponErrorCode.NO_COUPON_OWNERSHIP);
         }
 
         // 유효기간이 만료되지 않았는지
         if (couponService.isNotCouponExpired(coupon)) {
-            throw new ApiException(ErrorCode.NULL_POINT);
+            throw new ApiException(CouponErrorCode.EXPIRED_COUPON);
         }
 
         // 해당 상품에 대한 쿠폰인지
@@ -115,7 +116,7 @@ public class CouponBoxService {
 
     public CouponBoxEntity findByIdWithThrow(Long couponBoxId) {
         return couponBoxRepository.findById(couponBoxId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
+                .orElseThrow(() -> new ApiException(CouponErrorCode.COUPON_NOT_FOUND));
     }
 
 

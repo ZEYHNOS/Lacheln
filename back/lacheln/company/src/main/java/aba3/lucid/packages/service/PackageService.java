@@ -2,6 +2,8 @@ package aba3.lucid.packages.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.status_code.PackageErrorCode;
+import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
@@ -43,17 +45,17 @@ public class PackageService {
             , ProductEntity productEntity) {
         // 이미 해당 업체가 상품을 등록했는지
         if (existsByPackageEntityAndProduct(packageEntity, productEntity)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
+            throw new ApiException(PackageErrorCode.PRODUCT_ALREADY_REGISTERED);
         }
 
         // 등록하려는 상품이 해당 업체의 것인지
         if (productEntity.getCompany().getCpId() != companyId) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
+            throw new ApiException(ProductErrorCode.NO_PRODUCT_OWNERSHIP);
         }
 
         // 상태가 비공개인지
         if (productEntity.getPdStatus() != ProductStatus.INACTIVE) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
+            throw new ApiException(ProductErrorCode.PRODUCT_NOT_PRIVATE);
         }
 
 
@@ -100,13 +102,13 @@ public class PackageService {
     // 패키지에 해당 회사가 존재하는지
     public PackageEntity findByPackIdAndCompanyIdWithThrow(Long packId, Long companyId) {
         return packageRepository.findByPackageIdAndCompanyId(packId, companyId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ApiException(PackageErrorCode.UNAUTHORIZED_PACKAGE_ACCESS));
     }
 
     // 패키지가 존재하는지
     public PackageEntity findByIdWithThrow(Long packageId) {
         return packageRepository.findById(packageId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ApiException(PackageErrorCode.PACKAGE_NOT_FOUND));
     }
 
 
@@ -120,18 +122,18 @@ public class PackageService {
     protected void throwIfImpossibleToPublicChange(PackageEntity entity) {
         // 비공개 상태여야 함
         if (entity.getPackStatus() != PackageStatus.PRIVATE) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "비공개 상태여야합니다.");
         }
 
         // 모든 상품이 등록되어야 한다.
         if (countDistinctProductsByPackage(entity.getPackId()) != 3) {
-            throw new ApiException(ErrorCode.BAD_REQUEST, "모든 상품이 등록되어야 합니다.");
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION);
         }
 
         // 패키지 종료일이 등록되지 않았거나 오늘보다 하루 이상이지 않을 때
         LocalDateTime minimumDateTime = LocalDate.now().plusDays(1).atStartOfDay();
         if (entity.getPackEndDate().isBefore(minimumDateTime)) {
-            throw new ApiException(ErrorCode.INVALID_PARAMETER);
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_END_DATE);
         }
     }
 
@@ -148,17 +150,17 @@ public class PackageService {
 
         // 모든 상품이 등록되었는지
         if (countDistinctProductsByPackage(packageEntity.getPackId()) != 3) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION);
         }
 
         // 패키지가 삭제되었을 때
         if (packageEntity.getPackStatus().equals(PackageStatus.REMOVE)) {
-            throw new ApiException(ErrorCode.GONE);
+            throw new ApiException(PackageErrorCode.PACKAGE_NOT_FOUND);
         }
 
         // 패키지가 이미 공개 상태일 때
         if (packageEntity.getPackStatus().equals(PackageStatus.PUBLIC)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
+            throw new ApiException(ErrorCode.BAD_REQUEST, "이미 공개 상태입니다.");
         }
 
         // todo 모든 패키지 정보가 잘 저장되었는지
@@ -171,7 +173,7 @@ public class PackageService {
     // 방장의 요청이 아닐 때 에러 발생
     public void throwIfNotAdminRequest(PackageEntity packageEntity, Long adminId) {
         if (packageEntity.getPackAdmin().getCpId() != adminId) {
-            throw new ApiException(ErrorCode.UNAUTHORIZED);
+            throw new ApiException(PackageErrorCode.UNAUTHORIZED_PACKAGE_ACCESS);
         }
     }
 }

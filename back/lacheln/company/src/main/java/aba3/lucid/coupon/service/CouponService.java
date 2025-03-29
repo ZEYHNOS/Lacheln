@@ -1,6 +1,7 @@
 package aba3.lucid.coupon.service;
 
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.CouponErrorCode;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.coupon.entity.CouponEntity;
@@ -62,7 +63,7 @@ public class CouponService {
     // 요청을 보낸 업체의 쿠폰인지 유무 확인
     public void validateCompanyCouponOwnership(CompanyEntity company, CouponEntity coupon) {
         if (!company.equals(coupon.getCompany())) {
-            throw new ApiException(ErrorCode.UNAUTHORIZED);
+            throw new ApiException(CouponErrorCode.UNAUTHORIZED_PACKAGE_ACCESS);
         }
     }
 
@@ -77,7 +78,7 @@ public class CouponService {
     // Id를 통해 쿠폰 찾기
     public CouponEntity findByIdWithThrow(String couponId) {
         return couponRepository.findById(couponId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ApiException(CouponErrorCode.COUPON_NOT_FOUND));
     }
 
 

@@ -2,6 +2,7 @@ package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
@@ -64,7 +65,7 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
     @Override
     public T findByIdWithThrow(Long productId) {
         return repository.findById(productId)
-                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
+                .orElseThrow(() -> new ApiException(ProductErrorCode.PRODUCT_NOT_FOUND));
     }
 
     @Override

@@ -4,6 +4,7 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.ifs.ProductConverterIfs;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -109,7 +110,7 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
 
         // 삭제된 상품일 때
         if (existingProduct.getPdStatus() == ProductStatus.REMOVE) {
-            throw new ApiException(ErrorCode.GONE);
+            throw new ApiException(ProductErrorCode.PRODUCT_NOT_FOUND);
         }
 
         return productConverterIfs.toResponse(existingProduct);

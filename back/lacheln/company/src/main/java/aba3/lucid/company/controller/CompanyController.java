@@ -21,17 +21,6 @@ public class CompanyController {
 
 
 
-
-    @PostMapping("/login")
-    public API<CompanyLoginResponse> login(
-            @Valid
-            @RequestBody CompanyLoginRequest companyLoginRequest
-    ) {
-        CompanyLoginResponse companyLoginResponse = companyBusiness.login(companyLoginRequest);
-        log.debug("Login CompanyResponse: {}", companyLoginResponse);
-        return API.OK(companyLoginResponse);
-    }
-
     @PostMapping("/signup")
     public API<CompanyResponse> registerCompany (
             @RequestBody CompanyRequest companyRequest

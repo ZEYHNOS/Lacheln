@@ -3,7 +3,6 @@ package aba3.lucid.handler;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.enums.*;
 import aba3.lucid.domain.user.service.UserService;
-import aba3.lucid.jwt.JwtTokenProvider;
 import aba3.lucid.service.AuthService;
 import com.fasterxml.uuid.Generators;
 import jakarta.servlet.ServletException;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -23,7 +21,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Map;
 
 @Component
@@ -35,6 +32,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        System.out.println("OAuth2LoginSuccessHandler called");
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         // ClientRegistration을 통해 client-name 확인
         String clientName = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
@@ -69,13 +67,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         System.out.println("==== 로그인 요청 정보 끝 ====");
 
         // 토큰 발급 로직
-        Map<String, ResponseCookie> cookies = authService.userLogin(requestEmail);
+        Map<String, ResponseCookie> cookies = authService.login(requestEmail, "USER");
 
         for (ResponseCookie cookie : cookies.values()) {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
 
-        System.out.println("로그인 성공 : " + oAuth2User.getAttributes());
+        System.out.println("OAuth Authentication Successful : " + oAuth2User.getAttributes());
 
         response.sendRedirect("http://localhost:3000");
     }

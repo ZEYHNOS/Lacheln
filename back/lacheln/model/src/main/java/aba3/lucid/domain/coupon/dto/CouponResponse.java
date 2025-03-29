@@ -1,8 +1,5 @@
 package aba3.lucid.domain.coupon.dto;
 
-import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.product.entity.ProductEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigInteger;
@@ -26,7 +23,7 @@ public class CouponResponse {
 
     private String content; //내용
 
-    private BigInteger discountRate; //할인율 5~90%
+    private Integer discountRate; //할인율 5~90%
 
     private BigInteger minimumCost; //가격하한선 0
 

@@ -1,5 +1,6 @@
 package aba3.lucid.domain.coupon.entity;
 
+import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.coupon.enums.CouponBoxStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import jakarta.persistence.*;
@@ -27,4 +28,10 @@ public class CouponBoxEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "coupon_status", columnDefinition = "CHAR(20)", nullable = false)
     private CouponBoxStatus couponStatus; //사용, 미사용, 만료
+
+    public void updateStatus(CouponBoxStatus couponBoxStatus) {
+        Validator.throwIfNull(couponBoxStatus);
+
+        this.couponStatus = couponBoxStatus;
+    }
 }

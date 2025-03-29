@@ -7,8 +7,6 @@ import aba3.lucid.domain.coupon.dto.CouponResponse;
 import aba3.lucid.domain.coupon.entity.CouponEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 
-import java.time.LocalDateTime;
-
 @Converter
 public class CouponConvertor {
 

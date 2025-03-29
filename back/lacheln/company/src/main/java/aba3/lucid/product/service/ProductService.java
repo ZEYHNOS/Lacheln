@@ -21,7 +21,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-
+    // 특정 업체 상품 리스트
     public List<ProductEntity> getCompanyProductList(Long companyId) {
         log.info("CompanyProductList : {}", companyId);
         List<ProductEntity> productEntityList = productRepository.findAllByCompany_CpId(companyId);

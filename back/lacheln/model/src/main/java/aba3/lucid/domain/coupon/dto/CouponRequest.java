@@ -25,7 +25,7 @@ public class CouponRequest {
 
     // 쿠폰 할인율
     @Min(5) @Max(90)
-    private BigInteger discountRate;
+    private Integer discountRate;
 
     // 쿠폰 가격 하한선
     @Min(0)

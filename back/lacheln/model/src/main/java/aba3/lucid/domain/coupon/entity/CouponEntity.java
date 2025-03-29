@@ -38,7 +38,7 @@ public class CouponEntity {
     private String couponContent; //내용
 
     @Column(name = "coupon_discount_rate", nullable = false)
-    private BigInteger couponDiscountRate; //할인율 5~90%
+    private Integer couponDiscountRate; //할인율 5~90%
 
     @Column(name = "coupon_minimumcost", nullable = false)
     private BigInteger couponMinimumCost; //가격하한선 0

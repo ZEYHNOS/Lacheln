@@ -2,24 +2,21 @@ package aba3.lucid.coupon.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.coupon.entity.CouponEntity;
 import aba3.lucid.domain.coupon.repository.CouponRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Service
 public class CouponService {
 
     private final SecureRandom RANDOM;
-
-    private final CompanyService companyService;
 
     private final CouponRepository couponRepository;
 
@@ -28,7 +25,6 @@ public class CouponService {
 
     public CouponService(SecureRandom RANDOM,
                          CouponRepository couponRepository,
-                         CompanyService companyService,
                          @Value("${coupon.characters}") String CHARACTERS,
                          @Value("${coupon.len}") int CODE_LENGTH
          ) {
@@ -36,7 +32,6 @@ public class CouponService {
         this.couponRepository = couponRepository;
         this.CHARACTERS = CHARACTERS;
         this.CODE_LENGTH = CODE_LENGTH;
-        this.companyService = companyService;
     }
 
 
@@ -52,22 +47,15 @@ public class CouponService {
         return couponRepository.save(entity);
     }
 
-    // 유저가 쿠폰 등록하기
-
-
-    // 유저가 쿠폰 사용
-
 
     // 쿠폰 삭제
     public void deleteCouponById(CouponEntity coupon) {
-
-
+        couponRepository.delete(coupon);
     }
 
 
     // 쿠폰 수정
     public CouponEntity updateCoupon(CouponEntity coupon) {
-
         return couponRepository.save(coupon);
     }
 
@@ -76,6 +64,13 @@ public class CouponService {
         if (!company.equals(coupon.getCompany())) {
             throw new ApiException(ErrorCode.UNAUTHORIZED);
         }
+    }
+
+
+
+    // 유효기간을 지난 쿠폰인지
+    public boolean isNotCouponExpired(CouponEntity coupon) {
+        return coupon.getCouponExpirationDate().isBefore(LocalDateTime.now());
     }
 
 

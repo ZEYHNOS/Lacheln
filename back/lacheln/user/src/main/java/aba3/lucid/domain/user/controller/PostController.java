@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Tag(name = "Post Controller", description = "게시글 관련 API")
 @RestController
@@ -25,7 +24,7 @@ public class PostController {
      * 게시글 생성 API
      */
     @PostMapping("")
-    @Operation( 
+    @Operation(
             summary = "게시글 생성",
             description = "새로운 게시글을 생성합니다. (세미프로 이상부터 작성 가능)",
             responses = {
@@ -54,58 +53,32 @@ public class PostController {
                     @ApiResponse(responseCode = "404", description = "해당 게시글이 존재하지 않음")
             }
     )
-    public API<PostDetailResponse> getPostById(@PathVariable long postId) {
-        PostDetailResponse res = postBusiness.getPostById(postId);
+    public API<PostDetailResponse> getPostById(
+            @PathVariable long postId,
+            @RequestParam String userId // ← JWT 미구현 상태에서는 임시로 이렇게 받자!
+    ) {
+        PostDetailResponse res = postBusiness.getPostById(postId, userId);
         return API.OK(res);
     }
 
     /**
-     * 특정 게시판의 게시글 목록 조회 API
-     */
-    @GetMapping("/list")
-    @Operation(
-            summary = "특정 게시판 목록 조회",
-            description = "특정 게시판에 작성된 게시글 목록을 조회합니다.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공"),
-                    @ApiResponse(responseCode = "404", description = "해당 게시판이 존재하지 않음")
-            }
-    )
-    public API<List<PostListResponse>> getPostListByBoardId(@RequestParam long boardId) {
-        List<PostListResponse> responseList = postBusiness.getPostListByBoardId(boardId);
-        return API.OK(responseList);
-    }
-
-    /**
-     * 전체 게시판 통합 목록 조회 API
-     */
-    @GetMapping("/all")
-    @Operation(
-            summary = "전체 게시판 조회",
-            description = "자유/질문/리뷰 게시판의 모든 글을 통합 조회합니다.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "전체 게시판 목록 조회 성공")
-            }
-    )
-    public API<List<PostListResponse>> getAllCategoryPosts() {
-        return API.OK(postBusiness.getAllCategoryPosts());
-    }
-
-    /**
      * 인기 게시판 조회 API
-     * - 자유/질문/리뷰 게시판 중 추천 수 15 이상 게시글만 조회
+     * - 자유/질문/리뷰 게시판 중 추천 수 15 이상 게시글만 조회 (페이징)
      */
     @GetMapping("/popular")
     @Operation(
             summary = "인기 게시판 조회",
-            description = "자유/질문/리뷰 게시판 중 추천 15 이상인 인기 게시글들을 조회합니다.",
+            description = "자유/질문/리뷰 게시판 중 추천 15 이상인 인기 게시글들을 페이징으로 조회합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "인기 게시글 목록 조회 성공")
             }
     )
-    public ResponseEntity<List<PostListResponse>> getPopularPosts() {
-        List<PostListResponse> response = postBusiness.getPopularPostList();
-        return ResponseEntity.ok(response);
+    public API<PagedResponse<PostListResponse>> getPopularPosts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "30") int size
+    ) {
+        PagedResponse<PostListResponse> response = postBusiness.getPopularPostPage(page, size);
+        return API.OK(response);
     }
 
     /**
@@ -158,5 +131,85 @@ public class PostController {
     ) {
         postBusiness.deletePost(postId, userId);
         return API.OK((Void) null); // ★ 여기 수정!
+    }
+
+    /**
+     * 게시글 추천 API
+     * - 사용자가 게시글에 추천(좋아요)을 1회 누를 수 있습니다.
+     * - 중복 추천은 불가능하며, 이미 추천한 경우 400 에러를 반환합니다.
+     *
+     * @param postId 추천할 게시글의 ID
+     * @param userId 추천을 누른 사용자 ID (임시, JWT 적용 전)
+     * @return 성공 시 200 OK 응답
+     */
+    @PostMapping("/{postId}/like")
+    @Operation(
+            summary = "게시글 추천",
+            description = "게시글에 추천을 1회 할 수 있습니다. (중복 추천 불가)",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "추천 성공"),
+                    @ApiResponse(responseCode = "400", description = "이미 추천함"),
+                    @ApiResponse(responseCode = "404", description = "게시글 또는 사용자 없음")
+            }
+    )
+    public API<Void> likePost(
+            @PathVariable Long postId,
+            @RequestParam String userId // TODO: JWT 적용 후 삭제 예정
+    ) {
+        postBusiness.likePost(postId, userId);
+        return API.OK((Void) null);
+    }
+
+    /**
+     * 특정 게시판의 게시글을 페이징으로 조회
+     *
+     * 예시 호출:
+     * GET /post/list?boardId=2&page=1&size=30
+     *
+     * @param boardId 게시판 ID
+     * @param page 현재 페이지 번호 (기본 1)
+     * @param size 페이지당 게시글 수 (기본 30)
+     */
+    @GetMapping("/list")
+    @Operation(
+            summary = "특정 게시판 페이징 조회",
+            description = "특정 게시판에 작성된 게시글을 페이징으로 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공"),
+                    @ApiResponse(responseCode = "404", description = "해당 게시판이 존재하지 않음")
+            }
+    )
+    public API<PagedResponse<PostListResponse>> getPostPageByBoardId(
+            @RequestParam Long boardId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "30") int size
+    ) {
+        PagedResponse<PostListResponse> response = postBusiness.getPostPageByBoardId(boardId, page, size);
+        return API.OK(response);
+    }
+
+    /**
+     * 전체 게시판 페이징 조회 (자유/질문/리뷰)
+     *
+     * 예시 호출:
+     * GET /post/all?page=1&size=30
+     *
+     * @param page 현재 페이지 번호
+     * @param size 한 페이지당 게시글 수
+     */
+    @GetMapping("/all")
+    @Operation(
+            summary = "전체 게시판 페이징 조회",
+            description = "자유, 질문, 리뷰 게시판의 게시글을 통합해서 페이징 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회 성공")
+            }
+    )
+    public API<PagedResponse<PostListResponse>> getAllCategoryPostPage(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "30") int size
+    ) {
+        PagedResponse<PostListResponse> response = postBusiness.getAllCategoryPostPage(page, size);
+        return API.OK(response);
     }
 }

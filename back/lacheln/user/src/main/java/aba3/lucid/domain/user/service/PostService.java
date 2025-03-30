@@ -10,6 +10,8 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,8 @@ public class PostService {
     private final PostImageRepository postImageRepository;
     private final BoardRepository boardRepository;
     private final UsersRepository usersRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final PostViewRepository postViewRepository;
 
     /**
      * 게시글 생성 - PostEntity 저장 + 이미지 저장
@@ -114,18 +118,7 @@ public class PostService {
      */
     public List<PostEntity> getAllCategoryPosts() {
         List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
-        return postRepository.findByBoard_BoardNameInAndDeletedFalse(boardNames);
-    }
-
-    /**
-     * 인기 게시글 조회
-     * - 자유/질문/리뷰 게시판 중 추천수 15 이상 & 삭제되지 않은 게시글만 조회
-     *
-     * @return 인기 게시글 목록
-     */
-    public List<PostEntity> getPopularPosts() {
-        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
-        return postRepository.findPopularPosts(boardNames);
+        return postRepository.findByBoardBoardNameInAndDeletedFalse(boardNames);
     }
 
     /**
@@ -204,5 +197,111 @@ public class PostService {
 
         // 논리 삭제 처리 (deleted = true)
         post.delete();
+    }
+
+    /**
+     * 게시글 추천 처리
+     * - 사용자가 특정 게시글에 추천을 1회 누르면, 추천 정보를 저장합니다.
+     * - 이미 추천한 경우 예외를 발생시킵니다.
+     *
+     * @param postId 추천할 게시글 ID
+     * @param userId 추천을 누른 사용자 ID
+     */
+    @Transactional
+    public void likePost(Long postId, String userId) {
+        // 1. 게시글 조회 (삭제된 글은 추천 불가)
+        PostEntity post = postRepository.findByPostIdAndDeletedFalse(postId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시글이 존재하지 않거나 삭제되었습니다."));
+
+        // 2. 사용자 조회
+        UsersEntity user = usersRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "사용자가 존재하지 않습니다."));
+
+        // 3. 이미 추천한 경우 예외 발생
+        boolean alreadyLiked = postLikeRepository.existsByPostPostIdAndUsersUserId(postId, userId);
+        if (alreadyLiked) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "이미 추천한 게시글입니다.");
+        }
+
+        // 4. 추천 정보 저장
+        PostLikeEntity like = PostLikeEntity.builder()
+                .post(post)
+                .users(user)
+                .build();
+
+        postLikeRepository.save(like);
+    }
+
+    /**
+     * 게시글을 조회한 사용자의 조회 정보를 저장하는 메서드
+     * - 게시글 상세 페이지 접속 시 호출됨
+     * - 현재는 중복 조회 방지 없이 단순히 PostViewEntity를 저장함
+     *
+     * @param postId 조회 대상 게시글 ID
+     * @param userId 조회한 사용자 ID
+     */
+    @Transactional
+    public void addPostView(Long postId, String userId) {
+        // 1. 게시글 존재 여부 확인 (삭제된 게시글은 예외 발생)
+        PostEntity post = postRepository.findByPostIdAndDeletedFalse(postId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시글이 존재하지 않거나 삭제되었습니다."));
+
+        // 2. 사용자 정보 조회
+        UsersEntity user = usersRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "사용자가 존재하지 않습니다."));
+
+        // 3. PostViewEntity 생성 및 저장 (중복 여부는 일단 검사 안 함)
+        PostViewEntity view = PostViewEntity.builder()
+                .post(post)
+                .users(user)
+                .build();
+
+        postViewRepository.save(view);
+    }
+
+    /**
+     * 특정 게시판의 게시글을 페이징으로 조회
+     * - 삭제되지 않은 게시글만 조회됨
+     */
+    @Transactional(readOnly = true)
+    public Page<PostEntity> getPostPageByBoardId(Long boardId, Pageable pageable) {
+        BoardEntity board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시판이 존재하지 않습니다."));
+        return postRepository.findAllByBoardAndDeletedFalse(board, pageable);
+    }
+
+    /**
+     * 전체 게시판(자유/질문/리뷰) 통합 페이징 조회
+     */
+    public Page<PostEntity> getAllCategoryPostPage(Pageable pageable) {
+        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
+        return postRepository.findByBoardBoardNameInAndDeletedFalse(boardNames, pageable);
+    }
+
+    /**
+     * 특정 게시글의 조회수를 반환하는 메서드
+     * - PostViewEntity 테이블에서 해당 게시글과 관련된 모든 레코드 수를 계산
+     *
+     * @param postId 게시글 ID
+     * @return 게시글의 총 조회수
+     */
+    public long getViewCount(Long postId) {
+        return postViewRepository.countByPostPostId(postId);
+    }
+
+    public long getLikeCount(Long postId) {
+        return postLikeRepository.countByPostPostId(postId);
+    }
+
+    /**
+     * 추천 수가 특정 수 이상인 인기 게시글을 페이징으로 조회
+     *
+     * @param minLike 최소 추천 수 (예: 15)
+     * @param pageable 페이징 정보
+     * @return 인기 게시글 Page
+     */
+    @Transactional(readOnly = true)
+    public Page<PostEntity> getPopularPostPage(int minLike, Pageable pageable) {
+        return postRepository.findPopularPosts(minLike, pageable);
     }
 }

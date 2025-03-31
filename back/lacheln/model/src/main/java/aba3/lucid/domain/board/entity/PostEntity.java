@@ -46,6 +46,9 @@ public class PostEntity {
     @Column(name = "post_update", nullable = false)
     private LocalDateTime postUpdate; // 수정일 (갱신 시간)
 
+    @Column(name = "popular_registered_at")
+    private LocalDateTime popularRegisteredAt; // 인기글 등록 시간(인기 게시판 정렬용)
+
     @Enumerated(EnumType.STRING)
     @Column(name = "post_status", columnDefinition = "CHAR(20)", nullable = false)
     private PostStatus postStatus; // 게시글 상태 (예: CREATED, DELETED 등)
@@ -85,5 +88,10 @@ public class PostEntity {
     // 외부에서 삭제 여부 확인용 getter
     public boolean isDeleted() {
         return this.deleted;
+    }
+
+    // 인기글 등록 시점 저장 메서드
+    public void markAsPopular(LocalDateTime time) {
+        this.popularRegisteredAt = time;
     }
 }

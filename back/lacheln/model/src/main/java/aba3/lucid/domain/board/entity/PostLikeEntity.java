@@ -18,11 +18,11 @@ public class PostLikeEntity {
     @Id
     @Column(name = "post_like_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postLikeId;
+    private long postLikeId; // 좋아요 PK
 
     @ManyToOne
-    private PostEntity post;
+    private PostEntity post; // 좋아요 누른 게시글 ID
 
     @ManyToOne
-    private UsersEntity users;
+    private UsersEntity users; // 좋아요 누른 유저 ID
 }

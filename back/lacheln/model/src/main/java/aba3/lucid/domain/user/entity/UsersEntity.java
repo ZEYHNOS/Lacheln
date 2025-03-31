@@ -103,9 +103,7 @@ public class UsersEntity {
      * 현재 시간 정보를 기반으로 고유한 UUID를 생성한다. UUIDv1은 시간 순서대로 생성되므로
      * 각 `userId`가 고유하고 시간이 순차적으로 정렬되는 특징을 가진다.
     */
-    public static UsersEntity createWithUUIDv1() {
-        return UsersEntity.builder()
-                .userId(Generators.timeBasedGenerator().generate().toString())
-                .build();
+    public static String createWithUUIDv1() {
+        return Generators.timeBasedGenerator().generate().toString();
     }
 }

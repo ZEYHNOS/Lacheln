@@ -1,7 +1,6 @@
 package aba3.lucid.domain.user.service;
 
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.UserCode;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +13,22 @@ import java.util.Optional;
 public class UserService {
     private final UsersRepository usersRepository;
 
+    // saveByUser와 중복되는 느낌이 있지만 추가적인 로직이 있을 수 있다고 생각해서 따로 구분함
+    public UsersEntity signUp(UsersEntity usersEntity) throws ApiException {
+        return saveByUser(usersEntity);
+    }
+    
+    // 유저 정보를 바탕으로 저장
+    public UsersEntity saveByUser(UsersEntity usersEntity) {
+        return usersRepository.save(usersEntity);
+    }
+
+    // ID로 유저를 찾음
     public Optional<UsersEntity> findById(String userId) {
         return usersRepository.findById(userId);
     }
 
-    public void saveOAuthUser(UsersEntity usersEntity) {
-        usersRepository.save(usersEntity);
-    }
-
+    // 이메일로 유저를 찾음
     public Optional<UsersEntity> findByEmail(String userEmail) {
         return usersRepository.findByUserEmail(userEmail);
     }

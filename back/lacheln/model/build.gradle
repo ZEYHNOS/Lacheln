@@ -20,6 +20,7 @@ configurations {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.security:spring-security-core:6.2.2' // BCryptPasswordEncoder만을 사용하기 위한 의존성
     implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

@@ -42,8 +42,8 @@ public class WeekdaysScheduleConvertor {
         return entities.stream().map(entity -> new WeekdaysScheduleResponse(
                 entity.getWsId(),
                 entity.getWsWeekdays().name(),
-                entity.getWsStart().toString(),
-                entity.getWsEnd().toString()
+                entity.getWsStart().format(DateTimeFormatter.ofPattern("HH:mm")),
+                entity.getWsEnd().format(DateTimeFormatter.ofPattern("HH:mm"))
         )).collect(Collectors.toList());
     }
 }

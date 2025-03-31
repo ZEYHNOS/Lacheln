@@ -35,11 +35,11 @@ public class WeekdaysScheduleController {
 
 
     @PutMapping("/update/{cpId}/weekdays-schedule")
-    public API<WeekdaysScheduleResponse> updateSchedule(
+    public API<List<WeekdaysScheduleResponse>> updateSchedule(
             @PathVariable Long cpId,
             @RequestBody WeekdaysScheduleRequest request
     ){
-        WeekdaysScheduleResponse response  = weekdaysScheduleService.updateCompanySchedules(cpId, request);
+        List<WeekdaysScheduleResponse> response  = weekdaysScheduleService.updateCompanySchedules(cpId, request);
         return API.OK(response);
     }
 

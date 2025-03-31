@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class WeekdaysScheduleService {
     private final WeekdaysScheduleRepository weekdaysScheduleRepository;
     private final CompanyRepository companyRepository;
-    private final WeekdaysScheduleConvertor convertor;
+//    private final WeekdaysScheduleConvertor convertor;
     private final ScheduleRepository scheduleRepository;
     private final WeekdaysScheduleConvertor weekdaysScheduleConvertor;
 
@@ -37,13 +37,13 @@ public class WeekdaysScheduleService {
         CompanyEntity company = companyRepository.findById(cpId)
                 .orElseThrow(()->new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 수 없습니다."));
         //기존 스케줄 삭제???????????
-//        List<WeekdaysScheduleEntity> existingSchedules = weekdaysScheduleRepository.findByCompany_CpId(cpId);
-//        if(existingSchedules != null && !existingSchedules.isEmpty()) {
-//            weekdaysScheduleRepository.deleteAll(existingSchedules);
-//        }
+        List<WeekdaysScheduleEntity> existingSchedules = weekdaysScheduleRepository.findByCompany_CpId(cpId);
+        if(existingSchedules != null && !existingSchedules.isEmpty()) {
+            weekdaysScheduleRepository.deleteAll(existingSchedules);
+        }
 
         //요청 DTO를 엔티티 리스트로 반환
-        List<WeekdaysScheduleEntity> newSchedules = convertor.toEntityList(request,company);
+        List<WeekdaysScheduleEntity> newSchedules = weekdaysScheduleConvertor.toEntityList(request,company);
         weekdaysScheduleRepository.saveAll(newSchedules);
 
     }
@@ -51,10 +51,10 @@ public class WeekdaysScheduleService {
     @Transactional
     public List<WeekdaysScheduleResponse> getSchedules(Long cpId) {
         List<WeekdaysScheduleEntity> entities = weekdaysScheduleRepository.findByCompany_CpId(cpId);
-        return convertor.toResponseList(entities);
+        return weekdaysScheduleConvertor.toResponseList(entities);
     }
 
-    public WeekdaysScheduleResponse updateCompanySchedules(Long cpId, WeekdaysScheduleRequest request) {
+    public List <WeekdaysScheduleResponse> updateCompanySchedules(Long cpId, WeekdaysScheduleRequest request) {
         CompanyEntity company = companyRepository.findById(cpId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 없습니다"));
         //해당하는 기존 요일별 스케줄들을 DB에서 조회합니다.
@@ -83,13 +83,15 @@ public class WeekdaysScheduleService {
                         .wsWeekdays(newWeekday)
                         .wsStart(newStart)
                         .wsEnd(newEnd).build();
-                weekdaysScheduleRepository.save(newSchedule);
+
             }
         }
-        List<WeekdaysScheduleEntity> updateSchedules = weekdaysScheduleRepository.findByCompany_CpId(cpId);
-        return (WeekdaysScheduleResponse) weekdaysScheduleConvertor.toResponseList(updateSchedules);
+        List<WeekdaysScheduleEntity> updatedSchedules = weekdaysScheduleRepository.findByCompany_CpId(cpId);
+        return weekdaysScheduleConvertor.toResponseList(updatedSchedules);
+
 
     }
+
 
 
 }

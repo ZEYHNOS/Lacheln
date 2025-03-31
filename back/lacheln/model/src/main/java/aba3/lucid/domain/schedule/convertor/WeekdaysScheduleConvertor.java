@@ -9,6 +9,7 @@ import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ public class WeekdaysScheduleConvertor {
 
     public List<WeekdaysScheduleEntity> toEntityList(WeekdaysScheduleRequest request, CompanyEntity company) {
         List<WeekdaysScheduleEntity> entities = new ArrayList<>();
+//        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
         for(WeekdaysScheduleRequest.DayScheduleDto dto : request.getScheduleList()) {
             // // 입력받은 요일 문자열("MON", "TUE" 등)을 enum으로 변환 (대문자 변환)
             Weekdays weekdayEnum = Weekdays.valueOf(dto.getWeekday().toUpperCase());
@@ -29,7 +31,9 @@ public class WeekdaysScheduleConvertor {
                     .company(company)
                     .wsWeekdays(weekdayEnum)
                     .wsEnd(endTime)
+                    .wsStart(startTime)
                     .build();
+            entities.add(entity);
         }
         return entities;
     }

@@ -1,5 +1,6 @@
 package aba3.lucid.schedule.Controller;
 
+import aba3.lucid.common.api.API;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleResponse;
 import aba3.lucid.schedule.Service.WeekdaysScheduleService;
@@ -20,7 +21,7 @@ public class WeekdaysScheduleController {
             @PathVariable Long cpId,
             @RequestBody WeekdaysScheduleRequest request
     ) {
-        weekdaysScheduleService.saveOrUpdateSchedules(cpId, request);
+        weekdaysScheduleService.saveSchedules(cpId, request);
         return ResponseEntity.ok().build();
     }
 
@@ -31,5 +32,16 @@ public class WeekdaysScheduleController {
         List<WeekdaysScheduleResponse> response = weekdaysScheduleService.getSchedules(cpId);
         return ResponseEntity.ok(response);
     }
+
+
+    @PutMapping("/update/{cpId}/weekdays-schedule")
+    public API<WeekdaysScheduleResponse> updateSchedule(
+            @PathVariable Long cpId,
+            @RequestBody WeekdaysScheduleRequest request
+    ){
+        WeekdaysScheduleResponse response  = weekdaysScheduleService.updateCompanySchedules(cpId, request);
+        return API.OK(response);
+    }
+
 
 }

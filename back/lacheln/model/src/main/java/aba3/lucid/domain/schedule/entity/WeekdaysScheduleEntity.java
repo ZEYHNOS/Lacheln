@@ -1,17 +1,19 @@
 package aba3.lucid.domain.schedule.entity;
 
 import aba3.lucid.common.enums.Weekdays;
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Entity
+@Setter
 @Table(name = "weekdays_schedule")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,11 +37,22 @@ public class WeekdaysScheduleEntity {
     private Weekdays wsWeekdays;
 
     // 시작 시간
-    @Column(name = "ws_start", columnDefinition = "DATETIME", nullable = false)
+    @Column(name = "ws_start", columnDefinition = "TIME", nullable = false)
     private LocalTime wsStart;
 
     // 종료 시간
     //“오픈/마감 시각”만 필요하다면 DB 컬럼 타입을 TIME으로 변경하는 것이 자연스럽습니다.
     @Column(name = "ws_end", columnDefinition = "TIME", nullable = false)
     private LocalTime wsEnd;
+
+
+    public void updateFromDto(WeekdaysScheduleRequest.DayScheduleDto dto) {
+        this.wsWeekdays = Weekdays.valueOf(dto.getWeekday());
+        this.wsStart = LocalTime.parse(dto.getStart());
+        this.wsEnd = LocalTime.parse(dto.getEnd());
+
+    }
+
+
+
 }

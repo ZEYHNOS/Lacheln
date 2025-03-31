@@ -102,6 +102,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .userMileage(new BigInteger("0"))
                 .userRole("USER")
                 .build();
-        userService.saveOAuthUser(usersEntity);
+        userService.saveByUser(usersEntity);
     }
 }

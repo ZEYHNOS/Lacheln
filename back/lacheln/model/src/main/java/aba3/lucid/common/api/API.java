@@ -101,5 +101,11 @@ public class API<T> {
                 ;
     }
 
-
+    public static <T>API<T> ERROR(T data, StatusCodeIfs statusCode) {
+        return API.<T>builder()
+                .result(Result.ERROR(statusCode))
+                .data(data)
+                .build()
+                ;
+    }
 }

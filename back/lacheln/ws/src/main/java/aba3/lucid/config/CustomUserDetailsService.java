@@ -1,6 +1,7 @@
 package aba3.lucid.config;
 
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.password.CustomPasswordEncoder;
 import aba3.lucid.common.status_code.UserCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
@@ -25,6 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UsersRepository usersRepository;
     private final CompanyRepository companyRepository;
+    private final CustomPasswordEncoder customPasswordEncoder;
 
     @Override
     public CustomUserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
@@ -48,7 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             return CustomUserDetails.builder()
                     .email(usersEntity.getUserEmail())
                     .role("ROLE_" + usersEntity.getUserRole())
-                    .password(passwordEncoder.encode(usersEntity.getUserPassword()))
+                    .password(usersEntity.getUserPassword())
                     .build();
         } else if(company.isPresent())  {
             companyEntity = company.get();
@@ -56,7 +58,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             return CustomUserDetails.builder()
                     .email(companyEntity.getCpEmail())
                     .role("ROLE_" + companyEntity.getCpRole())
-                    .password(passwordEncoder.encode(companyEntity.getCpPassword()))
+                    .password(companyEntity.getCpPassword())
                     .build();
         }
         throw new ApiException(UserCode.USER_NOT_FOUND, "User Not Found");

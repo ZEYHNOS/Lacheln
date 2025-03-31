@@ -15,6 +15,6 @@ public interface WeekdaysScheduleRepository extends JpaRepository<WeekdaysSchedu
     List<WeekdaysScheduleEntity> findByCompany_CpId(Long cpId);
 
     //특정 회사 + 특정 요일 스케줄 조회
-    Optional<WeekdaysScheduleEntity> findByCompany_CpIdAndWeekdays(Long cpId, Weekdays weekdays );
+    Optional<WeekdaysScheduleEntity> findByCompany_CpIdAndWsWeekdays(Long cpId, Weekdays weekdays );
 
 }

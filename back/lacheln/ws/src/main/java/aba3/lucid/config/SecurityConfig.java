@@ -43,7 +43,7 @@ public class SecurityConfig {
     private final OAuth2LoginSuccessHandler Oauth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler Oauth2LoginFailureHandler;
 
-    private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
+    private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/email/send", "/email/verify"};
     private final String[] roleUser = {"/user/**", "/board/**"};
     private final String[] roleCompany = {"/company/**", "/product/**"};
 
@@ -62,10 +62,10 @@ public class SecurityConfig {
                 }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(permitAlls).permitAll()
+                        .requestMatchers(permitAlls).permitAll()
 //                        .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
 //                        .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
-                                .anyRequest().permitAll()// 그 외 모든 요청은 인증 필요
+                                .anyRequest().permitAll()
                 )
                 .formLogin(form -> form.loginProcessingUrl("/login"))
                 .oauth2Login((oauth2) -> oauth2

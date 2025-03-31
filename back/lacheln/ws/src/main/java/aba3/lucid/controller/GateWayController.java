@@ -84,7 +84,8 @@ public class GateWayController {
                 response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             }
         }
-        
+
+        response.sendRedirect("http://localhost:3000");
         return ResponseEntity.ok("토큰 삭제완료");
     }
 

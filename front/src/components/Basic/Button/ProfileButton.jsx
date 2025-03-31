@@ -54,14 +54,6 @@ export default function ProfileButton({ isActive, onMouseEnter, onMouseLeave }) 
                         </button>
                     )}
 
-                    {/* 회원가입 버튼 */}
-                    {!isLoggedIn && (
-                        <p className="text-gray-500 text-center py-1 cursor-pointer hover:underline"
-                            onClick={() => navigate("/signup")}>
-                            회원가입하기
-                        </p>
-                    )}
-
                     {/* 로그인 상태일 때 표시되는 메뉴 */}
                     {isLoggedIn && ( <>
                             <hr />

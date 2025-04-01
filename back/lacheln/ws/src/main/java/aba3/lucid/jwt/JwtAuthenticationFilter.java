@@ -29,8 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Map<String, String> tokens = jwtTokenProvider.resolveTokens(request);
         String accessToken = tokens.get("AccessToken");
         String refreshToken = tokens.get("RefreshToken");
-        System.out.println("refreshToken = " + refreshToken);
-        System.out.println("accessToken = " + accessToken);
         if(accessToken != null && refreshToken != null)  {
             // Access 토큰 만료시 재발급
             if(jwtTokenProvider.isExpired(accessToken)) {

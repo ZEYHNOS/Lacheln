@@ -1,15 +1,15 @@
 package aba3.lucid.domain.user.controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.user.business.UserBusiness;
 import aba3.lucid.domain.user.dto.UserSignupRequest;
 import aba3.lucid.domain.user.dto.UserSignupResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/user")
@@ -24,5 +24,12 @@ public class UserController {
     public API<UserSignupResponse> createUser(
             @RequestBody UserSignupRequest userSignupRequest) {
         return userBusiness.signup(userSignupRequest);
+    }
+
+    @GetMapping("/test")
+    @ResponseBody
+    public String getUser() {
+        System.out.println(AuthUtil.getUserId());
+        return AuthUtil.getUserId();
     }
 }

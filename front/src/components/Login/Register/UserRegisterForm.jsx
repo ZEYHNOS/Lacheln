@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react"
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function UserRegisterForm() {
   const [email, setEmail] = useState("");
@@ -15,47 +15,203 @@ export default function UserRegisterForm() {
   const [isVerified, setIsVerified] = useState(false);
   const [sentCode, setSentCode] = useState(null);
   const [authMessage, setAuthMessage] = useState("");
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [emailAuthCode, setEmailAuthCode] = useState("");
+  const [emailAuthMessage, setEmailAuthMessage] = useState("");
+  const [timer, setTimer] = useState(0); // 남은 초 (예: 300초)
+  const timerRef = useRef(null); // setInterval을 위한 ref
+  const [hasRequestedPhoneCode, setHasRequestedPhoneCode] = useState(false); // 전화번호 인증 재요청 확인용
+  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [emailTimer, setEmailTimer] = useState(0);
+  const emailTimerRef = useRef(null);
+  const [isVerifiedPhone, setIsVerifiedPhone] = useState(false);
+  const [phoneAuthMessage, setPhoneAuthMessage] = useState("");
+  const [mainContact, setMainContact] = useState("");
+
   const navigate = useNavigate();
+  const location = useLocation();
+  const adsNotification = location.state?.adsNotification || "N";
 
   useEffect(() => {
     validateForm();
-  }, [email, password, confirmPassword, phone, authCode, birthDate, gender, isVerified]);
+  }, [email, password, confirmPassword, mainContact, authCode, birthDate, gender, isVerified, isEmailVerified, name]);
+
+  // 이메일 인증번호 타이머
+  useEffect(() => {
+    if (emailTimer > 0) {
+      emailTimerRef.current = setTimeout(() => setEmailTimer(emailTimer - 1), 1000);
+    }
+  
+    return () => clearTimeout(emailTimerRef.current);
+  }, [emailTimer]);
+
+  // 전화번호 인증번호 타이머 설정
+  useEffect(() => {
+    if (timer > 0) {
+      timerRef.current = setTimeout(() => setTimer(timer - 1), 1000);
+    }
+    return () => clearTimeout(timerRef.current);
+  }, [timer]);
+
+  // 타이머 포맷 함수
+  const formatTime = (seconds) => {
+    const min = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const sec = String(seconds % 60).padStart(2, '0');
+    return `${min}:${sec}`;
+  };
+
+  // 전화번호 자동하이픈 + 숫자 11자리까지 허용
+  const handlePhoneChange = (e) => {
+    let value = e.target.value;
+    value = value.replace(/\D/g, "");
+    value = value.slice(0, 11);
+  
+    if (value.length < 4) {
+      value = value;
+    } else if (value.length < 8) {
+      value = value.replace(/(\d{3})(\d{1,4})/, "$1-$2");
+    } else {
+      value = value.replace(/(\d{3})(\d{4})(\d{1,4})/, "$1-$2-$3");
+    }
+  
+    setMainContact(value);
+  };
 
   const validateForm = () => {
     let newErrors = {};
-    if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "사용할 수 없는 이메일입니다.";
+    if (!email.trim()) {
+      newErrors.email = "이메일을 입력해주세요.";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "사용할 수 없는 이메일입니다.";
+    } else if (!isEmailVerified) {
+      newErrors.email = "이메일 인증을 완료해주세요.";
+    }
     if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,20}$/.test(password)) newErrors.password = "사용할 수 없는 비밀번호입니다.";
     if (password !== confirmPassword) newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
     if (!/^\d{10,11}$/.test(phone)) newErrors.phone = "전화번호 형식이 맞지 않습니다.";
     if (!isVerified) newErrors.authCode = "인증을 완료해주세요.";
     if (!/^\d{8}$/.test(birthDate)) newErrors.birthDate = "생년월일 형식이 맞지 않습니다.";
     if (!gender) newErrors.gender = "성별을 선택해주세요.";
-
     setErrors(newErrors);
     setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
-  // 더미데이터 코드 인증
-  const handleSendAuthCode = () => {
-    if (phone === "01037552866") {
-      setSentCode("000000"); // 더미 인증 코드 저장
-      setAuthMessage("인증번호가 전송되었습니다."); // 초록색 메시지 설정
-      setErrors((prevErrors) => ({ ...prevErrors, phone: "" })); // 기존 오류 제거
-    } else {
-      setAuthMessage("");
-      alert("해당 번호로 인증 코드를 보낼 수 없습니다.");
+  // // ✅ 이메일 인증번호 전송 요청
+  // const handleSendEmailCode = async () => {
+  //   try {
+  //     const res = await fetch("/email/send", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email }),
+  //     });
+  //     const data = await res.json();
+  //     if (res.ok) {
+  //       setEmailAuthMessage(data.message);
+  //     } else {
+  //       setEmailAuthMessage(data.message);
+  //     }
+  //   } catch (err) {
+  //     console.error("이메일 전송 실패:", err);
+  //     setEmailAuthMessage("이메일 전송 중 오류 발생");
+  //   }
+  // };
+
+  // // ✅ 이메일 인증 확인
+  // const handleVerifyEmailCode = async () => {
+  //   try {
+  //     const res = await fetch("/email/verify", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email, code: emailAuthCode }),
+  //     });
+  //     const data = await res.json();
+  //     if (res.ok) {
+  //       setIsEmailVerified(true);
+  //       setEmailAuthMessage(data.message);
+  //     } else {
+  //       setEmailAuthMessage(data.message);
+  //     }
+  //   } catch (err) {
+  //     console.error("이메일 인증 실패:", err);
+  //     setEmailAuthMessage("이메일 인증 중 오류 발생");
+  //   }
+  // };
+
+  // 더미 이메일 인증
+  const handleSendEmailCode = async () => {
+    try {
+      if (email === "thswlgns0820@naver.com") {
+        setEmailAuthMessage("인증코드가 이메일로 전송되었습니다.");
+        setIsEmailSent(true);
+  
+        // ✅ 이전 타이머 클리어하고 새 타이머 시작
+        clearTimeout(emailTimerRef.current);
+        setEmailTimer(300); // 5분
+  
+        return;
+      }
+  
+      // 실제 API 호출도 여기에 추가 가능
+    } catch (err) {
+      console.error("이메일 전송 실패:", err);
+      setEmailAuthMessage("이메일 전송 중 오류 발생");
+    }
+  };
+  const handleVerifyEmailCode = async () => {
+    try {
+      if (email === "thswlgns0820@naver.com" && emailAuthCode === "000000") {
+        setIsEmailVerified(true);
+        setEmailAuthMessage("이메일 인증이 완료되었습니다.");
+        setErrors(prev => {
+          const { email, ...rest } = prev;
+          return rest;
+        });
+        return;
+      }
+  
+      setEmailAuthMessage("인증코드가 일치하지 않습니다.");
+    } catch (err) {
+      console.error("이메일 인증 실패:", err);
+      setEmailAuthMessage("이메일 인증 중 오류 발생");
     }
   };
 
-  // 인증 확인
-  const handleVerifyAuthCode = () => {
-    if (authCode === sentCode) {
-      setIsVerified(true);
-      setAuthMessage("인증이 완료되었습니다."); // 초록색 메시지 설정
-      setErrors((prevErrors) => ({ ...prevErrors, authCode: "" })); // 인증 오류 제거
+  // 인증 코드 전송 (더미 데이터)
+  const handleSendAuthCode = () => {
+    setSentCode(""); // 기존 코드 초기화
+
+    if (mainContact === "010-3755-2866") {
+      setIsVerifiedPhone(false);
+      setSentCode("000000");
+    
+      // ✅ 메시지 분기
+      if (hasRequestedPhoneCode) {
+        setPhoneAuthMessage("📨 재요청된 인증번호가 전송되었습니다.");
+      } else {
+        setPhoneAuthMessage("✅ 인증번호가 전송되었습니다.");
+        setHasRequestedPhoneCode(true); // 첫 요청 이후엔 true로 설정
+      }
+    
+      setTimer(300);
+      clearTimeout(timerRef.current);
+      setErrors((prevErrors) => ({ ...prevErrors, mainContact: "" }));
     } else {
-      setAuthMessage("");
-      alert("잘못된 인증번호입니다.");
+      setPhoneAuthMessage("❌ 인증 실패: 올바른 전화번호를 입력해주세요.");
+    }
+  };
+
+  const handleVerifyPhone = () => {
+    if (!authCode.trim()) {
+      setPhoneAuthMessage("❌ 인증 실패: 인증번호를 입력해주세요.");
+      return;
+    }
+
+    if (authCode === sentCode) {
+      setIsVerifiedPhone(true);
+      setPhoneAuthMessage("✅ 전화번호 인증 완료");
+      setErrors((prevErrors) => ({ ...prevErrors, authCode: "" }));
+    } else {
+      setPhoneAuthMessage("❌ 인증 실패: 인증번호를 확인해주세요.");
     }
   };
 
@@ -75,9 +231,80 @@ export default function UserRegisterForm() {
 
         <h2 className="text-xl text-[#845EC2] font-semibold mt-6">회원가입</h2>
 
+        {/* 이메일 버튼 */}
+        <div className="mt-4 space-y-1">
+          <label className="text-sm text-[#845EC2]">이메일</label>
+          <div className="flex items-center gap-x-2">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="flex-1 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1 focus:outline-none focus:ring-2 focus:ring-[#845EC2]"
+              placeholder="이메일 입력"
+              disabled={isEmailVerified}
+            />
+            <button
+              className={`shrink-0 px-4 py-2 mt-1 rounded-md min-w-[170px] text-white text-sm transition-all
+                ${isEmailVerified
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-[#845EC2] hover:bg-[#6b49a8]"}`}
+              disabled={isEmailVerified}
+              onClick={handleSendEmailCode}
+            >
+              {isEmailSent ? "📨 재요청 보내기" : "인증코드 보내기"}
+            </button>
+          </div>
+
+          {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
+
+          {/* 인증코드 입력 영역 */}
+          {isEmailSent && (
+            <div className="space-y-2 mt-2">
+              <div className="flex items-center space-x-2">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={emailAuthCode}
+                    onChange={(e) => setEmailAuthCode(e.target.value)}
+                    className="w-full p-2 border border-[#845EC2] bg-white text-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#845EC2] pr-16"
+                    placeholder="이메일 인증코드 입력"
+                    maxLength={6}
+                    disabled={isEmailVerified}
+                  />
+                  {/* 타이머 */}
+                  {emailTimer > 0 && !isEmailVerified && (
+                    <span className="absolute right-3 top-2 text-xl text-blue-600 font-mono">
+                      {formatTime(emailTimer)}
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  className={`px-4 py-2 rounded-md text-sm font-semibold min-w-[130px]
+                    ${isEmailVerified
+                      ? "bg-green-500 text-white"
+                      : emailAuthCode
+                      ? "bg-[#845EC2] text-white"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                  disabled={!emailAuthCode || isEmailVerified}
+                  onClick={handleVerifyEmailCode}
+                >
+                  {isEmailVerified ? "✅ 인증 완료" : "이메일 인증 확인"}
+                </button>
+              </div>
+
+              {emailAuthMessage && (
+                <p className={`text-xs mt-1 ${isEmailVerified ? "text-green-500" : "text-red-500"}`}>
+                  {emailAuthMessage}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="mt-4 space-y-4">
-          {/* 이메일, 비밀번호, 이름 */}
-          {[{ label: "이메일", value: email, setValue: setEmail, type: "email", error: errors.email, placeholder: "이메일 입력" },
+          {/*  비밀번호, 이름 입력 필드드*/}
+          {[
             { label: "비밀번호", value: password, setValue: setPassword, type: "password", error: errors.password, placeholder: "비밀번호 입력 (영문, 숫자, 특수문자 포함 8~20자)" },
             { label: "비밀번호 확인", value: confirmPassword, setValue: setConfirmPassword, type: "password", error: errors.confirmPassword, placeholder: "비밀번호 재입력" },
             { label: "이름", value: name, setValue: setName, type: "text", placeholder: "이름 입력" }]
@@ -95,50 +322,78 @@ export default function UserRegisterForm() {
             </div>
           ))}
 
-          {/* 전화번호 입력 + 인증번호 전송 버튼 */}
+          {/* 전화번호 버튼  */}
           <div>
             <label className="text-sm text-[#845EC2]">전화번호</label>
-            <div className="flex space-x-2">
+
+            {/* 전화번호 입력창 + 인증 요청 버튼 한 줄 */}
+            <div className="flex items-center gap-x-2">
               <input
                 type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                value={mainContact}
+                onChange={handlePhoneChange}
                 className="flex-1 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1 focus:outline-none focus:ring-2 focus:ring-[#845EC2]"
-                placeholder="전화번호 입력 - 예) 01012345678"
+                placeholder="전화번호 입력"
+                disabled={isVerifiedPhone}
               />
               <button
-                className={`px-4 py-2 rounded-md mt-1 ${phone ? "bg-[#845EC2] text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
-                disabled={!phone}
+                className={`shrink-0 px-4 py-2 mt-1 rounded-md min-w-[170px] text-white text-sm font-semibold transition-all
+                  ${isVerifiedPhone
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-[#845EC2] hover:bg-[#6b49a8]"}`}
+                disabled={isVerifiedPhone}
                 onClick={handleSendAuthCode}
               >
-                인증 코드 보내기
+                {sentCode ? "📨 재요청 보내기" : "인증 코드 보내기"}
               </button>
             </div>
-            {authMessage && <p className="text-green-500 text-xs mt-1">{authMessage}</p>}
+
+            {/* 인증번호 입력 영역 */}
+            {mainContact && (
+              <>
+                <div className="flex items-center space-x-2 mt-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={authCode}
+                      onChange={(e) => setAuthCode(e.target.value)}
+                      className="w-full p-2 border border-[#845EC2] bg-white text-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#845EC2] pr-16"
+                      placeholder="인증번호 입력"
+                      maxLength={6}
+                      disabled={isVerifiedPhone}
+                    />
+                    {/* ⏱ 타이머: 인증번호 입력창 안 오른쪽 상단에 표시 */}
+                    {sentCode && timer > 0 && !isVerifiedPhone && (
+                      <span className="absolute right-3 top-2 text-xl text-blue-600 font-mono">
+                        {formatTime(timer)}
+                      </span>
+                    )}
+                  </div>
+
+                  <button
+                    className={`px-4 py-2 rounded-md text-sm font-semibold min-w-[130px]
+                      ${isVerifiedPhone
+                        ? "bg-green-500 text-white"
+                        : authCode
+                        ? "bg-[#845EC2] text-white"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                    disabled={!authCode || isVerifiedPhone}
+                    onClick={handleVerifyPhone}
+                  >
+                    {isVerifiedPhone ? "✅ 인증 완료" : "인증 확인"}
+                  </button>
+                </div>
+
+                {/* 인증 메시지 */}
+                {phoneAuthMessage && (
+                  <p className={`text-xs mt-1 ${isVerifiedPhone ? "text-green-500" : "text-red-500"}`}>
+                    {phoneAuthMessage}
+                  </p>
+                )}
+              </>
+            )}
           </div>
 
-          {/* 인증번호 입력 + 인증 확인 버튼 */}
-          <div>
-            <label className="text-sm text-[#845EC2]">인증번호</label>
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={authCode}
-                onChange={(e) => setAuthCode(e.target.value)}
-                className="flex-1 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1 focus:outline-none focus:ring-2 focus:ring-[#845EC2]"
-                placeholder="인증번호 입력"
-                disabled={isVerified}
-              />
-              <button
-                className={`px-4 py-2 rounded-md mt-1 ${authCode ? "bg-[#845EC2] text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
-                disabled={!authCode || isVerified}
-                onClick={handleVerifyAuthCode}
-              >
-                인증 확인
-              </button>
-            </div>
-            {isVerified && <p className="text-green-500 text-xs mt-1">인증이 완료되었습니다.</p>}
-          </div>
           {/* 생년월일 입력 */}
           <div>
             <label className="text-sm text-[#845EC2]">생년월일</label>
@@ -186,22 +441,22 @@ export default function UserRegisterForm() {
   );
 }
 
-
 // const handleRegister = async () => {
 //   if (!isFormValid) {
 //     alert("모든 필수 항목을 올바르게 입력해주세요.");
 //     return;
 //   }
 
-//   // 백엔드로 보낼 데이터 구성
-//   const requestData = {
-//     email,
-//     password,
-//     name,
-//     phone,
-//     birthDate,
-//     gender
-//   };
+  // // 백엔드로 보낼 데이터 구성
+  // const requestData = {
+  //   email,
+  //   password,
+  //   name,
+  //   phone,
+  //   birthDate,
+  //   gender,
+  //   adsNotification,
+  // };
 
 //   try {
 //     const response = await fetch("https://your-api-endpoint.com/register", {

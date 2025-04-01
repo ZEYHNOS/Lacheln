@@ -1,5 +1,7 @@
-package aba3.lucid.domain.company.entity;
+package aba3.lucid.domain.alert.entity;
 
+import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,19 +36,15 @@ public class CompanyAlertEntity {
     @Column(name = "cp_alert_sendtime", nullable = false, updatable = false)
     private LocalDateTime cpAlertSendTime;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "cp_alert_read", columnDefinition = "CHAR(1)", nullable = false)
-    private String cpAlertRead;
+    private BinaryChoice cpAlertRead;
 
     @Column(name = "cp_alert_access_url", columnDefinition = "VARCHAR(255)")
     private String cpAlertAccessUrl;
 
-    // JPA 엔티티가 데이터베이스에 저장되기 전 자동으로 실행
-    // 데이터베이스에 INSERT 되기 직전 실행
-//    @PrePersist
-//    protected void onCreate() {
-//        // JPA 내부적으로 호출하는 메소드이므로 public 열 필요 없음 private 제어시 JPA 내부에서 접근 불가능해서 에러가 발생할 수 있음
-//        this.cpAlertSendTime = LocalDateTime.now();
-//        this.cpAlertRead = "0";
-//    }
+    public void readAlert() {
+        this.cpAlertRead = BinaryChoice.Y;
+    }
 
 }

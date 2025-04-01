@@ -1,8 +1,10 @@
 package aba3.lucid.packages.business;
 
+import aba3.lucid.alert.service.CompanyAlertService;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.domain.alert.dto.CompanyAlertDto;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.converter.PackageConverter;
 import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
@@ -13,6 +15,8 @@ import aba3.lucid.packages.service.PackageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Slf4j
 @Business
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ public class PackageBusiness {
 
     private final PackageService packageService;
     private final CompanyService companyService;
+    private final CompanyAlertService companyAlertService;
 
     private final PackageConverter packageConverter;
 
@@ -37,6 +42,10 @@ public class PackageBusiness {
         packageEntity.setPackageInvitationCompanies(company1, company2);
 
         PackageEntity newEntity = packageService.packageRegister(packageEntity);
+
+        // 업체에게 알림 보내기
+        companyAlertService.sendAlertCompany(CompanyAlertDto.invitationPackage(company1, newEntity));
+        companyAlertService.sendAlertCompany(CompanyAlertDto.invitationPackage(company2, newEntity));
 
         return packageConverter.toResponse(newEntity);
     }
@@ -63,5 +72,13 @@ public class PackageBusiness {
         PackageEntity uploadEntity = packageService.packageUpload(packageEntity, adminId);
 
         return packageConverter.toResponse(uploadEntity);
+    }
+
+    public List<PackageResponse> getPackageList(Long companyId) {
+        Validator.throwIfInvalidId(companyId);
+
+        List<PackageEntity> packageEntityList = packageService.getPackageList(companyId);
+
+        return packageConverter.toResponseList(packageEntityList);
     }
 }

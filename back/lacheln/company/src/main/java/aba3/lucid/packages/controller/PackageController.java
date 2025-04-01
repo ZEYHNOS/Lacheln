@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/package")
@@ -62,6 +64,15 @@ public class PackageController {
         PackageResponse response = packageBusiness.packageUpload(packageId, 1L);
 
         return API.OK(response);
+    }
+
+    @GetMapping("/list")
+    @Operation(summary = "업체가 속한 패키지 리스트 반환")
+    public API<List<PackageResponse>> getPackageList() {
+        // TODO 업체 정보 가지고 오기
+        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(1L);
+
+        return API.OK(packageResponseList);
     }
 
 

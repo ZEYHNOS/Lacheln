@@ -10,12 +10,21 @@ import aba3.lucid.domain.product.enums.PackageStatus;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Converter
 @RequiredArgsConstructor
 public class PackageConverter {
 
     private final CompanyConvertor companyConvertor;
+
+
+    public List<PackageResponse> toResponseList(List<PackageEntity> entityList) {
+        return entityList.stream()
+                .map(this::toResponse)
+                .toList()
+                ;
+    }
 
     public PackageEntity toEntity(PackageRegisterRequest request, CompanyEntity admin) {
         return PackageEntity.builder()

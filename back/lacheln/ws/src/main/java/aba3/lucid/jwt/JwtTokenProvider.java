@@ -1,20 +1,20 @@
 package aba3.lucid.jwt;
 
+import aba3.lucid.common.auth.CustomAuthenticationToken;
+import aba3.lucid.config.CustomUserDetails;
+import aba3.lucid.config.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class JwtTokenProvider {
     private String secretKey;
 
     // DI
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     // Access 토큰 생성
     public String createAccessToken(String userEmail, String role) {
@@ -59,9 +59,19 @@ public class JwtTokenProvider {
 
     // 토큰에서 인증 정보 가져오기
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserEmail(token));
+        CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(getUserEmail(token));
+        CustomAuthenticationToken customAuthenticationToken = null;
+        Collection<GrantedAuthority> authorities = List.of(
+                new SimpleGrantedAuthority("ROLE_" + userDetails.getRole())
+        );
+
+        if(userDetails.getRole().equals("ROLE_USER")) {
+            customAuthenticationToken = new CustomAuthenticationToken(userDetails.getUsername(), "", authorities, userDetails.getRole(), userDetails.getUserId());
+        } else if(userDetails.getRole().equals("ROLE_COMPANY")) {
+            customAuthenticationToken = new CustomAuthenticationToken(userDetails.getUsername(), "", authorities, userDetails.getRole(), userDetails.getCompanyId());
+        }
         System.out.println("userDetails = " + userDetails.getUsername() + " " + userDetails.getPassword() + " " + userDetails.getAuthorities());
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return customAuthenticationToken;
     }
 
     // 토큰에서 유저 이메일 추출

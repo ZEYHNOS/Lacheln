@@ -1,7 +1,10 @@
 package aba3.lucid.filter;
 
 import aba3.lucid.config.CustomAuthenticationToken;
-import aba3.lucid.jwt.JwtTokenProvider;
+import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.service.AuthService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,12 +14,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -24,15 +30,24 @@ import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
+@Slf4j
 public class CustomUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+    private final CompanyRepository companyRepository;
+    private final UsersRepository usersRepository;
     private final AuthenticationManager authenticationManager;
     private final AuthService authService;
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 변환기
+
+    public CustomUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager, CompanyRepository companyRepository, UsersRepository usersRepository, AuthService authService) {
+        this.authenticationManager = authenticationManager;
+        this.companyRepository = companyRepository;
+        this.usersRepository = usersRepository;
+        this.authService = authService;
+    }
 
     @PostConstruct
     public void init()  {
@@ -65,22 +80,44 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
             String password = jsonNode.get("password").asText();
             String role = jsonNode.get("role").asText();
 
-            System.out.println("username = " + username);
-            System.out.println("password = " + password);
-            System.out.println("role = " + role);
+            Collection<GrantedAuthority> roles = List.of(
+                    new SimpleGrantedAuthority("ROLE_"+role)
+            );
 
-            // CustomAuthenticationToken 생성 후 인증 시도
-            CustomAuthenticationToken authRequest = new CustomAuthenticationToken(username, password, role);
-            Authentication authResult = authenticationManager.authenticate(authRequest);
+            String userPk;
+            Long cpPk;
+            CustomAuthenticationToken authRequest = null;
 
-            // 인증이 되었으면 ContextHolder에 정보 저장 후 토큰 발급 후 넘겨주기
-            if(authResult.isAuthenticated()) {
-                SecurityContextHolder.getContext().setAuthentication(authResult);
-                System.out.println("Local Authentication successful: " + authResult.getPrincipal());
+            if(role.equals("USER")) {
+                Optional<UsersEntity> user = usersRepository.findByUserEmail(username);
+                if(user.isPresent()) {
+                    userPk = user.get().getUserId();
+                    authRequest = new CustomAuthenticationToken(username, password, roles);
+                }
+            } else if(role.equals("COMPANY")) {
+                Optional<CompanyEntity> company = companyRepository.findByCpEmail(username);
+                if(company.isPresent()) {
+                    cpPk = company.get().getCpId();
+                    authRequest = new CustomAuthenticationToken(username, password, roles);
+                }
             }
 
+            System.out.println("authRequest = " + authRequest);
+            System.out.println("authenticationManager execute");
+            // CustomAuthenticationToken 생성 후 인증 시도
+            Authentication authResult = authenticationManager.authenticate(authRequest);
+            // 인증이 되었으면 ContextHolder에 정보 저장 후 토큰 발급 후 넘겨주기
+            log.info("{}", authResult.isAuthenticated());
+            if(authResult.isAuthenticated()) {
+                CustomAuthenticationToken result = (CustomAuthenticationToken) authResult;
+                log.info("Authentication UserId : {}", result.getUserId());
+                log.info("Authentication CompanyId : {}", result.getCompanyId());
+                log.info("Authentication LoginType : {}", result.getLoginType());
+                log.info("Authentication Name : {}", result.getName());
+                SecurityContextHolder.getContext().setAuthentication(authResult);
+                log.info("Authentication Successful, {}", authResult.isAuthenticated());
+            }
             return authResult;
-
         } catch (IOException e) {
             throw new AuthenticationServiceException("Failed to parse JSON request body", e);
         }
@@ -89,8 +126,10 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        CustomAuthenticationToken authRequest = (CustomAuthenticationToken) authResult;
         String username = authResult.getName();
-        String role = authResult.getAuthorities().toString().replace("[ROLE_", "").replace("]", "");
+        String role = authRequest.getLoginType().replace("ROLE_", "");
+        System.out.println("Primary Key : " + (authRequest.getUserId() == null ? authRequest.getCompanyId() : authRequest.getUserId()));
         System.out.println("role = " + role);
         Map<String, ResponseCookie> cookies = authService.login(username, role);
         for (ResponseCookie cookie : cookies.values()) {

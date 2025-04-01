@@ -55,7 +55,7 @@ function AddProduct() {
 
     // 백엔드 요청 대신 하드코딩된 더미 코드 사용 -> 삭제예정
     useEffect(() => {
-        const code = "d"; // 드레스라고 가정
+        const code = "m"; // 드레스라고 가정
         setCategoryCode(code);
     
         if (code === "d") {

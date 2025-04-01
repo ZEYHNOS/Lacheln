@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
-import Header from "./components/Basic/Header";
-import Footer from "./components/Basic/Footer";
+import Header from "./components/Tool/Header";
+import Footer from "./components/Tool/Footer";
 import LoginPage from "./components/Login/LoginPage";
 import UserRegisterPage from "./components/Login/Register/UserRegisterPage";
 import UserRegisterForm from "./components/Login/Register/UserRegisterForm";
@@ -28,7 +28,7 @@ import Package from "./components/User/PackagePage/Package.jsx"
 import Event from "./components/User/EventPage/Event.jsx"
 import Community from "./components/User/CommunityPage/Community.jsx"
 import Support from "./components/User/SupportPage/Support.jsx"
-import CompanyNav, { About, Terms, Privacy, Location } from "./components/Basic/CompanyNavgation/CompanyNav.jsx";
+import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
 
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화

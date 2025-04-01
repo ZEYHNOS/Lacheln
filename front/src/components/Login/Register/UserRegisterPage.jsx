@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import UserRegisterForm from "./UserRegisterForm";
 
 export default function UserRegisterPage() {
   const [allChecked, setAllChecked] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
   const [privacyChecked, setPrivacyChecked] = useState(false);
   const [marketingChecked, setMarketingChecked] = useState(false);
+  const adsNotification = marketingChecked ? "Y" : "N";
   const navigate = useNavigate();
 
   const handleAllChecked = () => {
@@ -17,6 +19,15 @@ export default function UserRegisterPage() {
   };
 
   const isNextEnabled = termsChecked && privacyChecked;
+
+  const handleNext = () => {
+    // 👉 다음 화면(/register/user)으로 상태와 함께 이동
+    navigate("/register/user", {
+      state: {
+        adsNotification: marketingChecked ? "Y" : "N",
+      },
+    });
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-white p-4">
@@ -175,6 +186,7 @@ export default function UserRegisterPage() {
           </div>
         </div>
 
+        {/* 약관 체크박스 */}
         <div className="mt-4 flex items-center space-x-2">
           <input
             type="checkbox"
@@ -182,33 +194,32 @@ export default function UserRegisterPage() {
             onChange={() => setMarketingChecked(!marketingChecked)}
             className="w-5 h-5 border border-[#845EC2] rounded-sm appearance-none checked:bg-[#845EC2] checked:after:content-['✔'] checked:after:text-white checked:after:text-xs checked:after:flex checked:after:justify-center checked:after:items-center cursor-pointer"
           />
-          <span className="text-sm text-[#845EC2]">마케팅 활용 및 광고성 정보 수신 동의 (선택)</span>
+          <span className="text-sm text-[#845EC2]">
+            마케팅 활용 및 광고성 정보 수신 동의 (선택)
+          </span>
         </div>
 
         <div className="mt-6 flex space-x-2">
           <button className="w-full bg-gray-200 text-gray-600 py-2 rounded" onClick={() => navigate("/")}>취소</button>
           <button
-            className={`w-full py-2 rounded ${isNextEnabled ? "bg-[#845EC2] text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+            className={`w-full py-2 rounded ${isNextEnabled ? "bg-[#845EC2] text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
             disabled={!isNextEnabled}
-            onClick={() => navigate("/register/user/form")}
+            onClick={() => {
+              // ✅ 상태 로직 처리
+              handleNext();
+
+              // ✅ 상태 넘기면서 페이지 이동
+              navigate("/register/user/form", {
+                state: { adsNotification: marketingChecked ? "Y" : "N" },
+              });
+            }}
           >
             다음
           </button>
         </div>
       </div>
-      
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: white;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #845EC2;
-          border-radius: 4px;
-        }
-      `}</style>
     </div>
   );
 }

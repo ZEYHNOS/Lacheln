@@ -6,19 +6,24 @@ import aba3.lucid.domain.company.dto.CompanyResponse;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CompanyConvertor {
 
-    public CompanyEntity toEntity(CompanyRequest request, String hashedPassword) {
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public CompanyEntity toEntity(CompanyRequest request) {
         if(request == null) {
             return null;
         }
         //Entity -> DTO 바꾸기
         return CompanyEntity.builder()
                 .cpEmail(request.getEmail())
-                .cpPassword(hashedPassword)
+                .cpPassword(passwordEncoder.encode(request.getPassword()))
                 .cpName(request.getName())
                 .cpAddress(request.getAddress())
                 .cpRole(request.getRole())

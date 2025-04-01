@@ -38,7 +38,6 @@ public class CompanyBusiness {
     private final CompanyService companyService;
     private final CompanyRepository companyRepository;
     private final CompanyConvertor companyConvertor;
-    private final CustomPasswordEncoder customPasswordEncoder;
 
     private String serviceKey;
 
@@ -50,23 +49,16 @@ public class CompanyBusiness {
                            CompanyRepository companyRepository,
                            CompanyConvertor companyConvertor,
                            ApplicationContext applicationContext,
-                           CustomPasswordEncoder customPasswordEncoder, CompanySetConvertor companySetConvertor)
+                           CompanySetConvertor companySetConvertor)
     {
 
         this.companyService = companyService;
         this.companyRepository = companyRepository;
         this.companyConvertor = companyConvertor;
         this.applicationContext = applicationContext;
-        this.customPasswordEncoder = customPasswordEncoder;
         this.companySetConvertor = companySetConvertor;
     }
 
-    //encodePassword() 메서드가 호출될 때 applicationContext.getBean(PasswordEncoder.class)를
-    // 사용하여 Spring 컨테이너에서 PasswordEncoder 빈을 찾아 반환합니다
-    public String encodePassword(String rawPassword, String email) {
-        return customPasswordEncoder.encrypt(email, rawPassword);
-
-    }
     //passwordEncoder.encode(rawPassword)를 호출하여 비밀번호를 암호화합니다.
 
     public CompanyResponse registerCompany(CompanyRequest request) {
@@ -79,12 +71,10 @@ public class CompanyBusiness {
         }
 
         validateDuplicateCompany(request.getEmail());
-        //encodePassword 메서드로  email을 인자로 받도록 했습니다
-        String hashedPassword = encodePassword(request.getPassword(), request.getEmail());
 
 //        CompanyEntity savedCompanyEntity = companyConvertor.toEntity(request, hashedPassword);
 //        CompanyEntity savedCompanyEntitySaved = companyRepository.save(savedCompanyEntity);
-        CompanyEntity companyEntity = companyConvertor.toEntity(request, hashedPassword);
+        CompanyEntity companyEntity = companyConvertor.toEntity(request);
 
         companyEntity.setCpRepName("임시대표");
         companyEntity.setCpMainContact("01000000000");

@@ -1,15 +1,12 @@
 package aba3.lucid.domain.schedule.entity;
 
 import aba3.lucid.common.enums.Weekdays;
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalTime;
-import java.util.List;
 
 @Getter
 @Entity
@@ -46,12 +43,12 @@ public class WeekdaysScheduleEntity {
     private LocalTime wsEnd;
 
 
-    public void updateFromDto(WeekdaysScheduleRequest.DayScheduleDto dto) {
-        this.wsWeekdays = Weekdays.valueOf(dto.getWeekday());
-        this.wsStart = LocalTime.parse(dto.getStart());
-        this.wsEnd = LocalTime.parse(dto.getEnd());
-
-    }
+//    public void updateFromDto(WeekdaysScheduleRequest.DayScheduleDto dto) {
+//        this.wsWeekdays = Weekdays.valueOf(dto.getWeekday());
+//        this.wsStart = LocalTime.parse(dto.getStart());
+//        this.wsEnd = LocalTime.parse(dto.getEnd());
+//
+//    }
 
 
 

@@ -27,6 +27,7 @@ import Product from "./components/User/ProductPage/Product.jsx"
 import Package from "./components/User/PackagePage/Package.jsx"
 import Event from "./components/User/EventPage/Event.jsx"
 import Community from "./components/User/CommunityPage/Community.jsx"
+import Community from "./components/User/CommunityPage/BoardPage.jsx"
 import Support from "./components/User/SupportPage/Support.jsx"
 import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
 

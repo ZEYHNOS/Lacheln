@@ -64,8 +64,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(permitAlls).permitAll()
-//                        .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
-//                        .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
+                        .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
+                        .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
                                 .anyRequest().permitAll()
                 )
                 .formLogin(form -> form.loginProcessingUrl("/login"))

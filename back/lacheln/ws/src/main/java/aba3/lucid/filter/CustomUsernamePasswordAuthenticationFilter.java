@@ -92,13 +92,13 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
                 Optional<UsersEntity> user = usersRepository.findByUserEmail(username);
                 if(user.isPresent()) {
                     userPk = user.get().getUserId();
-                    authRequest = new CustomAuthenticationToken(username, password, roles);
+                    authRequest = new CustomAuthenticationToken(username, password, roles, user.get().getUserRole(), userPk);
                 }
             } else if(role.equals("COMPANY")) {
                 Optional<CompanyEntity> company = companyRepository.findByCpEmail(username);
                 if(company.isPresent()) {
                     cpPk = company.get().getCpId();
-                    authRequest = new CustomAuthenticationToken(username, password, roles);
+                    authRequest = new CustomAuthenticationToken(username, password, roles, company.get().getCpRole(), cpPk);
                 }
             }
 

@@ -84,10 +84,10 @@ public class GateWayController {
             for (ResponseCookie cookie : tokens.values()) {
                 response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             }
-        }
-
-        if (authentication != null) {
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
+            if (authentication != null) {
+                new SecurityContextLogoutHandler().logout(request, response, authentication);
+                System.out.println("컨텍스트 정보 삭제완료..");
+            }
         }
 
         response.sendRedirect("http://localhost:3000");

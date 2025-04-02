@@ -11,10 +11,10 @@ public class UserMessageProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
-    @Value("${spring.rabbitmq.exchange.user_to_company}")
+    @Value("${rabbitmq.exchange.user_to_company}")
     private String exchange;
 
-    @Value("${spring.rabbitmq.routinguser_to_company_key}")
+    @Value("${rabbitmq.routing.user_to_company_key}")
     private String routingKey;
 
     public void sendMessage(String message)   {

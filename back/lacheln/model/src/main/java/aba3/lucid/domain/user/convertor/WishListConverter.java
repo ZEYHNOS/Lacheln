@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Builder
 @Converter
-@NoArgsConstructor
-@AllArgsConstructor
 public class WishListConverter {
 
 

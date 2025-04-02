@@ -5,13 +5,12 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.alert.dto.CompanyAlertDto;
-import aba3.lucid.domain.company.convertor.CompanyAlertConverter;
 import aba3.lucid.domain.alert.dto.MutualAlert;
 import aba3.lucid.domain.alert.entity.CompanyAlertEntity;
+import aba3.lucid.domain.company.convertor.CompanyAlertConverter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 import java.util.List;

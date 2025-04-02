@@ -20,17 +20,6 @@ import java.util.stream.Collectors;
 @Component
 public class WeekdaysScheduleConvertor {
 
-    private  static final String DEFAULT_START_TIME = "09:00";
-    private static final String DEFAULT_END_TIME = "18:00";
-    private static final String DAY_OFF = "휴무";
-
-    private final TemporaryHolidayRepository temporaryHolidayRepository;
-
-    public WeekdaysScheduleConvertor(TemporaryHolidayRepository temporaryHolidayRepository) {
-        this.temporaryHolidayRepository = temporaryHolidayRepository;
-    }
-
-    //WeekdaysScheduleRequest를 List<WeekdaysScheduleEntity로 변환
 
     public List<WeekdaysScheduleEntity> toEntity(WeekdaysScheduleRequest request, CompanyEntity cp_Id) {
         if(request == null || request.getScheduleList() == null) {
@@ -42,21 +31,10 @@ public class WeekdaysScheduleConvertor {
             WeekdaysScheduleEntity entity = WeekdaysScheduleEntity.builder()
                     .company(cp_Id)
                     .wsWeekdays(Weekdays.valueOf(dto.getWeekday()))
-                    .wsStart(parseTime(dto.getStart(), DEFAULT_START_TIME))
-                    .wsEnd(parseTime(dto.getEnd(), DEFAULT_END_TIME))
+                    .wsStart(LocalTime.parse(dto.getStart()))
+                    .wsEnd(LocalTime.parse(dto.getEnd()))
                     .build();
 
-            if(DAY_OFF.equals(dto.getWeekday())) {
-                entity.setWsStart(null);
-                entity.setWsEnd(null);
-
-                TemporaryHolidayEntity holidayEntity = new TemporaryHolidayEntity();
-                holidayEntity.setCompany(cp_Id);
-                holidayEntity.setThDate(LocalDate.parse(dto.getStart()));
-                holidayEntity.setThReason("재등록");
-                temporaryHolidayRepository.save(holidayEntity);
-
-            }
             entityList.add(entity);
 
         }

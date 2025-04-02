@@ -1,4 +1,4 @@
-package aba3.lucid.domain.user.business;
+package aba3.lucid.user.business;
 
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
@@ -7,7 +7,7 @@ import aba3.lucid.domain.board.entity.PostImageEntity;
 import aba3.lucid.domain.board.convertor.PostConvertor;
 import aba3.lucid.domain.board.dto.*;
 import aba3.lucid.domain.board.entity.PostEntity;
-import aba3.lucid.domain.user.service.PostService;
+import aba3.lucid.user.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

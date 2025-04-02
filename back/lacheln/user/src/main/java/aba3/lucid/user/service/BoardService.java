@@ -1,4 +1,4 @@
-package aba3.lucid.domain.user.service;
+package aba3.lucid.user.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
@@ -7,7 +7,6 @@ import aba3.lucid.domain.board.dto.BoardRequest;
 import aba3.lucid.domain.board.dto.BoardResponse;
 import aba3.lucid.domain.board.entity.BoardEntity;
 import aba3.lucid.domain.board.repository.BoardRepository;
-import aba3.lucid.domain.user.business.BoardBusiness;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

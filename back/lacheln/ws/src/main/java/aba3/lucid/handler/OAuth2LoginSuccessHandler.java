@@ -2,7 +2,7 @@ package aba3.lucid.handler;
 
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.enums.*;
-import aba3.lucid.domain.user.service.UserService;
+import aba3.lucid.user.service.UserService;
 import aba3.lucid.service.AuthService;
 import com.fasterxml.uuid.Generators;
 import jakarta.servlet.ServletException;

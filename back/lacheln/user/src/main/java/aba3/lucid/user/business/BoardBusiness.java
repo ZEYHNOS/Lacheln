@@ -1,20 +1,13 @@
-package aba3.lucid.domain.user.business;
+package aba3.lucid.user.business;
 
 import aba3.lucid.common.annotation.Business;
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.domain.board.convertor.BoardConvertor;
 import aba3.lucid.domain.board.dto.BoardRequest;
 import aba3.lucid.domain.board.dto.BoardResponse;
-import aba3.lucid.domain.board.entity.BoardEntity;
-import aba3.lucid.domain.board.repository.BoardRepository;
-import aba3.lucid.domain.user.service.BoardService;
+import aba3.lucid.user.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * BoardBusiness는 비즈니스 계층으로, 서비스 계층(BoardService)을 호출하여

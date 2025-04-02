@@ -1,8 +1,8 @@
-package aba3.lucid.domain.user.controller;
+package aba3.lucid.user.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
-import aba3.lucid.domain.user.business.UserBusiness;
+import aba3.lucid.user.business.UserBusiness;
 import aba3.lucid.domain.user.dto.UserSignupRequest;
 import aba3.lucid.domain.user.dto.UserSignupResponse;
 import io.swagger.v3.oas.annotations.Operation;

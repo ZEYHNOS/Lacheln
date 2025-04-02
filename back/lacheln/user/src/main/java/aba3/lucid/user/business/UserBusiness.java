@@ -1,4 +1,4 @@
-package aba3.lucid.domain.user.business;
+package aba3.lucid.user.business;
 
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
@@ -7,9 +7,8 @@ import aba3.lucid.domain.user.convertor.UserConvertor;
 import aba3.lucid.domain.user.dto.UserSignupRequest;
 import aba3.lucid.domain.user.dto.UserSignupResponse;
 import aba3.lucid.domain.user.entity.UsersEntity;
-import aba3.lucid.domain.user.service.UserService;
+import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 
 @Business
 @RequiredArgsConstructor

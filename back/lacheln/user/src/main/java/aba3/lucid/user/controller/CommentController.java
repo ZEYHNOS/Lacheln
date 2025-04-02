@@ -1,7 +1,7 @@
-package aba3.lucid.domain.user.controller;
+package aba3.lucid.user.controller;
 
 import aba3.lucid.common.api.API;
-import aba3.lucid.domain.user.business.CommentBusiness;
+import aba3.lucid.user.business.CommentBusiness;
 import aba3.lucid.domain.board.dto.CommentRequest;
 import aba3.lucid.domain.board.dto.CommentResponse;
 import io.swagger.v3.oas.annotations.Operation;

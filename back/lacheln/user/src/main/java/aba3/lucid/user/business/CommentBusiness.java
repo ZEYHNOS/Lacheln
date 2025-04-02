@@ -1,11 +1,11 @@
-package aba3.lucid.domain.user.business;
+package aba3.lucid.user.business;
 
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.domain.board.convertor.CommentConvertor;
 import aba3.lucid.domain.board.dto.CommentRequest;
 import aba3.lucid.domain.board.dto.CommentResponse;
 import aba3.lucid.domain.board.entity.CommentEntity;
-import aba3.lucid.domain.user.service.CommentService;
+import aba3.lucid.user.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

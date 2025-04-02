@@ -1,6 +1,7 @@
 package aba3.lucid.domain.user.service;
 
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,9 @@ public class UserService {
     }
 
     // ID로 유저를 찾음
-    public Optional<UsersEntity> findById(String userId) {
-        return usersRepository.findById(userId);
+    public UsersEntity findById(String userId) {
+        return usersRepository.findById(userId).orElseThrow(() ->
+                new ApiException(ErrorCode.NULL_POINT, "해당하는 유저가 존재하지 않습니다."));
     }
 
     // 이메일로 유저를 찾음

@@ -33,15 +33,12 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
     // 상품 등록
     @Override
     public RES registerProduct(Long companyId, REQ req) {
-        // 매개변수 유효성 검사
         Validator.throwIfInvalidId(companyId);
         Validator.throwIfNull(req);
 
         // 요청을 보낸 업체가 해당 카테고리에 맞는지
         // Ex) 드래스 업체가 스튜디오 테이블에 저장하는 요청을 막는 용도
-        log.debug("Request HashTag {} ", req.getHashTagList());
         CompanyEntity companyEntity = companyService.findByIdAndMatchCategoryWithThrow(companyId, getCategory());
-        log.debug("Request {}", req);
 
         // DTO -> Entity
         ENTITY entity = productConverterIfs.toEntity(req, companyEntity);
@@ -58,7 +55,6 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
     // 상품 업데이트
     @Override
     public RES updateProduct(Long companyId, Long productId, REQ req) {
-        // 매개변수 유효성 검사
         Validator.throwIfInvalidId(companyId, productId);
         Validator.throwIfNull(req);
 
@@ -79,7 +75,6 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
     // 상품 삭제(상태만 변환)
     @Override
     public void deleteProduct(Long companyId, Long productId) {
-        // 유효성 검사
         Validator.throwIfInvalidId(companyId, productId);
 
         // 요청을 보낸 업체의 상품인지
@@ -103,10 +98,16 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
     // 현재 영역의 카테고리 반환(DressBusiness 면 CompanyCategory.D 반환)
     public abstract CompanyCategory getCategory();
 
-    public RES getProductDetailInfo(Long productId) {
-        Validator.throwIfInvalidId(productId);
+    // 상품 상세 정보
+    public RES getProductDetailInfo(Long companyId, Long productId) {
+        Validator.throwIfInvalidId(companyId, productId);
 
         ENTITY existingProduct = productService.findByIdWithThrow(productId);
+
+        // 요청한 업체가 본인 상품이 아닐 경우
+        if (existingProduct.getCompany().getCpId() != companyId) {
+            throw new ApiException(ErrorCode.UNAUTHORIZED);
+        }
 
         // 삭제된 상품일 때
         if (existingProduct.getPdStatus() == ProductStatus.REMOVE) {

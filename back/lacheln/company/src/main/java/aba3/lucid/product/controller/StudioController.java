@@ -1,9 +1,9 @@
 package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.product.studio.dto.StudioRequest;
 import aba3.lucid.domain.product.studio.dto.StudioResponse;
-import aba3.lucid.product.business.ProductBusiness;
 import aba3.lucid.product.business.StudioBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class StudioController {
 
     private final StudioBusiness studioBusiness;
-    private final ProductBusiness productBusiness;
 
     @PostMapping("/register")
     @Operation(summary = "스튜디오 등록", description = "새로운 스튜디오 상품을 등록")
@@ -28,9 +27,7 @@ public class StudioController {
             @Valid
             @RequestBody StudioRequest req
     ) {
-        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
-
-        StudioResponse res = studioBusiness.registerProduct(2L, req);
+        StudioResponse res = studioBusiness.registerProduct(AuthUtil.getCompanyId(), req);
         log.debug("Register StudioResponse : {}", res);
 
         return API.OK(res);
@@ -43,9 +40,7 @@ public class StudioController {
             @Valid
             @RequestBody StudioRequest request
     ) {
-        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
-
-        StudioResponse response = studioBusiness.updateProduct(2L, productId, request);
+        StudioResponse response = studioBusiness.updateProduct(AuthUtil.getCompanyId(), productId, request);
         log.debug("Update StudioResponse : {}", response);
 
         return API.OK(response);
@@ -57,9 +52,7 @@ public class StudioController {
     public API<String> deleteStudio(
             @PathVariable Long productId
     ) {
-        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
-
-        studioBusiness.deleteProduct(2L, productId);
+        studioBusiness.deleteProduct(AuthUtil.getCompanyId(), productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 
@@ -69,7 +62,7 @@ public class StudioController {
     public API<StudioResponse> getStudioDetailInfo(
             @PathVariable Long productId
     ) {
-        StudioResponse studioResponse = studioBusiness.getProductDetailInfo(productId);
+        StudioResponse studioResponse = studioBusiness.getProductDetailInfo(AuthUtil.getCompanyId(), productId);
 
         return API.OK(studioResponse);
     }

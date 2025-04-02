@@ -68,10 +68,9 @@ public class CompanyAlertBusiness {
     public void consume(CompanyAlertDto dto){
         Validator.throwIfNull(dto);
 
+        log.info("Producer : {}", dto);
         CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
         CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);
         companyAlertService.alertRegister(entity);
     }
-
-
 }

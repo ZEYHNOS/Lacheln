@@ -1,6 +1,7 @@
 package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.makeup.dto.MakeUpResponse;
 import aba3.lucid.domain.product.makeup.dto.MakeupRequest;
@@ -31,9 +32,7 @@ public class MakeupController {
             @Valid
             @RequestBody MakeupRequest req
     ) {
-        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
-
-        MakeUpResponse res = makeupBusiness.registerProduct(3L, req);
+        MakeUpResponse res = makeupBusiness.registerProduct(AuthUtil.getCompanyId(), req);
         log.debug("Register MakeupResponse : {}", res);
 
         return API.OK(res);
@@ -46,9 +45,7 @@ public class MakeupController {
             @Valid
             @RequestBody MakeupRequest request
     ) {
-        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
-
-        MakeUpResponse response = makeupBusiness.updateProduct(3L, productId, request);
+        MakeUpResponse response = makeupBusiness.updateProduct(AuthUtil.getCompanyId(), productId, request);
         log.debug("Update MakeupResponse : {}", response);
 
         return API.OK(response);
@@ -59,9 +56,7 @@ public class MakeupController {
     public API<String> deleteMakeup(
             @PathVariable Long productId
     ) {
-        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
-
-        makeupBusiness.deleteProduct(1L, productId);
+        makeupBusiness.deleteProduct(AuthUtil.getCompanyId(), productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 
@@ -70,7 +65,7 @@ public class MakeupController {
     public API<MakeUpResponse> getStudioDetailInfo(
             @PathVariable Long productId
     ) {
-        MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(productId);
+        MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(AuthUtil.getCompanyId(), productId);
 
         return API.OK(makeUpResponse);
     }

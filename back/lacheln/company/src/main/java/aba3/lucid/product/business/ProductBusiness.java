@@ -1,8 +1,6 @@
 package aba3.lucid.product.business;
 
 import aba3.lucid.common.annotation.Business;
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.packages.converter.PackageToProductConverter;
@@ -13,10 +11,8 @@ import aba3.lucid.domain.product.converter.ProductConverter;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.enums.ProductStatus;
-import aba3.lucid.domain.product.studio.dto.StudioResponse;
 import aba3.lucid.packages.service.PackageService;
 import aba3.lucid.product.service.ProductService;
-import aba3.lucid.rabbitmq.Producer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,18 +29,11 @@ public class ProductBusiness {
     private final ProductConverter productConverter;
     private final PackageToProductConverter packageToProductConverter;
 
-    private final Producer producer;
-
     // 특정 업체의 상품 리스트 todo 로직 제대로 짜기
     public List<ProductResponse> getProductList(CompanyCategory category, int minimum, int maximum, boolean isDesc) {
         List<ProductEntity> productEntityList = productService.getProductList(category, minimum, maximum, isDesc);
 
         return productConverter.toResponseList(productEntityList);
-    }
-
-    // todo 메시지 보내기
-    public void sendMessage(String message) {
-        producer.sendMessage(message);
     }
 
 

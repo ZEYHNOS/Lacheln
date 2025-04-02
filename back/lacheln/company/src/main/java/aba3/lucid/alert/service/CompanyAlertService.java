@@ -61,7 +61,8 @@ public class CompanyAlertService {
 
     // 업체에게 알림 보내기
     public void sendAlertCompany(CompanyAlertDto dto) {
-        rabbitTemplate.convertAndSend("company", dto);
+        log.info("Consumer : {}", dto);
+        rabbitTemplate.convertAndSend("", "company", dto);
     }
 
 

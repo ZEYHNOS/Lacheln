@@ -1,7 +1,6 @@
 package aba3.lucid.service;
 
 import aba3.lucid.config.CustomOAuth2User;
-import aba3.lucid.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

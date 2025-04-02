@@ -1,17 +1,15 @@
-package aba3.lucid.domain.user.controller;
+package aba3.lucid.user.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.domain.board.dto.BoardRequest;
 import aba3.lucid.domain.board.dto.BoardResponse;
-import aba3.lucid.domain.user.business.BoardBusiness;
-import aba3.lucid.domain.user.service.BoardService;
+import aba3.lucid.user.business.BoardBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

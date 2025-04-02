@@ -25,7 +25,7 @@ public class UserService {
     }
 
     // ID로 유저를 찾음
-    public UsersEntity findById(String userId) {
+    public UsersEntity findByIdWithThrow(String userId) {
         return usersRepository.findById(userId).orElseThrow(() ->
                 new ApiException(ErrorCode.NULL_POINT, "해당하는 유저가 존재하지 않습니다."));
     }

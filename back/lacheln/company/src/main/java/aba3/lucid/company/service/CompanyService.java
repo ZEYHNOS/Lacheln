@@ -8,9 +8,11 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -23,6 +25,9 @@ public class CompanyService {
 
         // 카테고리가 같지 않을 때
         if (!companyEntity.getCpCategory().equals(companyCategory)) {
+            log.info("company, {}", companyEntity.getCpId());
+            log.info("category, {}", companyCategory);
+            log.info("dbcategory, {}", companyEntity.getCpCategory());
             throw new ApiException(ErrorCode.UNAUTHORIZED);
         }
 

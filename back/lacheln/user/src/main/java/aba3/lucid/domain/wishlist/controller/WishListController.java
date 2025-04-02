@@ -2,6 +2,7 @@ package aba3.lucid.domain.wishlist.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.domain.user.dto.UserWishListResponse;
 import aba3.lucid.domain.user.entity.WishListEntity;
 import aba3.lucid.domain.user.repository.WishListRepository;
 import aba3.lucid.domain.wishlist.business.WishListBusiness;
@@ -20,7 +21,7 @@ public class WishListController {
     private final WishListBusiness wishListBusiness;
 
     @GetMapping("/")
-    public API<List<WishListEntity>> findAll() {
+    public API<UserWishListResponse> findAll() {
         String id = AuthUtil.getUserId();
         return wishListBusiness.findByUser(id);
     }

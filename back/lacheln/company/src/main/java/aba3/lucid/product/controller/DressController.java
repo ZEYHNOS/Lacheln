@@ -1,6 +1,7 @@
 package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
@@ -33,7 +34,7 @@ public class DressController {
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        DressResponse res = dressBusiness.registerProduct(1L, req);
+        DressResponse res = dressBusiness.registerProduct(AuthUtil.getCompanyId(), req);
         log.debug("Register DressResponse : {}", res);
 
         return API.OK(res);
@@ -48,7 +49,7 @@ public class DressController {
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        DressResponse response = dressBusiness.updateProduct(1L, productId, request);
+        DressResponse response = dressBusiness.updateProduct(AuthUtil.getCompanyId(), productId, request);
         log.debug("Update DressResponse : {}", response);
 
         return API.OK(response);
@@ -62,7 +63,7 @@ public class DressController {
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        dressBusiness.deleteProduct(1L, productId);
+        dressBusiness.deleteProduct(AuthUtil.getCompanyId(), productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 
@@ -72,7 +73,7 @@ public class DressController {
     public API<DressResponse> getDressDetailInfo(
             @PathVariable Long productId
     ) {
-        DressResponse dressResponse = dressBusiness.getProductDetailInfo(productId);
+        DressResponse dressResponse = dressBusiness.getProductDetailInfo(AuthUtil.getCompanyId(), productId);
 
         return API.OK(dressResponse);
     }

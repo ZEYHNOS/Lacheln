@@ -1,6 +1,7 @@
 package aba3.lucid.packages.controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
 import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
@@ -32,8 +33,7 @@ public class PackageController {
             @RequestBody
             PackageRegisterRequest request
     ) {
-        // TODO 요청 업체 정보
-        PackageResponse response = packageBusiness.packageRegister(request, 1L);
+        PackageResponse response = packageBusiness.packageRegister(request, AuthUtil.getCompanyId());
 
         return API.OK(response);
     }
@@ -48,8 +48,7 @@ public class PackageController {
             PackageUpdateRequest request,
             @PathVariable Long packageId
     ) {
-        // TODO 요청 업체 정보
-        PackageResponse response = packageBusiness.packageUpdate(request, 1L, packageId);
+        PackageResponse response = packageBusiness.packageUpdate(request, AuthUtil.getCompanyId(), packageId);
 
         return API.OK("");
     }
@@ -61,7 +60,7 @@ public class PackageController {
     public API<PackageResponse> packageUpload(
             @PathVariable Long packageId
     ) {
-        PackageResponse response = packageBusiness.packageUpload(packageId, 1L);
+        PackageResponse response = packageBusiness.packageUpload(packageId, AuthUtil.getCompanyId());
 
         return API.OK(response);
     }
@@ -69,8 +68,7 @@ public class PackageController {
     @GetMapping("/list")
     @Operation(summary = "업체가 속한 패키지 리스트 반환")
     public API<List<PackageResponse>> getPackageList() {
-        // TODO 업체 정보 가지고 오기
-        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(1L);
+        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(AuthUtil.getCompanyId());
 
         return API.OK(packageResponseList);
     }

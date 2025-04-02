@@ -1,5 +1,6 @@
 package aba3.lucid.domain.alert.dto;
 
+import aba3.lucid.common.enums.AlertType;
 import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.entity.PackageEntity;
@@ -29,19 +30,15 @@ public class CompanyAlertDto implements Serializable {
     private String accessUrl;
 
 
+    // 패키지에 업체 초대 알림
     public static CompanyAlertDto invitationPackage(CompanyEntity company, PackageEntity packageEntity) {
-        String title = String.format("%s 패키지에 초대되었습니다.", packageEntity.getPackName());
-        String content = String.format("%s님이 %s 패키지에 초대를 했습니다." +
-                        "\n만약 원치않은 초대를 받았을 경우 나가기 및 신고 버튼을 눌러주세요."
-                , packageEntity.getPackAdmin().getCpName()
-                , packageEntity.getPackAdmin());
-        String accessUrl = "/package/";
+        AlertType alert = AlertType.INVITATION_PACKAGE;
+
+        String title = alert.getTitle();
+        String content = String.format(alert.getContent(), company.getCpName(), packageEntity.getPackName());
+        String accessUrl = String.format(alert.getAccessUrl(), packageEntity.getPackId());
 
         return createAlert(company.getCpId(), title, content, accessUrl);
-    }
-
-    public static CompanyAlertDto test() {
-        return createAlert(1L, "", "", "");
     }
 
     private static CompanyAlertDto createAlert(Long companyId, String title, String content, String accessUrl) {

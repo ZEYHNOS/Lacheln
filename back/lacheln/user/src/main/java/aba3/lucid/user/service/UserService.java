@@ -34,4 +34,10 @@ public class UserService {
     public Optional<UsersEntity> findByEmail(String userEmail) {
         return usersRepository.findByUserEmail(userEmail);
     }
+
+    // 이메일로 유저를 찾음(예외처리 추가)
+    public UsersEntity findByEmailWithThrow(String userEmail) {
+        return usersRepository.findByUserEmail(userEmail).orElseThrow(() ->
+                new ApiException(ErrorCode.NULL_POINT, "해당하는 유저가 존재하지 않습니다."));
+    }
 }

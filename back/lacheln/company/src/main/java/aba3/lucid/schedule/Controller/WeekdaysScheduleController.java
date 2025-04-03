@@ -25,23 +25,16 @@ public class WeekdaysScheduleController {
         return API.OK(response);
     }
 
-//    @GetMapping("/{cpId}/weekdays-schedule")
-//    public ResponseEntity<List<WeekdaysScheduleResponse>> getSchedules(
-//            @PathVariable Long cpId
-//    ){
-//        List<WeekdaysScheduleResponse> response = weekdaysScheduleService.getSchedules(cpId);
-//        return ResponseEntity.ok(response);
-//    }
 
-
-//    @PutMapping("/update/{cpId}/weekdays-schedule")
-//    public API<List<WeekdaysScheduleResponse>> updateSchedule(
-//            @PathVariable Long cpId,
-//            @RequestBody WeekdaysScheduleRequest request
-//    ){
-//        List<WeekdaysScheduleResponse> response  = weekdaysScheduleService.updateCompanySchedules(cpId, request);
-//        return API.OK(response);
-//    }
+      @PutMapping("/update/{cpId}/weekdays-schedule")
+      public API<List<WeekdaysScheduleResponse>>updateSchedule(
+              @PathVariable Long cpId,
+              @RequestParam Long wsId,
+              @RequestBody WeekdaysScheduleRequest request
+      ){
+        List<WeekdaysScheduleResponse> response = weekdaysScheduleBusiness.updateWeekdaysSchedule(cpId,wsId, request);
+        return API.OK(response);
+      }
 
 
 }

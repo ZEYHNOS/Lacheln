@@ -126,20 +126,20 @@ public class CompanyBusiness {
     }
 
 
-    public CompanyResponse updateCompany(CompanyRequest companyRequest, Long companyId) {
-        Validator.throwIfNull(companyRequest);
-        Validator.throwIfInvalidId(companyId);
-        //companyService.findByIdWithThrow(companyId)를 호출하여, 주어진 companyId에 해당하는 회사를 조회합니다.
-        CompanyEntity existingCompany = companyService.findByIdWithThrow(companyId);
-        if(existingCompany == null) {
-            throw new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다");
-        }
-
-        CompanyEntity updateCompany = companyService.updateCompany(existingCompany, companyRequest);
-
-        return companyConvertor.toResponse(updateCompany);
-
-    }
+//    public CompanyResponse updateCompany(CompanyUpdateRequest companyUpdateRequest, Long companyId) {
+//        Validator.throwIfNull(companyUpdateRequest);
+//        Validator.throwIfInvalidId(companyId);
+//        //companyService.findByIdWithThrow(companyId)를 호출하여, 주어진 companyId에 해당하는 회사를 조회합니다.
+//        CompanyEntity existingCompany = companyService.findByIdWithThrow(companyId);
+//        if(existingCompany == null) {
+//            throw new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다");
+//        }
+//
+//        CompanyEntity updateCompany  =
+//
+//        return companyConvertor.toResponse(updateCompany);
+//
+//    }
 
     public CompanyResponse searchCompany(String email) {
         Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(email);

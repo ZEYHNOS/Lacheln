@@ -4,6 +4,7 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.convertor.CompanyConvertor;
 import aba3.lucid.domain.company.dto.CompanyRequest;
+import aba3.lucid.domain.company.dto.CompanyUpdateRequest;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.repository.CompanyRepository;
@@ -54,11 +55,11 @@ public class CompanyService {
 
     //메소드에 전달된 existingCompany와 request가 null인지 확인하고
     //만약 둘 중 하나라도 null이면, ApiException을 발생시켜 잘못된 파라미터임을 알립니다. 이는 안정성을 위해 필수이다
-    public CompanyEntity updateCompany( CompanyEntity existingCompany,CompanyRequest request) {
-        existingCompany.updateCompanyRequest(request);
-        return companyRepository.save(existingCompany);
-
-    }
+//    public CompanyEntity updateCompany(CompanyEntity existingCompany, CompanyUpdateRequest request, BCryptPasswordEncoder passwordEncoder) {
+//        existingCompany.updateCompanyRequest(request,passwordEncoder);
+//        return companyRepository.save(existingCompany);
+//
+//    }
 
     public void deleteCompany(CompanyEntity company) {
         companyRepository.delete(company);

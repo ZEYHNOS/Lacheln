@@ -15,6 +15,8 @@ import aba3.lucid.domain.schedule.repository.WeekdaysScheduleRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,7 +96,7 @@ public class WeekdaysScheduleBusiness {
 
     }
 
-    public WeekdaysScheduleResponse updateWeekdaysSchedule(WeekdaysScheduleRequest request, long cpId, long wsId) {
+    public List<WeekdaysScheduleResponse> updateWeekdaysSchedule( long cpId, long wsId,WeekdaysScheduleRequest request) {
         WeekdaysScheduleEntity weekdaysScheduleEntity = weekdaysScheduleRepository.findByWsId(wsId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "정보가 없습니다"));
 
@@ -106,19 +108,21 @@ public class WeekdaysScheduleBusiness {
             throw new ApiException(ErrorCode.BAD_REQUEST, "일정 목록이 비었습니다");
         }
         for(WeekdaysScheduleRequest.DayScheduleDto scheduleDto : request.getScheduleList()) {
-            if(weekdaysScheduleEntity.getWsWeekdays().equals(scheduleDto.getWeekday())) {
-                if(scheduleDto.getStart()!= null) {
-                    weekdaysScheduleEntity.setWsStart(LocalTime.parse(scheduleDto.getStart()));
+            String dbWeekday = weekdaysScheduleEntity.getWsWeekdays().name().trim();
+            String reqWeekday = scheduleDto.getWeekday();
+            if (dbWeekday.equals(reqWeekday)) {
+                if (scheduleDto.getStart() != null) {
+                    LocalTime newStart = LocalTime.parse(scheduleDto.getStart());
+                    weekdaysScheduleEntity.setWsStart(newStart);
                 }
-                if(scheduleDto.getEnd()!= null) {
-                    weekdaysScheduleEntity.setWsEnd(LocalTime.parse(scheduleDto.getEnd()));
-                }
-
+                if (scheduleDto.getEnd() != null) {
+                    LocalTime newEnd = LocalTime.parse(scheduleDto.getEnd());
+                    weekdaysScheduleEntity.setWsEnd(newEnd);}
             }
         }
-
         WeekdaysScheduleEntity updatedEntity = weekdaysScheduleRepository.save(weekdaysScheduleEntity);
-        return  weekdaysScheduleConvertor.toResponse(updatedEntity);
+        WeekdaysScheduleResponse response = weekdaysScheduleConvertor.toResponse(updatedEntity);
+        return Collections.singletonList(response);
 
     }
 

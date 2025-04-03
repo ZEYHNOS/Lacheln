@@ -44,17 +44,17 @@ public class CompanyController {
 
     }
 
-    @PutMapping("/update/{companyId}")
-    public API<CompanyResponse> updateCompany (
-
-            @PathVariable long companyId,
-            @Valid
-            @RequestBody CompanyRequest companyRequest
-
-    ){
-        CompanyResponse companyResponse = companyBusiness.updateCompany(companyRequest, companyId);
-        return API.OK(companyResponse);
-    }
+//    @PutMapping("/update/{companyId}")
+//    public API<CompanyResponse> updateCompany (
+//
+//            @PathVariable long companyId,
+//            @Valid
+//            @RequestBody CompanyRequest companyRequest
+//
+//    ){
+//        CompanyResponse companyResponse = companyBusiness.updateCompany(companyRequest, companyId);
+//        return API.OK(companyResponse);
+//    }
 
     @GetMapping("/search/{email}")
     public API<CompanyResponse> searchCompany (

@@ -61,6 +61,9 @@ public class CompanyService {
 //
 //    }
 
+    public CompanyEntity saveByCompany(CompanyEntity companyEntity) {
+        return companyRepository.save(companyEntity);
+    }
     public void deleteCompany(CompanyEntity company) {
         companyRepository.delete(company);
     }

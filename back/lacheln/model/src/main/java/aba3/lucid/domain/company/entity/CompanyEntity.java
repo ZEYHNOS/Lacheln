@@ -2,12 +2,10 @@ package aba3.lucid.domain.company.entity;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.domain.company.dto.CompanyRequest;
 import aba3.lucid.domain.company.dto.CompanyUpdateRequest;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -102,10 +100,10 @@ public class CompanyEntity {
     @Column(name = "company_role", nullable = false, columnDefinition = "CHAR(7)")
     private String cpRole = "COMPANY";
 
-    public void updateCompanyRequest(CompanyUpdateRequest request, BCryptPasswordEncoder passwordEncoder) {
-        updateCpPassword(passwordEncoder.encode(request.getPassword()));
+    public void updateCompany(CompanyUpdateRequest companyUpdateRequest, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        updateCpPassword(bCryptPasswordEncoder.encode(companyUpdateRequest.getPassword()));
 //        updateCpMainContact(request.getMainContact());
-        updateCpAddress(request.getAddress());
+        updateCpAddress(companyUpdateRequest.getAddress());
         
     }
 

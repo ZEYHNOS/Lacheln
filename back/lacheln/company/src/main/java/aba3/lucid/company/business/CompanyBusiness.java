@@ -1,36 +1,23 @@
 package aba3.lucid.company.business;
 
+import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.password.CustomPasswordEncoder;
 import aba3.lucid.common.status_code.CompanyCode;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.convertor.CompanyConvertor;
 import aba3.lucid.domain.company.convertor.CompanySetConvertor;
+import aba3.lucid.domain.company.convertor.CompanyUpdateConvertor;
 import aba3.lucid.domain.company.dto.*;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.domain.company.repository.CompanyRepository;
-import lombok.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.http.HttpHeaders;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -38,6 +25,7 @@ public class CompanyBusiness {
     private final CompanyService companyService;
     private final CompanyRepository companyRepository;
     private final CompanyConvertor companyConvertor;
+    private final CompanyUpdateConvertor companyUpdateConvertor;
 
     private String serviceKey;
 
@@ -49,7 +37,7 @@ public class CompanyBusiness {
                            CompanyRepository companyRepository,
                            CompanyConvertor companyConvertor,
                            ApplicationContext applicationContext,
-                           CompanySetConvertor companySetConvertor)
+                           CompanySetConvertor companySetConvertor, CompanyUpdateConvertor companyUpdateConvertor)
     {
 
         this.companyService = companyService;
@@ -57,6 +45,7 @@ public class CompanyBusiness {
         this.companyConvertor = companyConvertor;
         this.applicationContext = applicationContext;
         this.companySetConvertor = companySetConvertor;
+        this.companyUpdateConvertor = companyUpdateConvertor;
     }
 
     //passwordEncoder.encode(rawPassword)를 호출하여 비밀번호를 암호화합니다.
@@ -126,18 +115,21 @@ public class CompanyBusiness {
     }
 
 
-//    public CompanyResponse updateCompany(CompanyUpdateRequest companyUpdateRequest, Long companyId) {
-//        Validator.throwIfNull(companyUpdateRequest);
-//        Validator.throwIfInvalidId(companyId);
-//        //companyService.findByIdWithThrow(companyId)를 호출하여, 주어진 companyId에 해당하는 회사를 조회합니다.
-//        CompanyEntity existingCompany = companyService.findByIdWithThrow(companyId);
-//        if(existingCompany == null) {
-//            throw new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다");
+//    public API<CompanyUpdateResponse> updateCompany(CompanyUpdateRequest companyUpdateRequest, Long companyId) {
+//        if(companyUpdateRequest == null) {
+//            throw new ApiException(ErrorCode.NOT_FOUND, "요청에 대한 정보가 없ㅅ습니다");
 //        }
+//        CompanyEntity loadCompany = companyService.findByIdWithThrow(AuthUtil.getCompanyId());
+//        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+//        loadCompany.updateCompany(companyUpdateRequest, bCryptPasswordEncoder);
+//        companyService.saveByCompany(loadCompany);
+//        CompanyUpdateResponse dtoCompany = companyUpdateConvertor.toEntity(loadCompany);
+//        CompanyUpdateResponse data = CompanyUpdateResponse.builder()
+//                .company(dtoCompany)
+//                .build();
 //
-//        CompanyEntity updateCompany  =
 //
-//        return companyConvertor.toResponse(updateCompany);
+//
 //
 //    }
 

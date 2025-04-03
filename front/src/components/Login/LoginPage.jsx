@@ -24,31 +24,33 @@ export default function LoginPage() {
             return;
         }
 
-        try {
-            const endpoint = userType === "user" ? "/user/login" : "/company/login";
-            const response = await fetch(endpoint, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ userType, email, password }),
-            });
+        const requestData = {
+            username: email,
+            password: password,
+            role: userType // userType 사용해야 함
+        };
 
-            if (response.ok) {
-                const data = await response.json();
-                setErrorMessage("");
-                setShowPopup(false);
-                localStorage.setItem("userInfo", JSON.stringify(data)); // 로그인 상태를 브라우저에 저장 (예: 로컬 스토리지)
+        try {
+            const response = await fetch("http://localhost:5050/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials : "include",
+                body: JSON.stringify(requestData),
+            });
+            console.log(requestData);
+
+            if (response.status >= 200 && response.status < 300) {
+                alert("로그인이 성공적으로 완료되었습니다!");
                 navigate(userType === "user" ? "/" : "/company"); 
             } else {
                 const errorData = await response.json();
-                setErrorMessage(errorData.message || "아이디 또는 비밀번호가 올바르지 않습니다");
-                setShowPopup(true);
+                alert(`로그인 실패: ${errorData.message}`);
             }
         } catch (error) {
-            setErrorMessage("로그인 요청 중 오류가 발생했습니다.");
-            setShowPopup(true);
+            console.log(error);
+            alert("서버와의 통신 중 문제가 발생했습니다.");
         }
+    
     };
     
     // 카카오 소셜 로그인 처리

@@ -3,6 +3,7 @@ package aba3.lucid.domain.company.entity;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.dto.CompanyRequest;
+import aba3.lucid.domain.company.dto.CompanyUpdateRequest;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Getter
 @Setter
@@ -100,8 +102,8 @@ public class CompanyEntity {
     @Column(name = "company_role", nullable = false, columnDefinition = "CHAR(7)")
     private String cpRole = "COMPANY";
 
-    public void updateCompanyRequest(CompanyRequest request) {
-        updateCpPassword(request.getPassword());
+    public void updateCompanyRequest(CompanyUpdateRequest request, BCryptPasswordEncoder passwordEncoder) {
+        updateCpPassword(passwordEncoder.encode(request.getPassword()));
 //        updateCpMainContact(request.getMainContact());
         updateCpAddress(request.getAddress());
         
@@ -116,13 +118,13 @@ public class CompanyEntity {
 
     }
 
-    public void updateCpMainContact(@NotBlank(message = "대표자 전화번호는 필수 입력값입니다.") String cpMainContact) {
-        if(!cpMainContact.matches("^\\d{10,11}$")) {
-            throw new ApiException(ErrorCode.INVALID_PARAMETER, " 대표자 전화번호는 10~11자리 숫자만 가능합니다.");
-        }
-        this.cpMainContact = cpMainContact;
-        
-    }
+//    public void updateCpMainContact(@NotBlank(message = "대표자 전화번호는 필수 입력값입니다.") String cpMainContact) {
+//        if(!cpMainContact.matches("^\\d{10,11}$")) {
+//            throw new ApiException(ErrorCode.INVALID_PARAMETER, " 대표자 전화번호는 10~11자리 숫자만 가능합니다.");
+//        }
+//        this.cpMainContact = cpMainContact;
+//
+//    }
 
 
 
@@ -131,15 +133,14 @@ public class CompanyEntity {
         if(cpPassword == null || cpPassword.trim().isEmpty()) {
             throw new ApiException(ErrorCode.INVALID_PARAMETER, "비밀번호는 필수 입력값입니다.");
         }
-        String hashedPassword = hashPassword(cpPassword);
-        this.cpPassword = hashedPassword;
+        this.cpPassword = cpPassword;
         ///확실하게 안 했음
         
     }
 
-    private String hashPassword(String password) {
-        return password;
-    }
+//    private String hashPassword(String password) {
+//        return password;
+//    }
 
 
     // TODO 나중에 필요하면 하나씩 사용하기

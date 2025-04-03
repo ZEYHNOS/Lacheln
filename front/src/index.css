@@ -93,3 +93,38 @@ button:focus-visible {
     display: none; /* 스크롤바 양 끝 버튼 제거 */
   }
 }
+/* AddWrite.jsx 툴바 커스텀 */
+.btn-toolbar {
+  @apply px-3 py-1 rounded text-sm bg-white text-black border border-gray-300 hover:bg-gray-200;
+}
+
+.select-toolbar {
+  @apply px-2 py-1 rounded text-sm bg-white text-black border border-gray-300 hover:bg-gray-200;
+}
+.ProseMirror {
+  outline: none;
+  font-family: 'Noto Sans KR', 'Roboto', sans-serif;
+}
+.ProseMirror strong,
+.ProseMirror b {
+  font-weight: 700;
+}
+
+.ProseMirror * {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.ProseMirror p {
+  margin: 0;
+  padding: 0;
+  border: none !important;
+  outline: none !important;
+}
+
+.ProseMirror em {
+  font-style: italic;
+  transform: skew(-10deg); /* 한글도 시각적으로 기울어지게 */
+  display: inline-block;
+}

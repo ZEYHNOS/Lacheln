@@ -5,10 +5,12 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -39,5 +41,9 @@ public class UserService {
     public UsersEntity findByEmailWithThrow(String userEmail) {
         return usersRepository.findByUserEmail(userEmail).orElseThrow(() ->
                 new ApiException(ErrorCode.NULL_POINT, "해당하는 유저가 존재하지 않습니다."));
+    }
+
+    public void deleteById(String userId) {
+        usersRepository.deleteById(userId);
     }
 }

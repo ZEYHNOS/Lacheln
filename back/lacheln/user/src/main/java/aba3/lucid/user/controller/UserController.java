@@ -2,11 +2,8 @@ package aba3.lucid.user.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
-import aba3.lucid.domain.user.dto.UserUpdateRequest;
-import aba3.lucid.domain.user.dto.UserUpdateResponse;
+import aba3.lucid.domain.user.dto.*;
 import aba3.lucid.user.business.UserBusiness;
-import aba3.lucid.domain.user.dto.UserSignupRequest;
-import aba3.lucid.domain.user.dto.UserSignupResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +20,7 @@ public class UserController {
 
     // 유저 회원가입 컨트롤러
     @PostMapping("/signup")
-    @Operation(summary = "회원가입", description = "로컬 환경에서의 회원가입을 진행합니다.")
+    @Operation(summary = "소비자 회원가입", description = "로컬 환경에서의 소비자 회원가입을 진행합니다.")
     public API<UserSignupResponse> createUser(
             @RequestBody UserSignupRequest userSignupRequest) {
         return userBusiness.signup(userSignupRequest);
@@ -31,7 +28,7 @@ public class UserController {
 
     // 유저 업데이트 컨트롤러
     @PostMapping("/update")
-    @Operation(summary = "유저 갱신", description = "회원 정보를 수정합니다.")
+    @Operation(summary = "소비자 갱신", description = "소비자 정보를 수정합니다.")
     public API<UserUpdateResponse> updateUser(
             @RequestBody UserUpdateRequest userUpdateRequest)   {
         return userBusiness.update(userUpdateRequest);

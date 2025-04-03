@@ -1,13 +1,17 @@
 package aba3.lucid.controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.SuccessCode;
+import aba3.lucid.jwt.JwtTokenProvider;
 import aba3.lucid.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,12 +27,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class GateWayController {
 
     private final RestTemplate restTemplate;
     private final AuthService authService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 유저 서비스로 요청을 전달하는 메서드
     @RequestMapping("/user/**")
@@ -61,7 +67,8 @@ public class GateWayController {
     }
 
     // 토큰 지우기 (needs => userEmail, Role)
-    @GetMapping("/outuser")
+    @GetMapping("/userlogout")
+    @Operation(summary = "로그아웃", description = "사용자 세션을 제거하고 로그아웃 로직을 수행합니다.")
     public API<String> routeToLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
@@ -78,6 +85,45 @@ public class GateWayController {
             return API.ERROR(ErrorCode.BAD_REQUEST);
         }
 
+        Map<String, ResponseCookie> tokens = authService.logout(jwtToken);
+
+        if(tokens != null)  {
+            for (ResponseCookie cookie : tokens.values()) {
+                response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            }
+            if (authentication != null) {
+                new SecurityContextLogoutHandler().logout(request, response, authentication);
+                System.out.println("컨텍스트 정보 삭제완료..");
+            }
+        }
+
+        response.sendRedirect("http://localhost:3000");
+        return API.OK(SuccessCode.DELETE_TOKEN);
+    }
+
+    @DeleteMapping("/delaccount")
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 진행합니다.")
+    public API<String> delAccount(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
+        log.info("delaccount called, {}");
+        Cookie[] cookies = request.getCookies();
+        String jwtToken = null;
+        String accessToken = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("RefreshToken".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                } else if ("AccessToken".equals(cookie.getName())) {
+                    accessToken = cookie.getValue();
+                }
+            }
+        }
+
+        if (jwtToken == null) {
+            return API.ERROR(ErrorCode.BAD_REQUEST);
+        }
+
+        authService.withdrawUsers(accessToken);
         Map<String, ResponseCookie> tokens = authService.logout(jwtToken);
 
         if(tokens != null)  {

@@ -4,6 +4,8 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.status_code.UserCode;
+import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.convertor.UserConvertor;
 import aba3.lucid.domain.user.dto.*;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -44,8 +46,11 @@ public class UserBusiness {
         if(userUpdateRequest == null)   {
             return API.ERROR(ErrorCode.GONE, "요청에 대한 데이터가 없습니다.");
         }
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         UsersEntity loadUser = userService.findByIdWithThrow(AuthUtil.getUserId());
+        if(!loadUser.getUserSocial().getSocialCode().equals("L") && userUpdateRequest.getPassword() != null)   {
+            return API.ERROR(ErrorCode.BAD_REQUEST, "소셜계정은 비밀번호 변경이 불가합니다.");
+        }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         loadUser.updateUser(userUpdateRequest, bCryptPasswordEncoder);
         userService.saveByUser(loadUser);
         UserObject dtoUser = userConvertor.convertEntityToObject(loadUser);

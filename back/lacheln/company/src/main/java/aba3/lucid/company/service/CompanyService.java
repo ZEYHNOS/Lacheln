@@ -64,8 +64,7 @@ public class CompanyService {
         companyRepository.delete(company);
     }
 
-
-
-
-
+    public void deleteCompanyById(Long companyId) {
+        companyRepository.deleteById(companyId);
+    }
 }

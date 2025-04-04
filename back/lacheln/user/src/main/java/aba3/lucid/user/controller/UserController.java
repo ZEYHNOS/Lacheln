@@ -7,7 +7,6 @@ import aba3.lucid.user.business.UserBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -40,6 +39,15 @@ public class UserController {
     @Operation(summary = "소비자 조회", description = "소비자 정보를 조회합니다.")
     public API<UserCheckResponse> getUser()   {
         return userBusiness.getUser();
+    }
+
+    // 암호 인증
+    @PostMapping("/verify")
+    @Operation(summary = "소비자 암호 검증", description = "소비자 프로필 수정과 같은 인증 요소가 필요할 때 암호를 검증하는 역할을 합니다.")
+    public API<String> verifyUserByPassword(
+            @RequestBody UserPasswordVerifyRequest userPasswordVerifyRequest
+    ) {
+        return userBusiness.getUserPasswordVerify(userPasswordVerifyRequest.getPassword());
     }
 
     // 컨텍스트 유저 추출 테스트 코드

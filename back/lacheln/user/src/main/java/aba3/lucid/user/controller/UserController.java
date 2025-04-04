@@ -49,12 +49,4 @@ public class UserController {
     ) {
         return userBusiness.getUserPasswordVerify(userPasswordVerifyRequest.getPassword());
     }
-
-    // 컨텍스트 유저 추출 테스트 코드
-    @GetMapping("/test")
-    @ResponseBody
-    public String testUser() {
-        System.out.println(AuthUtil.getUserId());
-        return AuthUtil.getUserId();
-    }
 }

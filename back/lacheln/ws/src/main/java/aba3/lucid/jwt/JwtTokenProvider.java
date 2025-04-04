@@ -70,7 +70,7 @@ public class JwtTokenProvider {
         } else if(userDetails.getRole().equals("ROLE_COMPANY")) {
             customAuthenticationToken = new CustomAuthenticationToken(userDetails.getUsername(), "", authorities, userDetails.getRole(), userDetails.getCompanyId());
         }
-        System.out.println("userDetails = " + userDetails.getUsername() + " " + userDetails.getPassword() + " " + userDetails.getAuthorities());
+
         return customAuthenticationToken;
     }
 
@@ -83,16 +83,13 @@ public class JwtTokenProvider {
     // 토큰에서 유저 권한 추출
     public String getUserRole(String token) {
         Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-        String role = claim.get("role").toString();
-        System.out.println("role = " + role);
-        return role;
+        return claim.get("role").toString();
     }
 
     // 토큰 유효성 검증
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            System.out.println("!claims.getBody().getExpiration().before(new Date()) = " + !claims.getBody().getExpiration().before(new Date()));
             return !claims.getBody().getExpiration().before(new Date()); // 혹시 모르니 찾아볼 것 -->  ! (추가여부)
         } catch (JwtException | IllegalArgumentException e) {
             System.out.println("validateToken False");
@@ -104,10 +101,8 @@ public class JwtTokenProvider {
     public boolean isExpired(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            System.out.println("claims.getBody() = " + claims.getBody().getExpiration().before(new Date()));
             return claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
-            System.out.println("혹시 여기로 오니?");
             return true;
         }
     }

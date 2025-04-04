@@ -27,16 +27,16 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UsersRepository usersRepository;
     private final CompanyRepository companyRepository;
 
+    // 해당 메서드는 UserDetailsService에 존재하는 메서드, 구현체의 메서드이기 때문에 재정의 진행
     @Override
     public CustomUserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-        // 암호화 모듈 불러오기
-        System.out.println("CustomUserDetailsService called");
+        // 요청하는 이메일의 ROLE(소비자, 업체)를 구분할 수 없음으로 Optional로 포장된 객체 생성...
         UsersEntity usersEntity;
         CompanyEntity companyEntity;
         Optional<UsersEntity> user = usersRepository.findByUserEmail(userEmail);
         Optional<CompanyEntity> company = companyRepository.findByCpEmail(userEmail);
 
-        // 유저 정보가 있을때
+        // 유저 정보가 있을 시 로직
         if(user.isPresent()) {
             usersEntity = user.get();
             // 유저가 Local형태로 로그인을 진행할때

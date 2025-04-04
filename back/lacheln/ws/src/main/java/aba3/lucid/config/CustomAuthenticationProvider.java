@@ -21,18 +21,21 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        System.out.println("CustomAuthenticationProvider called");
+        // AuthenticationManager에서 반환된 Authentication의 정보를 이용하여 ContextHolder에 정보를 전달하는 로직을 수행
         CustomAuthenticationToken authRequest = (CustomAuthenticationToken) authentication;
         String username = authRequest.getName();
         String password = (String) authRequest.getCredentials();
         String loginType = ((CustomAuthenticationToken) authentication).getLoginType();
         Collection<GrantedAuthority> authorities = authRequest.getAuthorities();
+
+        // ContextHolder에 저장할 정보를 구성
         CustomAuthenticationToken authenticationToken = null;
         CustomUserDetails userDetails;
         Long companyId;
         String userId;
 
-        if("COMPANY".equals(loginType)){
+        // 요청한 클라이언트의 권한(ROLE)을 확인 후 알맞은 세션 정보를 생성하여 ContextHolder에 저장하는 로직을 수행
+        if("COMPANY".equals(loginType)){ // 업체일 경우의 로직
             userDetails = userDetailsService.loadUserByUsername(username);
             companyId = userDetails.getCompanyId();
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
@@ -45,12 +48,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                     userDetails.getRole(),
                     companyId  // 로그인 타입에 따라 적절한 ID를 전달
             );
-        } else {
+        } else { // 소비자일 경우의 로직
             userDetails = userDetailsService.loadUserByUsername(username);
             userId = userDetails.getUserId();
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-                log.info("password, {}", password);
-                log.info("userDetails.getPassword(), {}", userDetails.getPassword());
                 throw new RuntimeException("Invalid Credentials");
             }
             authenticationToken = new CustomAuthenticationToken(
@@ -64,6 +65,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         return authenticationToken;
     }
 
+    // 해당 메서드는 요청된 authentication에 대해 인증 로직을 수행할것인지 결정하는 메서드임
     @Override
     public boolean supports(Class<?> authentication) {
         return CustomAuthenticationToken.class.isAssignableFrom(authentication);

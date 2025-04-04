@@ -66,13 +66,15 @@ public class GateWayController {
         return routeRequest("http://localhost:5051", request);
     }
 
-    // 토큰 지우기 (needs => userEmail, Role)
+    // 로그아웃 로직
     @GetMapping("/userlogout")
     @Operation(summary = "로그아웃", description = "사용자 세션을 제거하고 로그아웃 로직을 수행합니다.")
     public API<String> routeToLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        // 새로운 쿠키 생성
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
 
+        // RefreshToken 추출(Redis에서 삭제진행을 위함)
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("RefreshToken".equals(cookie.getName())) {
@@ -84,9 +86,11 @@ public class GateWayController {
         if (jwtToken == null) {
             return API.ERROR(ErrorCode.BAD_REQUEST);
         }
-
+        
+        // RefreshToken과 함께 유효기간이 0인 쿠키생성
         Map<String, ResponseCookie> tokens = authService.logout(jwtToken);
 
+        // 생성된 쿠키를 response에 저장 후 ContextHolder에 있는 세션 정보 삭제
         if(tokens != null)  {
             for (ResponseCookie cookie : tokens.values()) {
                 response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -97,14 +101,16 @@ public class GateWayController {
             }
         }
 
+        // Redirect 진행
         response.sendRedirect("http://localhost:3000");
         return API.OK(SuccessCode.DELETE_TOKEN);
     }
 
+    // 회원 탈퇴(소비자, 업체) 로직
     @DeleteMapping("/delaccount")
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 진행합니다.")
     public API<String> delAccount(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
-        log.info("delaccount called, {}");
+        // 로그아웃 로직과 매우 유사함
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
         String accessToken = null;
@@ -123,6 +129,7 @@ public class GateWayController {
             return API.ERROR(ErrorCode.BAD_REQUEST);
         }
 
+        // 해당 코드에서 알맞은 유저의 정보 DROP
         authService.withdrawUsers(accessToken);
         Map<String, ResponseCookie> tokens = authService.logout(jwtToken);
 

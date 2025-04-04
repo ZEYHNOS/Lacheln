@@ -12,6 +12,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
 
+    // OAuth(소셜)로그인을 진행하는 유저의 정보를 저장하는 커스텀 클래스
     private String id;
     private String email;
     private String nickname;

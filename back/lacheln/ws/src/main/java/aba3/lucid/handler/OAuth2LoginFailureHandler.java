@@ -12,10 +12,11 @@ import java.io.IOException;
 @Component
 public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
 
+    // 소셜 로그인 실패 핸들러
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         System.out.println("OAuth2LoginFailureHandler called");
         System.out.println("로그인 실패: " + exception.getMessage());
-        response.sendRedirect("/login?error=true");
+        response.sendRedirect("http://localhost:3000/login");
     }
 }

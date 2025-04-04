@@ -20,8 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2UserService extends DefaultOAuth2UserService {
 
-    private final RestTemplate restTemplate;
-
+    // OAuth 로그인 성공 시 해당 메서드 실행
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
@@ -35,45 +34,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         System.out.println("getAttributes: "+super.loadUser(userRequest).getAttributes());
         System.out.println("==loadUser End==");
 
+        // 로그인 성공 시 Authentication에 return
         return super.loadUser(userRequest);
-    }
-
-    private OAuth2User loadKakaoUser(OAuth2UserRequest userRequest) {
-        String accessToken = userRequest.getAccessToken().getTokenValue();
-        String uri = "https://kapi.kakao.com/v2/user/me";
-        Map<String, Object> kakaoUserInfo;
-        System.out.println(accessToken);
-        try {
-            ResponseEntity<Map> response = restTemplate.exchange(
-                    uri,
-                    HttpMethod.GET,
-                    new HttpEntity<>(createHeaders(accessToken)),
-                    Map.class
-            );
-
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                throw new OAuth2AuthenticationException("카카오 API 요청 실패: " + response.getStatusCode());
-            }
-
-            kakaoUserInfo = response.getBody();
-        } catch (RestClientException e) {
-            throw new OAuth2AuthenticationException(e.getMessage());
-        }
-
-        Map<String, Object> properties = (Map<String, Object>) kakaoUserInfo.get("properties");
-        Map<String, Object> kakaoAccount = (Map<String, Object>) kakaoUserInfo.get("kakao_account");
-
-        String id = kakaoUserInfo.get("id").toString();
-        String nickname = (String) properties.get("nickname");
-        String email = (String) kakaoAccount.get("email");
-
-        // OAuth2User 객체 반환 (여기서 사용자 정보를 반환)
-        return new CustomOAuth2User(id, nickname, email);
-    }
-
-    private HttpHeaders createHeaders(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.SET_COOKIE, accessToken);
-        return headers;
     }
 }

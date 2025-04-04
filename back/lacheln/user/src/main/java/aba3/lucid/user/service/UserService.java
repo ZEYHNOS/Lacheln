@@ -26,23 +26,24 @@ public class UserService {
         return usersRepository.save(usersEntity);
     }
 
-    // ID로 유저를 찾음
+    // ID로 유저 탐색 및 반환
     public UsersEntity findByIdWithThrow(String userId) {
         return usersRepository.findById(userId).orElseThrow(() ->
                 new ApiException(ErrorCode.NULL_POINT, "해당하는 유저가 존재하지 않습니다."));
     }
 
-    // 이메일로 유저를 찾음
+    // 이메일로 유저 탐색
     public Optional<UsersEntity> findByEmail(String userEmail) {
         return usersRepository.findByUserEmail(userEmail);
     }
 
-    // 이메일로 유저를 찾음(예외처리 추가)
+    // 이메일로 유저 탐색(예외처리 추가)
     public UsersEntity findByEmailWithThrow(String userEmail) {
         return usersRepository.findByUserEmail(userEmail).orElseThrow(() ->
                 new ApiException(ErrorCode.NULL_POINT, "해당하는 유저가 존재하지 않습니다."));
     }
 
+    // 요청된 유저 ID를 기반으로 유저 DROP진행
     public void deleteById(String userId) {
         usersRepository.deleteById(userId);
     }

@@ -11,6 +11,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
+    // Redis와의 Connection을 담당하는 Template를 Bean으로 주입
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -20,6 +21,7 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+    // Redis와의 Connection을 담당하는 Template를 Bean으로 주입
     @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         return new StringRedisTemplate(redisConnectionFactory);

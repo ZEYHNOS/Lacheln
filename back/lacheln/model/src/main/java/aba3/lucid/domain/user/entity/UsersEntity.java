@@ -106,7 +106,6 @@ public class UsersEntity {
         if(newPassword == null) {
             throw new ApiException(UserCode.CANNOT_FIND_DATA, "비밀번호 기입이 안되었습니다.");
         }
-
         this.userPassword = newPassword;
     }
 

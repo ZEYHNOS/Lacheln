@@ -4,19 +4,19 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.common.status_code.UserCode;
-import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.convertor.UserConvertor;
 import aba3.lucid.domain.user.dto.*;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+@Slf4j
 @Business
 @RequiredArgsConstructor
 public class UserBusiness {
-    
+
     private final UserConvertor userConvertor;
     private final UserService userService;
 
@@ -70,5 +70,21 @@ public class UserBusiness {
         UserCheckResponse responseData = userConvertor.entityToCheckResponse(user);
 
         return API.OK(responseData);
+    }
+
+    public API<String> getUserPasswordVerify(String password) {
+        if(password == null)    {
+            return API.ERROR(ErrorCode.BAD_REQUEST, "비밀번호가 누락되었습니다.");
+        }
+        UsersEntity user = userService.findByIdWithThrow(AuthUtil.getUserId());
+        if(!user.getUserSocial().getSocialCode().equals("LOCAL"))   {
+            return API.ERROR(ErrorCode.BAD_REQUEST, "레헬른 계정만 요청 가능합니다.");
+        }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        if(bCryptPasswordEncoder.matches(password, user.getUserPassword())) {
+            return API.OK("인증에 성공하였습니다!");
+        } else {
+            return API.ERROR(ErrorCode.BAD_REQUEST, "비밀번호가 일치하지 않습니다!");
+        }
     }
 }

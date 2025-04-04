@@ -22,6 +22,7 @@ import Notification from "./components/Company/Work/Notification";
 import Schedule from "./components/Company/Work/Schedule";
 import AddProduct from "./components/Company/Management/Product/AddProduct.jsx";
 import ViewProduct from "./components/Company/Management/Product/ViewProduct.jsx";
+import EditProduct from "./components/Company/Management/Product/EditProduct.jsx";
 import MainPage from "./components/User/Mainpage/MainPage.jsx"
 import Brand from "./components/User/BrandPage/Brand.jsx"
 import Product from "./components/User/ProductPage/Product.jsx"
@@ -122,6 +123,7 @@ function App() {
                 <Route path="/company/product" element={<CompanyLayout><ProductManagement /></CompanyLayout>} />
                 <Route path="/company/product/add" element={<CompanyLayout><AddProduct/></CompanyLayout>} />
                 <Route path="/company/product/:id" element={<CompanyLayout><ViewProduct /></CompanyLayout>} /> {/* 동적 라우팅 */}
+                <Route path="/company/product/edit/:id" element={<CompanyLayout><EditProduct /></CompanyLayout>} />{/* 동적 라우팅 */}
                 <Route path="/company/order" element={<CompanyLayout><OrderManagement /></CompanyLayout>} />
                 <Route path="/company/review" element={<CompanyLayout><ReviewManagement /></CompanyLayout>} />
                 {/* 업무페이지(협업, 메신저, 알림, 일정) */}

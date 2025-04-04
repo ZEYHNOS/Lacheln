@@ -179,7 +179,7 @@ const productDummy = [
         task_time: 180,
         in_available: "Y",
         out_available: "N",
-        color: "brown",
+        color: "beige",
         image_url_list: [dmp11],
         description: `<p>드레스 + 메이크업 + 액세서리 포함된 프리미엄 패키지입니다.</p>`,
         option_list: []

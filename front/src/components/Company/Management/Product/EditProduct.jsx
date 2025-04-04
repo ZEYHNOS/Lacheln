@@ -1,203 +1,155 @@
-import React, { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Addphoto from "../../../../image/Company/addimage.png";
+import React, { useEffect, useRef, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Star } from "lucide-react";
 import axios from "axios";
 import AddWrite from "../../../Tool/WriteForm/AddWrite.jsx";
+import Addphoto from "../../../../image/Company/addimage.png";
+import productDummy from "./productDummy"; // 더미데이터용 파일
 
-function AddProduct() {
+function EditProduct() {
+    const { id } = useParams();
     const navigate = useNavigate();
-    
-    // 상태 변수
-    const [rec, setRec] = useState(false);
-    const [name, setName] = useState("");
-    const [color, setColor] = useState("WHITE");
-    const [price, setPrice] = useState("");
-    const [status, setStatus ] = useState("ACTIVE")
-    const [task_time, settask_time] = useState("2시간 대여");
-    const [indoor, setIndoor] = useState(true);
-    const [outdoor, setOutdoor] = useState(false);
-    const [images, setImages] = useState([]);
-    const [isDragging, setIsDragging] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(images.length > 0 ? images[0] : null);
-    const [options, setOptions] = useState([]);
-    const [categoryCode, setCategoryCode] = useState({});
     const writeRef = useRef();
 
+    const [name, setName] = useState("");
+    const [price, setPrice] = useState("");
+    const [color, setColor] = useState("white");
+    const [status, setStatus] = useState("ACTIVE");
+    const [rec, setRec] = useState(false);
+    const [task_time, settask_time] = useState("60");
+    const [indoor, setIndoor] = useState(false);
+    const [outdoor, setOutdoor] = useState(false);
+    const [images, setImages] = useState([]);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [options, setOptions] = useState([]);
+    const [categoryCode, setCategoryCode] = useState("d");
 
-    // product/add 페이지를 열때 백엔드에서 카테고리를 불러옴
-    // useEffect(() => {
-    //     axios.get("/api/product/category")
-    //         .then(res => {
-    //             const code = res.data.cp_category;
-    //             setCategoryCode(code);
-
-    //             if (code === "d") {
-    //                 axios.get("/api/product/sizes")
-    //                     .then(sizeRes => {
-    //                         const sizeList = sizeRes.data.size_list || [];
-    //                         const sizeOption = {
-    //                             title: "사이즈",
-    //                             isRequired: false,
-    //                             isMultiSelect: false,
-    //                             details: sizeList.map(s => ({
-    //                                 name: s.size,
-    //                                 stock: s.stock,
-    //                                 extraPrice: s.plus_cost,
-    //                                 extraTime: ""
-    //                             }))
-    //                         };
-    //                         setOptions([sizeOption]);
-    //                     })
-    //                     .catch(err => console.error("사이즈 불러오기 실패", err));
-    //             }
-    //         })
-    //         .catch(err => console.error("카테고리 불러오기 실패", err));
-    // }, []);
-
-    // 백엔드 요청 대신 하드코딩된 더미 코드 사용 -> 삭제예정
     useEffect(() => {
-        const code = "m"; // 드레스라고 가정
-        setCategoryCode(code);
-    
-        if (code === "d") {
-            // 사이즈 옵션용 기본 더미 데이터
-            const sizeList = [
-                { size: "S"},
-                { size: "M"},
-                { size: "L"}
-            ];
-    
-            const sizeOption = {
-                title: "사이즈",
-                isRequired: false,
-                isMultiSelect: false,
-                details: sizeList.map(s => ({
-                    name: s.size,
-                    stock: s.stock,
-                    extraPrice: s.plus_cost,
-                    extraTime: ""
+        const data = productDummy.find((p) => p.id === id);
+        if (!data) return;
+        setName(data.name);
+        setPrice(data.price);
+        setColor(data.color);
+        setStatus(data.status);
+        setRec(data.rec === "Y");
+        settask_time(String(data.task_time));
+        setIndoor(data.in_available === "Y");
+        setOutdoor(data.out_available === "Y");
+        setImages(data.image_url_list || []);
+        setSelectedImage(data.image_url_list?.[0] || null);
+        setOptions(
+            (data.option_list || []).map((opt) => ({
+                title: opt.name,
+                isMultiSelect: opt.overlap === "Y",
+                isRequired: opt.essential === "Y",
+                details: (opt.option_dt_list || []).map((dt) => ({
+                name: dt.op_dt_name,
+                extraTime: dt.plus_time,
+                extraPrice: dt.plus_cost,
                 }))
-            };
+            }))
+        );
+        setCategoryCode(data.category_code || "d");
     
-            setOptions([sizeOption]);
-        }
-    }, []);
-
-    // 옵션 추가
+        setTimeout(() => {
+            if (writeRef.current && data.description) {
+                writeRef.current.setHTML(data.description);
+            }
+            }, 100);
+        }, [id]);
+        
+    const handleImageUpload = (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer?.files || e.target.files;
+    if (!files) return;
+    const fileArray = Array.from(files).map((file) => URL.createObjectURL(file));
+    const newImages = [...images, ...fileArray];
+    setImages(newImages);
+    if (!selectedImage) setSelectedImage(newImages[0]);
+    setIsDragging(false);
+    };
+    
+    const handleChangeStatus = (e) => setStatus(e.target.value);
     const handleAddOption = () => {
         setOptions([
-            ...options,
-            {
-                title: "",
-                isRequired: false,
-                isMultiSelect: false,
-                details: [{ name: "", stock: "", extraTime: "", extraPrice: "" }]
-            }
+        ...options,
+        { title: "", isMultiSelect: false, isRequired: false, details: [] }
         ]);
     };
-
-    // 대표 이미지 업로드 
-    const handleImageUpload = (event) => {
-        event.preventDefault();
-        let files = [];
     
-        if (event.dataTransfer) {
-            files = Array.from(event.dataTransfer.files);
-        } else if (event.target.files) {
-            files = Array.from(event.target.files);
-        }
-    
-        const imageURLs = files.map(file => URL.createObjectURL(file));
-        const newImageList = [...images, ...imageURLs];
-    
-        setImages(newImageList);
-    
-        // 이미지가 처음 등록됐을 때, 대표 이미지 자동 설정
-        if (!selectedImage && imageURLs.length > 0) {
-            setSelectedImage(imageURLs[0]);
-        }
-    
-        setIsDragging(false);
-    };
-
-    const handleChangeStatus = (event) => {
-        setStatus(event.target.value);
-    };
-    
-    // 백엔드 전송 코드 
     const handleSubmit = () => {
-        // 상품 상세설명 추출해서 배열처리함
-        const descriptionArray = writeRef.current?.getContentAsJsonArray();
+        const description = writeRef.current?.getHTML();
         const payload = {
-            name,
-            price: parseInt(price || 0),
-            status,
-            rec: rec ? "Y" : "N",
-            task_time: parseInt(task_time),
-            description: JSON.stringify(descriptionArray),
-            image_url_list: images,
-            hash_tag_list: [],
-            in_available: indoor ? "Y" : "N",
-            out_available: outdoor ? "Y" : "N",
-            color,
+        id,
+        name,
+        price: parseInt(price),
+        color,
+        status,
+        rec: rec ? "Y" : "N",
+        task_time: parseInt(task_time),
+        in_available: indoor ? "Y" : "N",
+        out_available: outdoor ? "Y" : "N",
+        image_url_list: images,
+        category_code: categoryCode,
+        description,
+        option_list: options.map((opt) => ({
+            name: opt.title,
+            overlap: opt.isMultiSelect ? "Y" : "N",
+            essential: opt.isRequired ? "Y" : "N",
+            status: "ACTIVE",
+            option_dt_list: opt.details.map((dt) => ({
+            op_dt_name: dt.name,
+            plus_time: parseInt(dt.extraTime || 0),
+            plus_cost: parseInt(dt.extraPrice || 0)
+            }))
+        }))
         };
+    
+        console.log("📦 수정된 데이터:", payload);
+        alert("더미 데이터 수정 완료 (콘솔 확인)");
+        navigate(`/company/product/${id}`);
+    };    
 
-    // ✅ 주소 설정
-    let postUrl = "";
-    if (categoryCode === "d") {
-        postUrl = "/api/product/dress/register";
-        payload.size_list = options[0].details.map(detail => ({
-        size: detail.name,
-        stock: parseInt(detail.stock || 0),
-        plus_cost: parseInt(detail.extraPrice || 0)
-        }));
-        payload.option_list = options.slice(1).map(opt => ({
-        name: opt.title,
-        overlap: opt.isMultiSelect ? "Y" : "N",
-        essential: opt.isRequired ? "Y" : "N",
-        status: "ACTIVE",
-        option_dt_list: opt.details.map(dt => ({
-            op_dt_name: dt.name,
-            plus_cost: parseInt(dt.extraPrice || 0),
-            plus_time: parseInt(dt.extraTime || 0)
-        }))
-        }));
-    } else if (categoryCode === "s") {
-        postUrl = "/api/product/studio/register";
-    } else if (categoryCode === "m") {
-        postUrl = "/api/product/makeup/register";
-    }
-    
-    // ✅ 스튜디오 / 메이크업은 option_list만
-    if (categoryCode !== "d") {
-        payload.option_list = options.map(opt => ({
-        name: opt.title,
-        overlap: opt.isMultiSelect ? "Y" : "N",
-        essential: opt.isRequired ? "Y" : "N",
-        status: "ACTIVE",
-        option_dt_list: opt.details.map(dt => ({
-            op_dt_name: dt.name,
-            plus_cost: parseInt(dt.extraPrice || 0),
-            plus_time: parseInt(dt.extraTime || 0)
-        }))
-        }));
-    }
-    
-    // ✅ 전송
-    axios.post(postUrl, payload)
-        .then(res => {
-        console.log("등록 성공", res.data);
-        // 필요 시 navigate("/product/list")
-        })
-        .catch(err => {
-        console.error("등록 실패", err);
-        });
-    };
+    // 실제 백엔드에서 받아오는 주소
+    // useEffect(() => {
+    //     axios.get(`http://localhost:5051/product/${category}/${productid}`)
+    //         .then((res) => {
+    //             const data = res.data;
+    //             setForm({
+    //                 name: data.name,
+    //                 price: data.price,
+    //                 color: data.color,
+    //                 status: data.status,
+    //                 rec: data.rec === "Y",
+    //                 task_time: String(data.task_time),
+    //                 indoor: data.in_available === "Y",
+    //                 outdoor: data.out_available === "Y",
+    //                 images: data.image_url_list || [],
+    //                 selectedImage: data.image_url_list?.[0] || null,
+    //                 options: data.option_list || [],
+    //                 categoryCode: data.category_code || "d",
+    //                 description: data.description || ""
+    //             });
+    //         })
+    //         .catch((err) => console.error("불러오기 실패", err));
+    // }, [id]);
+
+    // 실제 백엔드로 보내는 주소소
+    // axios.put(`http://localhost:5051/product/update/${id}`, payload)
+    //     .then(() => {
+    //         alert("수정 완료!");
+    //         navigate(`/company/product/${id}`);
+    //     })
+    //     .catch((err) => {
+    //         console.error("수정 실패", err);
+    //         alert("수정 중 오류가 발생했습니다.");
+    //     });
+
 
     return (
         <div className="w-full max-w-6xl mx-auto p-6 bg-white text-black rounded-md">
-            <h1 className="text-2xl font-bold text-[#845EC2] mb-4">상품 추가하기</h1>
+            <h1 className="text-2xl font-bold text-[#845EC2] mb-4">상품 수정하기</h1>
 
             <div className="flex items-start space-x-6">
                 <div className="w-1/3 p-2">
@@ -487,16 +439,43 @@ function AddProduct() {
                     </div>
                 </div>
             </div>
-            
-            <AddWrite ref={writeRef} />
 
-            <div className="flex justify-end mt-6 space-x-4">
-                <button onClick={handleSubmit} 
-                className="bg-[#845EC2] text-white px-6 py-2 rounded hover:bg-purple-500">추가</button>
-                <button className="bg-gray-300 text-black px-6 py-2 rounded" onClick={() => navigate(-1)}>취소</button>
+            <AddWrite ref={writeRef} />
+            
+
+            {/* 하단 버튼 */}
+            <div className="flex justify-end mt-6">
+                <button
+                    onClick={() => {
+                        if (window.confirm("정말 삭제하시겠습니까?")) {
+                            console.log("🗑️ 삭제 요청", id);
+                            // 실제 백엔드에서는:
+                            // axios.delete(`http://localhost:5050/product/${category}/delete/${id}`)
+                            //     .then(() => navigate("/company/product"))
+                            //     .catch((err) => console.error("삭제 실패", err));
+                            
+                            alert("삭제 완료");
+                            navigate("/company/product");
+                        }
+                    }}
+                    className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 mr-4"
+                >
+                    삭제하기
+                </button>
+                <button
+                    onClick={handleSubmit}
+                    className="bg-[#845EC2] text-white px-6 py-2 rounded hover:bg-purple-500"
+                >
+                    수정하기
+                </button>
+                <button
+                    className="ml-4 bg-gray-300 text-black px-6 py-2 rounded"
+                    onClick={() => navigate(-1)}
+                >
+                    취소
+                </button>
             </div>
         </div>
     );
-}
-
-export default AddProduct;
+};
+export default EditProduct;

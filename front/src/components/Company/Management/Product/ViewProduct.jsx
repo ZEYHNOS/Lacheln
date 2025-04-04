@@ -12,7 +12,7 @@ function ViewProduct() {
 
     // 실제 백엔드에서 받아오는 주소
     // useEffect(() => {
-    //     axios.get(`http://localhost:5050/product/detail/${id}`)
+    //     axios.get(`http://localhost:5051/product/${category}/${id}`)
     //         .then(res => {
     //             setProduct(res.data);
     //             setSelectedImage(res.data.image_url_list?.[0]);
@@ -151,7 +151,7 @@ function ViewProduct() {
                                 <option value="blue">파랑</option>
                                 <option value="navy">남</option>
                                 <option value="purple">보라</option>
-                                <option value="brown">갈색</option>
+                                <option value="beige">베이지</option>
                                 <option value="pink">분홍</option>
                             </select>
                             <div className="ml-2 w-24 h-10 rounded" style={{ backgroundColor: color, border: '1px solid #ccc' }} />

@@ -27,7 +27,8 @@ import Product from "./components/User/ProductPage/Product.jsx"
 import Package from "./components/User/PackagePage/Package.jsx"
 import Event from "./components/User/EventPage/Event.jsx"
 import Community from "./components/User/CommunityPage/Community.jsx"
-import Community from "./components/User/CommunityPage/BoardPage.jsx"
+import BoardPage from "./components/User/CommunityPage/BoardPage.jsx"
+import CreatePost from "./components/User/CommunityPage/CreatePost.jsx"
 import Support from "./components/User/SupportPage/Support.jsx"
 import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
 
@@ -81,7 +82,7 @@ function App() {
     return (
         <Router>
             <Routes>
-                {/* ✅ /user 페이지 그룹화 */}
+                {/* /user 페이지 그룹화 */}
                 {/* 메인 페이지 */}
                 <Route path="/" element={<Layout><MainPage /></Layout>} />
                 {/* 로그인창 */}
@@ -103,7 +104,9 @@ function App() {
                 {/* 이벤트 페이지 */}
                 <Route path="/event" element={<Layout><Event /></Layout>} />
                 {/* 커뮤니티 페이지 */}
-                <Route path="/community" element={<Layout><Community /></Layout>} />
+                <Route path="/board" element={<Layout><Community /></Layout>} />
+                <Route path="/community" element={<Layout><BoardPage /></Layout>} />
+                <Route path="/create" element={<Layout><CreatePost /></Layout>} />
                 {/* 고객지원 */}
                 <Route path="/support" element={<Layout><Support /></Layout>} />
                 {/* 회사관련 네비게이션 */}
@@ -112,7 +115,7 @@ function App() {
                 <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
                 <Route path="/location" element={<Layout><Location /></Layout>} />
 
-                {/* ✅ /company 페이지 그룹화 및 Nested Routes 적용 */}
+                {/* /company 페이지 그룹화 및 Nested Routes 적용 */}
                 {/* 회사 메인페이지 */}
                 <Route path="/company" element={<CompanyLayout><MainCompany /></CompanyLayout>} />
                 {/* 가게 정보 페이지(정보수정, 통계) */}

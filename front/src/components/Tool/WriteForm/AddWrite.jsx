@@ -22,7 +22,7 @@ import AddImage from '../../../image/AddWrite/addimage.png';
 import { Node, mergeAttributes } from '@tiptap/core';
 import Youtube from '@tiptap/extension-youtube';
 
-// ✅ 이미지 노드 확장
+// 이미지 노드 확장
 const InlineImage = Node.create({
   name: 'inlineImage',
   inline: true,
@@ -50,7 +50,6 @@ const InlineImage = Node.create({
   },
 });
 
-// ✅ 유튜브 노드 확장
 // 유튜브 노드 확장
 const CustomYoutube = Youtube.extend({
   renderHTML({ HTMLAttributes }) {

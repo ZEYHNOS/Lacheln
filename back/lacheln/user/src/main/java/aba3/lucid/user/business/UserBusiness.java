@@ -60,4 +60,15 @@ public class UserBusiness {
 
         return API.OK(data);
     }
+
+    // 유저 프로필 조회
+    public API<UserCheckResponse> getUser() {
+        if(AuthUtil.getAuth() == null)  {
+            return API.ERROR(ErrorCode.UNAUTHORIZED, "세션이 존재하지 않습니다.");
+        }
+        UsersEntity user = userService.findByIdWithThrow(AuthUtil.getUserId());
+        UserCheckResponse responseData = userConvertor.entityToCheckResponse(user);
+
+        return API.OK(responseData);
+    }
 }

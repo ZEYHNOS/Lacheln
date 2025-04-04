@@ -1,6 +1,7 @@
 package aba3.lucid.domain.user.convertor;
 
 import aba3.lucid.common.password.CustomPasswordEncoder;
+import aba3.lucid.domain.user.dto.UserCheckResponse;
 import aba3.lucid.domain.user.dto.UserObject;
 import aba3.lucid.domain.user.dto.UserSignupRequest;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -68,6 +69,21 @@ public class UserConvertor {
                 .userGender(user.getUserGender())
                 .userMileage(user.getUserMileage())
                 .userRole(user.getUserRole())
+                .build();
+    }
+
+    public UserCheckResponse entityToCheckResponse(UsersEntity user) {
+        return UserCheckResponse.builder()
+                .email(user.getUserEmail())
+                .name(user.getUserName())
+                .phone(user.getUserPhone())
+                .gender(user.getUserGender())
+                .tier(user.getUserTier())
+                .currency(user.getUserCurrency())
+                .mileage(user.getUserMileage())
+                .nickname(user.getUserNickName())
+                .notification(user.getUserAdsNotification())
+                .language(user.getUserLanguage())
                 .build();
     }
 }

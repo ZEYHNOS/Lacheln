@@ -7,6 +7,7 @@ import aba3.lucid.user.business.UserBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -34,10 +35,17 @@ public class UserController {
         return userBusiness.update(userUpdateRequest);
     }
 
+    // 유저 프로필 조회
+    @GetMapping("/profile")
+    @Operation(summary = "소비자 조회", description = "소비자 정보를 조회합니다.")
+    public API<UserCheckResponse> getUser()   {
+        return userBusiness.getUser();
+    }
+
     // 컨텍스트 유저 추출 테스트 코드
     @GetMapping("/test")
     @ResponseBody
-    public String getUser() {
+    public String testUser() {
         System.out.println(AuthUtil.getUserId());
         return AuthUtil.getUserId();
     }

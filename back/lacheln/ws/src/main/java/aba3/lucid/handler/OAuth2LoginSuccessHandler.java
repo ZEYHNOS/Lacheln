@@ -2,6 +2,7 @@ package aba3.lucid.handler;
 
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.enums.*;
+import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.user.service.UserService;
 import aba3.lucid.service.AuthService;
 import com.fasterxml.uuid.Generators;
@@ -27,7 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final UserService userService;
+    private final UsersRepository usersRepository;
     private final AuthService authService;
 
     @Override
@@ -55,7 +56,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             social = "K";
         }
 
-        if(userService.findByEmail(requestEmail).isEmpty()) {
+        if(usersRepository.findByUserEmail(requestEmail).isEmpty()) {
             saveOAuth2User(requestEmail, requestName, requestId, social);
         }
 
@@ -102,6 +103,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .userMileage(new BigInteger("0"))
                 .userRole("USER")
                 .build();
-        userService.saveByUser(usersEntity);
+        usersRepository.save(usersEntity);
     }
 }

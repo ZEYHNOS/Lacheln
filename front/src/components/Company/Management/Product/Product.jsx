@@ -1,21 +1,39 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; 
-import weddingDress from "../../../../image/dummydata/weddingdress1.jpg"; // 더미데이터용 사진
+import axios from "axios";
+import productDummy from "./productDummy"; // 더미 데이터 import
 
 function Product() {
     const [selected, setSelected] = useState("전체보기");
     const [currentPage, setCurrentPage] = useState(1);
+    // 백엔드에서 받아올때
+    // const [productList, setProductList] = useState([]);
     const navigate = useNavigate();
+    const itemsPerPage = 5;
 
-    // 샘플 상품 더미 데이터
-    const dress = [
-        { id: "1", name: "드레스 22호 (흰)", status: "판매중", price: "100,000￦", image: weddingDress },
-        { id: "2", name: "드레스 23호 (핑크)", status: "판매중", price: "120,000￦", image: weddingDress },
-        { id: "3", name: "드레스 24호 (블루)", status: "비공개", price: "130,000￦", image: weddingDress },
-        { id: "4", name: "드레스 25호 (레드)", status: "판매중", price: "140,000￦", image: weddingDress },
-        { id: "5", name: "드레스 26호 (옐로우)", status: "판매중", price: "150,000￦", image: weddingDress },
-        { id: "6", name: "드레스 27호 (퍼플)", status: "비공개", price: "160,000￦", image: weddingDress },
-    ];
+    // 실제 백엔드에서 받아오는 주소
+    // useEffect(() => {
+    //     axios.get("http://localhost:5050/product/list")
+    //         .then(res => setProductList(res.data))
+    //         .catch(err => console.error("상품 목록 불러오기 실패", err));
+    // }, []);
+
+    // ✅ 탭 필터링 로직    
+    // productDummy -> productList
+    const filteredItems = productDummy.filter((item) => {
+        if (selected === "전체보기") return true;
+        if (selected === "개별상품") return item.status !== "PACKAGE";
+        if (selected === "패키지상품") return item.status === "PACKAGE";
+        return false;
+    });
+
+    // 총 페이지 수 계산
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+    // 현재 페이지에 보여줄 상품 슬라이스
+    const currentItems = filteredItems.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     return (
         <div className="w-full h-full overflow-auto bg-white text-black flex flex-col">
@@ -29,16 +47,18 @@ function Product() {
                                 className={`px-4 py-2 rounded-md transition-colors duration-200 bg-transparent 
                                     ${selected === category ? "text-[#845EC2] font-bold border border-[#845EC2]" : "text-[#B39CD0]"}
                                     focus:ring-0 focus:outline-none`}
-                                onClick={() => setSelected(category)}
+                                onClick={() => {
+                                    setSelected(category);
+                                    setCurrentPage(1); 
+                                }}
                             >
                                 {category}
                             </button>
                         ))}
                     </div>
-                    {/* 상품추가 버튼 -> addproduct.jsx */}
                     <button
                         className="bg-[#845EC2] text-white px-8 py-2 rounded hover:bg-purple-500 transition-colors duration-200"
-                        onClick={() => navigate("/company/product/add")} // 버튼 클릭 시 이동
+                        onClick={() => navigate("/company/product/add")}
                     >
                         추가
                     </button>
@@ -56,22 +76,22 @@ function Product() {
                             </tr>
                         </thead>
                         <tbody>
-                            {dress.map((dress) => (
+                            {currentItems.map((product) => (
                                 <tr
-                                    key={dress.id}
+                                    key={product.id}
                                     className="text-center cursor-pointer hover:bg-gray-100 transition-colors duration-200"
-                                    onClick={() => navigate(`/company/product/${dress.id}`)} // 클릭 시 해당 URL로 이동
+                                    onClick={() => navigate(`/company/product/${product.id}`)}
                                 >
                                     <td className="border border-gray-300 p-2">
                                         <img 
-                                            src={dress.image} 
+                                            src={product.image_url_list?.[0]} 
                                             alt="상품 이미지" 
                                             className="mx-auto w-12 h-12 object-cover rounded" 
                                         />
                                     </td>
-                                    <td className="border border-gray-300 p-2">{dress.name}</td>
-                                    <td className="border border-gray-300 p-2">{dress.status}</td>
-                                    <td className="border border-gray-300 p-2">{dress.price}</td>
+                                    <td className="border border-gray-300 p-2">{product.name}</td>
+                                    <td className="border border-gray-300 p-2">{product.status}</td>
+                                    <td className="border border-gray-300 p-2">{product.price.toLocaleString()}￦</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -80,7 +100,7 @@ function Product() {
 
                 {/* 페이지네이션 */}
                 <div className="flex justify-center mt-4 py-8">
-                    {Array(11).fill(0).map((_, index) => (
+                    {Array(totalPages).fill(0).map((_, index) => (
                         <button 
                             key={index} 
                             className={`mx-1 px-3 py-1 rounded transition-colors duration-200

@@ -2,6 +2,7 @@ package aba3.lucid.company.controller;
 
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.company.business.CompanyBusiness;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.dto.*;
@@ -44,17 +45,13 @@ public class CompanyController {
 
     }
 
-//    @PutMapping("/update/{companyId}")
-//    public API<CompanyResponse> updateCompany (
-//
-//            @PathVariable long companyId,
-//            @Valid
-//            @RequestBody CompanyRequest companyRequest
-//
-//    ){
-//        CompanyResponse companyResponse = companyBusiness.updateCompany(companyRequest, companyId);
-//        return API.OK(companyResponse);
-//    }
+    @PutMapping("/update/{companyId}")
+    public API<CompanyUpdateResponse> updateCompany (
+            @RequestBody CompanyUpdateRequest companyUpdateRequest
+
+    ){
+        return companyBusiness.updateCompany(companyUpdateRequest, AuthUtil.getCompanyId());
+    }
 
     @GetMapping("/search/{email}")
     public API<CompanyResponse> searchCompany (

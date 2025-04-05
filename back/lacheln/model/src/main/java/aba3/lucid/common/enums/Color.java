@@ -7,9 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Color {
 
-    RED,
-    BLUE,
-    BLACK,
-    WHITE;
+    RED("FF0000"),
+    BLUE("0000FF"),
+    BLACK("000000"),
+    WHITE("FFFFFF");
 
+    private final String hexCode;
 }

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -70,14 +71,17 @@ public class CompanyAlertBusiness {
     }
 
 
-    @RabbitListener(queues = "company", ackMode = "MANUAL", concurrency = "5")
+    @RabbitListener(queues = "company", ackMode = "MANUAL", concurrency = "2")
     public void consume(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
             // 🚀 JSON 변환 직접 수행
             CompanyAlertDto dto = objectMapper.readValue(message.getBody(), CompanyAlertDto.class);
 
-            log.info("✅ Received Message: {}", dto);
+            CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
+            CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);
+
+            companyAlertService.alertRegister(entity);
 
             // 정상 처리되었으므로 ACK
             channel.basicAck(deliveryTag, false);

@@ -1,6 +1,7 @@
 package aba3.lucid.domain.calendar.dto;
 
 
+import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

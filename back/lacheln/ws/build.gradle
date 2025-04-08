@@ -45,7 +45,7 @@ dependencies {
     testImplementation 'org.projectlombok:lombok'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

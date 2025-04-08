@@ -2,7 +2,6 @@ package aba3.lucid.domain.user.entity;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.UserCode;
-import aba3.lucid.domain.user.dto.UserObject;
 import aba3.lucid.domain.user.dto.UserUpdateRequest;
 import aba3.lucid.domain.user.enums.*;
 import com.fasterxml.uuid.Generators;

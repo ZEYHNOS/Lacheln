@@ -62,21 +62,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             saveOAuth2User(requestEmail, requestName, requestId, social);
         }
 
-        System.out.println("==== 로그인 요청 정보 시작 ====");
-        System.out.println("requestEmail : " + requestEmail);
-        System.out.println("requestName : " + requestName);
-        System.out.println("requestId : " + requestId);
-        System.out.println("requestSocial : " + social);
-        System.out.println("==== 로그인 요청 정보 끝 ====");
-
         // 토큰 발급 로직
         Map<String, ResponseCookie> cookies = authService.login(requestEmail, "USER");
 
         for (ResponseCookie cookie : cookies.values()) {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
-
-        System.out.println("OAuth Authentication Successful : " + oAuth2User.getAttributes());
 
         response.sendRedirect("http://localhost:3000");
     }

@@ -45,21 +45,15 @@ public class GateWayController {
     // 게시판 요청을 전달하는 메서드
     @RequestMapping("/board/**")
     public API<String> routeToBoard(HttpServletRequest request, @AuthenticationPrincipal UserDetails user) {
-        System.out.println("user.getUsername() + user.getPassword() + user.getAuthorities() = " + user.getUsername() + user.getPassword() + user.getAuthorities());
         return routeRequest("http://localhost:5052", request);
     }
 
     // 업체 서비스로 요청을 전달하는 메서드
     @RequestMapping(value = "/company/**", method = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.GET})
     public API<String> routeToCompany(HttpServletRequest request) {
-        System.out.println("===== routeToCompany 호출 =====");
-        System.out.println("요청 URI: " + request.getRequestURI());
-        System.out.println("요청 메서드: " + request.getMethod());
-
         try {
             BufferedReader reader = request.getReader();
             String body = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-            System.out.println("요청 본문: " + body);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,7 +91,6 @@ public class GateWayController {
             }
             if (authentication != null) {
                 new SecurityContextLogoutHandler().logout(request, response, authentication);
-                System.out.println("컨텍스트 정보 삭제완료..");
             }
         }
 
@@ -139,7 +132,6 @@ public class GateWayController {
             }
             if (authentication != null) {
                 new SecurityContextLogoutHandler().logout(request, response, authentication);
-                System.out.println("컨텍스트 정보 삭제완료..");
             }
         }
 

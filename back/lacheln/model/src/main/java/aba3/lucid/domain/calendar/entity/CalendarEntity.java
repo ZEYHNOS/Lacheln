@@ -3,15 +3,13 @@ package aba3.lucid.domain.calendar.entity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "calendar")
 @AllArgsConstructor

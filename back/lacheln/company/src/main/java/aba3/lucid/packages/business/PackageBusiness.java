@@ -44,8 +44,9 @@ public class PackageBusiness {
         PackageEntity newEntity = packageService.packageRegister(packageEntity);
 
         // 업체에게 알림 보내기
-        companyAlertService.sendAlertCompany(CompanyAlertDto.invitationPackage(company1, newEntity));
-        companyAlertService.sendAlertCompany(CompanyAlertDto.invitationPackage(company2, newEntity));
+        CompanyAlertDto dto1 = CompanyAlertDto.invitationPackage(company1, newEntity);
+        CompanyAlertDto dto2 = CompanyAlertDto.invitationPackage(company2, newEntity);
+        companyAlertService.sendAlertCompany(dto1, dto2);
 
         return packageConverter.toResponse(newEntity);
     }

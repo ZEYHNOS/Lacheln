@@ -99,7 +99,7 @@ public class UsersEntity {
     private BigInteger userMileage; //마일리지
 
     @Column(name = "user_role", nullable = false, columnDefinition = "CHAR(4)")
-    private String userRole = "USER"; //유저 권한
+    private String userRole; //유저 권한
 
     // 비밀번호 변경
     public void updatePassword(String newPassword) {

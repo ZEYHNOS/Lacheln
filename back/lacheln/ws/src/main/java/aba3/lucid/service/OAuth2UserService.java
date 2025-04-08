@@ -27,13 +27,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 //        if("kakao".equals(userRequest.getClientRegistration().getClientName())) {
 //            return loadKakaoUser(userRequest);
 //        }
-
-        System.out.println("==loadUser Start==");
-        System.out.println("getClientRegistration: "+userRequest.getClientRegistration());
-        System.out.println("getAccessToken: "+userRequest.getAccessToken());
-        System.out.println("getAttributes: "+super.loadUser(userRequest).getAttributes());
-        System.out.println("==loadUser End==");
-
         // 로그인 성공 시 Authentication에 return
         return super.loadUser(userRequest);
     }

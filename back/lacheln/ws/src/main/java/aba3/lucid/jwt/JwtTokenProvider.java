@@ -76,7 +76,6 @@ public class JwtTokenProvider {
 
     // 토큰에서 유저 이메일 추출
     public String getUserEmail(String token) {
-        System.out.println("getUserEmail = " + Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
@@ -92,7 +91,6 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date()); // 혹시 모르니 찾아볼 것 -->  ! (추가여부)
         } catch (JwtException | IllegalArgumentException e) {
-            System.out.println("validateToken False");
             return false;
         }
     }

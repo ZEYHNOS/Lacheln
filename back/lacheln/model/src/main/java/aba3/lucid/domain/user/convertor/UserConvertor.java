@@ -2,7 +2,6 @@ package aba3.lucid.domain.user.convertor;
 
 import aba3.lucid.common.password.CustomPasswordEncoder;
 import aba3.lucid.domain.user.dto.UserCheckResponse;
-import aba3.lucid.domain.user.dto.UserObject;
 import aba3.lucid.domain.user.dto.UserSignupRequest;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.enums.*;
@@ -46,8 +45,8 @@ public class UserConvertor {
                 .build();
     }
 
-    public UserObject convertEntityToObject(UsersEntity user) {
-        return UserObject.builder()
+    public UsersEntity convertEntityToObject(UsersEntity user) {
+        return UsersEntity.builder()
                 .userId(user.getUserId())
                 .userCountry(user.getUserCountry())
                 .userLanguage(user.getUserLanguage())

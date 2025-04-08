@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserSignupResponse {
-    private UserObject data;
+    private UsersEntity data;
     private String message;
 }

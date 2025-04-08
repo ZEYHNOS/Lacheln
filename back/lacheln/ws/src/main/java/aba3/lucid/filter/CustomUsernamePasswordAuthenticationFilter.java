@@ -71,7 +71,6 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         try {
             // JSON 요청 본문을 String으로 읽기
             String requestBody = new BufferedReader(request.getReader()).lines().collect(Collectors.joining("\n"));
-            System.out.println("Request Body: " + requestBody);
 
             // JSON 파싱
             JsonNode jsonNode = objectMapper.readTree(requestBody);
@@ -125,8 +124,6 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         CustomAuthenticationToken authRequest = (CustomAuthenticationToken) authResult;
         String username = authResult.getName();
         String role = authRequest.getLoginType().replace("ROLE_", "");
-        System.out.println("Primary Key : " + (authRequest.getUserId() == null ? authRequest.getCompanyId() : authRequest.getUserId()));
-        System.out.println("role = " + role);
         Map<String, ResponseCookie> cookies = authService.login(username, role);
         for (ResponseCookie cookie : cookies.values()) {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

@@ -49,7 +49,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                         .build();
             }
             // 유저가 Social 형태로 로그인을 진행할때
-            System.out.println("UserId = " + user.get().getUserId());
             return CustomUserDetails.builder()
                     .email(usersEntity.getUserEmail())
                     .role("ROLE_" + usersEntity.getUserRole())
@@ -59,8 +58,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         } else if(company.isPresent())  {
             // 유저가 없으면 업체쪽임으로 해당 로직실행
             companyEntity = company.get();
-            System.out.println("Company ID = " + company.get().getCpId());
-            System.out.println("companyEntity.getCpRole() = " + companyEntity.getCpRole());
             return CustomUserDetails.builder()
                     .email(companyEntity.getCpEmail())
                     .role("ROLE_" + companyEntity.getCpRole())

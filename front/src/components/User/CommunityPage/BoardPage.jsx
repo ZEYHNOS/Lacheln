@@ -1,15 +1,16 @@
 import { useState } from "react";
 
+import { Link } from "react-router-dom";
 const BoardPage = () => {
     const dummyPosts = [
-        { tap: "후기", id: 8, title: "여덟 번째 게시글", author: "박서준", date: "2025-04-02", likes: 12, views: 42 },
-        { tap: "자유", id: 7, title: "일곱 번째 게시글", author: "이지은", date: "2025-03-29", likes: 9, views: 56 },
-        { tap: "질문", id: 6, title: "여섯 번째 게시글", author: "차은우", date: "2025-03-27", likes: 15, views: 51 },
-        { tap: "후기", id: 5, title: "다섯 번째 게시글", author: "손흥민", date: "2025-03-25", likes: 10, views: 48 },
-        { tap: "자유", id: 4, title: "네 번째 게시글", author: "김연아", date: "2025-03-20", likes: 17, views: 45 },
-        { tap: "후기", id: 3, title: "세 번째 게시글", author: "이영희", date: "2025-03-15", likes: 24, views: 50 },
-        { tap: "자유", id: 2, title: "두 번째 게시글", author: "김철수", date: "2025-03-09", likes: 7, views: 22 },
-        { tap: "질문", id: 1, title: "첫 번째 게시글", author: "홍길동", date: "2025-03-04", likes: 14, views: 38 },
+        { tap: "후기", id: 8, title: "여덟 번째 게시글", content: "정말 유익한 경험이었습니다. 추천드려요!", author: "박서준", date: "2025-04-02", likes: 12, views: 42 },
+        { tap: "자유", id: 7, title: "일곱 번째 게시글", content: "오늘 날씨 진짜 좋네요~ 기분도 좋아요.", author: "이지은", date: "2025-03-29", likes: 9, views: 56 },
+        { tap: "질문", id: 6, title: "여섯 번째 게시글", content: "React에서 props와 state 차이가 뭔가요?", author: "차은우", date: "2025-03-27", likes: 15, views: 51 },
+        { tap: "후기", id: 5, title: "다섯 번째 게시글", content: "이 프로젝트 덕분에 많이 배웠어요. 감사합니다.", author: "손흥민", date: "2025-03-25", likes: 10, views: 48 },
+        { tap: "자유", id: 4, title: "네 번째 게시글", content: "요즘에 책 읽는 게 재밌네요. 추천할게요!", author: "김연아", date: "2025-03-20", likes: 17, views: 45 },
+        { tap: "후기", id: 3, title: "세 번째 게시글", content: "강의가 너무 좋았어요. 다음에도 참여하고 싶어요.", author: "이영희", date: "2025-03-15", likes: 24, views: 50 },
+        { tap: "자유", id: 2, title: "두 번째 게시글", content: "주말에 뭐 할지 고민되네요ㅎㅎ 추천 좀요.", author: "김철수", date: "2025-03-09", likes: 7, views: 22 },
+        { tap: "질문", id: 1, title: "첫 번째 게시글", content: "자바스크립트에서 배열 정렬하는 방법 궁금합니다.", author: "홍길동", date: "2025-03-04", likes: 14, views: 38 },
     ];
 
     const [posts, setPosts] = useState(dummyPosts);
@@ -43,10 +44,10 @@ const BoardPage = () => {
             <h2 className="text-center text-2xl font-bold">전체 게시판</h2>
             <hr className="my-6" />
             <nav className="mb-5">
-                <ul className="flex justify-center gap-9 text-lg font-bold">
-                    <li className="text-purple-600 hover:text-pink-400 cursor-pointer">자유게시판</li>
-                    <li className="text-purple-600 hover:text-pink-400 cursor-pointer">후기게시판</li>
-                    <li className="text-purple-600 hover:text-pink-400 cursor-pointer">질문게시판</li>
+                <ul className="flex justify-center gap-[5px] text-lg font-bold">
+                    <li className="text-purple-600 hover:text-pink-400 cursor-pointer border-l border-purple-400 px-[120px]">자유게시판</li>
+                    <li className="text-purple-600 hover:text-pink-400 cursor-pointer border-l border-r border-purple-400 px-[110px]">후기게시판</li>
+                    <li className="text-purple-600 hover:text-pink-400 cursor-pointer border-r border-purple-400 px-[120px]">질문게시판</li>
                 </ul>
             </nav>
             <table className="w-full border-collapse">
@@ -112,8 +113,8 @@ const BoardPage = () => {
                     <option value="author">글쓴이</option>
                 </select>
                 <input type="text" placeholder="검색어 입력" className="border p-2" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                <button type="submit" className="bg-gray-200 px-3 py-2">검색</button>
-                <button type="button" className="bg-white text-purple-600 font-bold border rounded-lg px-4 py-2" onClick={() => window.location.href = '/CreatePost.jsx'}>글쓰기</button>
+                <button type="submit" className="bg-gray-200 px-3 py-2 hover:bg-violet-100">검색</button>
+                <button type="button" className="bg-white text-purple-600 font-bold border rounded-lg px-4 py-2 hover:bg-violet-100" onClick={() => window.location.href = '/create'}>글쓰기</button>
             </form>
         </div>
     );

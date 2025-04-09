@@ -29,6 +29,8 @@ import Event from "./components/User/EventPage/Event.jsx"
 import Community from "./components/User/CommunityPage/Community.jsx"
 import BoardPage from "./components/User/CommunityPage/BoardPage.jsx"
 import CreatePost from "./components/User/CommunityPage/CreatePost.jsx"
+import UpdatePost from "./components/User/CommunityPage/UpdatePost.jsx"
+import PostDetail from "./components/User/CommunityPage/PostDetail.jsx";
 import Support from "./components/User/SupportPage/Support.jsx"
 import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
 
@@ -107,6 +109,8 @@ function App() {
                 <Route path="/board" element={<Layout><Community /></Layout>} />
                 <Route path="/community" element={<Layout><BoardPage /></Layout>} />
                 <Route path="/create" element={<Layout><CreatePost /></Layout>} />
+                <Route path="/update" element={<Layout><UpdatePost /></Layout>} />
+                <Route path="/Post" element={<Layout><PostDetail /></Layout>} />
                 {/* 고객지원 */}
                 <Route path="/support" element={<Layout><Support /></Layout>} />
                 {/* 회사관련 네비게이션 */}

@@ -16,31 +16,32 @@ const PostDetail = () => {
     const handleDelete = () => {
         const confirmDelete = window.confirm("정말 삭제하시겠습니까?");
         if (confirmDelete) {
-
-        }
         alert("게시물이 삭제되었습니다.");
-        window.location.href = "/Post";
-    }
+        window.location.href = "/post";
+        }
+    };
 
     return (
-        <div className="max-w-screen-lg mx-auto p-6">
+        <div className="max-w-screen-lg mx-auto p-3">
             <h2 className="text-2xl font-bold text-center mb-4">게시글 조회</h2>
             <hr className="mb-6" />
-
-            <nav className="mb-6 text-center">
-                <ul className="flex justify-center space-x-16 text-lg font-bold">
-                    <li className="text-purple-600 hover:text-pink-400 hover:underline cursor-pointer">자유게시판</li>
-                    <li className="text-purple-600 hover:text-pink-400 hover:underline cursor-pointer">후기게시판</li>
-                    <li className="text-purple-600 hover:text-pink-400 hover:underline cursor-pointer">질문게시판</li>
+            <nav className="mb-5">
+                <ul className="flex justify-center gap-[5px] text-lg font-bold">
+                    <li className="text-purple-600 hover:text-pink-400 hover:underline cursor-pointer border-l border-purple-400 px-[120px]">자유게시판</li>
+                    <li className="text-purple-600 hover:text-pink-400 hover:underline cursor-pointer border-l border-r border-purple-400 px-[110px]">후기게시판</li>
+                    <li className="text-purple-600 hover:text-pink-400 hover:underline cursor-pointer border-r border-purple-400 px-[120px]">질문게시판</li>
                 </ul>
             </nav>
 
             <div className="flex justify-end space-x-2 mb-4">
                 <button className="w-14 h-8 border border-purple-500 bg-white text-purple-500 rounded">수정</button>
-                <button className="w-14 h-8 border border-purple-500 bg-white text-purple-500 rounded">삭제</button>
+                <button onClick={handleDelete} className="w-14 h-8 border border-purple-500 bg-white text-purple-500 rounded">삭제</button>
             </div>
 
-            <h3 className="text-xl font-semibold text-center mb-2">첫 번째 게시글</h3>
+            <h3 className="text-xl font-semibold text-center mb-2">{post?.title || "게시글 없음"}</h3>
+            <div className="text-center mb-6">
+            <p className="text-gray-700">{post?.content || "내용이 존재하지 않습니다."}</p>
+            </div>
             <hr className="mb-4" />
 
             <div className="text-center">

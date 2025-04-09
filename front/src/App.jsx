@@ -112,7 +112,7 @@ function App() {
                 <Route path="/community" element={<Layout><BoardPage /></Layout>} />
                 <Route path="/create" element={<Layout><CreatePost /></Layout>} />
                 <Route path="/update" element={<Layout><UpdatePost /></Layout>} />
-                <Route path="/Post" element={<Layout><PostDetail /></Layout>} />
+                <Route path="/post/:id" element={<Layout><PostDetail /></Layout>} />
                 {/* 고객지원 */}
                 <Route path="/support" element={<Layout><Support /></Layout>} />
                 {/* 회사관련 네비게이션 */}

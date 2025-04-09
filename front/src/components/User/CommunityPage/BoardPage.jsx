@@ -1,16 +1,17 @@
+import axios from "axios";
 import { useState } from "react";
 
 import { Link } from "react-router-dom";
 const BoardPage = () => {
     const dummyPosts = [
-        { tap: "후기", id: 8, title: "여덟 번째 게시글", content: "정말 유익한 경험이었습니다. 추천드려요!", author: "박서준", date: "2025-04-02", likes: 12, views: 42 },
-        { tap: "자유", id: 7, title: "일곱 번째 게시글", content: "오늘 날씨 진짜 좋네요~ 기분도 좋아요.", author: "이지은", date: "2025-03-29", likes: 9, views: 56 },
-        { tap: "질문", id: 6, title: "여섯 번째 게시글", content: "React에서 props와 state 차이가 뭔가요?", author: "차은우", date: "2025-03-27", likes: 15, views: 51 },
-        { tap: "후기", id: 5, title: "다섯 번째 게시글", content: "이 프로젝트 덕분에 많이 배웠어요. 감사합니다.", author: "손흥민", date: "2025-03-25", likes: 10, views: 48 },
-        { tap: "자유", id: 4, title: "네 번째 게시글", content: "요즘에 책 읽는 게 재밌네요. 추천할게요!", author: "김연아", date: "2025-03-20", likes: 17, views: 45 },
-        { tap: "후기", id: 3, title: "세 번째 게시글", content: "강의가 너무 좋았어요. 다음에도 참여하고 싶어요.", author: "이영희", date: "2025-03-15", likes: 24, views: 50 },
-        { tap: "자유", id: 2, title: "두 번째 게시글", content: "주말에 뭐 할지 고민되네요ㅎㅎ 추천 좀요.", author: "김철수", date: "2025-03-09", likes: 7, views: 22 },
-        { tap: "질문", id: 1, title: "첫 번째 게시글", content: "자바스크립트에서 배열 정렬하는 방법 궁금합니다.", author: "홍길동", date: "2025-03-04", likes: 14, views: 38 },
+        { tab: "후기", id: 8, title: "여덟 번째 게시글", content: "정말 유익한 경험이었습니다. 추천드려요!", author: "박서준", date: "2025-04-02", likes: 12, views: 42 },
+        { tab: "자유", id: 7, title: "일곱 번째 게시글", content: "오늘 날씨 진짜 좋네요~ 기분도 좋아요.", author: "이지은", date: "2025-03-29", likes: 9, views: 56 },
+        { tab: "질문", id: 6, title: "여섯 번째 게시글", content: "React에서 props와 state 차이가 뭔가요?", author: "차은우", date: "2025-03-27", likes: 15, views: 51 },
+        { tab: "후기", id: 5, title: "다섯 번째 게시글", content: "이 프로젝트 덕분에 많이 배웠어요. 감사합니다.", author: "손흥민", date: "2025-03-25", likes: 10, views: 48 },
+        { tab: "자유", id: 4, title: "네 번째 게시글", content: "요즘에 책 읽는 게 재밌네요. 추천할게요!", author: "김연아", date: "2025-03-20", likes: 17, views: 45 },
+        { tab: "후기", id: 3, title: "세 번째 게시글", content: "강의가 너무 좋았어요. 다음에도 참여하고 싶어요.", author: "이영희", date: "2025-03-15", likes: 24, views: 50 },
+        { tab: "자유", id: 2, title: "두 번째 게시글", content: "주말에 뭐 할지 고민되네요ㅎㅎ 추천 좀요.", author: "김철수", date: "2025-03-09", likes: 7, views: 22 },
+        { tab: "질문", id: 1, title: "첫 번째 게시글", content: "자바스크립트에서 배열 정렬하는 방법 궁금합니다.", author: "홍길동", date: "2025-03-04", likes: 14, views: 38 },
     ];
 
     const [posts, setPosts] = useState(dummyPosts);
@@ -18,6 +19,19 @@ const BoardPage = () => {
     const [searchType, setSearchType] = useState("title+content");
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 5;
+
+        useEffect(() => {
+            const fetchPosts = async () => {
+                try {
+                    const res = await axios.get("http://localhost:8080/api/posts");
+                    setPosts(res.data);
+                } catch (err) {
+                    console.error("게시글 불러오기 실패:", err);
+                }
+            };
+
+        fetchPosts();
+    }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -45,9 +59,9 @@ const BoardPage = () => {
             <hr className="my-6" />
             <nav className="mb-5">
                 <ul className="flex justify-center gap-[5px] text-lg font-bold">
-                    <li className="text-purple-600 hover:text-pink-400 cursor-pointer border-l border-purple-400 px-[120px]">자유게시판</li>
-                    <li className="text-purple-600 hover:text-pink-400 cursor-pointer border-l border-r border-purple-400 px-[110px]">후기게시판</li>
-                    <li className="text-purple-600 hover:text-pink-400 cursor-pointer border-r border-purple-400 px-[120px]">질문게시판</li>
+                    <li className="text-purple-600 hover:text-pink-400 hover:underline cursor-pointer border-l border-purple-400 px-[120px]">자유게시판</li>
+                    <li className="text-purple-600 hover:text-pink-400 hover:underline cursor-pointer border-l border-r border-purple-400 px-[110px]">후기게시판</li>
+                    <li className="text-purple-600 hover:text-pink-400 hover:underline cursor-pointer border-r border-purple-400 px-[120px]">질문게시판</li>
                 </ul>
             </nav>
             <table className="w-full border-collapse">
@@ -62,10 +76,11 @@ const BoardPage = () => {
                         <th className="p-3">조회</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {currentPosts.map((post, index) => (
-                        <tr key={post.id} className="hover:bg-gray-100 cursor-pointer" onClick={() => window.location.href = `/PostDetail?id=${post.id}`}>
-                            <td className="text-purple-600 font-bold p-3">{post.tap}</td>
+                        <tr key={post.id} className="hover:bg-gray-100 cursor-pointer" onClick={() => window.location.href = `/post/${post.id}`}>
+                            <td className="text-purple-600 font-bold p-3">{post.tab}</td>
                             <td className="p-3">{index + 1 + (currentPage - 1) * postsPerPage}</td>
                             <td className="p-3 underline hover:text-blue-500">{post.title}</td>
                             <td className="p-3 underline hover:text-blue-500">{post.author}</td>

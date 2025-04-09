@@ -21,6 +21,6 @@ public class WishListEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private UsersEntity users;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ProductEntity product;
+    @Column(name = "product_id", nullable = false)
+    private Long product;
 }

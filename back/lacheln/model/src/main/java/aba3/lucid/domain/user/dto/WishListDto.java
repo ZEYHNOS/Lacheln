@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WishListDto {
+public class WishListDto implements Serializable {
     
     // 판매업체명
     private String companyName;

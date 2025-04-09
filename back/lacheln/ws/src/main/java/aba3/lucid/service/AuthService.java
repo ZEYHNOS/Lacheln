@@ -1,7 +1,13 @@
 package aba3.lucid.service;
 
+import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.jwt.JwtTokenProvider;
+import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
@@ -9,16 +15,19 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final UsersRepository userRepository;
+    private final CompanyRepository companyRepository;
 
     // 로그인 성공 시 토큰 발급
     public Map<String, ResponseCookie> login(String userEmail, String role)  {
-        String accessToken = jwtTokenProvider.createAccessToken(userEmail, role);
+        String accessToken = jwtTokenProvider.createAccessToken(userEmail,   role);
         String refreshToken = jwtTokenProvider.createRefreshToken(userEmail, role);
         Map<String, ResponseCookie> responseCookies = new HashMap<>();
 
@@ -73,6 +82,25 @@ public class AuthService {
         responseCookies.put("RefreshToken", refreshCookie);
 
         return responseCookies;
+    }
+
+    public void withdrawUsers(String accessToken) {
+        String role = jwtTokenProvider.getUserRole(accessToken);
+        if(role.equals("ROLE_USER"))    {
+            deleteUser(AuthUtil.getUserId());
+            log.info("유저정보 제거, {}");
+        } else if(role.equals("ROLE_COMPANY"))  {
+            deleteCompany(AuthUtil.getCompanyId());
+            log.info("업체정보 제거, {}");
+        }
+    }
+
+    public void deleteUser(String userId) {
+        userRepository.deleteById(userId);
+    }
+
+    public void deleteCompany(Long companyId) {
+        companyRepository.deleteById(companyId);
     }
 
     // Access 토큰 재발급

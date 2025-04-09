@@ -1,17 +1,23 @@
 package aba3.lucid.controller;
 
+import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.status_code.SuccessCode;
+import aba3.lucid.jwt.JwtTokenProvider;
 import aba3.lucid.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
@@ -21,29 +27,31 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class GateWayController {
 
     private final RestTemplate restTemplate;
     private final AuthService authService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 유저 서비스로 요청을 전달하는 메서드
-    @GetMapping("/user/**")
-    public ResponseEntity<String> routeToUser(HttpServletRequest request) {
+    @RequestMapping("/user/**")
+    public API<String> routeToUser(HttpServletRequest request) {
         return routeRequest("http://localhost:5052", request);
     }
 
     // 게시판 요청을 전달하는 메서드
-    @GetMapping("/board/**")
-    public ResponseEntity<String> routeToBoard(HttpServletRequest request, @AuthenticationPrincipal UserDetails user) {
+    @RequestMapping("/board/**")
+    public API<String> routeToBoard(HttpServletRequest request, @AuthenticationPrincipal UserDetails user) {
         System.out.println("user.getUsername() + user.getPassword() + user.getAuthorities() = " + user.getUsername() + user.getPassword() + user.getAuthorities());
         return routeRequest("http://localhost:5052", request);
     }
 
     // 업체 서비스로 요청을 전달하는 메서드
     @RequestMapping(value = "/company/**", method = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.GET})
-    public ResponseEntity<String> routeToCompany(HttpServletRequest request) {
+    public API<String> routeToCompany(HttpServletRequest request) {
         System.out.println("===== routeToCompany 호출 =====");
         System.out.println("요청 URI: " + request.getRequestURI());
         System.out.println("요청 메서드: " + request.getMethod());
@@ -55,13 +63,13 @@ public class GateWayController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return routeRequest("http://localhost:5051", request);
     }
 
     // 토큰 지우기 (needs => userEmail, Role)
-    @GetMapping("/delToken")
-    public ResponseEntity<String> routeToLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @GetMapping("/userlogout")
+    @Operation(summary = "로그아웃", description = "사용자 세션을 제거하고 로그아웃 로직을 수행합니다.")
+    public API<String> routeToLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
 
@@ -74,7 +82,7 @@ public class GateWayController {
         }
 
         if (jwtToken == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰이 존재하지 않습니다.");
+            return API.ERROR(ErrorCode.BAD_REQUEST);
         }
 
         Map<String, ResponseCookie> tokens = authService.logout(jwtToken);
@@ -83,14 +91,57 @@ public class GateWayController {
             for (ResponseCookie cookie : tokens.values()) {
                 response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             }
+            if (authentication != null) {
+                new SecurityContextLogoutHandler().logout(request, response, authentication);
+                System.out.println("컨텍스트 정보 삭제완료..");
+            }
         }
 
         response.sendRedirect("http://localhost:3000");
-        return ResponseEntity.ok("토큰 삭제완료");
+        return API.OK(SuccessCode.DELETE_TOKEN);
+    }
+
+    @DeleteMapping("/delaccount")
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 진행합니다.")
+    public API<String> delAccount(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
+        log.info("delaccount called, {}");
+        Cookie[] cookies = request.getCookies();
+        String jwtToken = null;
+        String accessToken = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("RefreshToken".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                } else if ("AccessToken".equals(cookie.getName())) {
+                    accessToken = cookie.getValue();
+                }
+            }
+        }
+
+        if (jwtToken == null) {
+            return API.ERROR(ErrorCode.BAD_REQUEST);
+        }
+
+        authService.withdrawUsers(accessToken);
+        Map<String, ResponseCookie> tokens = authService.logout(jwtToken);
+
+        if(tokens != null)  {
+            for (ResponseCookie cookie : tokens.values()) {
+                response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            }
+            if (authentication != null) {
+                new SecurityContextLogoutHandler().logout(request, response, authentication);
+                System.out.println("컨텍스트 정보 삭제완료..");
+            }
+        }
+
+        response.sendRedirect("http://localhost:3000");
+        return API.OK(SuccessCode.DELETE_TOKEN);
     }
 
     // 공통 HTTP 요청 전달 메서드 (RestTemplate 사용)
-    public ResponseEntity<String> routeRequest(String baseUrl, HttpServletRequest request) {
+    public API<String> routeRequest(String baseUrl, HttpServletRequest request) {
         String path = request.getRequestURI();
         String url = baseUrl + path;
 
@@ -108,8 +159,9 @@ public class GateWayController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        String description = "path : " + path + "url : " + url + "method : " + method;
 
-        HttpEntity<String> entity = new HttpEntity<>(body, headers);
-        return restTemplate.exchange(url, method, entity, String.class);
+        String entity = new HttpEntity<>(body, headers).toString();
+        return API.OK(entity, description);
     }
 }

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Addphoto from "../../../../image/Company/addimage.png";
 import { Star } from "lucide-react";
 import axios from "axios";
+import AddWrite from "../../../Tool/WriteForm/AddWrite.jsx";
 
 function AddProduct() {
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ function AddProduct() {
     const [selectedImage, setSelectedImage] = useState(images.length > 0 ? images[0] : null);
     const [options, setOptions] = useState([]);
     const [categoryCode, setCategoryCode] = useState({});
+    const writeRef = useRef();
 
 
     // product/add 페이지를 열때 백엔드에서 카테고리를 불러옴
@@ -125,13 +127,15 @@ function AddProduct() {
     
     // 백엔드 전송 코드 
     const handleSubmit = () => {
+        // 상품 상세설명 추출해서 배열처리함
+        const descriptionArray = writeRef.current?.getContentAsJsonArray();
         const payload = {
             name,
             price: parseInt(price || 0),
             status,
             rec: rec ? "Y" : "N",
             task_time: parseInt(task_time),
-            description: "임시 설명", // 설명 미구현으로 인한 더미데이터
+            description: JSON.stringify(descriptionArray),
             image_url_list: images,
             hash_tag_list: [],
             in_available: indoor ? "Y" : "N",
@@ -483,6 +487,8 @@ function AddProduct() {
                     </div>
                 </div>
             </div>
+            
+            <AddWrite ref={writeRef} />
 
             <div className="flex justify-end mt-6 space-x-4">
                 <button onClick={handleSubmit} 

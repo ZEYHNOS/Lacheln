@@ -37,7 +37,7 @@ out/
 .vscode/
 
 ### 도커 ###
-docker-compose.override.yml
+docker-compose.yaml
 
 ### 로그 및 환경 파일 ###
 .log

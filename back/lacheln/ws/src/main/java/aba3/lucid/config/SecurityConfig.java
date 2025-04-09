@@ -1,10 +1,11 @@
 package aba3.lucid.config;
 
+import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.filter.CustomUsernamePasswordAuthenticationFilter;
 import aba3.lucid.handler.OAuth2LoginFailureHandler;
 import aba3.lucid.handler.OAuth2LoginSuccessHandler;
 import aba3.lucid.jwt.JwtAuthenticationFilter;
-import aba3.lucid.jwt.JwtTokenProvider;
 import aba3.lucid.service.AuthService;
 import aba3.lucid.service.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,8 @@ public class SecurityConfig {
     private final String[] roleCompany = {"/company/**", "/product/**"};
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager, AuthService authService) throws Exception {
-        CustomUsernamePasswordAuthenticationFilter customFilter = new CustomUsernamePasswordAuthenticationFilter(authenticationManager, authService);
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager, AuthService authService, UsersRepository usersRepository, CompanyRepository companyRepository) throws Exception {
+        CustomUsernamePasswordAuthenticationFilter customFilter = new CustomUsernamePasswordAuthenticationFilter(authenticationManager, companyRepository, usersRepository, authService);
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> { // TODO AbstractHtt pConfigurer::disable
@@ -63,8 +64,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(permitAlls).permitAll()
-//                        .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
-//                        .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
+                        .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
+                        .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
                                 .anyRequest().permitAll()
                 )
                 .formLogin(form -> form.loginProcessingUrl("/login"))

@@ -5,9 +5,12 @@ import aba3.lucid.common.enums.Weekdays;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleResponse;
+import aba3.lucid.domain.schedule.entity.TemporaryHolidayEntity;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
+import aba3.lucid.domain.schedule.repository.TemporaryHolidayRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -16,34 +19,47 @@ import java.util.stream.Collectors;
 
 @Component
 public class WeekdaysScheduleConvertor {
-    //WeekdaysScheduleRequest를 List<WeekdaysScheduleEntity로 변환
 
-    public List<WeekdaysScheduleEntity> toEntityList(WeekdaysScheduleRequest request, CompanyEntity company) {
-        List<WeekdaysScheduleEntity> entities = new ArrayList<>();
-//        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
-        for(WeekdaysScheduleRequest.DayScheduleDto dto : request.getScheduleList()) {
-            // // 입력받은 요일 문자열("MON", "TUE" 등)을 enum으로 변환 (대문자 변환)
-            Weekdays weekdayEnum = Weekdays.valueOf(dto.getWeekday().toUpperCase());
-            LocalTime startTime = LocalTime.parse(dto.getStart());
-            LocalTime endTime = LocalTime.parse(dto.getEnd());
 
-            WeekdaysScheduleEntity entity = WeekdaysScheduleEntity.builder()
-                    .company(company)
-                    .wsWeekdays(weekdayEnum)
-                    .wsEnd(endTime)
-                    .wsStart(startTime)
-                    .build();
-            entities.add(entity);
+    public List<WeekdaysScheduleEntity> toEntity(WeekdaysScheduleRequest request, CompanyEntity cp_Id) {
+        if(request == null || request.getScheduleList() == null) {
+            return null;
+
         }
-        return entities;
+        List<WeekdaysScheduleEntity> entityList = new ArrayList<>();
+        for(WeekdaysScheduleRequest.DayScheduleDto dto : request.getScheduleList()) {
+            WeekdaysScheduleEntity entity = WeekdaysScheduleEntity.builder()
+                    .company(cp_Id)
+                    .wsWeekdays(Weekdays.valueOf(dto.getWeekday()))
+                    .wsStart(LocalTime.parse(dto.getStart()))
+                    .wsEnd(LocalTime.parse(dto.getEnd()))
+                    .build();
+
+            entityList.add(entity);
+
+        }
+        return entityList;
+
     }
-    //List<WeekdaysScheduleEntity>를 List<WeekdaysScheduleResponse> DTO로 변환
-    public List<WeekdaysScheduleResponse> toResponseList(List<WeekdaysScheduleEntity> entities) {
-        return entities.stream().map(entity -> new WeekdaysScheduleResponse(
+    private LocalTime parseTime(String time, String defaultTime ) {
+        if(time == null || time.isEmpty()) {
+            return LocalTime.parse(defaultTime);
+        }
+        return  LocalTime.parse(time);
+
+    }
+
+    // Convert WeekdaysScheduleEntity to WeekdaysScheduleResponse
+    public WeekdaysScheduleResponse toResponse(WeekdaysScheduleEntity entity) {
+        if(entity == null) {
+            return null;
+        }
+
+        return new WeekdaysScheduleResponse(
                 entity.getWsId(),
                 entity.getWsWeekdays().name(),
-                entity.getWsStart().format(DateTimeFormatter.ofPattern("HH:mm")),
-                entity.getWsEnd().format(DateTimeFormatter.ofPattern("HH:mm"))
-        )).collect(Collectors.toList());
+                entity.getWsStart() != null ? entity.getWsStart().toString():"휴무",
+                entity.getWsEnd() != null ? entity.getWsEnd().toString(): "휴무"
+        );
     }
 }

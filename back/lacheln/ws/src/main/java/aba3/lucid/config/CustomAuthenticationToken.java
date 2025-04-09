@@ -10,14 +10,34 @@ import java.util.Collection;
 @Getter
 public class CustomAuthenticationToken extends UsernamePasswordAuthenticationToken {
     private final String loginType; // 추가 인자
+    private final Long companyId; // 업체 PK
+    private final String userId; // 유저 PK
 
-    public CustomAuthenticationToken(String username, String password, String loginType) {
-        super(username, password);
+    public CustomAuthenticationToken(String username, String password, Collection<? extends GrantedAuthority> authorities, String loginType, String userId) {
+        super(username, password, authorities);
         this.loginType = loginType;
+        this.companyId = null;
+        this.userId = userId;
+    }
+
+    public CustomAuthenticationToken(String companyName, String password, Collection<? extends GrantedAuthority> authorities, String loginType, Long companyId) {
+        super(companyName, password, authorities);
+        this.loginType = loginType;
+        this.companyId = companyId;
+        this.userId = null;
     }
 
     public CustomAuthenticationToken(Object principal, Object credentials, String loginType, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);
         this.loginType = loginType;
+        this.companyId = null;
+        this.userId = null;
+    }
+
+    public CustomAuthenticationToken(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, authorities);
+        this.loginType = null;
+        this.companyId = null;
+        this.userId = null;
     }
 }

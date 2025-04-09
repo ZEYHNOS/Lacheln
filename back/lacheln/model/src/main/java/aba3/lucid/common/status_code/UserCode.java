@@ -9,6 +9,7 @@ public enum UserCode implements StatusCodeIfs {
 
     USER_NOT_FOUND(400, 1404, "유저를 찾을 수 없습니다"),
     UN_AUTHORIZATION(403, 1403, "해당 권한이 없음"),
+    CANNOT_FIND_DATA(405, 1405, "데이터를 입력해주세요.")
 
     ;
 

@@ -1,5 +1,9 @@
 package aba3.lucid.domain.user.entity;
 
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.UserCode;
+import aba3.lucid.domain.user.dto.UserObject;
+import aba3.lucid.domain.user.dto.UserUpdateRequest;
 import aba3.lucid.domain.user.enums.*;
 import com.fasterxml.uuid.Generators;
 import jakarta.persistence.*;
@@ -8,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -95,6 +100,65 @@ public class UsersEntity {
 
     @Column(name = "user_role", nullable = false, columnDefinition = "CHAR(4)")
     private String userRole = "USER"; //유저 권한
+
+    // 비밀번호 변경
+    public void updatePassword(String newPassword) {
+        if(newPassword == null) {
+            throw new ApiException(UserCode.CANNOT_FIND_DATA, "비밀번호 기입이 안되었습니다.");
+        }
+
+        this.userPassword = newPassword;
+    }
+
+    // 닉네임 변경
+    public void updateNickName(String newNickName) {
+        if(newNickName == null) {
+            throw new ApiException(UserCode.CANNOT_FIND_DATA, "닉네임을 입력해주세요.");
+        }
+        this.userNickName = newNickName;
+    }
+
+    // 연락처 변경
+    public void updatePhone(String newPhone)    {
+        if(newPhone == null) {
+            throw new ApiException(UserCode.CANNOT_FIND_DATA, "연락처를 입력해주세요.");
+        }
+        this.userPhone = newPhone;
+    }
+
+    // 언어 변경
+    public void updateLanguage(LanguageEnum newLanguage) {
+        if(newLanguage == null) {
+            throw new ApiException(UserCode.CANNOT_FIND_DATA, "언어 설정을 해주세요.");
+        }
+        this.userLanguage = newLanguage;
+    }
+
+    // 화폐 단위 변경
+    public void updateCurrency(CurrencyEnum newCurrency) {
+        if(newCurrency == null) {
+            throw new ApiException(UserCode.CANNOT_FIND_DATA, "화폐단위 설정을 해주세요.");
+        }
+        this.userCurrency = newCurrency;
+    }
+
+    // 푸쉬알람여부 변경
+    public void updateAdsNotification(NotificationEnum newAdsNotification) {
+        if(newAdsNotification == null) {
+            throw new ApiException(UserCode.CANNOT_FIND_DATA, "");
+        }
+        this.userAdsNotification = newAdsNotification;
+    }
+
+    // 유저정보 업데이트
+    public void updateUser(UserUpdateRequest userUpdateRequest, BCryptPasswordEncoder bCryptPasswordEncoder)    {
+        updatePassword(bCryptPasswordEncoder.encode(userUpdateRequest.getPassword()));
+        updateNickName(userUpdateRequest.getNickname());
+        updatePhone(userUpdateRequest.getPhone());
+        updateLanguage(userUpdateRequest.getLanguage());
+        updateCurrency(userUpdateRequest.getCurrency());
+        updateAdsNotification(userUpdateRequest.getAdsNotification());
+    }
 
     /*
      * 시간 기반 UUIDv1을 생성하여 userId로 설정한 새로운 UsersEntity 객체를 반환한다.

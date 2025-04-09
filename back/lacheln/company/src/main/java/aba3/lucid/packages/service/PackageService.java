@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -175,5 +176,10 @@ public class PackageService {
         if (packageEntity.getPackAdmin().getCpId() != adminId) {
             throw new ApiException(PackageErrorCode.UNAUTHORIZED_PACKAGE_ACCESS);
         }
+    }
+
+    // 업체가 속한 패키지 리스트 출력
+    public List<PackageEntity> getPackageList(Long companyId) {
+        return packageRepository.findByCompanyIdInAnyRole(companyId);
     }
 }

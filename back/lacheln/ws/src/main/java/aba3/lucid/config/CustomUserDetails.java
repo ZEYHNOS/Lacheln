@@ -16,6 +16,7 @@ import java.util.Map;
 @Builder
 public class CustomUserDetails implements UserDetails {
 
+    // UserDetails 구현체를 상속받아 현재 프로젝트에 필요한 정보들로 재구성한 클래스
     private String email;
     private String password;
     private String role;

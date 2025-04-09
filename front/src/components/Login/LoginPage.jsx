@@ -4,7 +4,7 @@ import googleLogo from "../../image/SocialLogin/google-logo.png";
 import kakaoLogo from "../../image/SocialLogin/kakaotalk-logo.png";
 
 export default function LoginPage() {
-    const [userType, setUserType] = useState("user");
+    const [userType, setUserType] = useState("USER");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -41,7 +41,7 @@ export default function LoginPage() {
 
             if (response.status >= 200 && response.status < 300) {
                 alert("로그인이 성공적으로 완료되었습니다!");
-                navigate(userType === "user" ? "/" : "/company"); 
+                navigate(userType === "USER" ? "/" : "/company"); 
             } else {
                 const errorData = await response.json();
                 alert(`로그인 실패: ${errorData.message}`);
@@ -89,18 +89,18 @@ export default function LoginPage() {
                     <button
                         className={`flex-1 py-3 text-lg font-semibold transition border-2 border-transparent hover:border-[#845EC2] 
                                     focus:outline-none focus:ring-0 ${
-                            userType === "user"
+                            userType === "USER"
                                 ? "bg-[#845EC2] text-white" : "bg-white text-[#845EC2]"}`}
-                        onClick={() => setUserType("user")}
+                        onClick={() => setUserType("USER")}
                     >
                         회원
                     </button>
                     <button
                         className={`flex-1 py-3 text-lg font-semibold transition border-2 border-transparent hover:border-[#845EC2] 
                                     focus:outline-none focus:ring-0 ${
-                            userType === "company"
+                            userType === "COMPANY"
                                 ? "bg-[#845EC2] text-white" : "bg-white text-[#845EC2]"}`}
-                        onClick={() => setUserType("company")}
+                        onClick={() => setUserType("COMPANY")}
                     >
                         업체
                     </button>
@@ -148,7 +148,7 @@ export default function LoginPage() {
                 {/* 회원가입 userType에 따라 다른 경로로 이동 */}
                 <div className="mt-6 text-center">
                     <Link
-                        to={userType === "user" ? "/register/user" : "/register/company"}
+                        to={userType === "USER" ? "/register/user" : "/register/company"}
                         className="text-[#845EC2] font-semibold hover:underline">
                         아직 계정이 없으신가요?
                     </Link>
@@ -156,7 +156,7 @@ export default function LoginPage() {
 
                 {/* 소셜 로그인 (고정 높이 유지) */}
                 <div className="mt-6 text-center" style={{ minHeight: "120px" }}>
-                    {userType === "user" ? 
+                    {userType === "USER" ? 
                         <div className="mt-6 text-center">
                             <p className="text-gray-500">or</p>
                             <div className="flex justify-center gap-6 mt-4">

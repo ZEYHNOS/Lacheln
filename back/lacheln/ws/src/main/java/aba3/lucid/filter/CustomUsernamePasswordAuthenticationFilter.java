@@ -57,7 +57,6 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
-        System.out.println("attemptAuthentication called == > " + request.getContextPath());
         
         // POST 메서드 확인
         if (!request.getMethod().equals("POST")) {
@@ -72,7 +71,6 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         try {
             // JSON 요청 본문을 String으로 읽기
             String requestBody = new BufferedReader(request.getReader()).lines().collect(Collectors.joining("\n"));
-            System.out.println("Request Body: " + requestBody);
 
             // JSON 파싱
             JsonNode jsonNode = objectMapper.readTree(requestBody);
@@ -102,19 +100,15 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
                 }
             }
 
-            System.out.println("authRequest = " + authRequest);
-            System.out.println("authenticationManager execute");
-            // CustomAuthenticationToken 생성 후 인증 시도
+            // CustomAuthenticationToken 생성 후 인증 시도 후 성공 시 ContextHolder에 세션 정보 저장
             Authentication authResult = authenticationManager.authenticate(authRequest);
-            // 인증이 되었으면 ContextHolder에 정보 저장 후 토큰 발급 후 넘겨주기
-            log.info("{}", authResult.isAuthenticated());
             if(authResult.isAuthenticated()) {
                 CustomAuthenticationToken result = (CustomAuthenticationToken) authResult;
                 log.info("Authentication UserId : {}", result.getUserId());
                 log.info("Authentication CompanyId : {}", result.getCompanyId());
                 log.info("Authentication LoginType : {}", result.getLoginType());
                 log.info("Authentication Name : {}", result.getName());
-                SecurityContextHolder.getContext().setAuthentication(authResult);
+//                SecurityContextHolder.getContext().setAuthentication(authResult);
                 log.info("Authentication Successful, {}", authResult.isAuthenticated());
             }
             return authResult;
@@ -123,14 +117,13 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         }
     }
 
+    // 인증에 성공했을때 핸들러
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authResult) throws IOException, ServletException {
         CustomAuthenticationToken authRequest = (CustomAuthenticationToken) authResult;
         String username = authResult.getName();
         String role = authRequest.getLoginType().replace("ROLE_", "");
-        System.out.println("Primary Key : " + (authRequest.getUserId() == null ? authRequest.getCompanyId() : authRequest.getUserId()));
-        System.out.println("role = " + role);
         Map<String, ResponseCookie> cookies = authService.login(username, role);
         for (ResponseCookie cookie : cookies.values()) {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

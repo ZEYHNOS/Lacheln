@@ -1,5 +1,6 @@
 package aba3.lucid.domain.calendar.entity;
 
+import aba3.lucid.common.enums.Color;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,8 +46,9 @@ public class CalendarDetailEntity {
     private LocalTime calDtEnd;
 
     // 캘린더 색상 RGB 값
+    @Enumerated(EnumType.STRING)
     @Column(name = "cal_dt_color", columnDefinition = "CHAR(6)", nullable = false)
-    private String calDtColor = "845EC2";
+    private Color calDtColor = Color.BLUE;
 
     // 담당자
     @Column(name = "cal_dt_manager", columnDefinition = "CHAR(20)")

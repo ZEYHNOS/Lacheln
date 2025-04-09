@@ -1,5 +1,6 @@
 package aba3.lucid.company.business;
 
+import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.exception.ApiException;
@@ -14,12 +15,15 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.domain.company.repository.CompanyRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Optional;
 
+
+@Business
 @Component
 public class CompanyBusiness {
     private final CompanyService companyService;
@@ -115,23 +119,25 @@ public class CompanyBusiness {
     }
 
 
-//    public API<CompanyUpdateResponse> updateCompany(CompanyUpdateRequest companyUpdateRequest, Long companyId) {
-//        if(companyUpdateRequest == null) {
-//            throw new ApiException(ErrorCode.NOT_FOUND, "요청에 대한 정보가 없ㅅ습니다");
+    public API<CompanyUpdateResponse> updateCompany(CompanyUpdateRequest companyUpdateRequest, long companyId) {
+        if(companyUpdateRequest == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "요청에 대한 정보가 없ㅅ습니다");
+        }
+        CompanyEntity loadCompany = companyService.findByIdWithThrow(AuthUtil.getCompanyId());
+//        CompanyEntity loadCompany = companyService.findByIdWithThrow(companyId);
+//        if(!loadCompany.getUserSocial().getSocialCode().equals("L") && companyUpdateRequest.getPassword() != null)   {
+//            return API.ERROR(ErrorCode.BAD_REQUEST, "소셜계정은 비밀번호 변경이 불가합니다.");
 //        }
-//        CompanyEntity loadCompany = companyService.findByIdWithThrow(AuthUtil.getCompanyId());
-//        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-//        loadCompany.updateCompany(companyUpdateRequest, bCryptPasswordEncoder);
-//        companyService.saveByCompany(loadCompany);
-//        CompanyUpdateResponse dtoCompany = companyUpdateConvertor.toEntity(loadCompany);
-//        CompanyUpdateResponse data = CompanyUpdateResponse.builder()
-//                .company(dtoCompany)
-//                .build();
-//
-//
-//
-//
-//    }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        loadCompany.updateCompany(companyUpdateRequest,bCryptPasswordEncoder);
+        companyService.saveByCompany(loadCompany);
+        CompanyUpdateResponse dtoCom = companyUpdateConvertor.toResponse(loadCompany);
+        CompanyUpdateResponse data = CompanyUpdateResponse.builder()
+                .address(loadCompany.getCpAddress())
+                .build();
+        return API.OK(data);
+
+    }
 
     public CompanyResponse searchCompany(String email) {
         Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(email);

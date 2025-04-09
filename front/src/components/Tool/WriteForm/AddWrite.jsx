@@ -22,7 +22,7 @@ import AddImage from '../../../image/AddWrite/addimage.png';
 import { Node, mergeAttributes } from '@tiptap/core';
 import Youtube from '@tiptap/extension-youtube';
 
-// ✅ 이미지 노드 확장
+// 이미지 노드 확장
 const InlineImage = Node.create({
   name: 'inlineImage',
   inline: true,
@@ -50,7 +50,7 @@ const InlineImage = Node.create({
   },
 });
 
-// ✅ 유튜브 노드 확장
+// 유튜브 노드 확장
 const CustomYoutube = Youtube.extend({
   renderHTML({ HTMLAttributes }) {
     return [
@@ -73,7 +73,7 @@ const CustomYoutube = Youtube.extend({
   }
 });
 
-// ✅ forwardRef 추가!
+// forwardRef 추가!
 const AddWrite = forwardRef((props, ref) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
 
@@ -93,7 +93,7 @@ const AddWrite = forwardRef((props, ref) => {
     content: '',
   });
 
-  // ✅ 외부에서 editor 내용을 가져올 수 있게 설정
+  // 외부에서 editor 내용을 가져올 수 있게 설정
   useImperativeHandle(ref, () => ({
     getContentAsJsonArray: () => {
       if (!editor) return [];
@@ -105,6 +105,16 @@ const AddWrite = forwardRef((props, ref) => {
         if (el.querySelector('iframe')) return { type: 'youtube', src: el.querySelector('iframe')?.getAttribute('src') };
         return el.outerHTML;
       }).filter(Boolean);
+    },
+
+    setHTML: (html) => {
+      if (editor) {
+        editor.commands.setContent(html);
+      }
+    },
+  
+    getHTML: () => {
+      return editor?.getHTML() || '';
     }
   }));
 

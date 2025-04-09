@@ -9,10 +9,15 @@ import aba3.lucid.domain.alert.dto.MutualAlert;
 import aba3.lucid.domain.alert.entity.CompanyAlertEntity;
 import aba3.lucid.domain.company.convertor.CompanyAlertConverter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -23,6 +28,8 @@ public class CompanyAlertBusiness {
     private final CompanyAlertConverter companyAlertConverter;
     private final CompanyAlertService companyAlertService;
     private final CompanyService companyService;
+
+    private final ObjectMapper objectMapper;
 
 
     // 알림 생성하기
@@ -64,13 +71,25 @@ public class CompanyAlertBusiness {
     }
 
 
-    @RabbitListener(queues = "company")
-    public void consume(CompanyAlertDto dto){
-        Validator.throwIfNull(dto);
+    @RabbitListener(queues = "company", ackMode = "MANUAL", concurrency = "2")
+    public void consume(Message message, Channel channel) throws IOException {
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+        try {
+            // 🚀 JSON 변환 직접 수행
+            CompanyAlertDto dto = objectMapper.readValue(message.getBody(), CompanyAlertDto.class);
+            
+            CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
+            CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);
 
-        log.info("Producer : {}", dto);
-        CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
-        CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);
-        companyAlertService.alertRegister(entity);
+            companyAlertService.alertRegister(entity);
+
+            // 정상 처리되었으므로 ACK
+            channel.basicAck(deliveryTag, false);
+        } catch (Exception e) {
+            log.error("❌ Error processing message: {}", e.getMessage(), e);
+
+            // 메시지를 다시 큐에 넣고 재시도하도록 설정
+            channel.basicNack(deliveryTag, false, true);
+        }
     }
 }

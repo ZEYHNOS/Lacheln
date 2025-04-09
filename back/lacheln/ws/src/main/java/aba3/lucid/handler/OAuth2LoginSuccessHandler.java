@@ -2,6 +2,7 @@ package aba3.lucid.handler;
 
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.enums.*;
+import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.user.service.UserService;
 import aba3.lucid.service.AuthService;
 import com.fasterxml.uuid.Generators;
@@ -27,12 +28,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final UserService userService;
+    private final UsersRepository usersRepository;
     private final AuthService authService;
 
+    // 소셜 로그인 성공 핸들러
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        System.out.println("OAuth2LoginSuccessHandler called");
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         // ClientRegistration을 통해 client-name 확인
         String clientName = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
@@ -41,6 +42,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String requestId = "";
         String social = "";
 
+        // 사용자가 어느 플랫폼을 통해 로그인을 요청했는지 확인 후 플랫폼에 알맞은 로직을 수행
         if(clientName.equals("google")) {
             requestId = oAuth2User.getAttribute("sub");
             requestEmail = oAuth2User.getAttribute("email");
@@ -55,16 +57,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             social = "K";
         }
 
-        if(userService.findByEmail(requestEmail).isEmpty()) {
+        // 해당하는 유저가 신규 유저일 경우 DB에 정보를 INSERT 진행
+        if(usersRepository.findByUserEmail(requestEmail).isEmpty()) {
             saveOAuth2User(requestEmail, requestName, requestId, social);
         }
-
-        System.out.println("==== 로그인 요청 정보 시작 ====");
-        System.out.println("requestEmail : " + requestEmail);
-        System.out.println("requestName : " + requestName);
-        System.out.println("requestId : " + requestId);
-        System.out.println("requestSocial : " + social);
-        System.out.println("==== 로그인 요청 정보 끝 ====");
 
         // 토큰 발급 로직
         Map<String, ResponseCookie> cookies = authService.login(requestEmail, "USER");
@@ -73,11 +69,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
 
-        System.out.println("OAuth Authentication Successful : " + oAuth2User.getAttributes());
-
         response.sendRedirect("http://localhost:3000");
     }
 
+    // 정보 저장하는 로직
     public void saveOAuth2User(String email, String name, String id, String platform) {
         String nickName = platform+"_"+id;
         SocialEnum social = platform.equals("K") ? SocialEnum.K : SocialEnum.G;
@@ -102,6 +97,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .userMileage(new BigInteger("0"))
                 .userRole("USER")
                 .build();
-        userService.saveByUser(usersEntity);
+        usersRepository.save(usersEntity);
     }
 }

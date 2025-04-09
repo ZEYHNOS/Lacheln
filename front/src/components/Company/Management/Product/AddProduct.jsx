@@ -317,8 +317,8 @@ function AddProduct() {
                                     <option value="green">초록</option>
                                     <option value="blue">파랑</option>
                                     <option value="navy">남</option>
-                                    <option value="pupple">보라</option>
-                                    <option value="brown">갈색</option>
+                                    <option value="purple">보라</option>
+                                    <option value="beige">베이지</option>
                                     <option value="pink">분홍</option>
                                 </select>
                                 <div className="ml-2 w-24 h-10 rounded" 

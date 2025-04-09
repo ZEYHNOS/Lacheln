@@ -2,7 +2,6 @@ package aba3.lucid.domain.user.entity;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.UserCode;
-import aba3.lucid.domain.user.dto.UserObject;
 import aba3.lucid.domain.user.dto.UserUpdateRequest;
 import aba3.lucid.domain.user.enums.*;
 import com.fasterxml.uuid.Generators;
@@ -99,14 +98,13 @@ public class UsersEntity {
     private BigInteger userMileage; //마일리지
 
     @Column(name = "user_role", nullable = false, columnDefinition = "CHAR(4)")
-    private String userRole = "USER"; //유저 권한
+    private String userRole; //유저 권한
 
     // 비밀번호 변경
     public void updatePassword(String newPassword) {
         if(newPassword == null) {
             throw new ApiException(UserCode.CANNOT_FIND_DATA, "비밀번호 기입이 안되었습니다.");
         }
-
         this.userPassword = newPassword;
     }
 

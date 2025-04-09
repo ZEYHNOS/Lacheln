@@ -34,11 +34,19 @@ public class UserController {
         return userBusiness.update(userUpdateRequest);
     }
 
-    // 컨텍스트 유저 추출 테스트 코드
-    @GetMapping("/test")
-    @ResponseBody
-    public String getUser() {
-        System.out.println(AuthUtil.getUserId());
-        return AuthUtil.getUserId();
+    // 유저 프로필 조회
+    @GetMapping("/profile")
+    @Operation(summary = "소비자 조회", description = "소비자 정보를 조회합니다.")
+    public API<UserCheckResponse> getUser()   {
+        return userBusiness.getUser();
+    }
+
+    // 암호 인증
+    @PostMapping("/verify")
+    @Operation(summary = "소비자 암호 검증", description = "소비자 프로필 수정과 같은 인증 요소가 필요할 때 암호를 검증하는 역할을 합니다.")
+    public API<String> verifyUserByPassword(
+            @RequestBody UserPasswordVerifyRequest userPasswordVerifyRequest
+    ) {
+        return userBusiness.getUserPasswordVerify(userPasswordVerifyRequest.getPassword());
     }
 }

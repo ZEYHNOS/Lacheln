@@ -11,7 +11,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class CompanyUpdateResponse implements Serializable {
-
-
+    private Long id;
     private String address;
 }

@@ -77,7 +77,7 @@ public class CompanyAlertBusiness {
         try {
             // 🚀 JSON 변환 직접 수행
             CompanyAlertDto dto = objectMapper.readValue(message.getBody(), CompanyAlertDto.class);
-
+            
             CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
             CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);
 

@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @NoArgsConstructor
@@ -19,7 +17,7 @@ public class CalendarDetailResponse {
     private long calDtId;
     private String title;
     private String content;
-    private LocalTime starTime;
+    private LocalTime startTime;
     private LocalTime endTime;
     private Color color;
     private String manager;

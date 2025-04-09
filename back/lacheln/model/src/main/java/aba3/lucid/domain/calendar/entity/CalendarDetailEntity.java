@@ -2,11 +2,9 @@ package aba3.lucid.domain.calendar.entity;
 
 import aba3.lucid.common.enums.Color;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -39,11 +37,11 @@ public class CalendarDetailEntity {
 
     // 시작 시간
     @Column(name = "cal_dt_start", columnDefinition = "DATETIME", nullable = false)
-    private LocalTime calDtStart;
+    private LocalDateTime calDtStart;
 
     // 종료 시간
     @Column(name = "cal_dt_end", columnDefinition = "DATETIME", nullable = false)
-    private LocalTime calDtEnd;
+    private LocalDateTime calDtEnd;
 
     // 캘린더 색상 RGB 값
     @Enumerated(EnumType.STRING)

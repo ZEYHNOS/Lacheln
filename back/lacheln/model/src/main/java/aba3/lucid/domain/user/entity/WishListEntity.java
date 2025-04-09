@@ -22,5 +22,5 @@ public class WishListEntity {
     private UsersEntity users;
 
     @Column(name = "product_id", nullable = false)
-    private Long product;
+    private Long productId;
 }

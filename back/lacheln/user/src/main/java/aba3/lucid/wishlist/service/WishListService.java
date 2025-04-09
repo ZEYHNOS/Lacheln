@@ -28,8 +28,7 @@ public class WishListService {
     private final UserService userService;
     private final ObjectMapper objectMapper;
 
-    public List<WishListEntity> findByUser(String userId)   {
-        UsersEntity user = userService.findByIdWithThrow(userId);
-        return wishListRepository.findByUsers(user);
+    public List<WishListEntity> findByUserId(String userId)   {
+        return wishListRepository.findAllByUsers_userId(userId);
     }
 }

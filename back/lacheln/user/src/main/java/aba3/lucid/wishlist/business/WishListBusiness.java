@@ -17,6 +17,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -29,9 +30,10 @@ public class WishListBusiness {
     private final WishListConverter wishListConverter;
     private final ObjectMapper objectMapper;
 
-    public API<UserWishListResponse> findByUser(String userId) {
-        List<WishListEntity> wishList = wishListService.findByUser(userId);
-        UserWishListResponse response = UserWishListResponse.builder().build();
-        return API.OK(response);
+    public List<Long> findByUser(String userId) {
+        return wishListService.findByUserId(userId).stream()
+                .map(WishListEntity::getProductId)
+                .toList()
+                ;
     }
 }

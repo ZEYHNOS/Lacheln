@@ -108,7 +108,6 @@ function App() {
                 {/* 이벤트 페이지 */}
                 <Route path="/event" element={<Layout><Event /></Layout>} />
                 {/* 커뮤니티 페이지 */}
-                <Route path="/board" element={<Layout><Community /></Layout>} />
                 <Route path="/community" element={<Layout><BoardPage /></Layout>} />
                 <Route path="/create" element={<Layout><CreatePost /></Layout>} />
                 <Route path="/update" element={<Layout><UpdatePost /></Layout>} />

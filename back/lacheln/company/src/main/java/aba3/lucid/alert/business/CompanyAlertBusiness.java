@@ -71,24 +71,18 @@ public class CompanyAlertBusiness {
     }
 
 
-    @RabbitListener(queues = "company", ackMode = "MANUAL", concurrency = "2")
-    public void consume(Message message, Channel channel) throws IOException {
+    @RabbitListener(queues = "company")
+    public void consume(CompanyAlertDto dto, Channel channel, Message message) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
-            // 🚀 JSON 변환 직접 수행
-            CompanyAlertDto dto = objectMapper.readValue(message.getBody(), CompanyAlertDto.class);
-
             CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
             CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);
 
             companyAlertService.alertRegister(entity);
 
-            // 정상 처리되었으므로 ACK
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
-            log.error("❌ Error processing message: {}", e.getMessage(), e);
-
-            // 메시지를 다시 큐에 넣고 재시도하도록 설정
+            log.error("Error processing message: {}", e.getMessage(), e);
             channel.basicNack(deliveryTag, false, true);
         }
     }

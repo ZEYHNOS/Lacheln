@@ -1,12 +1,14 @@
 package aba3.lucid.domain.calendar.convertor;
 
 
-import aba3.lucid.domain.calendar.dto.CalendarDetailRequest;
+import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.calendar.dto.CalendarDetailResponse;
 import aba3.lucid.domain.calendar.dto.CalendarRequest;
 import aba3.lucid.domain.calendar.dto.CalendarResponse;
 import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
+import aba3.lucid.domain.company.entity.CompanyEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -15,71 +17,36 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-@Component
+@Converter
 public class CalendarConvertor {
+    private final CalendarDetailConvertor calendarDetailConvertor;
 
-    public CalendarEntity toEntity(CalendarRequest request) {
-        if(request == null) {
-            return null;
-        }
-
-        List<CalendarDetailEntity>  detailEntities  = Optional.ofNullable(request.getDetails())
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(detailRequest -> {
-                    CalendarDetailEntity detailEntity =  CalendarDetailEntity.builder()
-                                .calDtTitle(detailRequest.getTitle())
-                                .calDtContent(detailRequest.getContent())
-                                .calDtStart(detailRequest.getStartTime())
-                                .calDtEnd(detailRequest.getEndTime())
-                                .calDtColor(detailRequest.getColor())
-                                .calDtMemo(detailRequest.getMemo())
-                                .calDtManager(detailRequest.getManager())
-                                .build();
-                return detailEntity;
-        })
-        .collect(Collectors.toList());
-
-       return CalendarEntity.builder()
-                .calDate(request.getDate())
-                .calendarDetailEntity(detailEntities)
-                .build();
-
+    public CalendarConvertor(CalendarDetailConvertor calendarDetailConvertor) {
+        this.calendarDetailConvertor = calendarDetailConvertor;
     }
 
+    public CalendarEntity toEntity(CalendarRequest request, CompanyEntity companyEntity) {
+        List<CalendarDetailEntity> detailEntities = request.getDetails().stream()
+                .map(detailRequest -> calendarDetailConvertor.toEntity(detailRequest, null))
+                .toList();
+
+        return CalendarEntity.builder()
+                .calDate(request.getDate())
+                .company(companyEntity)
+                .calendarDetailEntity(detailEntities)
+                .build();
+    }
+
+
     public CalendarResponse toResponse(CalendarEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        List<CalendarDetailResponse> detailResponseList = Optional.ofNullable(entity.getCalendarDetailEntity())
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(detailEntity -> CalendarDetailResponse.builder()
-                        .calDtId(detailEntity.getCalDtId())
-                        .title(detailEntity.getCalDtTitle())
-                        .content(detailEntity.getCalDtContent())
-                        .starTime(detailEntity.getCalDtStart())
-                        .endTime(detailEntity.getCalDtEnd())
-                        .color(detailEntity.getCalDtColor())
-                        .manager(detailEntity.getCalDtManager())
-                        .memo(detailEntity.getCalDtManager())
-                        .build())
-                .collect(Collectors.toList());
-
-
+        List<CalendarDetailResponse> detailResponses = calendarDetailConvertor.toResponseList(entity.getCalendarDetailEntity());
 
         return CalendarResponse.builder()
                 .calId(entity.getCalId())
                 .calDate(entity.getCalDate())
                 .companyId(entity.getCompany().getCpId())
-                .details(detailResponseList)
+                .details(detailResponses)
                 .build();
-
     }
-
-
-
-
-
 }
+

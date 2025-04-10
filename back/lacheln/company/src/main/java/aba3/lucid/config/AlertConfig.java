@@ -38,17 +38,19 @@ public class AlertConfig {
 
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
-        Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
+        Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter(); // ➤ JSON 메시지 처리용 변환기
 
-        // 허용할 클래스 목록 설정
+        // ➤ 메시지를 어떤 클래스에 매핑할지 명시 (보안 목적)
         DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
+
         Map<String, Class<?>> allowedMappings = new HashMap<>();
         allowedMappings.put("aba3.lucid.domain.alert.dto.CompanyAlertDto", aba3.lucid.domain.alert.dto.CompanyAlertDto.class);
-        typeMapper.setIdClassMapping(allowedMappings);
-        converter.setJavaTypeMapper(typeMapper);
+        typeMapper.setIdClassMapping(allowedMappings); // ➤ 위에 정의한 클래스만 역직렬화 허용
 
+        converter.setJavaTypeMapper(typeMapper); // ➤ 타입 매핑 정보 적용
         return converter;
     }
+
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, Jackson2JsonMessageConverter converter) {
@@ -56,30 +58,15 @@ public class AlertConfig {
         rabbitTemplate.setMessageConverter(converter);
         rabbitTemplate.setChannelTransacted(true);
 
-        // 메시지가 Exchange까지 전달되었는지 확인하는 ConfirmCallback 추가
-        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            if (ack) {
-                log.info("✅ [Producer] Message delivered successfully");
-            } else {
-                log.error("❌ [Producer] Message delivery failed: {}", cause);
-            }
-        });
-
-        // 메시지가 Queue에 정상적으로 전달되지 않았을 때 처리
-        rabbitTemplate.setMandatory(true);
-        rabbitTemplate.setReturnsCallback(returnedMessage -> {
-            log.error("❌ [Producer] Message returned: {}", returnedMessage);
-        });
-
         return rabbitTemplate;
     }
 
-    // ✅ 자동 ACK 방지: 수동 ACK 모드 설정
+    // 자동 ACK 방지: 수동 ACK 모드 설정
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
-        factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);  // 🚀 반드시 수동 ACK으로 변경
+        factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);  // 반드시 수동 ACK으로 변경
         return factory;
     }
 }

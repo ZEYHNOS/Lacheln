@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
+
 @Entity
 @Getter
 @Table(name = "cart_detail")
@@ -36,13 +38,24 @@ public class CartDetailEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private ProductEntity product; //상품ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private OptionEntity option; //옵션ID
+    @Column(name = "option_id", nullable = false)
+    private Long optionId; //옵션ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private OptionDetailEntity optionDetail; //옵션상세ID
+    @Column(name = "option_name", nullable = false)
+    private String optionName;
+
+    @Column(name = "option_detail_id", nullable=false)
+    private Long optionDetailId; //옵션상세ID
+
+    @Column(name = "option_detail_name", nullable = false)
+    private String optionDetailName;
 
     @Column(name = "cart_dt_quantity")
     private int cartDtQuantity; // 상세 옵션 갯수
 
+    @Column(name = "option_price", nullable = false)
+    private BigInteger optionPrice;
+
+    @Column(name = "option_task_time", nullable = false)
+    private int optionTaskTime;
 }

@@ -22,9 +22,8 @@ public class SubscribeEntity {
     private long subscribeId;
 
     // 외래키(업체ID)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cp_id")
-    private CompanyEntity company;
+    @Column(name = "cp_id", nullable = false)
+    private Long companyId;
 
     // 외래키2(소비자ID)
     @ManyToOne(fetch = FetchType.LAZY)

@@ -13,17 +13,17 @@ import java.util.List;
 
 @Converter
 public class WishListConverter {
-
-    public List<WishListDto> wishListToWishListDto(List<WishListEntity> wishListEntityList) {
-        List<WishListDto> wishListDtoList = new ArrayList<>();
-        for (WishListEntity wishListEntity : wishListEntityList) {
-            WishListDto wishListDto = new WishListDto();
-
-        }
-    }
-
-    public WishListDto wishToWishDto(WishListEntity wishListEntity) {
-
-    }
-
+//
+//    public List<WishListDto> wishListToWishListDto(List<WishListEntity> wishListEntityList) {
+//        List<WishListDto> wishListDtoList = new ArrayList<>();
+//        for (WishListEntity wishListEntity : wishListEntityList) {
+//            WishListDto wishListDto = new WishListDto();
+//
+//        }
+//    }
+//
+//    public WishListDto wishToWishDto(WishListEntity wishListEntity) {
+//
+//    }
+//
 }

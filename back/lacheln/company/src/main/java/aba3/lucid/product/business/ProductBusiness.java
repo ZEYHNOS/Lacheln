@@ -15,7 +15,10 @@ import aba3.lucid.packages.service.PackageService;
 import aba3.lucid.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
+import java.nio.channels.Channel;
 import java.util.List;
 
 @Slf4j

@@ -6,6 +6,7 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.entity.WishListEntity;
 import aba3.lucid.domain.user.repository.WishListRepository;
 import aba3.lucid.user.service.UserService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
@@ -27,21 +28,7 @@ public class WishListService {
     private final UserService userService;
     private final ObjectMapper objectMapper;
 
-    public List<WishListEntity> findByUser(String userId)   {
-        UsersEntity user = userService.findByIdWithThrow(userId);
-        return wishListRepository.findByUsers(user);
-    }
-
-    @RabbitListener(queues = "user")
-    public void getWishList(Message message, Channel channel) throws IOException {
-        long deliveryTag = message.getMessageProperties().getDeliveryTag();
-        try {
-            WishListDto listDto = objectMapper.readValue(message.getBody(), WishListDto.class);
-        } catch (Exception e)   {
-            log.error("Error processing message: {}", e.getMessage(), e);
-
-            // 메시지를 다시 큐에 넣고 재시도하도록 설정
-            channel.basicNack(deliveryTag, false, true);
-        }
+    public List<WishListEntity> findByUserId(String userId)   {
+        return wishListRepository.findAllByUsers_userId(userId);
     }
 }

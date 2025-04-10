@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @NoArgsConstructor
@@ -23,14 +24,12 @@ public class CalendarDetailRequest {
     private  String content;
 
     @NotBlank(message = "시작 시간이 필수 입력값입니다")
-    LocalTime startTime;
+    LocalDateTime startTime;
 
     @NotBlank(message = "마감 시간이 필수 입력값입나다")
-    LocalTime endTime;
+    LocalDateTime endTime;
 
     private Color color = Color.BLUE;
-
-    private String manager;
 
     private String memo;
 

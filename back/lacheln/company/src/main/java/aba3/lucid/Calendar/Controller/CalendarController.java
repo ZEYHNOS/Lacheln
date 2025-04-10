@@ -6,6 +6,7 @@ import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.calendar.dto.CalendarRequest;
 import aba3.lucid.domain.calendar.dto.CalendarResponse;
+import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,17 +31,16 @@ public class CalendarController {
 
 
     }
-//
-//    @PutMapping("/{companyId}/{calId}")
-//    public API<CalendarResponse> updateCalendar(
-//            @PathVariable CompanyEntity companyId,
-//            @PathVariable  Long calId,
-//            @RequestBody CalendarRequest request
-//    ) {
-//        log.debug("Update Calendar:{}", companyId, calId);
-//        CalendarResponse response = calendarBusiness.updateCalendar(calId, request,AuthUtil.getCompanyId());
-//        return API.OK();
-//    }
+
+    @PutMapping("{companyId}/{calId}")
+    public API<CalendarResponse> updateCalendar(
+            @PathVariable Long calId,
+            @RequestBody CalendarRequest request
+    ) {
+        log.debug("Update Calendar:{}", calId);
+        CalendarResponse response = calendarBusiness.updateCalendar(request, calId, AuthUtil.getCompanyId());
+        return API.OK();
+    }
 
 
 }

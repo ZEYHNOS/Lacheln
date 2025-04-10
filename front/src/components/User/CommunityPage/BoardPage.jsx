@@ -1,7 +1,5 @@
-import axios from "axios";
 import { useState } from "react";
 
-import { Link } from "react-router-dom";
 const BoardPage = () => {
     const dummyPosts = [
         { tab: "후기", id: 8, title: "여덟 번째 게시글", content: "정말 유익한 경험이었습니다. 추천드려요!", author: "박서준", date: "2025-04-02", likes: 12, views: 42 },
@@ -19,19 +17,6 @@ const BoardPage = () => {
     const [searchType, setSearchType] = useState("title+content");
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 5;
-
-        useEffect(() => {
-            const fetchPosts = async () => {
-                try {
-                    const res = await axios.get("http://localhost:8080/api/posts");
-                    setPosts(res.data);
-                } catch (err) {
-                    console.error("게시글 불러오기 실패:", err);
-                }
-            };
-
-        fetchPosts();
-    }, []);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -82,8 +67,8 @@ const BoardPage = () => {
                         <tr key={post.id} className="hover:bg-gray-100 cursor-pointer" onClick={() => window.location.href = `/post/${post.id}`}>
                             <td className="text-purple-600 font-bold p-3">{post.tab}</td>
                             <td className="p-3">{index + 1 + (currentPage - 1) * postsPerPage}</td>
-                            <td className="p-3 underline hover:text-blue-500">{post.title}</td>
-                            <td className="p-3 underline hover:text-blue-500">{post.author}</td>
+                            <td className="p-3 hover: underline hover:text-blue-500">{post.title}</td>
+                            <td className="p-3 hover: underline hover:text-blue-500">{post.author}</td>
                             <td className="p-3">{post.date}</td>
                             <td className={`p-3 font-bold ${post.likes >= 15 ? 'text-red-500' : 'text-blue-500'}`}>{post.likes}</td>
                             <td className="p-3">{post.views}</td>

@@ -1,6 +1,5 @@
 package aba3.lucid.domain.calendar.convertor;
 
-
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.calendar.dto.CalendarDetailResponse;
 import aba3.lucid.domain.calendar.dto.CalendarRequest;
@@ -8,40 +7,31 @@ import aba3.lucid.domain.calendar.dto.CalendarResponse;
 import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Converter
-public class CalendarConvertor {
-    private final CalendarDetailConvertor calendarDetailConvertor;
+@AllArgsConstructor
+public class CalendarUpdateConvertor {
 
-    public CalendarConvertor(CalendarDetailConvertor calendarDetailConvertor) {
-        this.calendarDetailConvertor = calendarDetailConvertor;
-    }
-    //먼저 entity 만들고
-    //그 후에, 각 CalendarDetailEntity(자식 엔티티)를 생성할 때 부모 엔티티를 함께 전달함
-    public CalendarEntity toEntity(CalendarRequest request, CompanyEntity company) {
-        CalendarEntity calendarEntity = CalendarEntity.builder()
+    private final  CalendarDetailConvertor calendarDetailConvertor;
+
+
+    public CalendarEntity toEntity(CalendarRequest request, CompanyEntity company, Long calId) {
+        CalendarEntity updatedEntity = CalendarEntity.builder()
                 .calDate(request.getDate())
                 .company(company)
                 .build();
         List<CalendarDetailEntity> detailEntities = request.getDetails().stream()
-                .map(detailRequest -> calendarDetailConvertor.toEntity(detailRequest, calendarEntity))
+                .map(detailRequest -> calendarDetailConvertor.toEntity(detailRequest, updatedEntity))
                 .toList();
-        calendarEntity.setCalendarDetailEntity(detailEntities);
-        return calendarEntity;
+        updatedEntity.setCalendarDetailEntity(detailEntities);
+        return updatedEntity;
     }
 
-
-
-
-    public CalendarResponse toResponse(CalendarEntity entity) {
+    public CalendarResponse toResponse(CalendarEntity entity, CompanyEntity company, Long calId) {
         List<CalendarDetailResponse> detailResponses = calendarDetailConvertor.toResponseList(entity.getCalendarDetailEntity());
 
         return CalendarResponse.builder()
@@ -53,4 +43,3 @@ public class CalendarConvertor {
     }
 
 }
-

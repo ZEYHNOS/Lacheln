@@ -35,8 +35,7 @@ public class CalendarEntity {
 
     // 캘린더 상세 List 받아오기
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cal_dt_id")
+    @OneToMany(mappedBy= "calendar", fetch = FetchType.LAZY)
     private List<CalendarDetailEntity> calendarDetailEntity;
 
 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,7 @@ public class CalendarConvertor {
                 .build();
         List<CalendarDetailEntity> detailEntities = request.getDetails().stream()
                 .map(detailRequest -> calendarDetailConvertor.toEntity(detailRequest, calendarEntity))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
         calendarEntity.setCalendarDetailEntity(detailEntities);
         return calendarEntity;
     }

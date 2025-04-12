@@ -36,7 +36,6 @@ public class CalendarEntity {
     // 캘린더 상세 List 받아오기
     @JsonIgnore
     @OneToMany(mappedBy= "calendar", fetch = FetchType.LAZY)
-    private List<CalendarDetailEntity> calendarDetailEntity;
-
+    private List<CalendarDetailEntity> calendarDetailEntity = new ArrayList<>();
 
 }

@@ -10,6 +10,8 @@ import aba3.lucid.domain.calendar.convertor.CalendarConvertor;
 import aba3.lucid.domain.calendar.convertor.CalendarUpdateConvertor;
 import aba3.lucid.domain.calendar.dto.CalendarRequest;
 import aba3.lucid.domain.calendar.dto.CalendarResponse;
+import aba3.lucid.domain.calendar.dto.CalendarUpdateRequest;
+import aba3.lucid.domain.calendar.dto.CalendarUpdateResponse;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
@@ -40,13 +42,17 @@ public class CalendarBusiness {
 
     }
 
-    public CalendarResponse updateCalendar(CalendarRequest request, Long cpId, Long calId) {
+    public CalendarUpdateResponse updateCalendar(CalendarUpdateRequest request, Long cpId, Long calId, CalendarEntity existingEntity) {
+        System.out.println("BusCompanyId"+ cpId);
+        System.out.println("BusCalendarId " + calId);
         CompanyEntity newCompany = companyRepository.findById(cpId).orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND,
                 "업체를 찾을 수 없습니다" + cpId));
-        CalendarEntity updatedCalendar = calendarUpdateConvertor.toEntity(request,newCompany,calId);
+//        CalendarEntity existingEntity = calendarService.findById(calId).orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND,
+//                "캘린더 ID를 찾을 수 없습니다: " + calId));
+        CalendarEntity updatedCalendar = calendarUpdateConvertor.toEntity(request,newCompany,calId, existingEntity);
         CalendarEntity updatedEntity = calendarService.updateCalendar(updatedCalendar, calId);
 
-        return calendarConvertor.toResponse(updatedEntity);
+        return calendarUpdateConvertor.toResponse(updatedEntity, newCompany, calId);
 
     }
 

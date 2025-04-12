@@ -5,17 +5,16 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.calendar.convertor.CalendarConvertor;
 import aba3.lucid.domain.calendar.convertor.CalendarDetailConvertor;
-import aba3.lucid.domain.calendar.dto.CalendarRequest;
 import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.calendar.repository.CalendarDetailRepository;
 import aba3.lucid.domain.calendar.repository.CalendarRepository;
-import aba3.lucid.domain.company.entity.CompanyEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +38,8 @@ public class CalendarService {
         return calendarRepository.save(calendarEntity);
     }
 
-    @Transactional
     public CalendarEntity updateCalendar(CalendarEntity updatedEntity, Long calId) {
+        System.out.println("SerCalendarId"+ calId);
         CalendarEntity existing = calendarRepository.findById(calId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "캘린더 ID를 찾을 수 없습니다"));
         existing.setCalDate(updatedEntity.getCalDate());
@@ -49,6 +48,11 @@ public class CalendarService {
 
     }
 
-    
+    public Optional<CalendarEntity> findById(Long calId) {
+        return calendarRepository.findById(calId);
+    }
 
-}
+
+
+
+    }

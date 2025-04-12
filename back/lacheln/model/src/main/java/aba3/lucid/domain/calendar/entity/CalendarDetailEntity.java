@@ -25,6 +25,7 @@ public class CalendarDetailEntity {
     // 캘린더 id(날짜 식별하기 위해서)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cal_id")
+    @Setter
     private CalendarEntity calendar;
 
     // 제목

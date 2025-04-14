@@ -13,11 +13,13 @@ import aba3.lucid.domain.calendar.dto.CalendarResponse;
 import aba3.lucid.domain.calendar.dto.CalendarUpdateRequest;
 import aba3.lucid.domain.calendar.dto.CalendarUpdateResponse;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
+import aba3.lucid.domain.calendar.repository.CalendarRepository;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Business
@@ -28,6 +30,7 @@ public class CalendarBusiness {
     private final CalendarConvertor calendarConvertor;
     private final CompanyRepository companyRepository;
     private final CalendarUpdateConvertor calendarUpdateConvertor;
+    private final CalendarRepository calendarRepository;
 
     public CalendarResponse createCalendar(CalendarRequest request, Long cpId) {
         CompanyEntity company = companyRepository.findById(cpId).orElseThrow(EntityNotFoundException::new);
@@ -42,18 +45,35 @@ public class CalendarBusiness {
 
     }
 
-    public CalendarUpdateResponse updateCalendar(CalendarUpdateRequest request, Long cpId, Long calId, CalendarEntity existingEntity) {
-        System.out.println("BusCompanyId"+ cpId);
-        System.out.println("BusCalendarId " + calId);
-        CompanyEntity newCompany = companyRepository.findById(cpId).orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND,
-                "업체를 찾을 수 없습니다" + cpId));
-//        CalendarEntity existingEntity = calendarService.findById(calId).orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND,
-//                "캘린더 ID를 찾을 수 없습니다: " + calId));
-        CalendarEntity updatedCalendar = calendarUpdateConvertor.toEntity(request,newCompany,calId, existingEntity);
-        CalendarEntity updatedEntity = calendarService.updateCalendar(updatedCalendar, calId);
 
-        return calendarUpdateConvertor.toResponse(updatedEntity, newCompany, calId);
+    @Transactional
+    public CalendarUpdateResponse updateCalendar(CalendarUpdateRequest request, Long cpId, Long calId) {
+        //callId에 해당하는 기존 CalendarEntity를 데이터베이스에 조회함
+        CalendarEntity existingEntity = calendarService.findById(calId);
 
+        // // cpId에 해당하는 CompanyEntity를 데이터베이스에서 조회하거나, 없으면 예외를 발생시킵니다
+        CompanyEntity company = companyRepository.findById(cpId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없다." + cpId));
+
+        // 요청(request) 데이터를 바탕으로 기존 엔티티(existingEntity)를 업데이트합니다.
+        // CalendarUpdateConvertor의 toEntity 메소드가 기존 엔티티를 수정합니다.
+        CalendarEntity updatedCalendar = calendarUpdateConvertor.toEntity(request, company, calId, existingEntity);
+        CalendarEntity savedCalendar = calendarRepository.save(updatedCalendar);
+        return calendarUpdateConvertor.toResponse(savedCalendar, company, calId);
+
+
+    }
+    @Transactional
+    public CalendarEntity updateCalendarEntity(CalendarEntity updatedEntity, Long calId) {
+        CalendarEntity existing = calendarRepository.findById(calId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "Calendar ID not found: " + calId));
+        // 기존 엔티티의 날짜(calDate)를 업데이트합니다.
+        existing.setCalDate(updatedEntity.getCalDate());
+        existing.setCompany(updatedEntity.getCompany());
+        // 기존 엔티티의 CalendarDetailEntity 목록을 업데이트합니다.
+        existing.setCalendarDetailEntity(updatedEntity.getCalendarDetailEntity());
+
+        return calendarRepository.save(existing);
     }
 
 

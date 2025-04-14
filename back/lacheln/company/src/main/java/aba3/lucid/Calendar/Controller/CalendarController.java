@@ -40,15 +40,12 @@ public class CalendarController {
 
     }
 
-    @PutMapping("{companyId}/{calId}")
+    @PutMapping("{calId}")
     public API<CalendarResponse> updateCalendar(
             @PathVariable Long calId,
             @RequestBody CalendarUpdateRequest request
     ) {
-
-        CalendarEntity existingEntity = calendarService.findById(calId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "Calendar ID not found: " + calId));
-        CalendarUpdateResponse response = calendarBusiness.updateCalendar(request, calId, AuthUtil.getCompanyId(), existingEntity);
+        CalendarUpdateResponse response = calendarBusiness.updateCalendar(request, AuthUtil.getCompanyId(), calId);
         return API.OK();
     }
 

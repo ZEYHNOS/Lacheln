@@ -11,12 +11,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CalendarUpdateRequest {
+public class CalendarUpdateRequest implements CalendarRequestIfs {
     @NotBlank(message = "캘린더 데이터가 필수 입럭값입니다")
     private LocalDate date;
-
-    @NotBlank(message = "업체 ID가 필수 입력입니다")
-    private long id;
 
     @NotBlank(message = "EventDetail 필수 입력값입니다")
     private List<CalendarDetailRequest> details;

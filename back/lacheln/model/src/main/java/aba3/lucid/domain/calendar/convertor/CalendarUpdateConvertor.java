@@ -19,39 +19,38 @@ public class CalendarUpdateConvertor {
 
 
     public CalendarEntity toEntity(CalendarUpdateRequest request, CompanyEntity company, Long calId, CalendarEntity existingEntity) {
+        // 요청에서 받은 날짜로 기존 엔티티의 날짜(calDate)를 업데이트함.
         existingEntity.setCalDate(request.getDate());
+        // 요청에 해당하는 회사 정보를 엔티티에 설정함.
         existingEntity.setCompany(company);
 
+        // 기존 엔티티의 CalendarDetailEntity 컬렉션을 가져옴.
+        List<CalendarDetailEntity> currentDetails = existingEntity.getCalendarDetailEntity();
+        //기존 요소들을 제거합니다.
+        currentDetails.clear();
 
-        List<CalendarDetailEntity> detailEntities = new ArrayList<>();
-        for(CalendarDetailRequest detailRequest : request.getDetails()) {
-            CalendarDetailEntity existingDetail = findExistingDetail(existingEntity, detailRequest);
-            CalendarDetailEntity updatedDetail = calendarUpdateDetailConvertor.toEntity(detailRequest, existingDetail);
-            detailEntities.add(updatedDetail);
+        // 엔티티의 모든 CalendarDetailEntity들을 CalendarDetailResponse로 변환함
+        List<CalendarDetailEntity> newDetailEntities = new ArrayList<>();
+        for (CalendarDetailRequest detailRequest : request.getDetails()) {
 
-            updatedDetail.setCalendar(existingEntity);
-            detailEntities.add(updatedDetail);
-
+            CalendarDetailEntity newDetail = calendarUpdateDetailConvertor.toEntity(detailRequest, null);
+            newDetail.setCalendar(existingEntity);
+            currentDetails.add(newDetail);
         }
-        existingEntity.setCalendarDetailEntity(detailEntities);
         return existingEntity;
 
 
     }
 
-    private CalendarDetailEntity findExistingDetail(CalendarEntity existingEntity, CalendarDetailRequest detailRequest) {
-        return null;
-    }
-
     public CalendarUpdateResponse  toResponse(CalendarEntity entity, CompanyEntity company, Long calId) {
         List<CalendarDetailResponse> detailResponses = entity.getCalendarDetailEntity().stream()
-                .map(calendarUpdateDetailConvertor::toResponse)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .map(calendarUpdateDetailConvertor:: toResponse)
+                .collect(Collectors.toList());
 
         return CalendarUpdateResponse.builder()
                 .calId(entity.getCalId())
                 .calDate(entity.getCalDate())
-                .companyId(entity.getCompany().getCpId())
+                .companyId(company.getCpId())
                 .details(detailResponses)
                 .build();
     }

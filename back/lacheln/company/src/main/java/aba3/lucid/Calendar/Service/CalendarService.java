@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class CalendarService {
@@ -25,7 +26,7 @@ public class CalendarService {
     private final CalendarConvertor calendarConvertor;
     private final CalendarDetailConvertor calendarDetailConvertor;
 
-    @Transactional
+
     public CalendarEntity createCalendar(CalendarEntity calendarEntity) {
         List<CalendarDetailEntity> calendarDetailEntities = calendarEntity.getCalendarDetailEntity();
         if (calendarDetailEntities != null && !calendarDetailEntities.isEmpty()) {
@@ -38,18 +39,14 @@ public class CalendarService {
         return calendarRepository.save(calendarEntity);
     }
 
-    public CalendarEntity updateCalendar(CalendarEntity updatedEntity, Long calId) {
-        System.out.println("SerCalendarId"+ calId);
-        CalendarEntity existing = calendarRepository.findById(calId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "캘린더 ID를 찾을 수 없습니다"));
-        existing.setCalDate(updatedEntity.getCalDate());
-        existing.setCalendarDetailEntity(updatedEntity.getCalendarDetailEntity());
-        return calendarRepository.save(existing);
 
+    public CalendarEntity findById(Long calId) {
+        return calendarRepository.findById(calId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "Calendar ID not found: " + calId));
     }
 
-    public Optional<CalendarEntity> findById(Long calId) {
-        return calendarRepository.findById(calId);
+    public CalendarEntity updateCalendar(CalendarEntity calendar) {
+        return calendarRepository.save(calendar);
     }
 
 

@@ -11,6 +11,8 @@ import java.util.List;
 
 @Repository
 public interface CalendarRepository extends JpaRepository<CalendarEntity, Long>
+
+
 {
     List<CalendarEntity> findByCalDate(LocalDate calDate);
     List<CalendarEntity> findByCompany_cpId(Long cpId);

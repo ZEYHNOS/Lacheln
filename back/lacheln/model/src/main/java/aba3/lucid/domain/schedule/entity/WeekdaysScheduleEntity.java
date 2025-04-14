@@ -38,17 +38,10 @@ public class WeekdaysScheduleEntity {
     private LocalTime wsStart;
 
     // 종료 시간
-    //“오픈/마감 시각”만 필요하다면 DB 컬럼 타입을 TIME으로 변경하는 것이 자연스럽습니다.
+    //“오픈/마감 시간”만 필요하다면 DB 컬럼 타입을 TIME으로 변경하는 것이 자연스럽습니다.
     @Column(name = "ws_end", columnDefinition = "TIME", nullable = false)
     private LocalTime wsEnd;
 
-
-//    public void updateFromDto(WeekdaysScheduleRequest.DayScheduleDto dto) {
-//        this.wsWeekdays = Weekdays.valueOf(dto.getWeekday());
-//        this.wsStart = LocalTime.parse(dto.getStart());
-//        this.wsEnd = LocalTime.parse(dto.getEnd());
-//
-//    }
 
 
 

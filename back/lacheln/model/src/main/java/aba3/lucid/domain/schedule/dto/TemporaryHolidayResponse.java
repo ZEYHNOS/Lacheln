@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class TemporaryHolidayResponse {
-    private long thId;
+    private long id;
     private long cpId;
-    private LocalDateTime thDate;
-    private String thReason;
+    private LocalDate date;
+    private String reason;
 }

@@ -36,7 +36,7 @@ public class CalendarBusiness {
         CompanyEntity company = companyRepository.findById(cpId).orElseThrow(EntityNotFoundException::new);
 
         if (company == null) {
-            throw new EntityNotFoundException("Company not found with id " + cpId);
+            throw new EntityNotFoundException("업체를 찾을 수 없습니다. " + cpId);
         }
         CalendarEntity calendarEntity = calendarConvertor.toEntity(request,company);
 

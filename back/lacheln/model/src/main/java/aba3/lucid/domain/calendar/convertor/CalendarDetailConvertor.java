@@ -37,7 +37,7 @@ public class CalendarDetailConvertor {
         return CalendarDetailResponse.builder()
                 .calDtId(entity.getCalDtId())
                 .title(entity.getCalDtTitle())
-                .content(entity.getCalDtContent())
+            .content(entity.getCalDtContent())
                 .startTime(LocalTime.from(entity.getCalDtStart()))
                 .endTime(LocalTime.from(entity.getCalDtEnd()))
                 .color(entity.getCalDtColor())

@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping("api/company")
 @RequiredArgsConstructor
 public class WeekdaysScheduleController {
-    private final WeekdaysScheduleBusiness weekdaysScheduleService;
     private final WeekdaysScheduleBusiness weekdaysScheduleBusiness;
 
     @PostMapping("/{cpId}/weekdays-schedule")

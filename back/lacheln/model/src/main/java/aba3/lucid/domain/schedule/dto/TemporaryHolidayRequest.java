@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class TemporaryHolidayRequest {
-    private LocalDateTime date;
+    private LocalDate date;
     private String reason;
 
 

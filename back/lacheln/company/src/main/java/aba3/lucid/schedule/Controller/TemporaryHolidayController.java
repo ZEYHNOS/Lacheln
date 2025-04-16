@@ -26,4 +26,14 @@ public class TemporaryHolidayController {
         TemporaryHolidayResponse response = temporaryHolidayBusiness.createHoliday(request, AuthUtil.getCompanyId());
         return API.OK(response);
     }
+
+    @PutMapping("{cpId}/{thId}/temporary")
+    public API<TemporaryHolidayResponse> updateTemporaryHoliday(
+            @PathVariable Long cpId,
+            @PathVariable Long thId,
+            @RequestBody TemporaryHolidayRequest request
+    ) {
+        TemporaryHolidayResponse response = temporaryHolidayBusiness.updateTemporaryHoliday(request, thId, AuthUtil.getCompanyId());
+        return API.OK(response);
+    }
 }

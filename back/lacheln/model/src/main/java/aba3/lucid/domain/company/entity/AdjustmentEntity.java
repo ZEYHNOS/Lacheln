@@ -2,14 +2,12 @@ package aba3.lucid.domain.company.entity;
 
 import aba3.lucid.adjustment.enums.Bank;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "adjustment")
 @AllArgsConstructor

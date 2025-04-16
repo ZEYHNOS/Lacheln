@@ -26,5 +26,15 @@ public class RegularHolidayController {
         return API.OK();
     }
 
+    @PutMapping("/{cpId}/{regId}/regularHoliday")
+    public API<RegularHolidayResponse> updateRegular(
+            @PathVariable Long cpId,
+            @PathVariable Long regId,
+            @RequestBody RegularHolidayRequest regularHolidayRequest
+    ){
+        RegularHolidayResponse response = regularHolidayBusiness.updateHoliday (AuthUtil.getCompanyId(), regId, regularHolidayRequest);
+        return API.OK();
+    }
+
 
 }

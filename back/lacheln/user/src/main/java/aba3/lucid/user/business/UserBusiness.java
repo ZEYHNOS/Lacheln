@@ -107,4 +107,14 @@ public class UserBusiness {
             throw new ApiException(ErrorCode.BAD_REQUEST, "비밀번호가 일치하지 않습니다!");
         }
     }
+
+    // 유저 소셜타입 조회
+    public API<String> getUserSocial(String userId)  {
+        UsersEntity user = userService.findByIdWithThrow(userId);
+        if(user != null)    {
+            return API.OK(user.getUserSocial().getSocialCode(), "소비자 타입");
+        } else {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "잘못된 요청입니다.");
+        }
+    }
 }

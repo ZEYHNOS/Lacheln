@@ -49,4 +49,11 @@ public class UserController {
     ) {
         return userBusiness.getUserPasswordVerify(userPasswordVerifyRequest.getPassword());
     }
+
+    // 소비자 타입 조회
+    @GetMapping("/type")
+    @Operation(summary = "소비자 타입 조회", description = "소비자가 소셜, 로컬 로그인인지 정보를 반환합니다.")
+    public API<String> getSocial()  {
+        return userBusiness.getUserSocial(AuthUtil.getUserId());
+    }
 }

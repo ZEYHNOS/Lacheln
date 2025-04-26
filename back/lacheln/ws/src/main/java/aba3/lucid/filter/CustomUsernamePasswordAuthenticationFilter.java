@@ -1,5 +1,7 @@
 package aba3.lucid.filter;
 
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.config.CustomAuthenticationToken;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
@@ -91,12 +93,16 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
                 if(user.isPresent()) {
                     userPk = user.get().getUserId();
                     authRequest = new CustomAuthenticationToken(username, password, roles, user.get().getUserRole(), userPk);
+                } else {
+                    throw new ApiException(ErrorCode.NOT_FOUND, "User not found");
                 }
             } else if(role.equals("COMPANY")) {
                 Optional<CompanyEntity> company = companyRepository.findByCpEmail(username);
                 if(company.isPresent()) {
                     cpPk = company.get().getCpId();
                     authRequest = new CustomAuthenticationToken(username, password, roles, company.get().getCpRole(), cpPk);
+                } else {
+                    throw new ApiException(ErrorCode.NOT_FOUND, "Company not found");
                 }
             }
 

@@ -35,27 +35,24 @@ public class CartDetailEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private CartEntity cart; //장바구니ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ProductEntity product; //상품ID
-
-    @Column(name = "option_id", nullable = false)
+    @Column(name = "op_id", nullable = false)
     private Long optionId; //옵션ID
 
-    @Column(name = "option_name", nullable = false)
+    @Column(name = "op_name", nullable = false)
     private String optionName;
 
-    @Column(name = "option_detail_id", nullable=false)
+    @Column(name = "op_dt_id", nullable=false)
     private Long optionDetailId; //옵션상세ID
 
-    @Column(name = "option_detail_name", nullable = false)
+    @Column(name = "op_dt_name", nullable = false)
     private String optionDetailName;
 
     @Column(name = "cart_dt_quantity")
     private int cartDtQuantity; // 상세 옵션 갯수
 
-    @Column(name = "option_price", nullable = false)
+    @Column(name = "op_price", nullable = false)
     private BigInteger optionPrice;
 
-    @Column(name = "option_task_time", nullable = false)
+    @Column(name = "op_tasktime", nullable = false)
     private int optionTaskTime;
 }

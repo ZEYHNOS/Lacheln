@@ -1,7 +1,5 @@
 package aba3.lucid.domain.user.dto;
 
-import aba3.lucid.domain.user.entity.UsersEntity;
-import aba3.lucid.domain.user.entity.WishListEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +13,6 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserWishListResponse {
-    private List<WishListDto> data;
+public class WishListAddRequest {
+    private List<Long> ids;
 }

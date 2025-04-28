@@ -1,4 +1,4 @@
-package aba3.lucid.adjustment.enums;
+package aba3.lucid.domain.payment.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

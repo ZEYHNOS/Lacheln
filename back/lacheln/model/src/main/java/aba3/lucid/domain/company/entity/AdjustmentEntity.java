@@ -1,6 +1,6 @@
 package aba3.lucid.domain.company.entity;
 
-import aba3.lucid.adjustment.enums.Bank;
+import aba3.lucid.domain.payment.enums.Bank;
 import jakarta.persistence.*;
 import lombok.*;
 

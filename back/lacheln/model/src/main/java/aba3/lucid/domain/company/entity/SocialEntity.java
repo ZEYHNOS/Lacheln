@@ -2,12 +2,10 @@ package aba3.lucid.domain.company.entity;
 
 import aba3.lucid.domain.company.enums.SNS;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "social")
 @AllArgsConstructor

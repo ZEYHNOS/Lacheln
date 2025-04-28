@@ -1,6 +1,7 @@
 package aba3.lucid.domain.company.dto;
 
 
+import aba3.lucid.domain.payment.enums.Bank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdjustmentRequest {
-    private aba3.lucid.adjustment.enums.Bank bankName;
+    private Bank bankName;
     private String bankAccount;
     private String depositName;
     private LocalDateTime receiptDate;

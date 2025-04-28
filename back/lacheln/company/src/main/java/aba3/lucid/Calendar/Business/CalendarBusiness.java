@@ -3,15 +3,14 @@ package aba3.lucid.Calendar.Business;
 
 import aba3.lucid.Calendar.Service.CalendarService;
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.enums.Color;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.calendar.convertor.CalendarConvertor;
 import aba3.lucid.domain.calendar.convertor.CalendarUpdateConvertor;
-import aba3.lucid.domain.calendar.dto.CalendarRequest;
-import aba3.lucid.domain.calendar.dto.CalendarResponse;
-import aba3.lucid.domain.calendar.dto.CalendarUpdateRequest;
-import aba3.lucid.domain.calendar.dto.CalendarUpdateResponse;
+import aba3.lucid.domain.calendar.dto.*;
+import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.calendar.repository.CalendarRepository;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -20,6 +19,12 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Business
@@ -33,14 +38,30 @@ public class CalendarBusiness {
     private final CalendarRepository calendarRepository;
 
     public CalendarResponse createCalendar(CalendarRequest request, Long cpId) {
+
         CompanyEntity company = companyRepository.findById(cpId).orElseThrow(EntityNotFoundException::new);
+        CalendarEntity calendar = calendarConvertor.toEntity(request, company);
 
-        if (company == null) {
-            throw new EntityNotFoundException("업체를 찾을 수 없습니다. " + cpId);
+        LocalDate calDate = Optional.ofNullable(request.getDate())
+                .orElse(LocalDate.now());
+        request.setDate(calDate);
+
+        if(calendar.getCalendarDetailEntity() == null || calendar.getCalendarDetailEntity().isEmpty()) {
+            CalendarDetailEntity defaultDetail = CalendarDetailEntity.builder()
+                    .calendar(calendar)
+                    .calDtTitle("기본 일정")
+                    .calDtContent("일정")
+                    .calDtStart(calendar.getCalDate().atStartOfDay())
+                    .calDtEnd(calendar.getCalDate().atTime(LocalTime.MAX))
+                    .calDtColor(Color.BLUE)
+                    .calDtMemo("")
+                    .build();
+            calendar.getCalendarDetailEntity().add(defaultDetail);
         }
-        CalendarEntity calendarEntity = calendarConvertor.toEntity(request,company);
 
-        CalendarEntity savedEntity = calendarService.createCalendar(calendarEntity);
+//        CalendarEntity calendarEntity = calendarConvertor.toEntity(request,company);
+
+        CalendarEntity savedEntity = calendarService.createCalendar(calendar);
         return calendarConvertor.toResponse(savedEntity);
 
     }
@@ -60,8 +81,6 @@ public class CalendarBusiness {
         CalendarEntity updatedCalendar = calendarUpdateConvertor.toEntity(request, company, calId, existingEntity);
         CalendarEntity savedCalendar = calendarRepository.save(updatedCalendar);
         return calendarUpdateConvertor.toResponse(savedCalendar, company, calId);
-
-
     }
     @Transactional
     public CalendarEntity updateCalendarEntity(CalendarEntity updatedEntity, Long calId) {
@@ -73,7 +92,7 @@ public class CalendarBusiness {
         // 기존 엔티티의 CalendarDetailEntity 목록을 업데이트합니다.
         existing.setCalendarDetailEntity(updatedEntity.getCalendarDetailEntity());
 
-        return calendarRepository.save(existing);
+        return calendarService.updateCalendar(existing);
     }
 
 

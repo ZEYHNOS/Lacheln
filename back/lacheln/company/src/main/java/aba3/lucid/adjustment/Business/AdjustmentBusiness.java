@@ -11,6 +11,7 @@ import aba3.lucid.domain.company.entity.AdjustmentEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.AdjustmentRepository;
 import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.domain.payment.enums.Bank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class AdjustmentBusiness {
         CompanyEntity company = companyRepository.findById(cpId).orElseThrow(
                 () -> new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다." + cpId)
         );
-        aba3.lucid.adjustment.enums.Bank bankName = (request.getBankName() != null) ? (request.getBankName()) : aba3.lucid.adjustment.enums.Bank.valueOf("KBS_BANK");
+        Bank bankName = (request.getBankName() != null) ? (request.getBankName()): Bank.NH_BANK;
         String bankAccount = (request.getBankAccount() != null) ? (request.getBankAccount()) : "ABS7964";
         String depositName = (request.getDepositName() != null) ? (request.getDepositName()) : "Bank";
         LocalDateTime receiptDate = (request.getReceiptDate() != null) ? (request.getReceiptDate()) : LocalDateTime.now();

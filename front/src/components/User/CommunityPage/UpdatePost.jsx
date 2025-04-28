@@ -20,7 +20,7 @@ export default function EditPost() {
                 <input 
                     className="w-full h-10 border border-gray-300 rounded-md px-4" 
                     type="text" 
-                    placeholder="수정할 제목을 입력하세요." 
+                    placeholder="수정할 제목을 입력하세요."
                 />
             </div>
 

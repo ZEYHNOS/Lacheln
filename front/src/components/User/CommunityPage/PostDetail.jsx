@@ -102,8 +102,12 @@ const PostDetail = () => {
 
                 <div className="mt-6 w-3/5 mx-auto text-left">
                     {comments.map((c, idx) => (
-                        <div key={idx} className="p-2 border-b border-gray-300">
-                            {c.content}
+                        <div key={idx} className="p-2 border-b border-gray-300 flex justify-between items-end">
+                            <span>{c.content}</span> 
+                            <div className="ml-auto space-x-2">                      
+                            <button className="text-sm text-blue-500 hover:underline">수정</button>
+                            <button className="text-sm text-red-500 hover:underline">삭제</button>
+                            </div>
                         </div>
                     ))}
                 </div>

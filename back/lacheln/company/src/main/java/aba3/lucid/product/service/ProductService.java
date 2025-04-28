@@ -1,9 +1,12 @@
 package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
+import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.product.dto.ProductItem;
+import aba3.lucid.domain.product.entity.OptionDetailEntity;
+import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -52,15 +56,58 @@ public class ProductService {
         productRepository.deleteAll(removeProductEntityList);
     }
 
-    // 상품 찾기
-    public ProductEntity findByIdWithThrow(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new ApiException(ProductErrorCode.PRODUCT_NOT_FOUND));
-    }
+
 
     public void updateStatusToPackage(ProductEntity product) {
         product.updateStatusToPackage();
 
         productRepository.save(product);
+    }
+
+    // 상품 스냅샷 확인 로직
+    public void verifySnapshotMatch(ProductItem item) {
+        Validator.throwIfNull(item);
+
+        ProductEntity product = findByIdWithThrow(item.getId());
+        // 1. 기본적인 상품 정보 확인
+        if (!product.getPdName().equals(item.getName()) || // 이름
+            product.getPdPrice().compareTo(item.getPrice()) != 0 || // 가격
+            product.getPdTaskTime() != item.getTaskTime()) { // 작업 시간
+            throw new ApiException(ProductErrorCode.PRODUCT_SNAPSHOT_MISMATCH);
+        }
+
+        // 2. 옵션 정보 확인
+        Map<Long, OptionEntity> optionEntityMap = product.getOpList().stream()
+                .collect(Collectors.toMap(OptionEntity::getOpId, it -> it));
+
+        for (ProductItem.OptionItem optionItem : item.getOptionItemList()) {
+            OptionEntity option = optionEntityMap.get(optionItem.getId());
+
+            if (option == null || // 없을 때
+                !option.getOpName().equals(optionItem.getName())) { // 옵션 이름
+                throw new ApiException(ProductErrorCode.PRODUCT_SNAPSHOT_MISMATCH);
+            }
+
+            Map<Long, OptionDetailEntity> optionDetailEntityMap = option.getOpDtList().stream()
+                    .collect(Collectors.toMap(OptionDetailEntity::getOpDtId, it -> it));
+
+            // 해당 옵션의 상세 정보 확인
+            for (ProductItem.OptionItem.OptionDetailItem optionDetailItem : optionItem.getOptionDetailItemList()) {
+                OptionDetailEntity optionDetail = optionDetailEntityMap.get(optionDetailItem.getId());
+
+                if (optionDetail == null ||
+                    optionDetail.getOpDtPlusCost().compareTo(optionDetailItem.getPrice()) != 0 || // 가격
+                    optionDetail.getOpDtPlusTime() != optionDetailItem.getTaskTime() || // 작업 시간
+                    !optionDetail.getOpDtName().equals(optionDetailItem.getName())) { // 이름
+                    throw new ApiException(ProductErrorCode.PRODUCT_SNAPSHOT_MISMATCH);
+                }
+            }
+        }
+    }
+
+    // 상품 찾기
+    public ProductEntity findByIdWithThrow(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ApiException(ProductErrorCode.PRODUCT_NOT_FOUND));
     }
 }

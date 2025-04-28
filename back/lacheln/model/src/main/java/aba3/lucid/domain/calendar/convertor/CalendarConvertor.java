@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,18 +25,21 @@ public class CalendarConvertor {
     public CalendarConvertor(CalendarDetailConvertor calendarDetailConvertor) {
         this.calendarDetailConvertor = calendarDetailConvertor;
     }
-
-    public CalendarEntity toEntity(CalendarRequest request, CompanyEntity companyEntity) {
-        List<CalendarDetailEntity> detailEntities = request.getDetails().stream()
-                .map(detailRequest -> calendarDetailConvertor.toEntity(detailRequest, null))
-                .toList();
-
-        return CalendarEntity.builder()
+    //먼저 entity 만들고
+    //그 후에, 각 CalendarDetailEntity(자식 엔티티)를 생성할 때 부모 엔티티를 함께 전달함
+    public CalendarEntity toEntity(CalendarRequest request, CompanyEntity company) {
+        CalendarEntity calendarEntity = CalendarEntity.builder()
                 .calDate(request.getDate())
-                .company(companyEntity)
-                .calendarDetailEntity(detailEntities)
+                .company(company)
                 .build();
+        List<CalendarDetailEntity> detailEntities = request.getDetails().stream()
+                .map(detailRequest -> calendarDetailConvertor.toEntity(detailRequest, calendarEntity))
+                .collect(Collectors.toCollection(ArrayList::new));
+        calendarEntity.setCalendarDetailEntity(detailEntities);
+        return calendarEntity;
     }
+
+
 
 
     public CalendarResponse toResponse(CalendarEntity entity) {
@@ -48,5 +52,6 @@ public class CalendarConvertor {
                 .details(detailResponses)
                 .build();
     }
+
 }
 

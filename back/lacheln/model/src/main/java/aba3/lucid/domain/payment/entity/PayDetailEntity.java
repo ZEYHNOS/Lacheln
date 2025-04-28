@@ -1,13 +1,12 @@
 package aba3.lucid.domain.payment.entity;
 
-import aba3.lucid.domain.product.entity.OptionDetailEntity;
-import aba3.lucid.domain.product.entity.OptionEntity;
-import aba3.lucid.domain.product.entity.ProductEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.math.BigInteger;
 
 @Getter
 @Entity
@@ -22,18 +21,23 @@ public class PayDetailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long payDetailId;
 
+    @JoinColumn(name = "pay_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private PayManagementEntity payManagement;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ProductEntity product;
+    // 옵션 이름
+    @Column(name = "pay_op_name", columnDefinition = "VARCHAR(30)", nullable = false)
+    private String payOpName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private OptionEntity option;
+    // 옵션 상세 이름
+    @Column(name = "pay_op_dt_name", columnDefinition = "VARCHAR(50)", nullable = false)
+    private String payOpDtName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private OptionDetailEntity optionDetail;
-
-    @Column(name = "pay_dt_quantity", columnDefinition = "INT")
+    // 수량
+    @Column(name = "pay_dt_quantity", nullable = false)
     private int payDtQuantity;
+
+    // 추가 금액
+    @Column(name = "pay_op_plus_cost", nullable = false)
+    private BigInteger payOpPlusCost;
 }

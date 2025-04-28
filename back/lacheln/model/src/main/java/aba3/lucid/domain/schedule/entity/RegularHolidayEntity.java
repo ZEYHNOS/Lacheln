@@ -4,12 +4,10 @@ import aba3.lucid.common.enums.HolidayWeek;
 import aba3.lucid.common.enums.Weekdays;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "regular_holiday")
 @AllArgsConstructor

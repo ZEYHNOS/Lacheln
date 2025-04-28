@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface WishListRepository extends JpaRepository<WishListEntity, Long> {
     List<WishListEntity> findAllByUsers_userId(String userId);
+    void deleteByProductIdAndUsers(Long productId, UsersEntity user);
 }

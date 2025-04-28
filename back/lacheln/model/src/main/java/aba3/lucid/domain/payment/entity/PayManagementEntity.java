@@ -1,16 +1,14 @@
 package aba3.lucid.domain.payment.entity;
 
 
-import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.coupon.entity.CouponEntity;
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,47 +26,33 @@ public class PayManagementEntity {
     @Column(name = "pay_id", columnDefinition = "VARCHAR(105)")
     private String payId;
 
-    // 업체
-    @JoinColumn(name = "cp_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private CompanyEntity company;
-
-    // 쿠폰
-    @JoinColumn(name = "coupon_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private CouponEntity coupon;
-
     // 사용자
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private UsersEntity user;
-
-    // 상품명
-    @Column(name = "pay_pd_name", columnDefinition = "VARCHAR(100)", nullable = false)
-    private String payPdName;
 
     // 결제 수단
     @Column(name = "pay_tool", columnDefinition = "VARCHAR(50)", nullable = false)
     private String payTool;
 
     // 원가
-    @Column(name = "pay_cost", nullable = false)
-    private BigInteger payCost;
+    @Column(name = "pay_total_price", nullable = false)
+    private BigInteger payTotalPrice;
 
     // 할인 금액
     @Column(name = "pay_dc_price", nullable = false)
-    private BigInteger payDcPrice;
+    private BigDecimal payDcPrice;
 
     // 상태
     @Column(name = "pay_status", columnDefinition = "VARCHAR(20)", nullable = false)
     private String payStatus;
 
     // 환불금액
-    @Column(name = "pay_refund_price", nullable = false)
+    @Column(name = "pay_refund_price")
     private BigInteger payRefundPrice;
 
     // 환불 금액
-    @Column(name = "pay_refund_date", nullable = false)
+    @Column(name = "pay_refund_date")
     private LocalDateTime payRefundDate;
 
     // 환불 일자
@@ -79,8 +63,12 @@ public class PayManagementEntity {
     @Column(name = "pay_imp_uid", columnDefinition = "VARCHAR(50)")
     private String payImpUid;
 
+    // 결제 일시
+    @Column(name = "paid_at", nullable = false)
+    private LocalDateTime paidAt;
+
     @JsonIgnore
-    @OneToMany(mappedBy = "payManagement", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "payManagement", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PayDetailEntity> payDetailEntityList;
 
 
@@ -88,5 +76,14 @@ public class PayManagementEntity {
         this.payStatus = "REFUND";
         this.payRefundDate = LocalDateTime.now();
     }
+
+    public void updatePayDetailEntityList(List<PayDetailEntity> payDetailEntityList) {
+        if (payDetailEntityList == null) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        this.payDetailEntityList = payDetailEntityList;
+    }
+
 
 }

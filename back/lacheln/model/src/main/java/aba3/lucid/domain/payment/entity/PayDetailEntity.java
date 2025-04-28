@@ -1,43 +1,61 @@
 package aba3.lucid.domain.payment.entity;
 
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Getter
 @Entity
 @Table(name = "pay_detail")
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Builder
 public class PayDetailEntity {
 
     @Id
-    @Column(name = "pay_detail_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long payDetailId;
+    private Long payDetailId;
 
     @JoinColumn(name = "pay_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private PayManagementEntity payManagement;
 
-    // 옵션 이름
-    @Column(name = "pay_op_name", columnDefinition = "VARCHAR(30)", nullable = false)
-    private String payOpName;
+    // 업체
+    @Column(name = "cp_id")
+    private Long cpId;
 
-    // 옵션 상세 이름
-    @Column(name = "pay_op_dt_name", columnDefinition = "VARCHAR(50)", nullable = false)
-    private String payOpDtName;
+    // 쿠폰
+    @Column(name = "coupon_id")
+    private Long couponId;
 
-    // 수량
-    @Column(name = "pay_dt_quantity", nullable = false)
-    private int payDtQuantity;
+    // 상품 이름
+    @Column(name = "pay_pd_name", nullable = false, columnDefinition = "VARCHAR(100)")
+    private String productName;
 
-    // 추가 금액
-    @Column(name = "pay_op_plus_cost", nullable = false)
-    private BigInteger payOpPlusCost;
+    // 가격
+    @Column(name = "pay_cost", nullable = false)
+    private BigInteger payCost;
+
+    // 할인된 가격
+    @Column(name = "pay_dc_price", nullable = false)
+    private BigInteger payDcPrice;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "payDetail", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PayDetailOptionEntity> payDetailOptionEntityList;
+
+    public void updatePayDetailOptionEntity(List<PayDetailOptionEntity> payDetailOptionEntityList) {
+        if (payDetailOptionEntityList == null) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        this.payDetailOptionEntityList = payDetailOptionEntityList;
+    }
+
 }

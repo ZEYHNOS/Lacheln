@@ -1,9 +1,11 @@
 package aba3.lucid.packages.service;
 
+import aba3.lucid.alert.service.CompanyAlertService;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.PackageErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
+import aba3.lucid.domain.alert.dto.CompanyAlertDto;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
@@ -28,6 +30,7 @@ import java.util.List;
 public class PackageService {
 
     private final ProductService productService;
+    private final CompanyAlertService companyAlertService;
 
     private final PackageRepository packageRepository;
     private final PackageToProductRepository packageToProductRepository;
@@ -35,7 +38,12 @@ public class PackageService {
     // 패키지 등록
     @Transactional
     public PackageEntity packageRegister(PackageEntity packageEntity) {
-        return packageRepository.save(packageEntity);
+        PackageEntity savedEntity = packageRepository.save(packageEntity);
+
+        // 알림 보내기
+        companyAlertService.sendAlertCompany(savedEntity);
+
+        return savedEntity;
     }
 
     // 패키지에 상품 등록하기

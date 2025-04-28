@@ -36,7 +36,6 @@ public class ProductConverter {
                 .id(entity.getPdId())
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
-                .status(entity.getPdStatus())
                 .imageUrl(entity.getImageList().get(0).getPdImageUrl())
                 .build()
                 ;

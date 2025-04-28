@@ -4,7 +4,9 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.alert.dto.CompanyAlertDto;
 import aba3.lucid.domain.alert.entity.CompanyAlertEntity;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyAlertRepository;
+import aba3.lucid.domain.packages.entity.PackageEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -58,11 +60,24 @@ public class CompanyAlertService {
     }
 
     // 업체에게 알림 보내기
-    public void sendAlertCompany(CompanyAlertDto... dtos) {
-        for (CompanyAlertDto dto : dtos) {
-            log.info("Producer : {}", dto);
+    public void sendAlertCompany(List<CompanyAlertDto> dtoList) {
+        for (CompanyAlertDto dto : dtoList) {
             rabbitTemplate.convertAndSend("company.exchange", "company", dto);
         }
+    }
+
+    public void sendAlertCompany(PackageEntity entity) {
+        List<CompanyEntity> companies = List.of(
+                entity.getPackAdmin(),
+                entity.getPackCompany1(),
+                entity.getPackCompany2()
+        );
+
+        List<CompanyAlertDto> alertDtoList = companies.stream()
+                .map(company -> CompanyAlertDto.invitationPackage(company, entity))
+                .toList();
+
+        sendAlertCompany(alertDtoList);
     }
 
 

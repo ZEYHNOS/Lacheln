@@ -6,6 +6,7 @@ import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.jwt.JwtTokenProvider;
 import aba3.lucid.user.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
@@ -104,7 +105,9 @@ public class AuthService {
     }
 
     // 각 Entity의 Respository에 접근하여 DB의 정보를 DROP하는 로직
+    @Transactional
     public void deleteUser(String userId) { userRepository.deleteById(userId); }
+    @Transactional
     public void deleteCompany(Long companyId) { companyRepository.deleteById(companyId); }
 
     // Access 토큰 재발급

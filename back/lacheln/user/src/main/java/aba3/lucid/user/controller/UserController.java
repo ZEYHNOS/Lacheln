@@ -27,7 +27,7 @@ public class UserController {
     }
 
     // 유저 업데이트 컨트롤러
-    @PostMapping("/update")
+    @PutMapping("/update")
     @Operation(summary = "소비자 갱신", description = "소비자 정보를 수정합니다.")
     public API<UserUpdateResponse> updateUser(
             @RequestBody UserUpdateRequest userUpdateRequest)   {

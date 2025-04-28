@@ -1,12 +1,12 @@
-package aba3.lucid.email.service;
+package aba3.lucid.common.codegenerator;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.util.Random;
 
-@Service
-public class EmailCodeService {
+@Component
+public class EmailCodeGenerator {
 
     // 6자리의 랜덤한 숫자만들기
     public String generateNumbericCode()    {

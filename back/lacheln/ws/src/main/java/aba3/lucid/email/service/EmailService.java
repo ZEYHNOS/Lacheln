@@ -1,5 +1,6 @@
 package aba3.lucid.email.service;
 
+import aba3.lucid.common.codegenerator.EmailCodeGenerator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -21,7 +22,7 @@ public class EmailService {
 
     private final UsersRepository usersRepository;
     private final CompanyRepository companyRepository;
-    private final EmailCodeService emailCodeService;
+    private final EmailCodeGenerator emailCodeGenerator;
     private final EmailVerificationRepository emailVerificationRepository;
     private final JavaMailSender mailSender;
 
@@ -62,7 +63,7 @@ public class EmailService {
 
     // 번호를 생성하고 Redis에 이메일을 key값, 코드를 Value값으로 가지는 정보 저장
     public String saveVerificationCode(String email)  {
-        String code = emailCodeService.generateNumbericCode();
+        String code = emailCodeGenerator.generateNumbericCode();
         emailVerificationRepository.saveVerificationCode(email, code);
         return code;
     }

@@ -24,7 +24,6 @@ public class PackageBusiness {
 
     private final PackageService packageService;
     private final CompanyService companyService;
-    private final CompanyAlertService companyAlertService;
 
     private final PackageConverter packageConverter;
 
@@ -42,11 +41,6 @@ public class PackageBusiness {
         packageEntity.setPackageInvitationCompanies(company1, company2);
 
         PackageEntity newEntity = packageService.packageRegister(packageEntity);
-
-        // 업체에게 알림 보내기
-        CompanyAlertDto dto1 = CompanyAlertDto.invitationPackage(company1, newEntity);
-        CompanyAlertDto dto2 = CompanyAlertDto.invitationPackage(company2, newEntity);
-        companyAlertService.sendAlertCompany(dto1, dto2);
 
         return packageConverter.toResponse(newEntity);
     }

@@ -16,11 +16,8 @@ public class ProductResponse {
     // 정렬을 위한 id
     private long id;
 
-    // 상품 가격
+    // 상품 이름
     private String name;
-
-    // 설명
-    private ProductStatus status;
 
     // 가격
     private BigInteger price;

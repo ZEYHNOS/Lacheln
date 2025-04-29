@@ -4,8 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,8 +19,4 @@ public class PostUpdateRequest {
 
     @NotBlank(message = "본문은 필수입니다.")
     private String postContent;
-
-    private List<String> imageUrls; // 새로 추가할 이미지 URL
-
-    private List<String> deleteImageUrls; // 삭제할 기존 이미지 URL
 }

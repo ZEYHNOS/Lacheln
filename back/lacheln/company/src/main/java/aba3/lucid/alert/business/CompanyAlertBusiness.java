@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -75,7 +74,7 @@ public class CompanyAlertBusiness {
     public void consume(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
-            // 🚀 JSON 변환 직접 수행
+            // JSON 변환 직접 수행
             CompanyAlertDto dto = objectMapper.readValue(message.getBody(), CompanyAlertDto.class);
             
             CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
@@ -86,7 +85,7 @@ public class CompanyAlertBusiness {
             // 정상 처리되었으므로 ACK
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
-            log.error("❌ Error processing message: {}", e.getMessage(), e);
+            log.error("Error processing message: {}", e.getMessage(), e);
 
             // 메시지를 다시 큐에 넣고 재시도하도록 설정
             channel.basicNack(deliveryTag, false, true);

@@ -1,19 +1,26 @@
 package aba3.lucid.payment.service;
 
+import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.cart.entity.CartEntity;
+import aba3.lucid.domain.payment.dto.PaymentVerifyRequest;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
+import aba3.lucid.domain.product.dto.ProductSnapshot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
+
+    private final CartService cartService;
 
     private final PayManagementRepository payManagementRepository;
 
@@ -56,4 +63,25 @@ public class PaymentService {
                 .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
     }
 
+    @Transactional
+    public Object verification(PaymentVerifyRequest request, String userId) {
+        // TODO 일정 확인하기
+        List<CartEntity> cartEntityList = cartService.findAllById(request.getCardIdList());
+
+        // 상품 스냅샷 검사하기
+        List<ProductSnapshot> productSnapshotList = cartEntityList.stream()
+                .map(ProductSnapshot::new)
+                .toList()
+                ;
+
+        // TODO RPC 패턴 사용하기
+
+        // 쿠폰 유효성 검사하기
+        // userId, couponIdList, productId, totalAmount
+
+
+        // 일정 블락 해주기
+
+        return null;
+    }
 }

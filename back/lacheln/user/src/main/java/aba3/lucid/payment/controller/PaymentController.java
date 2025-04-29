@@ -4,6 +4,7 @@ import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.payment.dto.PayManagementResponse;
 import aba3.lucid.domain.payment.dto.PaymentRequest;
+import aba3.lucid.domain.payment.dto.PaymentVerifyRequest;
 import aba3.lucid.payment.business.PaymentBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,16 @@ public class PaymentController {
         PayManagementResponse response = paymentBusiness.save(AuthUtil.getUserId(), request);
 
         return API.OK(response);
+    }
+
+    @PostMapping("/verify")
+    @Operation(summary = "결제 전 검증")
+    public API<String> paymentVerification(
+            @RequestBody PaymentVerifyRequest request
+    ) {
+        paymentBusiness.verification(request, AuthUtil.getUserId());
+
+        return null;
     }
 
 }

@@ -1,0 +1,29 @@
+package aba3.lucid.domain.payment.dto;
+
+import aba3.lucid.domain.product.dto.ProductCouponVerifyDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigInteger;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class PaymentVerifyRequest {
+
+    // 결제 검증을 위한 DTO
+
+    // 쿠폰함 ID
+    private List<Long> couponBoxIdList;
+
+    // 사용할려고 하는 마일리지 금액
+    private BigInteger mileage;
+
+    // 장바구니 ID 리스트
+    private List<Long> cardIdList;
+
+}

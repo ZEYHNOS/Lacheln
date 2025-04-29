@@ -17,13 +17,13 @@ public class CouponBoxEntity {
     @Id
     @Column(name = "coupon_box_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long couponBoxId;//쿠폰함ID
+    private Long couponBoxId;//쿠폰함ID
 
     @ManyToOne(fetch = FetchType.LAZY)
     private CouponEntity coupon;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private UsersEntity users;
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "coupon_status", columnDefinition = "CHAR(20)", nullable = false)

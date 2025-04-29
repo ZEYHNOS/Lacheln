@@ -9,13 +9,15 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.coupon.convertor.CouponConvertor;
 import aba3.lucid.domain.coupon.dto.CouponRequest;
 import aba3.lucid.domain.coupon.dto.CouponResponse;
+import aba3.lucid.domain.coupon.dto.CouponVerifyRequest;
 import aba3.lucid.domain.coupon.entity.CouponBoxEntity;
 import aba3.lucid.domain.coupon.entity.CouponEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
-import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Slf4j
 @Business
@@ -53,18 +55,18 @@ public class CouponBusiness {
 
 
     // 유저가 쿠폰 받기
-    public void claimCoupon(UsersEntity users, String couponId) {
-        Validator.throwIfNull(users, couponId);
+    public void claimCoupon(String userId, String couponId) {
+        Validator.throwIfNull(userId, couponId);
 
         CouponEntity coupon = couponService.findByIdWithThrow(couponId);
 
-        couponBoxService.claimCoupon(users, coupon);
+        couponBoxService.claimCoupon(userId, coupon);
     }
 
 
     // 유저가 쿠폰 사용
-    public void useCoupon(UsersEntity user, Long couponBoxId) {
-        Validator.throwIfNull(user, couponBoxId);
+    public void useCoupon(String userId, Long couponBoxId) {
+        Validator.throwIfNull(userId, couponBoxId);
 
         CouponBoxEntity couponBox = couponBoxService.findByIdWithThrow(couponBoxId);
 
@@ -105,6 +107,23 @@ public class CouponBusiness {
         // Entity -> DTO
         CouponEntity newCouponEntity = couponService.updateCoupon(coupon);
         return couponConvertor.toResponse(newCouponEntity);
+    }
+
+    // 사용자가 결제 전 쿠폰 유효성 확인하기
+    // TODO RabbitMQ 연결하기 RPC 스타일로
+    public void couponVerify(CouponVerifyRequest request) {
+        Validator.throwIfNull(request);
+
+        if (request.getCouponBoxIdList().isEmpty()) {
+            // TODO 응답값 넣기
+            return;
+        }
+
+        String userId = request.getUserId();
+        List<CouponBoxEntity> couponBoxEntityList = couponBoxService.findAllById(request.getCouponBoxIdList());
+        List<ProductEntity> productEntityList = productService.findAllById(request.getProductIdList());
+
+        couponService.verificationBeforePayment(userId, couponBoxEntityList, productEntityList);
     }
 
 }

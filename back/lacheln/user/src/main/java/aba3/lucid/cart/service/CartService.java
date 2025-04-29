@@ -25,6 +25,10 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
+    public List<CartEntity> findAllById(List<Long> cartId) {
+        return cartRepository.findAllById(cartId);
+    }
+
     // 장바구니 목록에서 제거
     @Transactional
     public void removeCart(String userId, Long cartId) {

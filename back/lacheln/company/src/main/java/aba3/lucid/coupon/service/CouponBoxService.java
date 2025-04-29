@@ -2,7 +2,6 @@ package aba3.lucid.coupon.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.CouponErrorCode;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.coupon.convertor.CouponBoxConverter;
 import aba3.lucid.domain.coupon.entity.CouponBoxEntity;
@@ -10,7 +9,6 @@ import aba3.lucid.domain.coupon.entity.CouponEntity;
 import aba3.lucid.domain.coupon.enums.CouponBoxStatus;
 import aba3.lucid.domain.coupon.repository.CouponBoxRepository;
 import aba3.lucid.domain.product.entity.ProductEntity;
-import aba3.lucid.domain.user.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,28 +28,28 @@ public class CouponBoxService {
 
 
     // 유저가 업체 쿠폰 등록하기
-    public void claimCoupon(UsersEntity user, CouponEntity coupon) {
+    public void claimCoupon(String userId, CouponEntity coupon) {
         // 유효기간 확인하기
         if (couponService.isNotCouponExpired(coupon)) {
             throw new ApiException(CouponErrorCode.EXPIRED_COUPON);
         }
 
         // 쿠폰을 가지고 있는지
-        if (doesUserOwnCoupon(user, coupon)) {
+        if (doesUserOwnCoupon(userId, coupon)) {
             throw new ApiException(CouponErrorCode.NO_COUPON_OWNERSHIP);
         }
 
         // 쿠폰 등록하기
-        CouponBoxEntity couponBox = couponBoxConverter.toEntity(coupon, user);
+        CouponBoxEntity couponBox = couponBoxConverter.toEntity(coupon, userId);
         couponBoxRepository.save(couponBox);
     }
 
     // 쿠폰을 사용한 상품 가격
-    public BigInteger getDiscountPrice(UsersEntity user, CouponBoxEntity couponBox, ProductEntity product) {
+    public BigInteger getDiscountPrice(String userId, CouponBoxEntity couponBox, ProductEntity product) {
         CouponEntity coupon = couponBox.getCoupon();
 
         // 사용자가 가지고 있는 쿠폰인지
-        if (!doesUserOwnCoupon(user, coupon)) {
+        if (!doesUserOwnCoupon(userId, coupon)) {
             throw new ApiException(CouponErrorCode.NO_COUPON_OWNERSHIP);
         }
 
@@ -98,10 +96,10 @@ public class CouponBoxService {
 
 
     // 유저의 쿠폰 리스트 가지고 오기
-    public List<CouponEntity> findAllByUserCouponList(UsersEntity user) {
-        Validator.throwIfNull(user);
+    public List<CouponEntity> findAllByUserCouponList(String userId) {
+        Validator.throwIfNull(userId);
 
-        List<CouponBoxEntity> couponBoxEntityList = couponBoxRepository.findAllByUsers_UserId(user.getUserId());
+        List<CouponBoxEntity> couponBoxEntityList = couponBoxRepository.findAllByUsers_UserId(userId);
 
         return couponBoxEntityList.stream()
                 .map(CouponBoxEntity::getCoupon)
@@ -110,8 +108,12 @@ public class CouponBoxService {
     }
 
     // 소비자가 소유하고 있는 쿠폰인지
-    public boolean doesUserOwnCoupon(UsersEntity user, CouponEntity coupon) {
-        return couponBoxRepository.existsByCoupon_CouponIdAndUsers_UserId(coupon.getCouponId(), user.getUserId());
+    public boolean doesUserOwnCoupon(String userId, CouponEntity coupon) {
+        return couponBoxRepository.existsByCoupon_CouponIdAndUsers_UserId(coupon.getCouponId(), userId);
+    }
+
+    public List<CouponBoxEntity> findAllById(List<Long> couponBoxIdList) {
+        return couponBoxRepository.findAllById(couponBoxIdList);
     }
 
     public CouponBoxEntity findByIdWithThrow(Long couponBoxId) {
@@ -120,4 +122,13 @@ public class CouponBoxService {
     }
 
 
+    public boolean isUserDoesNotOwnCoupon(String userId, List<CouponBoxEntity> couponBoxEntityList) {
+        for (CouponBoxEntity entity : couponBoxEntityList) {
+            if (!entity.getUserId().equals(userId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

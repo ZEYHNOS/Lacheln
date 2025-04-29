@@ -9,10 +9,10 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 @Converter
 public class CouponBoxConverter {
 
-    public CouponBoxEntity toEntity(CouponEntity coupon, UsersEntity users) {
+    public CouponBoxEntity toEntity(CouponEntity coupon, String userId) {
         return CouponBoxEntity.builder()
                 .coupon(coupon)
-                .users(users)
+                .userId(userId)
                 .couponStatus(CouponBoxStatus.UNUSED)
                 .build()
                 ;

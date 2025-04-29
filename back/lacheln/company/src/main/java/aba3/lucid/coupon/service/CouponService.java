@@ -2,20 +2,26 @@ package aba3.lucid.coupon.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.CouponErrorCode;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.coupon.entity.CouponBoxEntity;
 import aba3.lucid.domain.coupon.entity.CouponEntity;
+import aba3.lucid.domain.coupon.enums.CouponBoxStatus;
 import aba3.lucid.domain.coupon.repository.CouponRepository;
+import aba3.lucid.domain.product.entity.ProductEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
 @Service
 public class CouponService {
+
+    private final CouponBoxService couponBoxService;
 
     private final SecureRandom RANDOM;
 
@@ -24,15 +30,18 @@ public class CouponService {
     private final String CHARACTERS;
     private final int CODE_LENGTH;
 
+    // TODO 리팩토링하기
     public CouponService(SecureRandom RANDOM,
                          CouponRepository couponRepository,
                          @Value("${coupon.characters}") String CHARACTERS,
-                         @Value("${coupon.len}") int CODE_LENGTH
+                         @Value("${coupon.len}") int CODE_LENGTH,
+                         CouponBoxService couponBoxService
          ) {
         this.RANDOM = RANDOM;
         this.couponRepository = couponRepository;
         this.CHARACTERS = CHARACTERS;
         this.CODE_LENGTH = CODE_LENGTH;
+        this.couponBoxService = couponBoxService;
     }
 
 
@@ -91,4 +100,64 @@ public class CouponService {
         return sb.toString();
     }
 
+    // TODO 리팩토링
+    public void verificationBeforePayment(String userId, List<CouponBoxEntity> couponBoxEntityList, List<ProductEntity> productEntityList) {
+        // 쿠폰을 소유하고 있는지
+        if (couponBoxService.isUserDoesNotOwnCoupon(userId, couponBoxEntityList)) {
+            // TODO 소유하고 있지 않을 때
+
+        }
+
+        // 쿠폰 상태 확인
+        for (CouponBoxEntity couponBox : couponBoxEntityList) {
+            if (!couponBox.getCouponStatus().equals(CouponBoxStatus.UNUSED)) {
+                // 사용했거나 만료되었을 때 처리하기
+            }
+        }
+
+        // 쿠폰 유효기간 확인하기
+        List<CouponEntity> couponEntityList =couponBoxEntityList.stream()
+                .map(CouponBoxEntity::getCoupon)
+                .toList();
+
+        for (CouponEntity coupon : couponEntityList) {
+            if (isNotCouponExpired(coupon)) {
+                // TODO 유효기간이 지났을 때 처리하기
+            }
+        }
+
+        // 같은 업체에서 발행한 쿠폰을 2개 이상 사용하는가
+        Set<Long> companyIdSet = new HashSet<>();
+        for (CouponEntity coupon : couponEntityList) {
+            if (companyIdSet.add(coupon.getCompany().getCpId())) {
+                // 같은 업체의 쿠폰을 2개 이상 사용했을 때 처리하기
+            }
+        }
+
+        Set<Long> productCompanyIdSet = new HashSet<>();
+        for (ProductEntity product : productEntityList) {
+            productCompanyIdSet.add(product.getCompany().getCpId());
+        }
+
+        // 사용하는 쿠폰이 결제하려는 상품과 무관한 쿠폰일 때
+        for (Long id : companyIdSet) {
+            if (!productCompanyIdSet.contains(id)) {
+
+            }
+        }
+
+
+        // 쿠폰 최소 사용 금액인가
+        Map<CompanyEntity, BigInteger> amountMap = new HashMap<>();
+        for (ProductEntity product : productEntityList) {
+            amountMap.put(product.getCompany(), amountMap.getOrDefault(product.getCompany(), BigInteger.ZERO).add(product.getPdPrice()));
+        }
+
+        for (CouponEntity coupon : couponEntityList) {
+            BigInteger amount = amountMap.get(coupon.getCompany());
+            if (amount.compareTo(coupon.getCouponMinimumCost()) < 0) {
+
+            }
+        }
+    }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class CalendarRequest implements CalendarRequestIfs {
     @NotBlank(message = "캘린더 데이터가 필수 입럭값입니다")
     private LocalDate date;

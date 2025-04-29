@@ -29,10 +29,10 @@ public class RegularHolidayBusiness {
     public RegularHolidayResponse createHoliday(RegularHolidayRequest request,Long cpId) {
         CompanyEntity company = companyRepository.findById(cpId).orElseThrow(
                 () -> new ApiException(ErrorCode.NOT_FOUND,"업체를 찾을 수 없습니다." + cpId));
-        String weekdays = (request.getWeekdays() != null) ? request.getWeekdays() : "MON";
-        String week = (request.getWeek() != null) ? request.getWeek(): "TWO";
-        int days = (request.getDays() > 0) ? request.getDays() : 1;
-        int months = (request.getMonths() > 0) ? request.getMonths() : 1;
+        String weekdays = (request.getWeekdays() != null) ? (request.getWeekdays()) : "MON";
+        String week = (request.getWeek() != null) ? (request.getWeek()): "TWO";
+        int days = (request.getDays() > 0) ? (request.getDays()) : 1;
+        int months = (request.getMonths() > 0) ? (request.getMonths()) : 1;
 
         RegularHolidayRequest defaultRequest = new RegularHolidayRequest(weekdays, week, days, months);
         RegularHolidayEntity entity = regularHolidayConvertor.toEntity(defaultRequest, company);

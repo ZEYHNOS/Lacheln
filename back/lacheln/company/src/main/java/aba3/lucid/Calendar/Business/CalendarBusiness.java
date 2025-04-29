@@ -6,11 +6,9 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.enums.Color;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.calendar.convertor.CalendarConvertor;
 import aba3.lucid.domain.calendar.convertor.CalendarUpdateConvertor;
 import aba3.lucid.domain.calendar.dto.*;
-import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.calendar.repository.CalendarRepository;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -21,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +27,6 @@ import java.util.Optional;
 @Business
 @RequiredArgsConstructor
 public class CalendarBusiness {
-
     private final CalendarService calendarService;
     private final CalendarConvertor calendarConvertor;
     private final CompanyRepository companyRepository;
@@ -40,29 +36,37 @@ public class CalendarBusiness {
     public CalendarResponse createCalendar(CalendarRequest request, Long cpId) {
 
         CompanyEntity company = companyRepository.findById(cpId).orElseThrow(EntityNotFoundException::new);
-        CalendarEntity calendar = calendarConvertor.toEntity(request, company);
-
         LocalDate calDate = Optional.ofNullable(request.getDate())
                 .orElse(LocalDate.now());
-        request.setDate(calDate);
 
-        if(calendar.getCalendarDetailEntity() == null || calendar.getCalendarDetailEntity().isEmpty()) {
-            CalendarDetailEntity defaultDetail = CalendarDetailEntity.builder()
-                    .calendar(calendar)
-                    .calDtTitle("기본 일정")
-                    .calDtContent("일정")
-                    .calDtStart(calendar.getCalDate().atStartOfDay())
-                    .calDtEnd(calendar.getCalDate().atTime(LocalTime.MAX))
-                    .calDtColor(Color.BLUE)
-                    .calDtMemo("")
-                    .build();
-            calendar.getCalendarDetailEntity().add(defaultDetail);
-        }
+        // details 기본값: 없거나 빈 리스트면, 하나짜리 기본 일정 채워 넣기
+        List<CalendarDetailRequest> realDetails = Optional.ofNullable(request.getDetails())
+                .filter(dl -> !dl.isEmpty())
+                .orElseGet(() -> {
+                    CalendarDetailRequest def = CalendarDetailRequest.builder()
+                            .title("Basic")
+                            .content("Basic1.")
+                            .startTime(calDate.atStartOfDay())
+                            .endTime  (calDate.atTime(LocalTime.MAX))
+                            .color    (Color.BLUE)
+                            .memo     ("")
+                            .build();
+                    return List.of(def);
+                });
 
 //        CalendarEntity calendarEntity = calendarConvertor.toEntity(request,company);
+        //새 CalendarRequest 인스턴스 생성
+        CalendarRequest effectiveRequest = request.toBuilder()
+                .date   (calDate)
+                .details(realDetails)
+                .build();
 
-        CalendarEntity savedEntity = calendarService.createCalendar(calendar);
-        return calendarConvertor.toResponse(savedEntity);
+        // 새 CalendarRequest 인스턴스 생성
+        CalendarEntity calendar = calendarConvertor.toEntity(effectiveRequest, company);
+        CalendarEntity saved   = calendarService.createCalendar(calendar);
+
+        // Response
+        return calendarConvertor.toResponse(saved);
 
     }
 

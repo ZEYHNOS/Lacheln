@@ -8,13 +8,9 @@ import aba3.lucid.domain.calendar.dto.CalendarResponse;
 import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Collectors;
 
 

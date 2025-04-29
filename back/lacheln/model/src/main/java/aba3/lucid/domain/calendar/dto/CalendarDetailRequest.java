@@ -29,8 +29,10 @@ public class CalendarDetailRequest {
     @NotBlank(message = "마감 시간이 필수 입력값입나다")
     LocalDateTime endTime;
 
+    @Builder.Default
     private Color color = Color.BLUE;
 
-    private String memo;
+    @Builder.Default
+    private String memo = "";
 
 }

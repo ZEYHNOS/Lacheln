@@ -12,6 +12,7 @@ import aba3.lucid.domain.schedule.dto.WeekdaysScheduleResponse;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
 import aba3.lucid.domain.schedule.repository.TemporaryHolidayRepository;
 import aba3.lucid.domain.schedule.repository.WeekdaysScheduleRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
@@ -21,21 +22,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class WeekdaysScheduleBusiness {
     private final WeekdaysScheduleRepository weekdaysScheduleRepository;
     private final TemporaryHolidayRepository temporaryHolidayRepository;
     private final WeekdaysScheduleConvertor weekdaysScheduleConvertor;
     private final CompanyRepository companyRepository;
-
-    public WeekdaysScheduleBusiness(WeekdaysScheduleConvertor weekdaysScheduleConvertor,
-                                    WeekdaysScheduleRepository weekdaysScheduleRepository,
-                                    TemporaryHolidayRepository temporaryHolidayRepository,
-                                    CompanyRepository companyRepository) {
-        this.weekdaysScheduleRepository = weekdaysScheduleRepository;
-        this.weekdaysScheduleConvertor = weekdaysScheduleConvertor;
-        this.temporaryHolidayRepository = temporaryHolidayRepository;
-        this.companyRepository = companyRepository;
-    }
     public List<WeekdaysScheduleResponse> saveWeekdaysSchedule(WeekdaysScheduleRequest request, long cpId) {
         if(request == null) {
             throw  new ApiException(ErrorCode.BAD_REQUEST, "WeekdaysRequest 값을 못 받았습니다.");

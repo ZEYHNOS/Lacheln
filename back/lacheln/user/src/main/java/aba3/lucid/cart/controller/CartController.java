@@ -46,6 +46,13 @@ public class CartController {
     public API<String> deleteCart(
             @RequestBody CartDeleteRequest cartDeleteRequest
     )    {
-        return cartBusiness.deleteCart(AuthUtil.getUserId(), cartDeleteRequest);
+        return cartBusiness.deleteCart(cartDeleteRequest);
+    }
+
+    // 결제완료시 장바구니에서 제거
+    @DeleteMapping("/pay/success")
+    @Operation(summary = "사용자 장바구니 결제 완료시 상품 제거", description = "장바구니에 있는 상품들을 결제완료했을때 장바구니를 비웁니다.")
+    public API<String> paySuccess() {
+        return cartBusiness.deleteAllCart(AuthUtil.getUserId());
     }
 }

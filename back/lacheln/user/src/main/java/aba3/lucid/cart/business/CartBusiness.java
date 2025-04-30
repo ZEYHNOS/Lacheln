@@ -80,10 +80,14 @@ public class CartBusiness {
     }
     
     // 장바구니 상품제거
-    public API<String> deleteCart(String userId, CartDeleteRequest cartDeleteRequest)    {
-        for(Long cartId : cartDeleteRequest.getCartIds())    {
-            cartService.removeCart(userId, cartId);
-        }
+    public API<String> deleteCart(CartDeleteRequest cartDeleteRequest)    {
+        cartService.removeCart(cartDeleteRequest.getCartIds());
         return API.OK("장바구니 상품 제거 성공..");
+    }
+
+    // 장바구니 비우기
+    public API<String> deleteAllCart(String userId)  {
+        cartService.removeAllCart(userId);
+        return API.OK("장바구니 비우기 성공..");
     }
 }

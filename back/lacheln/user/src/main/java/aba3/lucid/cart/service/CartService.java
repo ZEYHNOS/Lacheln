@@ -29,9 +29,17 @@ public class CartService {
         return cartRepository.findAllById(cartId);
     }
 
-    // 장바구니 목록에서 제거
+    // 장바구니 목록 n개 제거
     @Transactional
-    public void removeCart(String userId, Long cartId) {
-        cartRepository.deleteByCartIdAndUsers_UserId(cartId, userId);
+    public void removeCart(List<Long> cartIds) {
+        for(Long id : cartIds) {
+            cartRepository.deleteByCartId(id);
+        }
+    }
+
+    // 장바구니 목록 전부 제거
+    @Transactional
+    public void removeAllCart(String userId) {
+        cartRepository.deleteAllByUsers_UserId(userId);
     }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Builder
 public class CartResponse {
+    private Long cartId;
     private Long productIds;
     private List<Long> productDetailIds;
 }

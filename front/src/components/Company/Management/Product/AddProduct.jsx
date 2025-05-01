@@ -14,75 +14,76 @@ function AddProduct() {
     const [color, setColor] = useState("WHITE");
     const [price, setPrice] = useState("");
     const [status, setStatus ] = useState("ACTIVE")
-    const [task_time, settask_time] = useState("2시간 대여");
+    const [task_time, settask_time] = useState(120);
     const [indoor, setIndoor] = useState(true);
     const [outdoor, setOutdoor] = useState(false);
     const [images, setImages] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
     const [selectedImage, setSelectedImage] = useState(images.length > 0 ? images[0] : null);
     const [options, setOptions] = useState([]);
-    const [categoryCode, setCategoryCode] = useState({});
+    const [categoryCode, setCategoryCode] = useState("");
     const writeRef = useRef();
 
 
     // product/add 페이지를 열때 백엔드에서 카테고리를 불러옴
-    // useEffect(() => {
-    //     axios.get("/api/product/category")
-    //         .then(res => {
-    //             const code = res.data.cp_category;
-    //             setCategoryCode(code);
+    useEffect(() => {
+        axios.get("http://172.18.1.223:5050/company/category")
+            .then(res => {
+                const category = res.data;
+                setCategoryCode(category);
 
-    //             if (code === "d") {
-    //                 axios.get("/api/product/sizes")
-    //                     .then(sizeRes => {
-    //                         const sizeList = sizeRes.data.size_list || [];
-    //                         const sizeOption = {
-    //                             title: "사이즈",
-    //                             isRequired: false,
-    //                             isMultiSelect: false,
-    //                             details: sizeList.map(s => ({
-    //                                 name: s.size,
-    //                                 stock: s.stock,
-    //                                 extraPrice: s.plus_cost,
-    //                                 extraTime: ""
-    //                             }))
-    //                         };
-    //                         setOptions([sizeOption]);
-    //                     })
-    //                     .catch(err => console.error("사이즈 불러오기 실패", err));
-    //             }
-    //         })
-    //         .catch(err => console.error("카테고리 불러오기 실패", err));
-    // }, []);
+                if (category  === "D") {
+                    const sizeList = [
+                        { size: "S"},
+                        { size: "M"},
+                        { size: "L"}
+                    ];
+            
+                    const sizeOption = {
+                        title: "사이즈",
+                        isRequired: false,
+                        isMultiSelect: false,
+                        details: sizeList.map(s => ({
+                            name: s.size,
+                            stock: s.stock,
+                            extraPrice: s.plus_cost,
+                            extraTime: ""
+                        }))
+                    };
+            
+                    setOptions([sizeOption]);
+                }
+            })
+            .catch(err => console.error("카테고리 불러오기 실패", err));
+    }, []);
 
     // 백엔드 요청 대신 하드코딩된 더미 코드 사용 -> 삭제예정
-    useEffect(() => {
-        const code = "m"; // 드레스라고 가정
-        setCategoryCode(code);
+    // useEffect(() => {
+    //     const code = "m"; // 드레스라고 가정
+    //     setCategoryCode(code);
     
-        if (code === "d") {
-            // 사이즈 옵션용 기본 더미 데이터
-            const sizeList = [
-                { size: "S"},
-                { size: "M"},
-                { size: "L"}
-            ];
+    //     if (code === "d") {
+    //         const sizeList = [
+    //             { size: "S"},
+    //             { size: "M"},
+    //             { size: "L"}
+    //         ];
     
-            const sizeOption = {
-                title: "사이즈",
-                isRequired: false,
-                isMultiSelect: false,
-                details: sizeList.map(s => ({
-                    name: s.size,
-                    stock: s.stock,
-                    extraPrice: s.plus_cost,
-                    extraTime: ""
-                }))
-            };
+    //         const sizeOption = {
+    //             title: "사이즈",
+    //             isRequired: false,
+    //             isMultiSelect: false,
+    //             details: sizeList.map(s => ({
+    //                 name: s.size,
+    //                 stock: s.stock,
+    //                 extraPrice: s.plus_cost,
+    //                 extraTime: ""
+    //             }))
+    //         };
     
-            setOptions([sizeOption]);
-        }
-    }, []);
+    //         setOptions([sizeOption]);
+    //     }
+    // }, []);
 
     // 옵션 추가
     const handleAddOption = () => {
@@ -108,14 +109,15 @@ function AddProduct() {
             files = Array.from(event.target.files);
         }
     
-        const imageURLs = files.map(file => URL.createObjectURL(file));
-        const newImageList = [...images, ...imageURLs];
+        const newImageList = files.map(file => ({
+            file, // 실제 전송용
+            previewUrl: URL.createObjectURL(file), 
+        }));
     
-        setImages(newImageList);
+        setImages(prev => [...prev, ...newImageList]);
     
-        // 이미지가 처음 등록됐을 때, 대표 이미지 자동 설정
-        if (!selectedImage && imageURLs.length > 0) {
-            setSelectedImage(imageURLs[0]);
+        if (!selectedImage && newImageList.length > 0) {
+            setSelectedImage(newImageList[0].previewUrl);
         }
     
         setIsDragging(false);
@@ -124,76 +126,97 @@ function AddProduct() {
     const handleChangeStatus = (event) => {
         setStatus(event.target.value);
     };
+
+    //이미지 처리(formdata 파일을 백엔드로 보내야함) 
+    const uploadImages = async () => {
+        const formData = new FormData();
+        images.forEach((img) => formData.append("image", img.file)); 
     
+        try {
+            const res = await axios.post("http://172.18.1.223:5050/product/image/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+            console.log("🟢 업로드 응답:", res.data);
+            return res.data.urls; 
+        } catch (err) {
+            console.error("이미지 업로드 실패", err);
+            return [];
+        }
+    };
+
     // 백엔드 전송 코드 
-    const handleSubmit = () => {
-        // 상품 상세설명 추출해서 배열처리함
+    const handleSubmit = async () => {
+        // // 1. 이미지 업로드 (FormData)
+        // const imageUrls = await uploadImages();
+
+        // 2. payload 구성
         const descriptionArray = writeRef.current?.getContentAsJsonArray();
-        const payload = {
+        const data = {
             name,
             price: parseInt(price || 0),
             status,
             rec: rec ? "Y" : "N",
             task_time: parseInt(task_time),
-            description: JSON.stringify(descriptionArray),
-            image_url_list: images,
+            description: JSON.stringify(descriptionArray || []),
+            // image_url_list: imageUrls, 
             hash_tag_list: [],
             in_available: indoor ? "Y" : "N",
             out_available: outdoor ? "Y" : "N",
             color,
         };
 
-    // ✅ 주소 설정
-    let postUrl = "";
-    if (categoryCode === "d") {
-        postUrl = "/api/product/dress/register";
-        payload.size_list = options[0].details.map(detail => ({
-        size: detail.name,
-        stock: parseInt(detail.stock || 0),
-        plus_cost: parseInt(detail.extraPrice || 0)
-        }));
-        payload.option_list = options.slice(1).map(opt => ({
-        name: opt.title,
-        overlap: opt.isMultiSelect ? "Y" : "N",
-        essential: opt.isRequired ? "Y" : "N",
-        status: "ACTIVE",
-        option_dt_list: opt.details.map(dt => ({
-            op_dt_name: dt.name,
-            plus_cost: parseInt(dt.extraPrice || 0),
-            plus_time: parseInt(dt.extraTime || 0)
-        }))
-        }));
-    } else if (categoryCode === "s") {
-        postUrl = "/api/product/studio/register";
-    } else if (categoryCode === "m") {
-        postUrl = "/api/product/makeup/register";
-    }
-    
-    // ✅ 스튜디오 / 메이크업은 option_list만
-    if (categoryCode !== "d") {
-        payload.option_list = options.map(opt => ({
-        name: opt.title,
-        overlap: opt.isMultiSelect ? "Y" : "N",
-        essential: opt.isRequired ? "Y" : "N",
-        status: "ACTIVE",
-        option_dt_list: opt.details.map(dt => ({
-            op_dt_name: dt.name,
-            plus_cost: parseInt(dt.extraPrice || 0),
-            plus_time: parseInt(dt.extraTime || 0)
-        }))
-        }));
-    }
-    
-    // ✅ 전송
-    axios.post(postUrl, payload)
-        .then(res => {
-        console.log("등록 성공", res.data);
-        // 필요 시 navigate("/product/list")
-        })
-        .catch(err => {
-        console.error("등록 실패", err);
-        });
+        // 3. 옵션 구성
+        let postUrl = "";
+        if (categoryCode  === "D") {
+            postUrl = "/api/product/dress/register";
+            data.size_list = options[0].details.map(detail => ({
+                size: detail.name,
+                stock: parseInt(detail.stock || 0),
+                plus_cost: parseInt(detail.extraPrice || 0)
+            }));
+            data.option_list = options.slice(1).map(opt => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                option_dt_list: opt.details.map(dt => ({
+                    op_dt_name: dt.name,
+                    plus_cost: parseInt(dt.extraPrice || 0),
+                    plus_time: parseInt(dt.extraTime || 0)
+                }))
+            }));
+        } else if (categoryCode  === "S") {
+            postUrl = "/api/product/studio/register";
+        } else if (categoryCode  === "M") {
+            postUrl = "/api/product/makeup/register";
+        }
+
+        if (categoryCode  !== "D") {
+            data.option_list = options.map(opt => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                option_dt_list: opt.details.map(dt => ({
+                    op_dt_name: dt.name,
+                    plus_cost: parseInt(dt.extraPrice || 0),
+                    plus_time: parseInt(dt.extraTime || 0)
+                }))
+            }));
+        }
+        
+        // 4. 상품 등록 JSON 전송
+        console.log("최종 전송할 data:", data);
+        axios.post(`http://172.18.1.223:5050/product/dress/register`, data)
+            .then(res => {
+                console.log("등록 성공", res.data);
+                navigate("/product/list");
+            })
+            .catch(err => {
+                console.error("등록 실패", err);
+            });
     };
+
 
     return (
         <div className="w-full max-w-6xl mx-auto p-6 bg-white text-black rounded-md">
@@ -201,6 +224,7 @@ function AddProduct() {
 
             <div className="flex items-start space-x-6">
                 <div className="w-1/3 p-2">
+                    {/* 대표 이미지 */}
                     <div className="border rounded-lg overflow-hidden bg-gray-100 w-full h-96">
                         {selectedImage ? (
                             <img src={selectedImage} alt="대표 이미지" className="w-full h-full object-cover" />
@@ -210,15 +234,15 @@ function AddProduct() {
                             </div>
                         )}
                     </div>
-
+                    {/* 이미지 미리보기 */}
                     <div className="mt-4 flex space-x-2 overflow-x-auto max-w-full p-1 custom-scrollbar">
                         {images.map((img, index) => (
                             <img 
-                                key={index} 
-                                src={img} 
-                                alt={`업로드된 이미지 ${index}`} 
-                                className="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-[#845EC2] flex-shrink-0" 
-                                onClick={() => setSelectedImage(img)} 
+                            key={index}
+                            src={img.previewUrl}  // ✅ 수정 포인트
+                            alt={`업로드된 이미지 ${index}`} 
+                            className="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-[#845EC2] flex-shrink-0" 
+                            onClick={() => setSelectedImage(img.previewUrl)}  // ✅ 대표 이미지도 바꿔야 함
                             />
                         ))}
                     </div>

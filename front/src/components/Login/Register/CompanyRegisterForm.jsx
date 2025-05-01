@@ -35,6 +35,7 @@ export default function CompanyRegisterForm() {
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [emailTimer, setEmailTimer] = useState(0);
   const emailTimerRef = useRef(null);
+  const [selectedCategory, setSelectedCategory] = useState('드레스');
 
   useEffect(() => {
     validateForm();
@@ -110,6 +111,19 @@ export default function CompanyRegisterForm() {
     setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
+  const categoryMap = {
+    스튜디오: 'S',
+    드레스: 'D',
+    메이크업: 'M',
+  };
+
+  const categories = Object.keys(categoryMap);
+  
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    const categoryCode = categoryMap[category];
+  };
+
   const handleRegister = async () => {
     if (!isFormValid) {
         alert("모든 필수 항목을 올바르게 입력해주세요.");
@@ -127,7 +141,7 @@ export default function CompanyRegisterForm() {
         address,
         postalCode,
         profile: "default-profile-image.jpg", // 기본 프로필 이미지 또는 파일 경로
-        category: "S", // 기본 카테고리 값
+        category,
         status: "ACTIVATE",   // 기본 상태 값
         role: "USER"        // 기본 역할 값
     };
@@ -439,6 +453,26 @@ export default function CompanyRegisterForm() {
               {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
           ))}
+          
+          {/* 카테고리 선택창 */}
+        <div className="mt-4 space-y-4">
+          <h3 className="text-lg font-semibold">카테고리 선택</h3>
+          <div className="flex space-x-4">
+            {categories.map((category) => (
+              <button
+                key={category}
+                className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+                  selectedCategory === category
+                    ? 'bg-purple-500 text-white border border-purple-500 focus:outline-none'
+                    : 'bg-white text-black border border-gray-300 hover:bg-blue-500 hover:text-white focus:outline-none'
+                }`}
+                onClick={() => handleCategorySelect(category)}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
 
           {/* 전화번호 버튼  */}
           <div>

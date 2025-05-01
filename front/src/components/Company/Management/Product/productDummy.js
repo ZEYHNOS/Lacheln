@@ -14,6 +14,7 @@ import dmp11 from "../../../../image/dummydata/weddingdress11.jpg";
 const productDummy = [
     {
         id: "1",
+        category: "D",
         name: "드레스 22호 (흰)",
         price: 100000,
         status: "ACTIVE",
@@ -35,6 +36,18 @@ const productDummy = [
         `,
         option_list: [
         {
+            name: "사이즈",
+            overlap: "N",
+            essential: "Y",
+            status: "ACTIVE",
+            option_dt_list: [
+            { op_dt_name: "small", plus_cost: 50000 },
+            { op_dt_name: "midium", plus_cost: 50000 },
+            { op_dt_name: "large", plus_cost: 50000 },
+            { op_dt_name: "x-larg", plus_cost: 100000 }
+            ]
+        },
+        {
             name: "추가 대여",
             overlap: "N",
             essential: "N",
@@ -48,6 +61,7 @@ const productDummy = [
     },
     {
         id: "2",
+        category: "D",
         name: "드레스 23호 (핑크)",
         price: 120000,
         status: "ACTIVE",
@@ -82,6 +96,7 @@ const productDummy = [
     },
     {
         id: "3",
+        category: "D",
         name: "드레스 24호 (블루)",
         price: 130000,
         status: "ACTIVE",
@@ -116,6 +131,7 @@ const productDummy = [
     },
     {
         id: "4",
+        category: "D",
         name: "드레스 25호 (레드)",
         price: 140000,
         status: "INACTIVE",
@@ -130,6 +146,7 @@ const productDummy = [
     },
     {
         id: "5",
+        category: "D",
         name: "드레스 26호 (옐로우)",
         price: 150000,
         status: "INACTIVE",
@@ -144,6 +161,7 @@ const productDummy = [
     },
     {
         id: "6",
+        category: "D",
         name: "드레스 27호 (퍼플링)",
         price: 160000,
         status: "INACTIVE",
@@ -158,6 +176,7 @@ const productDummy = [
     },
     {
         id: "7",
+        category: "D",
         name: "드레스 22호 (블랙)",
         price: 300000,
         status: "PACKAGE",
@@ -172,6 +191,7 @@ const productDummy = [
     },
     {
         id: "8",
+        category: "D",
         name: "드레스 22호 (베이지)",
         price: 350000,
         status: "PACKAGE",

@@ -1,86 +1,86 @@
-package aba3.lucid.config;
+    package aba3.lucid.config;
 
-import aba3.lucid.domain.company.repository.CompanyRepository;
-import aba3.lucid.domain.user.repository.UsersRepository;
-import aba3.lucid.filter.CustomUsernamePasswordAuthenticationFilter;
-import aba3.lucid.handler.OAuth2LoginFailureHandler;
-import aba3.lucid.handler.OAuth2LoginSuccessHandler;
-import aba3.lucid.jwt.JwtAuthenticationFilter;
-import aba3.lucid.service.AuthService;
-import aba3.lucid.service.OAuth2UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
+    import aba3.lucid.domain.company.repository.CompanyRepository;
+    import aba3.lucid.domain.user.repository.UsersRepository;
+    import aba3.lucid.filter.CustomUsernamePasswordAuthenticationFilter;
+    import aba3.lucid.handler.OAuth2LoginFailureHandler;
+    import aba3.lucid.handler.OAuth2LoginSuccessHandler;
+    import aba3.lucid.jwt.JwtAuthenticationFilter;
+    import aba3.lucid.service.AuthService;
+    import aba3.lucid.service.OAuth2UserService;
+    import lombok.RequiredArgsConstructor;
+    import org.springframework.context.annotation.Bean;
+    import org.springframework.context.annotation.Configuration;
+    import org.springframework.security.authentication.AuthenticationManager;
+    import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+    import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+    import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+    import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+    import org.springframework.security.config.http.SessionCreationPolicy;
+    import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+    import org.springframework.security.web.SecurityFilterChain;
+    import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+    import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.List;
+    import java.util.List;
 
-@Configuration
-@EnableWebSecurity
-@RequiredArgsConstructor
-public class SecurityConfig {
+    @Configuration
+    @EnableWebSecurity
+    @RequiredArgsConstructor
+    public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final OAuth2UserService Oauth2UserService;
-    private final OAuth2LoginSuccessHandler Oauth2LoginSuccessHandler;
-    private final OAuth2LoginFailureHandler Oauth2LoginFailureHandler;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final OAuth2UserService Oauth2UserService;
+        private final OAuth2LoginSuccessHandler Oauth2LoginSuccessHandler;
+        private final OAuth2LoginFailureHandler Oauth2LoginFailureHandler;
 
-    // ROLE(소비자, 업체, 일반사용자)에 따라 접근 가능한 URL들을 저장하는 리스트
-    private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/email/send", "/email/verify", "/static/**", "/bear.png", "/**"};
-    private final String[] roleUser = {"/user/**", "/board/**"};
-    private final String[] roleCompany = {"/company/**", "/product/**"};
+        // ROLE(소비자, 업체, 일반사용자)에 따라 접근 가능한 URL들을 저장하는 리스트
+        private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/email/send", "/email/verify", "/static/**", "/bear.png", "/**"};
+        private final String[] roleUser = {"/user/**", "/board/**"};
+        private final String[] roleCompany = {"/company/**", "/product/**"};
 
-    // Http 요청을 가로채어 인증진행
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager, AuthService authService, UsersRepository usersRepository, CompanyRepository companyRepository) throws Exception {
-        CustomUsernamePasswordAuthenticationFilter customFilter = new CustomUsernamePasswordAuthenticationFilter(authenticationManager, companyRepository, usersRepository, authService);
-        http
-                .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
-                .cors(cors -> cors.configurationSource(request -> { // TODO AbstractHtt pConfigurer::disable
-                    CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:3000")); // TODO List.of("http://localhost:3000", "http://localhost:5050") <-- 넣어야함
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    config.setAllowedHeaders(List.of("*"));
-                    config.setAllowCredentials(true);
-                    return config;
-                })) // CORS 설정진행
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(permitAlls).permitAll()
-                        .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
-                        .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
-                        .anyRequest().permitAll()
-                ) // ROLE에 따른 접근 권한 설정
-                .formLogin(form -> form.loginProcessingUrl("/login")) // /login에 대한 요청이 들어오면 로그인 로직 실행
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-                        .userService(Oauth2UserService))
-                        .successHandler(Oauth2LoginSuccessHandler)
-                        .failureHandler(Oauth2LoginFailureHandler)) // OAuth로그인 진행 설정
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class) // 사용자 인증에 대한 로직실행
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 토큰에 대한 인증 실행
-        return http.build();
+        // Http 요청을 가로채어 인증진행
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager, AuthService authService, UsersRepository usersRepository, CompanyRepository companyRepository) throws Exception {
+            CustomUsernamePasswordAuthenticationFilter customFilter = new CustomUsernamePasswordAuthenticationFilter(authenticationManager, companyRepository, usersRepository, authService);
+            http
+                    .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
+                    .cors(cors -> cors.configurationSource(request -> { // TODO AbstractHtt pConfigurer::disable
+                        CorsConfiguration config = new CorsConfiguration();
+                        config.setAllowedOrigins(List.of("http://localhost:3000")); // TODO List.of("http://localhost:3000", "http://localhost:5050") <-- 넣어야함
+                        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                        config.setAllowedHeaders(List.of("*"));
+                        config.setAllowCredentials(true);
+                        return config;
+                    })) // CORS 설정진행
+                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
+                    .authorizeHttpRequests(auth -> auth
+                            .requestMatchers(permitAlls).permitAll()
+                            .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
+                            .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
+                            .anyRequest().permitAll()
+                    ) // ROLE에 따른 접근 권한 설정
+                    .formLogin(form -> form.loginProcessingUrl("/login")) // /login에 대한 요청이 들어오면 로그인 로직 실행
+                    .oauth2Login((oauth2) -> oauth2
+                            .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
+                            .userService(Oauth2UserService))
+                            .successHandler(Oauth2LoginSuccessHandler)
+                            .failureHandler(Oauth2LoginFailureHandler)) // OAuth로그인 진행 설정
+                    .httpBasic(AbstractHttpConfigurer::disable)
+                    .addFilterAt(customFilter, UsernamePasswordAuthenticationFilter.class) // 사용자 인증에 대한 로직실행
+                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 토큰에 대한 인증 실행
+            return http.build();
+        }
+
+        // authencticationManager Bean주입
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+            return authenticationConfiguration.getAuthenticationManager();
+        }
+
+        // 암호화 모듈 Bean 주입
+        @Bean
+        public BCryptPasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
     }
-
-    // authencticationManager Bean주입
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    // 암호화 모듈 Bean 주입
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-}

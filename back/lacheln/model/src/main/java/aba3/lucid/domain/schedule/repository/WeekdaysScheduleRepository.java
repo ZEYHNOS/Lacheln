@@ -2,6 +2,7 @@ package aba3.lucid.domain.schedule.repository;
 
 
 import aba3.lucid.common.enums.Weekdays;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,8 @@ public interface WeekdaysScheduleRepository extends JpaRepository<WeekdaysSchedu
     //특정 회사 + 특정 요일 스케줄 조회
     Optional<WeekdaysScheduleEntity> findByCompany_CpIdAndWsWeekdays(Long cpId, Weekdays weekdays );
     Optional<WeekdaysScheduleEntity> findByWsId(Long wsId);
+
+
+    void deleteByWsId(Long wsId);
+    List<WeekdaysScheduleEntity> findByWsWeekdays(Weekdays wsWeekdays);
 }

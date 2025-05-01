@@ -1,9 +1,13 @@
 package aba3.lucid.domain.schedule.dto;
 
+import aba3.lucid.common.enums.Weekdays;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,9 +22,9 @@ public class WeekdaysScheduleRequest {
     @AllArgsConstructor
     @Builder
     public static class DayScheduleDto {
-        private String weekday;
-        private String start;
-        private String end;
+        private Weekdays weekday;
+        private LocalDateTime start;
+        private LocalDateTime end;
     }
 
 

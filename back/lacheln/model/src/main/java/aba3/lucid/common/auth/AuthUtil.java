@@ -14,6 +14,7 @@ public class AuthUtil {
         log.info("auth , {}", auth);
         log.info("auth.isAuthenticated, {}", auth.isAuthenticated());
         log.info("auth instanceof CustomAuthenticationToken, {}", auth instanceof CustomAuthenticationToken);
+        log.info("auth.getClass() {}", auth.getClass());
         if(auth.isAuthenticated()) {
             assert auth instanceof CustomAuthenticationToken;
             return (CustomAuthenticationToken) auth;

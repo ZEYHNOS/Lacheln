@@ -1,8 +1,8 @@
 package aba3.lucid.filter;
 
+import aba3.lucid.common.auth.CustomAuthenticationToken;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.config.CustomAuthenticationToken;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;

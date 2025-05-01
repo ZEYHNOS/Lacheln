@@ -5,7 +5,6 @@ import aba3.lucid.common.status_code.CouponErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.coupon.entity.CouponBoxEntity;
 import aba3.lucid.domain.coupon.entity.CouponEntity;
-import aba3.lucid.domain.coupon.enums.CouponBoxStatus;
 import aba3.lucid.domain.coupon.repository.CouponRepository;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -22,6 +20,7 @@ import java.util.*;
 public class CouponService {
 
     private final CouponBoxService couponBoxService;
+    private final CouponVerificationService couponVerificationService;
 
     private final SecureRandom RANDOM;
 
@@ -35,13 +34,15 @@ public class CouponService {
                          CouponRepository couponRepository,
                          @Value("${coupon.characters}") String CHARACTERS,
                          @Value("${coupon.len}") int CODE_LENGTH,
-                         CouponBoxService couponBoxService
+                         CouponBoxService couponBoxService,
+                         CouponVerificationService couponVerificationService
          ) {
         this.RANDOM = RANDOM;
         this.couponRepository = couponRepository;
         this.CHARACTERS = CHARACTERS;
         this.CODE_LENGTH = CODE_LENGTH;
         this.couponBoxService = couponBoxService;
+        this.couponVerificationService = couponVerificationService;
     }
 
 
@@ -77,13 +78,6 @@ public class CouponService {
     }
 
 
-
-    // 유효기간을 지난 쿠폰인지
-    public boolean isNotCouponExpired(CouponEntity coupon) {
-        return coupon.getCouponExpirationDate().isBefore(LocalDateTime.now());
-    }
-
-
     // Id를 통해 쿠폰 찾기
     public CouponEntity findByIdWithThrow(String couponId) {
         return couponRepository.findById(couponId)
@@ -101,63 +95,30 @@ public class CouponService {
     }
 
     // TODO 리팩토링
+    // 결제 전 사용하는 쿠폰 검증
     public void verificationBeforePayment(String userId, List<CouponBoxEntity> couponBoxEntityList, List<ProductEntity> productEntityList) {
         // 쿠폰을 소유하고 있는지
-        if (couponBoxService.isUserDoesNotOwnCoupon(userId, couponBoxEntityList)) {
-            // TODO 소유하고 있지 않을 때
+        couponBoxService.throwIfNotCouponOwnerByBox(userId, couponBoxEntityList);
 
-        }
+        // 쿠폰을 사용했는지
+        couponVerificationService.throwIfCouponUsedOrExpired(couponBoxEntityList);
 
-        // 쿠폰 상태 확인
-        for (CouponBoxEntity couponBox : couponBoxEntityList) {
-            if (!couponBox.getCouponStatus().equals(CouponBoxStatus.UNUSED)) {
-                // 사용했거나 만료되었을 때 처리하기
-            }
-        }
-
-        // 쿠폰 유효기간 확인하기
         List<CouponEntity> couponEntityList =couponBoxEntityList.stream()
                 .map(CouponBoxEntity::getCoupon)
                 .toList();
 
-        for (CouponEntity coupon : couponEntityList) {
-            if (isNotCouponExpired(coupon)) {
-                // TODO 유효기간이 지났을 때 처리하기
-            }
-        }
+        // 쿠폰 유효기간 확인하기
+        couponVerificationService.throwIfCouponExpired(couponEntityList);
 
         // 같은 업체에서 발행한 쿠폰을 2개 이상 사용하는가
-        Set<Long> companyIdSet = new HashSet<>();
-        for (CouponEntity coupon : couponEntityList) {
-            if (companyIdSet.add(coupon.getCompany().getCpId())) {
-                // 같은 업체의 쿠폰을 2개 이상 사용했을 때 처리하기
-            }
-        }
+        Set<Long> companyIdSet = couponVerificationService.companyIdSetThrowIfCompanyDuplicated(couponEntityList);
 
-        Set<Long> productCompanyIdSet = new HashSet<>();
-        for (ProductEntity product : productEntityList) {
-            productCompanyIdSet.add(product.getCompany().getCpId());
-        }
 
-        // 사용하는 쿠폰이 결제하려는 상품과 무관한 쿠폰일 때
-        for (Long id : companyIdSet) {
-            if (!productCompanyIdSet.contains(id)) {
-
-            }
-        }
+        // 해당 상품 리스트에서 적용이 불가능한 상품이 존재하는 지
+        couponVerificationService.throwIfCouponNotApplicableToProduct(companyIdSet, productEntityList);
 
 
         // 쿠폰 최소 사용 금액인가
-        Map<CompanyEntity, BigInteger> amountMap = new HashMap<>();
-        for (ProductEntity product : productEntityList) {
-            amountMap.put(product.getCompany(), amountMap.getOrDefault(product.getCompany(), BigInteger.ZERO).add(product.getPdPrice()));
-        }
-
-        for (CouponEntity coupon : couponEntityList) {
-            BigInteger amount = amountMap.get(coupon.getCompany());
-            if (amount.compareTo(coupon.getCouponMinimumCost()) < 0) {
-
-            }
-        }
+        couponVerificationService.throwIfBelowCouponMinimumCost(couponEntityList, productEntityList);
     }
 }

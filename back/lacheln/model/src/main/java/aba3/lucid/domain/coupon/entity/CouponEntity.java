@@ -27,10 +27,6 @@ public class CouponEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private CompanyEntity company;
 
-    @JoinColumn(name = "pd_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ProductEntity product;
-
     @Column(name = "coupon_name", length = 50, nullable = false)
     private String couponName; //쿠폰이름
 

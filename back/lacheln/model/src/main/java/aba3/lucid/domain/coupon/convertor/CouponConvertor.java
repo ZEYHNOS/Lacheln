@@ -10,7 +10,7 @@ import aba3.lucid.domain.product.entity.ProductEntity;
 @Converter
 public class CouponConvertor {
 
-    public CouponEntity toEntity(CouponRequest request, CompanyEntity company, ProductEntity product) {
+    public CouponEntity toEntity(CouponRequest request, CompanyEntity company) {
         return CouponEntity.builder()
                 .couponName(request.getName())
                 .couponContent(request.getContent())
@@ -20,7 +20,6 @@ public class CouponConvertor {
                 .couponCreateDate(request.getCreateDate())
                 .couponExpirationDate(request.getExpirationDate())
                 .company(company)
-                .product(product)
                 .build()
                 ;
     }
@@ -36,7 +35,6 @@ public class CouponConvertor {
                 .createDate(entity.getCouponCreateDate())
                 .expirationDate(entity.getCouponExpirationDate())
                 .companyName(entity.getCompany().getCpName())
-                .productName(entity.getProduct().getPdName())
                 .build()
                 ;
     }

@@ -25,18 +25,16 @@ public class CouponBoxService {
 
     private final CouponBoxConverter couponBoxConverter;
 
+    private final CouponVerificationService couponVerificationService;
+
 
     // 유저가 업체 쿠폰 등록하기
     public void claimCoupon(String userId, CouponEntity coupon) {
         // 유효기간 확인하기
-//        if (couponService.isNotCouponExpired(coupon)) {
-//            throw new ApiException(CouponErrorCode.EXPIRED_COUPON);
-//        }
+        couponVerificationService.throwIfCouponExpired(coupon);
 
         // 쿠폰을 가지고 있는지
-        if (doesUserOwnCoupon(userId, coupon)) {
-            throw new ApiException(CouponErrorCode.NO_COUPON_OWNERSHIP);
-        }
+        throwIfNotCouponOwnerByCoupon(userId, coupon);
 
         // 쿠폰 등록하기
         CouponBoxEntity couponBox = couponBoxConverter.toEntity(coupon, userId);
@@ -48,27 +46,13 @@ public class CouponBoxService {
         CouponEntity coupon = couponBox.getCoupon();
 
         // 사용자가 가지고 있는 쿠폰인지
-        if (!doesUserOwnCoupon(userId, coupon)) {
-            throw new ApiException(CouponErrorCode.NO_COUPON_OWNERSHIP);
-        }
+        throwIfNotCouponOwnerByCoupon(userId, coupon);
 
         // 유효기간이 만료되지 않았는지
-//        if (couponService.isNotCouponExpired(coupon)) {
-//            throw new ApiException(CouponErrorCode.EXPIRED_COUPON);
-//        }
+        couponVerificationService.throwIfCouponExpired(coupon);
 
-        // 해당 상품에 대한 쿠폰인지
-        if (coupon.getProduct() != null && coupon.getProduct().equals(product)) {
-            return getDiscountedPrice(product, coupon);
-        }
+        // TODO 상품 리스트로 오니깐 상품 그룹을 만들어서 총액 계산 하기
 
-        // 업체용 쿠폰일 때 해당 업체의 상품인지
-        if (coupon.getCompany().equals(product.getCompany())) {
-            // TODO 업체용일 경우 모든 상품들이 할인되므로 모든 상품 가격에서 총 가격을 할인할 때 로직에서 적용하기
-            return product.getPdPrice()
-                    .multiply(BigInteger.valueOf(coupon.getCouponDiscountRate()))
-                    .divide(BigInteger.valueOf(100));
-        }
 
         return product.getPdPrice();
     }
@@ -107,8 +91,25 @@ public class CouponBoxService {
     }
 
     // 소비자가 소유하고 있는 쿠폰인지
-    public boolean doesUserOwnCoupon(String userId, CouponEntity coupon) {
-        return couponBoxRepository.existsByCoupon_CouponIdAndUserId(coupon.getCouponId(), userId);
+    public void throwIfNotCouponOwnerByCoupon(String userId, CouponEntity coupon) {
+        if (!couponBoxRepository.existsByCoupon_CouponIdAndUserId(coupon.getCouponId(), userId)) {
+            throw new ApiException(CouponErrorCode.NO_COUPON_OWNERSHIP);
+        }
+    }
+
+    // 소비자가 소유하고 있는 쿠폰 리스트인지
+    public void throwIfNotCouponOwnerByCoupon(String userId, List<CouponEntity> couponList) {
+        for (CouponEntity coupon : couponList) {
+            throwIfNotCouponOwnerByCoupon(userId, coupon);
+        }
+    }
+
+    public void throwIfNotCouponOwnerByBox(String userId, List<CouponBoxEntity> couponBoxEntityList) {
+        for (CouponBoxEntity couponBox : couponBoxEntityList) {
+            if (!couponBox.getUserId().equals(userId)) {
+                throw new ApiException(CouponErrorCode.NO_COUPON_OWNERSHIP);
+            }
+        }
     }
 
     public List<CouponBoxEntity> findAllById(List<Long> couponBoxIdList) {
@@ -121,13 +122,5 @@ public class CouponBoxService {
     }
 
 
-    public boolean isUserDoesNotOwnCoupon(String userId, List<CouponBoxEntity> couponBoxEntityList) {
-        for (CouponBoxEntity entity : couponBoxEntityList) {
-            if (!entity.getUserId().equals(userId)) {
-                return true;
-            }
-        }
 
-        return false;
-    }
 }

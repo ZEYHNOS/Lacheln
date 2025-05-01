@@ -17,7 +17,9 @@ import aba3.lucid.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Business
@@ -32,7 +34,7 @@ public class CouponBusiness {
     private final CouponConvertor couponConvertor;
 
     // 쿠폰 등록
-    public CouponResponse issueCouponForCompany(Long companyId, CouponRequest couponRequest, Long productId) {
+    public CouponResponse issueCouponForCompany(Long companyId, CouponRequest couponRequest) {
         Validator.throwIfNull(couponRequest);
         Validator.throwIfInvalidId(companyId);
 
@@ -40,12 +42,8 @@ public class CouponBusiness {
 
         // DTO -> Entity
         CompanyEntity company = companyService.findByIdWithThrow(companyId);
-        ProductEntity product = null;
-        if (productId != null) {
-            product = productService.findByIdWithThrow(productId); // 업체 전용 쿠폰은 상품 값이 Null 허용
-        }
 
-        CouponEntity coupon = couponConvertor.toEntity(couponRequest, company, product);
+        CouponEntity coupon = couponConvertor.toEntity(couponRequest, company);
 
 
         CouponEntity newCoupon = couponService.issueCouponForCompany(coupon);
@@ -93,15 +91,11 @@ public class CouponBusiness {
         Validator.throwIfNull(request);
         Validator.throwIfInvalidId(companyId, productId);
 
-        // 업체, 상품 Entity 가지고 오기 (Product는 Null 허용)
+        // 업체 Entity 가지고 오기
         CompanyEntity company = companyService.findByIdWithThrow(companyId);
-        ProductEntity product = null;
-        if (productId != null) {
-            product = productService.findByIdWithThrow(productId);
-        }
 
         // DTO -> Entity
-        CouponEntity coupon = couponConvertor.toEntity(request, company, product);
+        CouponEntity coupon = couponConvertor.toEntity(request, company);
         couponService.validateCompanyCouponOwnership(company, coupon);
 
         // Entity -> DTO
@@ -125,5 +119,7 @@ public class CouponBusiness {
 
         couponService.verificationBeforePayment(userId, couponBoxEntityList, productEntityList);
     }
+
+
 
 }

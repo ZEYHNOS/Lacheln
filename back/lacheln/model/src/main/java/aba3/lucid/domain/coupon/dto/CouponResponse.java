@@ -17,8 +17,6 @@ public class CouponResponse {
 
     private String companyName; // 업체 이름
 
-    private String productName; // 상품 이름(Null 허용)
-
     private String couponName; //쿠폰이름
 
     private String content; //내용

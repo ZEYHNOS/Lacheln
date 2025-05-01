@@ -1,7 +1,13 @@
 package aba3.lucid.product.business;
 
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.image.ImageType;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
+import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.company.service.ImageService;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.packages.converter.PackageToProductConverter;
 import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
@@ -15,10 +21,9 @@ import aba3.lucid.packages.service.PackageService;
 import aba3.lucid.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.channels.Channel;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -28,6 +33,8 @@ public class ProductBusiness {
 
     private final ProductService productService;
     private final PackageService packageService;
+    private final CompanyService companyService;
+    private final ImageService imageService;
 
     private final ProductConverter productConverter;
     private final PackageToProductConverter packageToProductConverter;
@@ -65,5 +72,15 @@ public class ProductBusiness {
                 .map(productConverter::toResponse)
                 .toList()
                 ;
+    }
+
+    public List<String> productImagesUpload(Long companyId, List<MultipartFile> images) throws IOException {
+        Validator.throwIfInvalidId(companyId);
+        if(images.isEmpty()) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        CompanyEntity company = companyService.findByIdWithThrow(companyId);
+        return imageService.imagesUpload(company, images, ImageType.PRODUCT_IMAGE);
     }
 }

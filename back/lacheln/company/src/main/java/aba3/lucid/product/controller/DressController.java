@@ -4,7 +4,6 @@ import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
-import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.product.business.DressBusiness;
 import aba3.lucid.product.business.ProductBusiness;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("/product/dress")
@@ -24,7 +21,6 @@ import java.util.List;
 public class DressController {
 
     private final DressBusiness dressBusiness;
-    private final ProductBusiness productBusiness;
 
     @PostMapping("/register")
     @Operation(summary = "드레스 등록", description = "새로운 드래스 상품을 등록")
@@ -33,7 +29,7 @@ public class DressController {
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        DressResponse res = dressBusiness.registerProduct(1L, req);
+        DressResponse res = dressBusiness.registerProduct(AuthUtil.getCompanyId(), req);
         log.debug("Register DressResponse : {}", res);
 
         return API.OK(res);
@@ -72,7 +68,7 @@ public class DressController {
     public API<DressResponse> getDressDetailInfo(
             @PathVariable Long productId
     ) {
-        DressResponse dressResponse = dressBusiness.getProductDetailInfo(1L, productId);
+        DressResponse dressResponse = dressBusiness.getProductDetailInfo(AuthUtil.getCompanyId(), productId);
 
         return API.OK(dressResponse);
     }

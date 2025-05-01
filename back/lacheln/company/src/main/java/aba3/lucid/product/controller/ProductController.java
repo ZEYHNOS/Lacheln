@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -47,8 +49,18 @@ public class ProductController {
     @GetMapping("/list")
     @Operation(summary = "해당 번호의 업체 상품 리스트 반환", description = "상품 리스트 반환 (삭제된 상품 제외)")
     public API<List<ProductResponse>> getProductList() {
-        List<ProductResponse> productResponseList = productBusiness.getValidProductList(1L);
+        List<ProductResponse> productResponseList = productBusiness.getValidProductList(AuthUtil.getCompanyId());
 
         return API.OK(productResponseList);
+    }
+
+    @PostMapping("/image/upload")
+    @Operation(summary = "상품 이미지 업로드")
+    public API<List<String>> imagesUpload(
+            @RequestPart List<MultipartFile> images
+    ) throws IOException {
+        List<String> imageUrlList = productBusiness.productImagesUpload(AuthUtil.getCompanyId(), images);
+
+        return API.OK(imageUrlList);
     }
 }

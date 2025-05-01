@@ -57,7 +57,8 @@ function ViewProduct() {
 
             <div className="flex items-start space-x-6">
                 {/* 이미지 영역 */}
-                <div className="w-1/3 p-2">
+                <div className="w-full lg:w-1/2">
+                    {/* 대표 이미지 영역 */}
                     <div className="border rounded-lg overflow-hidden bg-gray-100 w-full h-96">
                         {selectedImage ? (
                             <img src={selectedImage} alt="대표 이미지" className="w-full h-full object-cover" />
@@ -66,15 +67,16 @@ function ViewProduct() {
                         )}
                     </div>
 
+                    {/* 썸네일 리스트 */}
                     <div className="mt-4 flex space-x-2 overflow-x-auto max-w-full p-1">
-                        {image_url_list?.map((img, index) => (
+                        {product.image_url_list?.map((img, index) => (
                             <img
                                 key={index}
                                 src={img}
                                 alt={`업로드된 이미지 ${index}`}
                                 onClick={() => setSelectedImage(img)}
                                 className={`w-16 h-16 object-cover rounded-md cursor-pointer flex-shrink-0 border 
-                                            ${selectedImage === img ? "border-[#845EC2] border-2" : "border-gray-300"}`}
+                                    ${selectedImage === img ? "border-[#845EC2] border-2" : "border-gray-300"}`}
                             />
                         ))}
                     </div>

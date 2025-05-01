@@ -1,26 +1,30 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
 import axios from "axios";
-import productDummy from "./productDummy"; // 더미 데이터 import
+// import productDummy from "./productDummy"; // 더미 데이터 import
 
 function Product() {
     const [selected, setSelected] = useState("전체보기");
     const [currentPage, setCurrentPage] = useState(1);
     // 백엔드에서 받아올때
-    // const [productList, setProductList] = useState([]);
+    const [productList, setProductList] = useState([]);
     const navigate = useNavigate();
     const itemsPerPage = 5;
 
     // 실제 백엔드에서 받아오는 주소
-    // useEffect(() => {
-    //     axios.get("http://localhost:5050/product/list")
-    //         .then(res => setProductList(res.data))
-    //         .catch(err => console.error("상품 목록 불러오기 실패", err));
-    // }, []);
+    useEffect(() => {
+        // "http://Localhost:5050/product/list"
+        axios.get("http://172.18.1.223:5050/product/list")
+            .then(res => {
+                console.log("받아온 데이터:", res.data); // 전체 응답 확인
+                setProductList(res.data.data);          // 실제 데이터 세팅
+            })
+            .catch(err => console.error("상품 목록 불러오기 실패", err));
+    }, []);
 
     // ✅ 탭 필터링 로직    
     // productDummy -> productList
-    const filteredItems = productDummy.filter((item) => {
+    const filteredItems = productList.filter((item) => {
         if (selected === "전체보기") return true;
         if (selected === "개별상품") return item.status !== "PACKAGE";
         if (selected === "패키지상품") return item.status === "PACKAGE";
@@ -83,11 +87,11 @@ function Product() {
                                     onClick={() => navigate(`/company/product/${product.id}`)}
                                 >
                                     <td className="border border-gray-300 p-2">
-                                        <img 
-                                            src={product.image_url_list?.[0]} 
-                                            alt="상품 이미지" 
-                                            className="mx-auto w-12 h-12 object-cover rounded" 
-                                        />
+                                    <img 
+                                        src={`http://172.18.1.223:5050${product.imageUrl}`} 
+                                        alt="상품 이미지" 
+                                        className="mx-auto w-12 h-12 object-cover rounded" 
+                                    />
                                     </td>
                                     <td className="border border-gray-300 p-2">{product.name}</td>
                                     <td className="border border-gray-300 p-2">{product.status}</td>

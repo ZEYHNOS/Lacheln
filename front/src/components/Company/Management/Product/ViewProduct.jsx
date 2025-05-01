@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Star } from "lucide-react";
 import axios from "axios";
+import { COLOR_MAP } from "@/constants/colorMap";
 import productDummy from "./productDummy";
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function ViewProduct() {
     const { id } = useParams();
@@ -12,13 +15,15 @@ function ViewProduct() {
 
     // 실제 백엔드에서 받아오는 주소
     // useEffect(() => {
-    //     axios.get(`http://localhost:5051/product/${category}/${id}`)
+    //     axios.get(`${baseUrl}/product/${category}/${id}`)
     //         .then(res => {
-    //             setProduct(res.data);
+    //             setProduct(res.data.data);
     //             setSelectedImage(res.data.image_url_list?.[0]);
     //         })
     //         .catch(err => console.error("상품 상세 정보 불러오기 실패", err));
     // }, [id]);
+
+    // 더미데이터용임 지워야함
     useEffect(() => {
         const found = productDummy.find(p => p.id === id);
         if (found) {
@@ -144,17 +149,11 @@ function ViewProduct() {
                         <div className="flex items-center">
                             <label className="w-24">색상</label>
                             <select value={color} disabled className="flex-grow border p-2 rounded bg-white text-black appearance-none">
-                                <option value="white">하양</option>
-                                <option value="black">검정</option>
-                                <option value="red">빨강</option>
-                                <option value="orange">주황</option>
-                                <option value="yellow">노랑</option>
-                                <option value="green">초록</option>
-                                <option value="blue">파랑</option>
-                                <option value="navy">남</option>
-                                <option value="purple">보라</option>
-                                <option value="beige">베이지</option>
-                                <option value="pink">분홍</option>
+                                {Object.entries(COLOR_MAP).map(([eng, kor]) => (
+                                    <option key={eng} value={eng}>
+                                        {kor}
+                                    </option>
+                                ))}
                             </select>
                             <div className="ml-2 w-24 h-10 rounded" style={{ backgroundColor: color, border: '1px solid #ccc' }} />
                         </div>

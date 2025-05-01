@@ -4,7 +4,10 @@ import { Star } from "lucide-react";
 import axios from "axios";
 import AddWrite from "../../../Tool/WriteForm/AddWrite.jsx";
 import Addphoto from "../../../../image/Company/addimage.png";
+import { COLOR_MAP } from "@/constants/colorMap";
 import productDummy from "./productDummy"; // 더미데이터용 파일
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function EditProduct() {
     const { id } = useParams();
@@ -113,7 +116,7 @@ function EditProduct() {
 
     // 실제 백엔드에서 받아오는 주소
     // useEffect(() => {
-    //     axios.get(`http://localhost:5051/product/${category}/${productid}`)
+    //     axios.get(`${baseUrl}/product/${category}/${productid}`)
     //         .then((res) => {
     //             const data = res.data;
     //             setForm({
@@ -136,7 +139,7 @@ function EditProduct() {
     // }, [id]);
 
     // 실제 백엔드로 보내는 주소소
-    // axios.put(`http://localhost:5051/product/update/${id}`, payload)
+    // axios.put(`${baseUrl}/product/update/${id}`, payload)
     //     .then(() => {
     //         alert("수정 완료!");
     //         navigate(`/company/product/${id}`);
@@ -258,20 +261,16 @@ function EditProduct() {
                             {/* 색상 */}
                             <div className="flex items-center">
                                 <label className="w-24">색상</label>
-                                <select value={color} 
+                                <select
+                                    value={color}
                                     onChange={(e) => setColor(e.target.value)}
-                                    className="flex-grow border p-2 rounded bg-white text-black">
-                                    <option value="white">하양</option>
-                                    <option value="black">검정</option>
-                                    <option value="red">빨강</option>
-                                    <option value="orange">주황</option>
-                                    <option value="yellow">노랑</option>
-                                    <option value="green">초록</option>
-                                    <option value="blue">파랑</option>
-                                    <option value="navy">남</option>
-                                    <option value="purple">보라</option>
-                                    <option value="beige">베이지</option>
-                                    <option value="pink">분홍</option>
+                                    className="flex-grow border p-2 rounded bg-white text-black"
+                                >
+                                    {Object.entries(COLOR_MAP).map(([eng, kor]) => (
+                                        <option key={eng} value={eng}>
+                                            {kor}
+                                        </option>
+                                    ))}
                                 </select>
                                 <div className="ml-2 w-24 h-10 rounded" 
                                     style={{ backgroundColor: color, border: '1px solid #ccc'}}/>
@@ -450,7 +449,7 @@ function EditProduct() {
                         if (window.confirm("정말 삭제하시겠습니까?")) {
                             console.log("🗑️ 삭제 요청", id);
                             // 실제 백엔드에서는:
-                            // axios.delete(`http://localhost:5050/product/${category}/delete/${id}`)
+                            // axios.delete(`${baseUrl}/product/${category}/delete/${id}`)
                             //     .then(() => navigate("/company/product"))
                             //     .catch((err) => console.error("삭제 실패", err));
                             

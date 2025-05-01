@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 // import productDummy from "./productDummy"; // 더미 데이터 import
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+
 function Product() {
     const [selected, setSelected] = useState("전체보기");
     const [currentPage, setCurrentPage] = useState(1);
@@ -13,11 +16,12 @@ function Product() {
 
     // 실제 백엔드에서 받아오는 주소
     useEffect(() => {
-        // "http://Localhost:5050/product/list"
-        axios.get("http://172.18.1.223:5050/product/list")
+        axios.get(`${baseUrl}/product/list`, {
+            withCredentials: true
+        })
             .then(res => {
-                console.log("받아온 데이터:", res.data); // 전체 응답 확인
-                setProductList(res.data.data);          // 실제 데이터 세팅
+                console.log("받아온 데이터:", res.data);
+                setProductList(res.data.data);
             })
             .catch(err => console.error("상품 목록 불러오기 실패", err));
     }, []);
@@ -88,7 +92,7 @@ function Product() {
                                 >
                                     <td className="border border-gray-300 p-2">
                                     <img 
-                                        src={`http://172.18.1.223:5050${product.imageUrl}`} 
+                                        src={`${baseUrl}${product.imageUrl}`} 
                                         alt="상품 이미지" 
                                         className="mx-auto w-12 h-12 object-cover rounded" 
                                     />

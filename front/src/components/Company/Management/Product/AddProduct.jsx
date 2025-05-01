@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import Addphoto from "../../../../image/Company/addimage.png";
 import { Star } from "lucide-react";
 import axios from "axios";
+import { COLOR_MAP } from "@/constants/colorMap";
 import AddWrite from "../../../Tool/WriteForm/AddWrite.jsx";
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function AddProduct() {
     const navigate = useNavigate();
@@ -27,7 +30,9 @@ function AddProduct() {
 
     // product/add 페이지를 열때 백엔드에서 카테고리를 불러옴
     useEffect(() => {
-        axios.get("http://172.18.1.223:5050/company/category")
+        axios.get(`${baseUrl}/company/category`,{
+            withCredentials: true
+        })
             .then(res => {
                 const category = res.data;
                 setCategoryCode(category);
@@ -133,7 +138,7 @@ function AddProduct() {
         images.forEach((img) => formData.append("image", img.file)); 
     
         try {
-            const res = await axios.post("http://172.18.1.223:5050/product/image/upload", formData, {
+            const res = await axios.post(`${baseUrl}/product/image/upload`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             console.log("🟢 업로드 응답:", res.data);
@@ -146,8 +151,8 @@ function AddProduct() {
 
     // 백엔드 전송 코드 
     const handleSubmit = async () => {
-        // // 1. 이미지 업로드 (FormData)
-        // const imageUrls = await uploadImages();
+        // 1. 이미지 업로드 (FormData)
+        const imageUrls = await uploadImages();
 
         // 2. payload 구성
         const descriptionArray = writeRef.current?.getContentAsJsonArray();
@@ -168,7 +173,7 @@ function AddProduct() {
         // 3. 옵션 구성
         let postUrl = "";
         if (categoryCode  === "D") {
-            postUrl = "/api/product/dress/register";
+            postUrl = `${baseUrl}/product/dress/register`;
             data.size_list = options[0].details.map(detail => ({
                 size: detail.name,
                 stock: parseInt(detail.stock || 0),
@@ -186,9 +191,9 @@ function AddProduct() {
                 }))
             }));
         } else if (categoryCode  === "S") {
-            postUrl = "/api/product/studio/register";
+            postUrl = `${baseUrl}/product/studio/register`;
         } else if (categoryCode  === "M") {
-            postUrl = "/api/product/makeup/register";
+            postUrl = `${baseUrl}/product/makeup/register`;
         }
 
         if (categoryCode  !== "D") {
@@ -207,7 +212,7 @@ function AddProduct() {
         
         // 4. 상품 등록 JSON 전송
         console.log("최종 전송할 data:", data);
-        axios.post(`http://172.18.1.223:5050/product/dress/register`, data)
+        axios.post(postUrl, data)
             .then(res => {
                 console.log("등록 성공", res.data);
                 navigate("/product/list");
@@ -215,6 +220,7 @@ function AddProduct() {
             .catch(err => {
                 console.error("등록 실패", err);
             });
+    
     };
 
 
@@ -330,20 +336,14 @@ function AddProduct() {
                             {/* 색상 */}
                             <div className="flex items-center">
                                 <label className="w-24">색상</label>
-                                <select value={color} 
+                                <select
+                                    value={color}
                                     onChange={(e) => setColor(e.target.value)}
-                                    className="flex-grow border p-2 rounded bg-white text-black">
-                                    <option value="white">하양</option>
-                                    <option value="black">검정</option>
-                                    <option value="red">빨강</option>
-                                    <option value="orange">주황</option>
-                                    <option value="yellow">노랑</option>
-                                    <option value="green">초록</option>
-                                    <option value="blue">파랑</option>
-                                    <option value="navy">남</option>
-                                    <option value="purple">보라</option>
-                                    <option value="beige">베이지</option>
-                                    <option value="pink">분홍</option>
+                                    className="flex-grow border p-2 rounded bg-white text-black"
+                                >
+                                    {Object.entries(COLOR_MAP).map(([eng, kor]) => (
+                                        <option key={eng} value={eng}>{kor}</option>
+                                    ))}
                                 </select>
                                 <div className="ml-2 w-24 h-10 rounded" 
                                     style={{ backgroundColor: color, border: '1px solid #ccc'}}/>

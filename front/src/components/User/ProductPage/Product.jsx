@@ -1,27 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { COLOR_MAP } from "@/constants/colorMap"; 
 import productDummy from "../../Company/Management/Product/productDummy.js"; // 더미 데이터 import
 
-// 컬러 매핑 객체(상품설명)
-const colorMap = {
-    white: "하양",
-    black: "검정",
-    red: "빨강",
-    orange: "주황",
-    yellow: "노랑",
-    green: "초록",
-    blue: "파랑",
-    navy: "남",
-    purple: "보라",
-    beige: "베이지",
-    pink: "분홍",
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+// 백엔드 category 코드 → URL path 매핑
+const categoryUrlMap = {
+    D: "dress",
+    S: "studio",
+    M: "makeup",
 };
 
-const categoryUrlMap = {
-    스튜디오: "studio",
-    드레스: "dress",
-    메이크업: "makeup",
+// 탭용 한글 → 백엔드 코드
+const tabCategoryCodeMap = {
+    "드레스": "D",
+    "스튜디오": "S",
+    "메이크업": "M",
 };
 
 function Product() {
@@ -30,25 +26,15 @@ function Product() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 9;
 
-    // 더미데이터 카테고리 필터 추후 삭제 예정
     const filteredItems = productDummy.filter((item) => {
-        const categoryMatch =
-            (selected === "스튜디오" && item.category === "S") ||
-            (selected === "드레스" && item.category === "D") ||
-            (selected === "메이크업" && item.category === "M");
-        
+        const categoryMatch = item.category === tabCategoryCodeMap[selected];
         const notPackage = item.status !== "PACKAGE";
-        const colorMatch = selectedColor ? colorMap[item.color] === selectedColor : true;
-    
+        const colorMatch = selectedColor ? COLOR_MAP[item.color] === selectedColor : true;
         return categoryMatch && notPackage && colorMatch;
     });
 
-    // 페이지네이션 계산
     const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-    const currentItems = filteredItems.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    const currentItems = filteredItems.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -84,7 +70,7 @@ function Product() {
                         <div className="mb-4">
                         <h3 className="font-semibold text-gray-700 mb-2">색상</h3>
                         <div className="flex flex-wrap gap-2 text-sm">
-                            {Object.values(colorMap).map((colorKo) => (
+                            {Object.values(COLOR_MAP).map((colorKo) => (
                             <button
                                 key={colorKo}
                                 className={`px-2 py-1 border rounded transition-colors duration-200
@@ -166,7 +152,7 @@ function Product() {
                                     />
                                     <h4 className="font-medium text-gray-800">{item.name}</h4>
                                     <p className="text-sm text-gray-500">
-                                        {colorMap[item.color] || item.color} / {item.in_available === "Y" ? "실내촬영 가능" : "실내촬영 불가"}
+                                        {COLOR_MAP[item.color] || item.color} / {item.in_available === "Y" ? "실내촬영 가능" : "실내촬영 불가"}
                                     </p>
                                     <p className="text-violet-600 font-semibold mt-2">
                                         ₩ {item.price.toLocaleString()}
@@ -208,7 +194,7 @@ export default Product;
     // useEffect(() => {
     //     const fetchData = async () => {
     //         try {
-    //             const endpoint = `http://localhost:5050/product/${categoryUrlMap[selected]}/list`;
+    //             const endpoint = `${baseUrl}/product/${categoryUrlMap[selected]}/list`;
     //             const response = await axios.get(endpoint);
     //             setProductList(response.data);
     //             setCurrentPage(1);
@@ -223,6 +209,6 @@ export default Product;
     // // 필터링 (색상 + 패키지 제외)
     // const filteredItems = productList.filter((item) => {
     //     const notPackage = item.status !== "PACKAGE";
-    //     const colorMatch = selectedColor ? colorMap[item.color] === selectedColor : true;
+    //     const colorMatch = selectedColor ? COLOR_MAP[item.color] === selectedColor : true;
     //     return notPackage && colorMatch;
     // });

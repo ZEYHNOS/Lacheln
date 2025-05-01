@@ -1,28 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { COLOR_MAP } from "@/constants/colorMap"; 
 import dummyProduct from "../../Company/Management/Product/productDummy.js";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const ProductDetail = () => {
-    const { productid } = useParams();
+    const { category, productid } = useParams();
 
     // 더미파일의 itemid를 인식 
     const [product, setProduct] = useState(() =>
         dummyProduct.find((item) => item.id === productid)
     );
+    // 백엔드서버에서 받아오면 
+    // const [product, setProduct] = useState(null);
     const navigate = useNavigate();
+
     const [selectedOptions, setSelectedOptions] = useState({});
     const [mainImageIndex, setMainImageIndex] = useState(0); //대표이미지가 1번
     const [selectedTab, setSelectedTab] = useState('detail'); //상품상세정보가 기본값
 
 
+    useEffect(() => {
+        axios.get(`${baseUrl}/product/${category}/${productid}`)
+            .then((res) => setProduct(res.data))
+            .catch((err) => {
+                console.error("상품 불러오기 실패", err);
+                alert("상품 정보를 불러올 수 없습니다.");
+                navigate(-1);
+            });
+    }, [category, productid]);
+    
     // 오토 이미지 슬라이드
     useEffect(() => {
+        if (!product?.image_url_list) return;
         const timer = setInterval(() => {
             setMainImageIndex((prev) => (prev + 1) % product.image_url_list.length);
         }, 3000);
         return () => clearInterval(timer);
-    }, [product.image_url_list]);
+    }, [product]);
 
     // 옵션 중복선택 방지
     const handleOptionChange = (groupName, value) => {
@@ -48,13 +65,9 @@ const ProductDetail = () => {
         });
     };
 
-    useEffect(() => {
-        // 상품을 읽어들이지 못할때
-        if (!product) {
-            alert("상품 정보를 불러올 수 없습니다.");
-            navigate(-1); // ⬅ 이전 페이지로 이동
-        }
-    }, [product, navigate]);
+    if (!product) {
+        return <div className="text-center py-20 text-gray-500">상품 정보를 불러오는 중입니다...</div>;
+    }
 
     return (
         <div className="max-w-5xl mx-auto p-6 text-black">
@@ -101,19 +114,7 @@ const ProductDetail = () => {
                                 className="flex-grow border p-2 rounded bg-white text-black appearance-none"
                             >  
                                 {/* 색상 옵션 번역 */}
-                                {Object.entries({
-                                    white: "하양",
-                                    black: "검정",
-                                    red: "빨강",
-                                    orange: "주황",
-                                    yellow: "노랑",
-                                    green: "초록",
-                                    blue: "파랑",
-                                    navy: "남",
-                                    purple: "보라",
-                                    beige: "베이지",
-                                    pink: "분홍"
-                                }).map(([eng, kor]) => (
+                                {Object.entries(COLOR_MAP).map(([eng, kor]) => (
                                     <option key={eng} value={eng}>{kor}</option>
                                 ))}
                             </select>

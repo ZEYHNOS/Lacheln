@@ -68,7 +68,7 @@ public class SecurityConfig {
                         .requestMatchers(permitAlls).permitAll()
                         .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
                         .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
-                                .anyRequest().permitAll()
+                        .anyRequest().permitAll()
                 ) // ROLE에 따른 접근 권한 설정
                 .formLogin(form -> form.loginProcessingUrl("/login")) // /login에 대한 요청이 들어오면 로그인 로직 실행
                 .oauth2Login((oauth2) -> oauth2

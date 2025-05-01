@@ -6,6 +6,8 @@ import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.company.business.CompanyBusiness;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.dto.*;
+import aba3.lucid.domain.company.enums.CompanyCategory;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +74,11 @@ public class CompanyController {
         return API.OK("업체가 삭제되었습니다");
     }
 
-
+    @GetMapping("/category")
+    @Operation(summary = "해당 업체의 카테고리")
+    public CompanyCategory getCategory() {
+        return companyBusiness.getCategory(1L);
+    }
 
 
 }

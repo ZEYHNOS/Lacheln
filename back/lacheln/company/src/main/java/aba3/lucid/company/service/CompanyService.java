@@ -71,4 +71,9 @@ public class CompanyService {
     public void deleteCompanyById(Long companyId) {
         companyRepository.deleteById(companyId);
     }
+
+    // 업체 카테고리 가지고 오기
+    public CompanyCategory getCategory(Long companyId) {
+        return findByIdWithThrow(companyId).getCpCategory();
+    }
 }

@@ -32,7 +32,7 @@ public class ProductConverter {
                 .id(entity.getPdId())
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
-                .imageUrl("/static/bear.png")
+                .imageUrl("/bear.png")
                 .status(entity.getPdStatus())
                 .build()
                 ;

@@ -1,12 +1,14 @@
 package aba3.lucid.common.auth;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
 @Getter
+@Slf4j
 public class CustomAuthenticationToken extends UsernamePasswordAuthenticationToken {
     private final String loginType; // 추가 인자
     private final Long companyId; // 업체 PK
@@ -21,6 +23,7 @@ public class CustomAuthenticationToken extends UsernamePasswordAuthenticationTok
         this.loginType = loginType;
         this.companyId = null;
         this.userId = userId;
+        log.info("user");
     }
 
     public CustomAuthenticationToken(String username,
@@ -32,6 +35,7 @@ public class CustomAuthenticationToken extends UsernamePasswordAuthenticationTok
         this.loginType = loginType;
         this.companyId = companyId;
         this.userId = null;
+        log.info("company");
     }
 
     public CustomAuthenticationToken(Object principal,

@@ -6,6 +6,7 @@ import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.CompanyCode;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.convertor.CompanyConvertor;
 import aba3.lucid.domain.company.convertor.CompanySetConvertor;
@@ -147,6 +148,12 @@ public class CompanyBusiness {
         }else {
             throw new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 수 앖습니다");
         }
+    }
+
+    public CompanyCategory getCategory(Long companyId) {
+        Validator.throwIfInvalidId(companyId);
+
+        return companyService.getCategory(companyId);
     }
 
 

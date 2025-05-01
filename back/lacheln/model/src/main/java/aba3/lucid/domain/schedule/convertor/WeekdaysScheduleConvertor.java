@@ -1,65 +1,58 @@
 package aba3.lucid.domain.schedule.convertor;
 
 
+import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.common.enums.Weekdays;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleResponse;
-import aba3.lucid.domain.schedule.entity.TemporaryHolidayEntity;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
-import aba3.lucid.domain.schedule.repository.TemporaryHolidayRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Converter
+@RequiredArgsConstructor
 public class WeekdaysScheduleConvertor {
 
-
-    public List<WeekdaysScheduleEntity> toEntity(WeekdaysScheduleRequest request, CompanyEntity cp_Id) {
-        if(request == null || request.getScheduleList() == null) {
-            return null;
-
-        }
-        List<WeekdaysScheduleEntity> entityList = new ArrayList<>();
-        for(WeekdaysScheduleRequest.DayScheduleDto dto : request.getScheduleList()) {
-            WeekdaysScheduleEntity entity = WeekdaysScheduleEntity.builder()
-                    .company(cp_Id)
-                    .wsWeekdays(Weekdays.valueOf(dto.getWeekday()))
-                    .wsStart(LocalTime.parse(dto.getStart()))
-                    .wsEnd(LocalTime.parse(dto.getEnd()))
-                    .build();
-
-            entityList.add(entity);
-
-        }
-        return entityList;
-
-    }
-    private LocalTime parseTime(String time, String defaultTime ) {
-        if(time == null || time.isEmpty()) {
-            return LocalTime.parse(defaultTime);
-        }
-        return  LocalTime.parse(time);
-
+    public List<WeekdaysScheduleResponse> toResponseList(List<WeekdaysScheduleEntity> list) {
+        return list.stream()
+                .map(this::toResponse)
+                .toList()
+                ;
     }
 
-    // Convert WeekdaysScheduleEntity to WeekdaysScheduleResponse
+    public List<WeekdaysScheduleEntity> toEntity(WeekdaysScheduleRequest request,CompanyEntity company) {
+
+        return request.getScheduleList().stream()
+                .map(dto ->
+                        WeekdaysScheduleEntity.builder()
+                                .company(company)
+                                .wsWeekdays(dto.getWeekday())
+                                .wsStart(dto.getStart().toLocalTime())
+                                .wsEnd(dto.getEnd().toLocalTime())
+                                .build()
+                )
+                .collect(Collectors.toList());
+    }
+
+
     public WeekdaysScheduleResponse toResponse(WeekdaysScheduleEntity entity) {
-        if(entity == null) {
-            return null;
-        }
-
-        return new WeekdaysScheduleResponse(
-                entity.getWsId(),
-                entity.getWsWeekdays().name(),
-                entity.getWsStart() != null ? entity.getWsStart().toString():"휴무",
-                entity.getWsEnd() != null ? entity.getWsEnd().toString(): "휴무"
-        );
+        return WeekdaysScheduleResponse.builder()
+                .wsId(entity.getWsId())
+                .weekday(entity.getWsWeekdays())
+                .start(entity.getWsStart())
+                .end(entity.getWsEnd())
+                .build();
     }
+
+
+
+
+
 }

@@ -1,6 +1,7 @@
 package aba3.lucid.schedule.Controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleResponse;
 import aba3.lucid.schedule.Business.WeekdaysScheduleBusiness;
@@ -20,7 +21,7 @@ public class WeekdaysScheduleController {
             @PathVariable Long cpId,
             @RequestBody WeekdaysScheduleRequest request
     ) {
-        List<WeekdaysScheduleResponse> response = weekdaysScheduleBusiness.saveWeekdaysSchedule(request,cpId);
+        List<WeekdaysScheduleResponse> response = weekdaysScheduleBusiness.createSchedule(request, AuthUtil.getCompanyId());
         return API.OK(response);
     }
 
@@ -31,7 +32,7 @@ public class WeekdaysScheduleController {
               @RequestParam Long wsId,
               @RequestBody WeekdaysScheduleRequest request
       ){
-        List<WeekdaysScheduleResponse> response = weekdaysScheduleBusiness.updateWeekdaysSchedule(cpId,wsId, request);
+        List<WeekdaysScheduleResponse> response = weekdaysScheduleBusiness.updateSchedule(request,AuthUtil.getCompanyId(),wsId);
         return API.OK(response);
       }
 

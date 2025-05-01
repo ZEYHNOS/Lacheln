@@ -29,12 +29,11 @@ public class DressController {
     @PostMapping("/register")
     @Operation(summary = "드레스 등록", description = "새로운 드래스 상품을 등록")
     public API<DressResponse> registerDress(
-            @Valid
             @RequestBody DressRequest req
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        DressResponse res = dressBusiness.registerProduct(AuthUtil.getCompanyId(), req);
+        DressResponse res = dressBusiness.registerProduct(1L, req);
         log.debug("Register DressResponse : {}", res);
 
         return API.OK(res);
@@ -73,7 +72,7 @@ public class DressController {
     public API<DressResponse> getDressDetailInfo(
             @PathVariable Long productId
     ) {
-        DressResponse dressResponse = dressBusiness.getProductDetailInfo(AuthUtil.getCompanyId(), productId);
+        DressResponse dressResponse = dressBusiness.getProductDetailInfo(1L, productId);
 
         return API.OK(dressResponse);
     }

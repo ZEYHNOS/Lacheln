@@ -15,8 +15,6 @@ import java.util.List;
 public class ProductConverter {
 
     public ProductPackageInsertResponse toResponse(PackageToProductEntity entity) {
-        Validator.throwIfNull(entity);
-
         return ProductPackageInsertResponse.builder()
                 .packageName(entity.getPackageEntity().getPackName())
                 .companyName(entity.getProduct().getCompany().getCpName())
@@ -26,17 +24,16 @@ public class ProductConverter {
     }
 
     public ProductResponse toResponse(ProductEntity entity) {
-        Validator.throwIfNull(entity);
-
-        if (entity.getImageList().isEmpty()) {
-            throw new ApiException(ErrorCode.NULL_POINT);
-        }
+//        if (entity.getImageList().isEmpty()) {
+//            throw new ApiException(ErrorCode.NULL_POINT);
+//        }
 
         return ProductResponse.builder()
                 .id(entity.getPdId())
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
-                .imageUrl(entity.getImageList().get(0).getPdImageUrl())
+                .imageUrl("/static/bear.png")
+                .status(entity.getPdStatus())
                 .build()
                 ;
     }

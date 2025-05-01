@@ -22,6 +22,9 @@ public class ProductResponse {
     // 가격
     private BigInteger price;
 
+    // 상태
+    private ProductStatus status;
+
     // 대표 이미지
     private String imageUrl;
 

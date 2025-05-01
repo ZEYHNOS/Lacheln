@@ -5,7 +5,6 @@ import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
-import aba3.lucid.domain.product.dto.option.OptionDetailSnapshot;
 import aba3.lucid.domain.product.dto.option.OptionSnapshot;
 import aba3.lucid.domain.product.entity.OptionDetailEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

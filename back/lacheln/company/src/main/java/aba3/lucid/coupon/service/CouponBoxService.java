@@ -22,7 +22,6 @@ import java.util.List;
 public class CouponBoxService {
 
     private final CouponBoxRepository couponBoxRepository;
-    private final CouponService couponService;
 
     private final CouponBoxConverter couponBoxConverter;
 
@@ -30,9 +29,9 @@ public class CouponBoxService {
     // 유저가 업체 쿠폰 등록하기
     public void claimCoupon(String userId, CouponEntity coupon) {
         // 유효기간 확인하기
-        if (couponService.isNotCouponExpired(coupon)) {
-            throw new ApiException(CouponErrorCode.EXPIRED_COUPON);
-        }
+//        if (couponService.isNotCouponExpired(coupon)) {
+//            throw new ApiException(CouponErrorCode.EXPIRED_COUPON);
+//        }
 
         // 쿠폰을 가지고 있는지
         if (doesUserOwnCoupon(userId, coupon)) {
@@ -54,9 +53,9 @@ public class CouponBoxService {
         }
 
         // 유효기간이 만료되지 않았는지
-        if (couponService.isNotCouponExpired(coupon)) {
-            throw new ApiException(CouponErrorCode.EXPIRED_COUPON);
-        }
+//        if (couponService.isNotCouponExpired(coupon)) {
+//            throw new ApiException(CouponErrorCode.EXPIRED_COUPON);
+//        }
 
         // 해당 상품에 대한 쿠폰인지
         if (coupon.getProduct() != null && coupon.getProduct().equals(product)) {
@@ -99,7 +98,7 @@ public class CouponBoxService {
     public List<CouponEntity> findAllByUserCouponList(String userId) {
         Validator.throwIfNull(userId);
 
-        List<CouponBoxEntity> couponBoxEntityList = couponBoxRepository.findAllByUsers_UserId(userId);
+        List<CouponBoxEntity> couponBoxEntityList = couponBoxRepository.findAllByUserId(userId);
 
         return couponBoxEntityList.stream()
                 .map(CouponBoxEntity::getCoupon)
@@ -109,7 +108,7 @@ public class CouponBoxService {
 
     // 소비자가 소유하고 있는 쿠폰인지
     public boolean doesUserOwnCoupon(String userId, CouponEntity coupon) {
-        return couponBoxRepository.existsByCoupon_CouponIdAndUsers_UserId(coupon.getCouponId(), userId);
+        return couponBoxRepository.existsByCoupon_CouponIdAndUserId(coupon.getCouponId(), userId);
     }
 
     public List<CouponBoxEntity> findAllById(List<Long> couponBoxIdList) {

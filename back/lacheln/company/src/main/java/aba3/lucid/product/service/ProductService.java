@@ -1,8 +1,12 @@
 package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.image.ImageType;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.common.validate.Validator;
+import aba3.lucid.config.ImageConfig;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
 import aba3.lucid.domain.product.dto.option.OptionSnapshot;
@@ -14,10 +18,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j

@@ -105,9 +105,7 @@ public class AuthService {
     }
 
     // 각 Entity의 Respository에 접근하여 DB의 정보를 DROP하는 로직
-    @Transactional
     public void deleteUser(String userId) { userRepository.deleteById(userId); }
-    @Transactional
     public void deleteCompany(Long companyId) { companyRepository.deleteById(companyId); }
 
     // Access 토큰 재발급

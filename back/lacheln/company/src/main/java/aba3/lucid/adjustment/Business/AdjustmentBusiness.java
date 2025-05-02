@@ -19,42 +19,31 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Business
-@RequiredArgsConstructor
+
 @Component
 public class AdjustmentBusiness {
-    private final AdjustmentRepository adjustmentRepository;
-    private final AdjustmentConvertor adjustmentConvertor;
-    private final CompanyRepository companyRepository;
 
-    public AdjustmentResponse createAdjustment(AdjustmentRequest request, Long cpId) {
-        CompanyEntity company = companyRepository.findById(cpId).orElseThrow(
-                () -> new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다." + cpId)
-        );
+    public AdjustmentEntity createAdjustmentEntity(AdjustmentRequest request, CompanyEntity company) {
         Bank bankName = (request.getBankName() != null) ? (request.getBankName()): Bank.NH_BANK;
         String bankAccount = (request.getBankAccount() != null) ? (request.getBankAccount()) : "ABS7964";
         String depositName = (request.getDepositName() != null) ? (request.getDepositName()) : "Bank";
         LocalDateTime receiptDate = (request.getReceiptDate() != null) ? (request.getReceiptDate()) : LocalDateTime.now();
-
-        AdjustmentRequest defaultRequest = new AdjustmentRequest( bankName,bankAccount, depositName, receiptDate);
-        AdjustmentEntity entity = adjustmentConvertor.toEntity(defaultRequest,company);
-        AdjustmentEntity savedEntity = adjustmentRepository.save(entity);
-        return adjustmentConvertor.toResponse(savedEntity);
+        return AdjustmentEntity.builder()
+                .company(company)
+                .cpBankName(bankName)
+                .cpBankAccount(bankAccount)
+                .cpDepositName(depositName)
+                .cpReceiptDate(LocalDate.from(receiptDate))
+                .build();
     }
 
-    @Transactional
-    public AdjustmentResponse updateAdjustment(AdjustmentRequest request, Long cpId){
-        AdjustmentEntity adjustmentEntity = adjustmentRepository.findById(cpId).orElseThrow(
-                () -> new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다" + cpId)
-        );
 
-        adjustmentEntity.setCpBankName(request.getBankName());
-        adjustmentEntity.setCpBankAccount(request.getBankAccount());
-        adjustmentEntity.setCpDepositName(request.getDepositName());
-        adjustmentEntity.setCpReceiptDate(LocalDate.from(request.getReceiptDate()));
-        AdjustmentEntity updatedEntity = adjustmentRepository.save(adjustmentEntity);
-        return adjustmentConvertor.toResponse(updatedEntity);
 
+    public void applyUpdates(AdjustmentRequest request, AdjustmentEntity entity){
+       if(request.getBankName() != null) entity.setCpBankName(request.getBankName());
+       if(request.getBankAccount() != null) entity.setCpBankAccount(request.getBankAccount());
+       if(request.getDepositName() != null) entity.setCpDepositName(request.getDepositName());
+       if(request.getReceiptDate() != null) entity.setCpReceiptDate(LocalDate.from(request.getReceiptDate()));
 
     }
 

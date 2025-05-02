@@ -2,6 +2,7 @@ package aba3.lucid.coupon.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.CouponErrorCode;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.coupon.entity.CouponBoxEntity;
 import aba3.lucid.domain.coupon.entity.CouponEntity;
@@ -97,6 +98,10 @@ public class CouponService {
     // TODO 리팩토링
     // 결제 전 사용하는 쿠폰 검증
     public void verificationBeforePayment(String userId, List<CouponBoxEntity> couponBoxEntityList, List<ProductEntity> productEntityList) {
+        if (couponBoxEntityList.isEmpty()) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
         // 쿠폰을 소유하고 있는지
         couponBoxService.throwIfNotCouponOwnerByBox(userId, couponBoxEntityList);
 

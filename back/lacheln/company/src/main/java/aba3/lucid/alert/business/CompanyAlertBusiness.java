@@ -70,7 +70,7 @@ public class CompanyAlertBusiness {
     }
 
 
-    @RabbitListener(queues = "company", ackMode = "MANUAL", concurrency = "2")
+//    @RabbitListener(queues = "company", ackMode = "MANUAL", concurrency = "2")
     public void consume(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {

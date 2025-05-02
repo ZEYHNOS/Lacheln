@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { COLOR_MAP } from "@/constants/colorMap"; 
+import { COLOR_MAP } from "../../../constants/colorMap.js";
 import dummyProduct from "../../Company/Management/Product/productDummy.js";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;

@@ -99,7 +99,7 @@ export default function UserRegisterForm() {
   // // ✅ 이메일 인증번호 전송 요청
   // const handleSendEmailCode = async () => {
   //   try {
-  //     const res = await fetch("/email/send", {
+  //     const res = await fetch(`${baseUrl}/email/send`, {
   //       method: "POST",
   //       headers: { "Content-Type": "application/json" },
   //       body: JSON.stringify({ email }),
@@ -119,7 +119,7 @@ export default function UserRegisterForm() {
   // // ✅ 이메일 인증 확인
   // const handleVerifyEmailCode = async () => {
   //   try {
-  //     const res = await fetch("/email/verify", {
+  //     const res = await fetch(`${baseUrl}/email/verify`, {
   //       method: "POST",
   //       headers: { "Content-Type": "application/json" },
   //       body: JSON.stringify({ email, code: emailAuthCode }),
@@ -459,7 +459,7 @@ export default function UserRegisterForm() {
   // };
 
 //   try {
-//     const response = await fetch("https://your-api-endpoint.com/register", {
+//     const response = await fetch(`${baseUrl}/user/signup`, {
 //       method: "POST",
 //       headers: {
 //         "Content-Type": "application/json"

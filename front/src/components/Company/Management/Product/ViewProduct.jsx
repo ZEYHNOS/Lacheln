@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Star } from "lucide-react";
 import axios from "axios";
-import { COLOR_MAP } from "@/constants/colorMap";
+import { COLOR_MAP } from "../../../../constants/colorMap.js";
 import productDummy from "./productDummy";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;

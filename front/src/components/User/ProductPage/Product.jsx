@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { COLOR_MAP } from "@/constants/colorMap"; 
+import { COLOR_MAP } from "../../../constants/colorMap.js";
 import productDummy from "../../Company/Management/Product/productDummy.js"; // 더미 데이터 import
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;

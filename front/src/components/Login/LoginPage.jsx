@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import googleLogo from "../../image/SocialLogin/google-logo.png";
 import kakaoLogo from "../../image/SocialLogin/kakaotalk-logo.png";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function LoginPage() {
     const [userType, setUserType] = useState("USER");
     const [email, setEmail] = useState("");
@@ -31,7 +33,7 @@ export default function LoginPage() {
         };
 
         try {
-            const response = await fetch("http://172.18.1.223:5050/login", {
+            const response = await fetch(`${baseUrl}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials : "include",
@@ -49,17 +51,17 @@ export default function LoginPage() {
         } catch (error) {
             console.log(error);
             alert("서버와의 통신 중 문제가 발생했습니다.");
+            alert(error.message);
         }
-    
     };
     
     // 카카오 소셜 로그인 처리
     const OAuth2KakaoLogin = () => {
-        window.location.href = 'http://localhost:5050/oauth2/authorization/kakao' 
+        window.location.href = `${baseUrl}/oauth2/authorization/kakao`
     }
     // 구글 소셜 로그인 처리
     const OAuth2GoogleLogin = () => {
-        window.location.href = 'http://localhost:5050/oauth2/authorization/google'
+        window.location.href = `${baseUrl}/oauth2/authorization/google`
     }
 
     return (

@@ -4,7 +4,7 @@ import { Star } from "lucide-react";
 import axios from "axios";
 import AddWrite from "../../../Tool/WriteForm/AddWrite.jsx";
 import Addphoto from "../../../../image/Company/addimage.png";
-import { COLOR_MAP } from "@/constants/colorMap";
+import { COLOR_MAP } from "../../../../constants/colorMap.js";
 import productDummy from "./productDummy"; // 더미데이터용 파일
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;

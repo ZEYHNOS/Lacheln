@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Addphoto from "../../../../image/Company/addimage.png";
 import { Star } from "lucide-react";
 import axios from "axios";
-import { COLOR_MAP } from "@/constants/colorMap";
+import { COLOR_MAP } from "../../../../constants/colorMap.js";
 import AddWrite from "../../../Tool/WriteForm/AddWrite.jsx";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -434,7 +434,7 @@ function AddProduct() {
                                     />
 
                                     {/* 드레스 + 사이즈일 때만 재고 */}
-                                    {categoryCode === "d" && option.title === "사이즈" && (
+                                    {categoryCode === "D" && option.title === "사이즈" && (
                                     <input
                                         type="text"
                                         placeholder="재고"
@@ -449,7 +449,7 @@ function AddProduct() {
                                     )}
 
                                     {/* 드레스 + 사이즈가 아닐 때만 추가시간 */}
-                                    {!(categoryCode === "d" && option.title === "사이즈") && (
+                                    {!(categoryCode === "D" && option.title === "사이즈") && (
                                     <input
                                         type="text"
                                         placeholder="추가시간 (분단위)"

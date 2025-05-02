@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 export default function CompanyRegisterForm() {
   const navigate = useNavigate();
   const [isVerifiedBusiness, setIsVerifiedBusiness] = useState(false);
@@ -146,7 +147,7 @@ export default function CompanyRegisterForm() {
         role: "USER"        // 기본 역할 값
     };
     try {
-        const response = await fetch("http://192.168.0.121:5050/company/signup", {
+        const response = await fetch(`${baseUrl}/company/signup`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestData)
@@ -166,7 +167,7 @@ export default function CompanyRegisterForm() {
   // // ✅ 이메일 인증번호 전송 요청
   // const handleSendEmailCode = async () => {
   //   try {
-  //     const res = await fetch("/email/send", {
+  //     const res = await fetch(`${baseUrl}/email/send`, {
   //       method: "POST",
   //       headers: { "Content-Type": "application/json" },
   //       body: JSON.stringify({ email }),
@@ -186,7 +187,7 @@ export default function CompanyRegisterForm() {
   // // ✅ 이메일 인증 확인
   // const handleVerifyEmailCode = async () => {
   //   try {
-  //     const res = await fetch("/email/verify", {
+  //     const res = await fetch(`${baseUrl}/email/verify`, {
   //       method: "POST",
   //       headers: { "Content-Type": "application/json" },
   //       body: JSON.stringify({ email, code: emailAuthCode }),

@@ -1,20 +1,11 @@
 package aba3.lucid.adjustment.Business;
 
 
-import aba3.lucid.common.annotation.Business;
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.domain.company.convertor.AdjustmentConvertor;
 import aba3.lucid.domain.company.dto.AdjustmentRequest;
-import aba3.lucid.domain.company.dto.AdjustmentResponse;
 import aba3.lucid.domain.company.entity.AdjustmentEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.company.repository.AdjustmentRepository;
-import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.payment.enums.Bank;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

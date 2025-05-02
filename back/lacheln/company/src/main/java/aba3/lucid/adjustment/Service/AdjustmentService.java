@@ -24,7 +24,7 @@ public class AdjustmentService {
     private final AdjustmentRepository adjustmentRepository;
     private final AdjustmentBusiness adjustmentBusiness;
 
-    @Transactional
+
     public AdjustmentResponse createAdjustment(AdjustmentRequest request, Long cpId) {
         CompanyEntity company = companyRepository.findById(cpId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다: " + cpId));

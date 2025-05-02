@@ -1,4 +1,4 @@
-package aba3.lucid.common.rabbitmq;
+package aba3.lucid.config;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +45,7 @@ public class AlertConfig {
 
         Map<String, Class<?>> allowedMappings = new HashMap<>();
         allowedMappings.put("aba3.lucid.domain.alert.dto.CompanyAlertDto", aba3.lucid.domain.alert.dto.CompanyAlertDto.class);
+        allowedMappings.put("aba3.lucid.domain.coupon.dto.CouponVerifyRequest", aba3.lucid.domain.coupon.dto.CouponVerifyRequest.class);
         typeMapper.setIdClassMapping(allowedMappings); // ➤ 위에 정의한 클래스만 역직렬화 허용
 
         converter.setJavaTypeMapper(typeMapper); // ➤ 타입 매핑 정보 적용

@@ -1,4 +1,4 @@
-package aba3.lucid.common.rabbitmq;
+package aba3.lucid.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;

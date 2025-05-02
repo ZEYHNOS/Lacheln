@@ -1,5 +1,6 @@
 package aba3.lucid.payment.business;
 
+import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
@@ -17,10 +18,15 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.payment.service.PaymentService;
 import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
+@Slf4j
 @Business
 @RequiredArgsConstructor
 public class PaymentBusiness {
+
+    private final RabbitTemplate rabbitTemplate;
 
     private final PaymentConvertor paymentConvertor;
 
@@ -46,6 +52,7 @@ public class PaymentBusiness {
 
     // 결제 전 검증 로직
     public void verification(PaymentVerifyRequest request, String userId) {
+        log.info("Verification Request : {} userId : {}", request, userId);
         Validator.throwIfNull(request, userId);
 
         // 장바구니 ID 한 개도 없을 때

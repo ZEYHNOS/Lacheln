@@ -2,6 +2,7 @@ package aba3.lucid.adjustment.Controller;
 
 
 import aba3.lucid.adjustment.Business.AdjustmentBusiness;
+import aba3.lucid.adjustment.Service.AdjustmentService;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.company.dto.AdjustmentRequest;
@@ -17,13 +18,14 @@ public class AdjustmentController {
 
     private final AdjustmentRepository adjustmentRepository;
     private final AdjustmentBusiness adjustmentBusiness;
+    private final AdjustmentService adjustmentService;
 
     @PostMapping("{companyId}/create")
     public API<AdjustmentResponse> createAdjustment(
             @PathVariable Long companyId,
             @RequestBody AdjustmentRequest request
    ){
-       AdjustmentResponse response = adjustmentBusiness.createAdjustment(request, AuthUtil.getCompanyId());
+       AdjustmentResponse response =adjustmentService.createAdjustment(request, AuthUtil.getCompanyId());
        return API.OK();
 
    }
@@ -34,7 +36,7 @@ public class AdjustmentController {
            @RequestBody AdjustmentRequest request
 
    ) {
-        AdjustmentResponse response = adjustmentBusiness.updateAdjustment(request, AuthUtil.getCompanyId());
+        AdjustmentResponse response = adjustmentService.updateAdjustment(request, AuthUtil.getCompanyId());
         return API.OK();
    }
 

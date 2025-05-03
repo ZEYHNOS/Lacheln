@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigInteger;
+
 @Slf4j
 @RequestMapping("/payment")
 @RestController
@@ -38,13 +40,13 @@ public class PaymentController {
     }
 
     @PostMapping("/verify")
-    @Operation(summary = "결제 전 검증")
-    public API<String> paymentVerification(
+    @Operation(summary = "결제 전 검증 및 총액", description = "결제 전 쿠폰, 마일리지, 상품 스냅샷 유효성 검사 및 총 결제하는 금액 반환")
+    public API<BigInteger> paymentVerification(
             @RequestBody PaymentVerifyRequest request
     ) {
-        paymentBusiness.verification(request, AuthUtil.getUserId());
+        BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, AuthUtil.getUserId());
 
-        return null;
+        return API.OK(totalAmount);
     }
 
 }

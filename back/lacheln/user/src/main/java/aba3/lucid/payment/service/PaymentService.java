@@ -5,6 +5,7 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.cart.entity.CartEntity;
 import aba3.lucid.domain.coupon.dto.CouponVerifyRequest;
+import aba3.lucid.domain.coupon.dto.CouponVerifyResponse;
 import aba3.lucid.domain.payment.dto.PaymentVerifyRequest;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
@@ -19,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -72,61 +75,116 @@ public class PaymentService {
                 .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
     }
 
-    public Object verification(PaymentVerifyRequest request, String userId) {
+    // 결제 전 검증 및 총 금액 반환
+    public BigInteger verificationAndGetTotalAmount(PaymentVerifyRequest request, String userId) {
         // TODO 일정 확인하기
+
+        // 카트 Entity List
         List<CartEntity> cartEntityList = cartService.findAllById(request.getCardIdList());
 
+        // 쿠폰 확인을 위해 메세지 보내기
+        CouponVerifyResponse response = couponVerificationSendMessage(userId, request, cartEntityList);
 
-        // 상품 스냅샷 검사하기
+
+
+        // TODO RPC 패턴 사용하기
+
+
+//        return getTotalAmount(cartEntityList, response);
+        return null;
+    }
+
+    // 쿠폰 유효성 검사하기
+    // userId, couponBoxIdList, productId, totalAmount
+    private CouponVerifyResponse couponVerificationSendMessage(String userId, PaymentVerifyRequest request, List<CartEntity> cartEntityList) {
+        // 상품 스냅샷 리스트
         List<ProductSnapshot> productSnapshotList = cartEntityList.stream()
                 .map(ProductSnapshot::new)
                 .toList()
                 ;
 
-        // TODO RPC 패턴 사용하기
-
-        // 쿠폰 유효성 검사하기
-        // userId, couponBoxIdList, productId, totalAmount
         // 상품 아이디 리스트
         List<Long> productIdList = cartEntityList.stream()
                 .map(CartEntity::getProductId)
                 .toList()
                 ;
 
-        BigInteger total = BigInteger.ZERO;
-        productSnapshotList.forEach(it -> total.add(it.getPrice()));
 
-
-        // 쿠폰 유효성 보내기
+        // 메세지 생성 전 설정하기
         String correlationId = UUID.randomUUID().toString();
         MessageProperties props = new MessageProperties();
-        props.setReplyTo("to.user");
+        props.setReplyTo("to.user"); // 응답 결과 받는 큐 TODO 다른 큐로 설정하기
         props.setCorrelationId(correlationId);
 
+        // 메세지 보낼 DTO
         CouponVerifyRequest requestMessage = CouponVerifyRequest.builder()
                 .userId(userId)
                 .couponBoxIdList(request.getCouponBoxIdList())
                 .productIdList(productIdList)
-                .amount(total)
+                .amount(null)
                 .build()
                 ;
+
+        // 메세지 생성 및 보내기
         Message message = rabbitTemplate.getMessageConverter().toMessage(requestMessage, props);
         log.info("Message Send : {}", message);
         rabbitTemplate.send("company.exchange", "to.company", message);
 
+        // 메세지 받기(Timeout : 5초)
         Message reply = rabbitTemplate.receive("to.user", 5000);
         log.info("Message reply : {}", reply);
 
+        // TODO 쿠폰 Response로 받아서 결제해야 하는 금액 계산하기
+        // 필요한 필드 : 쿠폰 할인율, companyID
+
+        // 성공적으로 통신 했을 때(쿠폰 유효성 통과)
         if (reply != null && correlationId.equals(reply.getMessageProperties().getCorrelationId())) {
             // 응답 메시지를 객체로 변환
-            CouponVerifyRequest result = (CouponVerifyRequest) rabbitTemplate.getMessageConverter().fromMessage(reply);
+            CouponVerifyResponse result = (CouponVerifyResponse) rabbitTemplate.getMessageConverter().fromMessage(reply);
             log.info("RPC result: {}", result);
-        } else {
+            return result;
+        }
+        // TODO 통신은 성공했지만 쿠폰 유효성 검사 실패했을 때
+
+        // 타임아웃일 때
+        else {
             // 타임아웃 처리
             log.error("Timeout: No response received within 5 seconds");
             throw new RuntimeException("No response received within timeout period.");
         }
-
-        return null;
     }
+
+//    // 결제해야 하는 총 금액
+//    protected BigInteger getTotalAmount(List<CartEntity> cartEntityList, CouponVerifyResponse response) {
+//        // 업체 별 사용되는 돈
+//        Map<Long, BigInteger> groupByCompanyAmountMap = new HashMap<>();
+//
+//        for (CartEntity cart : cartEntityList) {
+//            groupByCompanyAmountMap.put(
+//                    cart.getCpId(),
+//                    groupByCompanyAmountMap.getOrDefault(cart.getCpId(), BigInteger.ZERO).add(cart.getPrice())
+//            );
+//        }
+//
+//        // 할인 된 금액 총합
+//        BigInteger totalAmount = BigInteger.ZERO;
+//        for (Long companyId : groupByCompanyAmountMap.keySet()) {
+//            int discountRate = response.getKeyCompanyIdValueDiscountRate().getOrDefault(companyId, 0);
+//
+//            BigInteger companyAmount = groupByCompanyAmountMap.get(companyId);
+//            BigInteger discountedAmount;
+//            if (discountRate > 0) {
+//                discountedAmount = companyAmount.multiply(BigInteger.valueOf(100))
+//                        .divide(BigInteger.valueOf(discountRate));
+//            } else {
+//                // 할인 없음 -> 원금 그대로
+//                discountedAmount = companyAmount;
+//            }
+//
+//            totalAmount = totalAmount.add(discountedAmount);
+//
+//        }
+//
+//        return totalAmount;
+//    }
 }

@@ -9,6 +9,7 @@ import aba3.lucid.domain.alert.dto.MutualAlert;
 import aba3.lucid.domain.alert.entity.CompanyAlertEntity;
 import aba3.lucid.domain.company.convertor.CompanyAlertConverter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.sse.service.SseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class CompanyAlertBusiness {
     private final CompanyAlertConverter companyAlertConverter;
     private final CompanyAlertService companyAlertService;
     private final CompanyService companyService;
+    private final SseService sseService;
 
     private final ObjectMapper objectMapper;
 
@@ -70,7 +72,7 @@ public class CompanyAlertBusiness {
     }
 
 
-//    @RabbitListener(queues = "company", ackMode = "MANUAL", concurrency = "2")
+    @RabbitListener(queues = "company", ackMode = "MANUAL", concurrency = "2")
     public void consume(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
@@ -81,6 +83,7 @@ public class CompanyAlertBusiness {
             CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);
 
             companyAlertService.alertRegister(entity);
+            sseService.sendAlert(company.getCpId(), dto);
 
             // 정상 처리되었으므로 ACK
             channel.basicAck(deliveryTag, false);

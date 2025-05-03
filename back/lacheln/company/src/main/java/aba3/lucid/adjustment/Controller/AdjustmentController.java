@@ -25,7 +25,7 @@ public class AdjustmentController {
             @PathVariable Long companyId,
             @RequestBody AdjustmentRequest request
    ){
-       AdjustmentResponse response =adjustmentService.createAdjustment(request, AuthUtil.getCompanyId());
+       AdjustmentResponse response =adjustmentBusiness.createAdjustmentEntity(request, AuthUtil.getCompanyId());
        return API.OK();
 
    }
@@ -36,7 +36,7 @@ public class AdjustmentController {
            @RequestBody AdjustmentRequest request
 
    ) {
-        AdjustmentResponse response = adjustmentService.updateAdjustment(request, AuthUtil.getCompanyId());
+        AdjustmentResponse response = adjustmentBusiness.updateAdjustment(request, AuthUtil.getCompanyId());
         return API.OK();
    }
 

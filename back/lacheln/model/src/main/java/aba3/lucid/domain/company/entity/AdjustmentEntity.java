@@ -3,8 +3,10 @@ package aba3.lucid.domain.company.entity;
 import aba3.lucid.domain.payment.enums.Bank;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -31,14 +33,14 @@ public class AdjustmentEntity {
     private Bank cpBankName;
 
     // 은행 계좌번호
-    @Column(name = "cp_bank_account", columnDefinition = "CHAR(20)", nullable = false)
+    @Column(name = "cp_bank_account", columnDefinition = "CHAR(20) DEFAULT 'AABB1254' NOT NULL")
     private String cpBankAccount;
 
     // 예금주명
-    @Column(name = "cp_deposit_name", columnDefinition = "CHAR(100)", nullable = false)
+    @Column(name = "cp_deposit_name", columnDefinition = "CHAR(100) DEFAULT '박예민' NOT NULL")
     private String cpDepositName;
 
     // 정기 대금 수령일
     @Column(name = "cp_receipt_date", columnDefinition = "DATE", nullable = false)
-    private LocalDate cpReceiptDate;
+    private LocalDateTime cpReceiptDate;
 }

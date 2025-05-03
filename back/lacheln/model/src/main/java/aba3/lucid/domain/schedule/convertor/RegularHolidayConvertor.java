@@ -14,10 +14,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RegularHolidayConvertor {
 
-    public RegularHolidayEntity toEntity(RegularHolidayRequest request, CompanyEntity company) {
+    public RegularHolidayEntity toEntity(RegularHolidayRequest request,  Long cpId) {
 
         return RegularHolidayEntity.builder()
-                .cpId(company)
                 .rhHdWeekdays(Weekdays.valueOf(request.getWeekdays()))
                 .rhHdWeek(HolidayWeek.valueOf(request.getWeek()))
                 .rhHdDays(request.getDays())
@@ -29,12 +28,19 @@ public class RegularHolidayConvertor {
 
         return RegularHolidayResponse.builder()
                 .id(entity.getRegHolidayId())
-                .cpId(entity.getCpId().getCpId())
+                .cpId(entity.getCompany().getCpId())
                 .weekdays(entity.getRhHdWeekdays().toString())
                 .days(entity.getRhHdDays())
                 .month(entity.getRhHdMonth())
                 .week(entity.getRhHdWeek().toString())
                 .build();
+    }
+
+    public void updateEntity(RegularHolidayEntity entity, RegularHolidayRequest request) {
+        entity.setRhHdWeekdays(Weekdays.valueOf(request.getWeekdays()));
+        entity.setRhHdWeek(HolidayWeek.valueOf(request.getWeek()));
+        entity.setRhHdDays(request.getDays());
+        entity.setRhHdMonth(request.getMonths());
     }
 
 }

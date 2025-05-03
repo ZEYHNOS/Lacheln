@@ -10,20 +10,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
 public class AdjustmentConvertor {
-    public AdjustmentEntity toEntity (AdjustmentRequest request, CompanyEntity company) {
+    public AdjustmentEntity toEntity (AdjustmentRequest request, Long cpId) {
         if(request == null) return null;{
 
         }
 
         return AdjustmentEntity.builder()
-                .company(company)
                 .cpBankName(request.getBankName())
                 .cpBankAccount(request.getBankAccount())
-                .cpReceiptDate(LocalDate.from(request.getReceiptDate()))
+                .cpReceiptDate(LocalDateTime.of(2019, 10, 12, 0, 0))
                 .cpDepositName(request.getDepositName())
                 .build();
     }
@@ -33,15 +33,20 @@ public class AdjustmentConvertor {
             return null;
         }
         return AdjustmentResponse.builder()
-                .cpId(entity.getCompany().getCpId())
+                .cpId(entity.getCpId())
                 .cpBankName(entity.getCpBankName())
                 .cpBankAccount(entity.getCpBankAccount())
                 .cpDepositName(entity.getCpDepositName())
-                .cpReceiptDate(String.valueOf(entity.getCpReceiptDate()))
+                .cpReceiptDate(entity.getCpReceiptDate())
                 .build();
     }
 
-
+    public void updateEntity(AdjustmentEntity entity, AdjustmentRequest request) {
+        entity.setCpBankName(request.getBankName());
+        entity.setCpBankAccount(request.getBankAccount());
+        entity.setCpDepositName(request.getDepositName());
+        entity.setCpReceiptDate(request.getReceiptDate());
+    }
 
 
 }

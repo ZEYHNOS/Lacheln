@@ -24,7 +24,7 @@ public class RegularHolidayEntity {
     // ManyToOne
     @JoinColumn(name = "cp_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private CompanyEntity cpId;
+    private CompanyEntity company;
 
     // 요일
     @Enumerated(EnumType.STRING)

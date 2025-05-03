@@ -15,6 +15,6 @@ public class AdjustmentResponse {
     private Bank cpBankName;
     private String cpBankAccount;
     private String cpDepositName;
-    private String cpReceiptDate;
+    private LocalDateTime cpReceiptDate;
 
 }

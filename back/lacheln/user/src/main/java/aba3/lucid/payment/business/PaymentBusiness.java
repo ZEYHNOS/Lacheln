@@ -1,14 +1,9 @@
 package aba3.lucid.payment.business;
 
-import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.annotation.Business;
-import aba3.lucid.common.api.API;
-import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.PaymentErrorCode;
 import aba3.lucid.common.validate.Validator;
-import aba3.lucid.domain.payment.convertor.PayDetailConverter;
-import aba3.lucid.domain.payment.convertor.PayDetailOptionConverter;
 import aba3.lucid.domain.payment.convertor.PaymentConvertor;
 import aba3.lucid.domain.payment.dto.PayManagementResponse;
 import aba3.lucid.domain.payment.dto.PaymentRequest;
@@ -20,6 +15,8 @@ import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+
+import java.math.BigInteger;
 
 @Slf4j
 @Business
@@ -50,9 +47,8 @@ public class PaymentBusiness {
         return paymentService.generateMerchantUid();
     }
 
-    // 결제 전 검증 로직
-    public void verification(PaymentVerifyRequest request, String userId) {
-        log.info("Verification Request : {} userId : {}", request, userId);
+    // 결제 전 검증 로직 및 총 금액
+    public BigInteger verificationAndGetTotalAmount(PaymentVerifyRequest request, String userId) {
         Validator.throwIfNull(request, userId);
 
         // 장바구니 ID 한 개도 없을 때
@@ -60,7 +56,8 @@ public class PaymentBusiness {
             throw new ApiException(PaymentErrorCode.NO_PRODUCT_FOR_PAYMENT);
         }
 
-        Object result = paymentService.verification(request, userId);
+        BigInteger totalAmount = paymentService.verificationAndGetTotalAmount(request, userId);
 
+        return totalAmount;
     }
 }

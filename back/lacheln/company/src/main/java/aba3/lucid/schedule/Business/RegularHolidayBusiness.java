@@ -35,9 +35,9 @@ public class RegularHolidayBusiness {
         Validator.throwIfNull(request);
         Validator.throwIfNull(cpId);
         CompanyEntity company = companyService.findByIdWithThrow(cpId);
-        //새로운 entity 만들고 업체 해당하기
+        //새로운 entity 만들고 해당 업체에 맞줘기
         RegularHolidayEntity entity = regularHolidayConvertor.toEntity(request, cpId);
-        entity.setCompany(company);  ///?????
+        entity.setCompany(company);
         RegularHolidayEntity savedEntity = regularHolidayService.createRegularHoliday(entity);
         return regularHolidayConvertor.toResponse(savedEntity);
 
@@ -46,11 +46,11 @@ public class RegularHolidayBusiness {
 
     public RegularHolidayResponse updateHoliday( long cpId, long regHolidayId,RegularHolidayRequest request ) {
         Validator.throwIfNull(request);
-        Validator.throwIfInvalidId(cpId);
+        Validator.throwIfInvalidId(cpId, regHolidayId);
         //업체가 존재하는지 확인
         companyService.findByIdWithThrow(cpId);
-
-        RegularHolidayEntity updatedEntity = regularHolidayService.updateRegularHoliday(request, cpId);
+        RegularHolidayEntity regularHolidayEntity = regularHolidayService.findByThrowId(regHolidayId);
+        RegularHolidayEntity updatedEntity = regularHolidayService.updateRegularHoliday(request, regHolidayId);
         return regularHolidayConvertor.toResponse(updatedEntity);
 
     }

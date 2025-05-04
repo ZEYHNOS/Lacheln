@@ -38,6 +38,10 @@ public class TemporaryHolidayConvertor {
                 .build();
     }
 
+    public void updateEntity(TemporaryHolidayEntity entity, TemporaryHolidayRequest request) {
+        entity.setThDate(request.getDate());
+        entity.setThReason(request.getReason());
 
+    }
 
 }

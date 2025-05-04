@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface RegularHolidayRepository extends JpaRepository<RegularHolidayEntity, Long> {
     Optional<RegularHolidayEntity> findByCompany_CpId(Long cpId);
+    Optional<RegularHolidayEntity> findByRegHolidayId(Long regHolidayId);
 }

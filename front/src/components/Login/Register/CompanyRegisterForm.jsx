@@ -146,22 +146,22 @@ export default function CompanyRegisterForm() {
         status: "ACTIVATE",   // 기본 상태 값
         role: "USER"        // 기본 역할 값
     };
-    try {
-        const response = await fetch(`${baseUrl}/company/signup`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestData)
-        });
-        if (response.ok) {
-            alert("회원가입이 성공적으로 완료되었습니다!");
-            navigate("/register/success");
-        } else {
-            const errorData = await response.json();
-            alert(`회원가입 실패: ${errorData.message}`);
-        }
-    } catch (error) {
-        alert("서버와의 통신 중 문제가 발생했습니다.");
-    }
+      try {
+          const response = await fetch(`${baseUrl}/company/signup`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(requestData)
+          });
+          if (response.ok) {
+              alert("회원가입이 성공적으로 완료되었습니다!");
+              navigate("/register/success");
+          } else {
+              const errorData = await response.json();
+              alert(`회원가입 실패: ${errorData.message}`);
+          }
+      } catch (error) {
+          alert("서버와의 통신 중 문제가 발생했습니다.");
+      }
     };
   
   // // ✅ 이메일 인증번호 전송 요청

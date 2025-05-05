@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import googleLogo from "../../image/SocialLogin/google-logo.png";
+import axios from "axios";
 import kakaoLogo from "../../image/SocialLogin/kakaotalk-logo.png";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -33,25 +34,34 @@ export default function LoginPage() {
         };
 
         try {
-            const response = await fetch(`${baseUrl}/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials : "include",
-                body: JSON.stringify(requestData),
-            });
+            const response = await axios.post(
+                `${baseUrl}/login`,
+                requestData,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true, // 쿠키 전송을 위한 설정
+                }
+            );
             console.log(requestData);
 
-            if (response.status >= 200 && response.status < 300) {
-                alert("로그인이 성공적으로 완료되었습니다!");
-                navigate(userType === "USER" ? "/" : "/company"); 
-            } else {
-                const errorData = await response.json();
-                alert(`로그인 실패: ${errorData.message}`);
-            }
+            alert("로그인이 성공적으로 완료되었습니다!");
+            navigate(userType === "USER" ? "/" : "/company");
+        
         } catch (error) {
             console.log(error);
-            alert("서버와의 통신 중 문제가 발생했습니다.");
-            alert(error.message);
+        
+            // 에러가 axios에서 온 경우 응답 메시지를 분리해서 출력
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    alert(`로그인 실패: ${error.response.data?.message || "알 수 없는 오류"}`);
+                } else {
+                    alert("서버로부터 응답이 없습니다.");
+                }
+            } else {
+                alert("알 수 없는 에러가 발생했습니다.");
+            }
         }
     };
     

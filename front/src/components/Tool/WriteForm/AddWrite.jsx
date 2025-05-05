@@ -22,7 +22,6 @@ import AddImage from '../../../image/AddWrite/addimage.png';
 import { Node, mergeAttributes } from '@tiptap/core';
 import Youtube from '@tiptap/extension-youtube';
 
-// 이미지 노드 확장
 const InlineImage = Node.create({
   name: 'inlineImage',
   inline: true,
@@ -50,7 +49,6 @@ const InlineImage = Node.create({
   },
 });
 
-// 유튜브 노드 확장
 const CustomYoutube = Youtube.extend({
   renderHTML({ HTMLAttributes }) {
     return [
@@ -73,8 +71,7 @@ const CustomYoutube = Youtube.extend({
   }
 });
 
-// forwardRef 추가!
-const AddWrite = forwardRef((props, ref) => {
+const AddWrite = forwardRef(({ onImageUpload }, ref) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
 
   const editor = useEditor({
@@ -93,63 +90,63 @@ const AddWrite = forwardRef((props, ref) => {
     content: '',
   });
 
-  // 외부에서 editor 내용을 가져올 수 있게 설정
   useImperativeHandle(ref, () => ({
     getContentAsJsonArray: () => {
       if (!editor) return [];
-      const div = document.createElement('div');
-      div.innerHTML = editor.getHTML();
-      return Array.from(div.children).map(el => {
-        if (el.tagName === 'P') return el.textContent.trim();
-        if (el.tagName === 'IMG') return { type: 'image', src: el.getAttribute('src') };
-        if (el.querySelector('iframe')) return { type: 'youtube', src: el.querySelector('iframe')?.getAttribute('src') };
-        return el.outerHTML;
-      }).filter(Boolean);
-    },
-
-    setHTML: (html) => {
-      if (editor) {
-        editor.commands.setContent(html);
-      }
+  
+      const result = [];
+  
+      const traverse = (nodes) => {
+        if (!nodes) return;
+  
+        nodes.forEach((node) => {
+          if (node.type === 'paragraph' && node.content) {
+            const text = node.content.map((c) => c.text || '').join('').trim();
+            if (text) {
+              result.push({ type: 'TEXT', value: text });
+            }
+  
+            // paragraph 내부의 이미지나 유튜브도 처리
+            node.content.forEach((child) => {
+              if (child.type === 'inlineImage') {
+                result.push({ type: 'IMAGE', value: child.attrs.src });
+              } else if (child.type === 'youtube') {
+                result.push({ type: 'YOUTUBE', value: child.attrs.src });
+              }
+            });
+          } else if (node.type === 'inlineImage') {
+            result.push({ type: 'IMAGE', value: node.attrs.src });
+          } else if (node.type === 'youtube') {
+            result.push({ type: 'YOUTUBE', value: node.attrs.src });
+          }
+  
+          // 중첩 노드 순회
+            if (node.content) {
+              traverse(node.content);
+            }
+          });
+        };
+  
+      const json = editor.getJSON();
+      traverse(json.content);
+  
+      return result.map((item, index) => ({ ...item, order: index }));
     },
   
-    getHTML: () => {
-      return editor?.getHTML() || '';
-    }
+    setHTML: (html) => editor?.commands.setContent(html),
+    getHTML: () => editor?.getHTML() || ''
   }));
 
-  // 이벤트 설정 (paste, drop 등)
   useEffect(() => {
     if (!editor) return;
     const handlePaste = (event) => {
       const pastedText = event.clipboardData.getData('text');
-      const urlRegex = /^(http|https):\/\/[^\s]+$/;
-      if (urlRegex.test(pastedText)) {
+      if (/^(http|https):\/\/[\S]+$/.test(pastedText)) {
         event.preventDefault();
         editor.chain().focus().insertContent(`<a href="${pastedText}" target="_blank">${pastedText}</a>`).run();
       }
     };
-
-    const handleDrop = (event) => {
-      event.preventDefault();
-      const files = Array.from(event.dataTransfer.files);
-      files.forEach(file => {
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            editor.chain().focus().insertContent({
-              type: 'inlineImage',
-              attrs: {
-                src: reader.result,
-                class: 'inline-image max-w-[300px] align-middle',
-              },
-            }).run();
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-    };
-
+    const handleDrop = (event) => event.preventDefault();
     const editorEl = document.querySelector('.ProseMirror');
     editorEl?.addEventListener('paste', handlePaste);
     editorEl?.addEventListener('drop', handleDrop);
@@ -171,27 +168,32 @@ const AddWrite = forwardRef((props, ref) => {
 
   if (!editor) return null;
 
-  // 툴바 버튼들
   const insertImage = () => {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/*';
+  
     fileInput.onchange = () => {
       const file = fileInput.files[0];
+      if (!file) return;
+  
       const reader = new FileReader();
       reader.onload = () => {
+        const base64 = reader.result;
         editor.chain().focus().insertContent({
           type: 'inlineImage',
           attrs: {
-            src: reader.result,
+            src: base64,
             class: 'inline-image max-w-[300px] align-middle',
           },
         }).run();
       };
       reader.readAsDataURL(file);
     };
+  
     fileInput.click();
   };
+  
 
   const insertYoutube = () => {
     let url = prompt('YouTube URL을 입력하세요:');
@@ -219,14 +221,10 @@ const AddWrite = forwardRef((props, ref) => {
     const { selection } = state;
     const pos = selection.$anchor.pos;
     const nodeAt = view.state.doc.nodeAt(pos);
-
     const alignmentClass =
-      alignment === 'left'
-        ? 'float-left max-w-[300px] w-full mr-4'
-        : alignment === 'right'
-        ? 'float-right max-w-[300px] w-full ml-4'
-        : 'mx-auto block max-w-[300px]';
-
+      alignment === 'left' ? 'float-left max-w-[300px] w-full mr-4' :
+      alignment === 'right' ? 'float-right max-w-[300px] w-full ml-4' :
+      'mx-auto block max-w-[300px]';
     if (nodeAt && (nodeAt.type.name === 'inlineImage' || nodeAt.type.name === 'youtube')) {
       try {
         const tr = editor.state.tr.setNodeMarkup(pos, nodeAt.type, {
@@ -262,8 +260,7 @@ const AddWrite = forwardRef((props, ref) => {
           <option value="12px">본문3</option>
         </select>
         <button onClick={() => setShowColorPicker(!showColorPicker)} className="btn-toolbar flex items-center gap-1">
-          <img src={Palette} alt="색상 선택하기" className="w-5 h-5" />
-          색상
+          <img src={Palette} alt="색상 선택하기" className="w-5 h-5" /> 색상
         </button>
         {showColorPicker && (
           <div className="absolute z-10 mt-2">
@@ -286,16 +283,13 @@ const AddWrite = forwardRef((props, ref) => {
           <img src={TextAlignRight} alt="우측 정렬" className="w-5 h-5" />
         </button>
         <button onClick={insertYoutube} className="btn-toolbar flex items-center gap-1">
-          <img src={AddYoutube} alt="유튜브 추가하기" className="w-5 h-5" />
-          유튜브
+          <img src={AddYoutube} alt="유튜브 추가하기" className="w-5 h-5" /> 유튜브
         </button>
         <button onClick={insertLink} className="btn-toolbar flex items-center gap-1">
-          <img src={AddLink} alt="링크 추가하기" className="w-5 h-5" />
-          링크
+          <img src={AddLink} alt="링크 추가하기" className="w-5 h-5" /> 링크
         </button>
         <button onClick={insertImage} className="btn-toolbar flex items-center gap-1">
-          <img src={AddImage} alt="이미지 추가하기" className="w-5 h-5" />
-          이미지
+          <img src={AddImage} alt="이미지 추가하기" className="w-5 h-5" /> 이미지
         </button>
       </div>
       <EditorContent

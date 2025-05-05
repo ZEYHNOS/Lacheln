@@ -45,4 +45,8 @@ public class MessageEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "msg_sender", columnDefinition = "CHAR(1)", nullable = false)
     private UserType msgSender;
+
+    public void changeMsgRead(BinaryChoice binaryChoice) {
+        this.msgRead = binaryChoice;
+    }
 }

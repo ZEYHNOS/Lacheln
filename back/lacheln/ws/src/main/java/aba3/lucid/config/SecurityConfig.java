@@ -13,6 +13,7 @@
     import org.springframework.context.annotation.Configuration;
     import org.springframework.security.authentication.AuthenticationManager;
     import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+    import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
     import org.springframework.security.config.annotation.web.builders.HttpSecurity;
     import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
     import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,10 +23,12 @@
     import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
     import org.springframework.web.cors.CorsConfiguration;
 
+    import java.util.Arrays;
     import java.util.List;
 
     @Configuration
     @EnableWebSecurity
+    @EnableMethodSecurity
     @RequiredArgsConstructor
     public class SecurityConfig {
 
@@ -35,7 +38,7 @@
         private final OAuth2LoginFailureHandler Oauth2LoginFailureHandler;
 
         // ROLE(소비자, 업체, 일반사용자)에 따라 접근 가능한 URL들을 저장하는 리스트
-        private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/email/send", "/email/verify", "/static/**", "/bear.png", "/**"};
+        private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/email/send", "/email/verify", "/static/**", "/ws/**" };
         private final String[] roleUser = {"/user/**", "/board/**"};
         private final String[] roleCompany = {"/company/**", "/product/**"};
 
@@ -44,13 +47,13 @@
         public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager, AuthService authService, UsersRepository usersRepository, CompanyRepository companyRepository) throws Exception {
             CustomUsernamePasswordAuthenticationFilter customFilter = new CustomUsernamePasswordAuthenticationFilter(authenticationManager, companyRepository, usersRepository, authService);
             http
-                    .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
-                    .cors(cors -> cors.configurationSource(request -> { // TODO AbstractHtt pConfigurer::disable
+                    .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화(세션 사용시에만 활성화 우리는 토큰 사용으로 필요없음)
+                    .cors(cors -> cors.configurationSource(request -> { // TODO AbstractHttpConfigurer::disable
                         CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(List.of("http://localhost:3000")); // TODO List.of("http://localhost:3000", "http://localhost:5050") <-- 넣어야함
+                        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5500"));
+                        config.setAllowCredentials(true);
                         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         config.setAllowedHeaders(List.of("*"));
-                        config.setAllowCredentials(true);
                         return config;
                     })) // CORS 설정진행
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
@@ -67,7 +70,7 @@
                             .successHandler(Oauth2LoginSuccessHandler)
                             .failureHandler(Oauth2LoginFailureHandler)) // OAuth로그인 진행 설정
                     .httpBasic(AbstractHttpConfigurer::disable)
-                    .addFilterAt(customFilter, UsernamePasswordAuthenticationFilter.class) // 사용자 인증에 대한 로직실행
+                    .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class) // 사용자 인증에 대한 로직실행
                     .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 토큰에 대한 인증 실행
             return http.build();
         }

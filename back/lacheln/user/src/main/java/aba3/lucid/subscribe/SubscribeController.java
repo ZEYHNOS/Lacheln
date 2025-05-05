@@ -18,10 +18,10 @@ public class SubscribeController {
     private final SubscribeBusiness subscribeBusiness;
 
     // 현재 세션 사용자 구독 목록 조회
-    @GetMapping("/search")
+    @GetMapping("/search/{userId}")
     @Operation(summary = "사용자 구독 목록 조회", description = "해당하는 소비자의 구독 목록을 조회합니다.")
-    public API<SubscribeSearchResponse> searchSubscribe()   {
-        return subscribeBusiness.searchSubscribe(AuthUtil.getUserId());
+    public API<SubscribeSearchResponse> searchSubscribe(@PathVariable String userId)   {
+        return subscribeBusiness.searchSubscribe(userId);
     }
 
     // 현재 세션 사용자 구독 목록 추가

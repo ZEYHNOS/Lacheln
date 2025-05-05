@@ -131,13 +131,13 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         String username = authResult.getName();
         String role = authRequest.getLoginType().replace("ROLE_", "");
         Map<String, ResponseCookie> cookies = authService.login(username, role);
+
         for (ResponseCookie cookie : cookies.values()) {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
         SecurityContextHolder.getContext().setAuthentication(authResult);
 
-        // CORS 헤더 추가
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        // 요청 Origin 가져오기
         response.setHeader("Access-Control-Allow-Credentials", "true");
 
         // JSON 응답 반환

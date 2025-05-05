@@ -30,6 +30,9 @@
         @Column(name = "pd_id", nullable = false)
         private Long productId;
 
+        @Column(name = "cp_id", nullable = false)
+        private Long cpId;
+
         @Column(name = "pd_name", nullable = false)
         private String productName;
 

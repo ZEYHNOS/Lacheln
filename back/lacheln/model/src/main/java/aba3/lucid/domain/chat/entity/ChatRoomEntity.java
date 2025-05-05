@@ -23,12 +23,10 @@ public class ChatRoomEntity {
     private Long chatRoomId;
 
     //업체ID
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cp_id")
-    private CompanyEntity cpId;
+    @Column(name = "cp_id")
+    private Long company;
 
     //소비자ID
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UsersEntity userId;
+    @Column(name = "user_id")
+    private String users;
 }

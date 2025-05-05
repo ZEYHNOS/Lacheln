@@ -21,13 +21,13 @@ public class AuthUtil {
     
     // 인증 정보를 가져와 Company Primary Key 값 반환
     public static Long getCompanyId() {
-        CustomAuthenticationToken company = getAuth();
-        return company != null ? company.getCompanyId() : null;
+        CustomUserDetails companyDetails = (CustomUserDetails) getAuth().getPrincipal();
+        return companyDetails != null ? companyDetails.getCompanyId() : null;
     }
 
     // 인증 정보를 가져와 User Primary Key 값 반환
     public static String getUserId()    {
-        CustomAuthenticationToken user = getAuth();
-        return user != null ? user.getUserId() : null;
+        CustomUserDetails userDetails = (CustomUserDetails) getAuth().getPrincipal();
+        return userDetails != null ? userDetails.getUserId() : null;
     }
 }

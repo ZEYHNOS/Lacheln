@@ -47,14 +47,14 @@ public class ImageService {
 
             // 이름 중복 방지
             String uuid = UUID.randomUUID().toString();
-            String savedName = uuid + "_" + originalFileName;
+            String savedName = "\\" + uuid + "_" + originalFileName;
 
             // 파일 저장
             File destination = new File(fileDir, savedName);
             image.transferTo(destination);
             
             // 파일 주소 저장
-            filePathList.add(destination.getAbsolutePath());
+            filePathList.add("\\" + company.getCpName() + "\\" + type.getType() + savedName);
         }
 
         return filePathList;

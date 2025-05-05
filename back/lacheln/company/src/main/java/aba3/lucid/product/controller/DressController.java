@@ -5,7 +5,6 @@ import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.product.business.DressBusiness;
-import aba3.lucid.product.business.ProductBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -28,7 +27,7 @@ public class DressController {
             @RequestBody DressRequest req
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
-
+        log.info("DressRequest : {}", req);
         DressResponse res = dressBusiness.registerProduct(AuthUtil.getCompanyId(), req);
         log.debug("Register DressResponse : {}", res);
 

@@ -1,8 +1,12 @@
 package aba3.lucid.domain.product.dto;
 
 import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.domain.company.entity.CompanyCountryEntity;
 import aba3.lucid.domain.product.dto.option.OptionDto;
 import aba3.lucid.domain.product.enums.ProductStatus;
+import aba3.lucid.domain.user.enums.CountryEnum;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @ToString
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ProductRequest implements ProductRequestIfs {
 
     // 상품 이름
@@ -43,19 +48,12 @@ public class ProductRequest implements ProductRequestIfs {
     private int taskTime;
 
     // 설명
-    @NotBlank
-    private String description;
+    private List<DescriptionRequest> descriptionList;
 
     private List<String> imageUrlList;
 
     private List<String> hashTagList;
 
     private List<OptionDto> optionList;
-
-
-    @AssertTrue(message = "이미지가 없습니다.")
-    public boolean imageUrlInvalidator() {
-        return !imageUrlList.isEmpty();
-    }
 
 }

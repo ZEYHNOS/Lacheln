@@ -19,4 +19,6 @@ public class DressSizeDto {
     @Min(1)
     private int stock;
 
+    private int plusCost;
+
 }

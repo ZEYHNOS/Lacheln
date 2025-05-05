@@ -26,22 +26,11 @@ public class ScheduleEntity {
     // 업체 ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cp_id")
-    private CompanyEntity companyId;
+    private CompanyEntity company;
 
-    // 사용자 ID
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private UsersEntity userId;
-
-    // 결제 ID
-    @OneToOne
-    @JoinColumn(name = "pay_id")
-    private PayManagementEntity payId;
-
-    //상품 ID
-    @OneToOne
-    @JoinColumn(name = "pd_id")
-    private ProductEntity productId;
+    // 결제 상세 ID
+    @Column(name = "pay_dt_id", nullable = false)
+    private Long payDetailId;
 
     //일정 상태:예정, 중, 완료, 취소
     @Enumerated(EnumType.STRING)
@@ -51,14 +40,6 @@ public class ScheduleEntity {
     //일정 날짜
     @Column(name = "sch_date", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime schDate;
-
-    //특이사항
-    @Column(name = "sch_details", columnDefinition = "VARCHAR(255)")
-    private String schDetails;
-
-    // 인원
-    @Column(name = "sch_person", columnDefinition = "INT", nullable = false)
-    private int schPerson;
 
     // 총 소요시간
     @Column(name = "sch_total_time", columnDefinition = "INT", nullable = false)

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties
+@ConfigurationProperties(prefix = "image")
 public class ImageConfig {
 
     private String dir;

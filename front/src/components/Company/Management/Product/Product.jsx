@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
-import axios from "axios";
+import apiClient from "../../../../lib/apiClient";
 // import productDummy from "./productDummy"; // 더미 데이터 import
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -15,15 +15,24 @@ function Product() {
     const itemsPerPage = 5;
 
     // 실제 백엔드에서 받아오는 주소
+    function getCookie(name) {
+        const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        if (match) return match[2];
+        return null;
+    }
+    
     useEffect(() => {
-        axios.get(`${baseUrl}/product/list`, {
-            withCredentials: true
+        const token = getCookie("AccessToken");
+        apiClient.get("/product/list", {
+            headers: { Authorization: `Bearer ${token}` }
         })
             .then(res => {
                 console.log("받아온 데이터:", res.data);
                 setProductList(res.data.data);
             })
-            .catch(err => console.error("상품 목록 불러오기 실패", err));
+            .catch(err => {
+                console.error("상품 목록 불러오기 실패", err);
+            });
     }, []);
 
     // ✅ 탭 필터링 로직    

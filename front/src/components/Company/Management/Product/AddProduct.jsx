@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Addphoto from "../../../../image/Company/addimage.png";
 import { Star } from "lucide-react";
 import axios from "axios";
+import apiClient from "../../../../lib/apiClient";
 import { COLOR_MAP } from "../../../../constants/colorMap.js";
 import AddWrite from "../../../Tool/WriteForm/AddWrite.jsx";
 
@@ -10,14 +11,12 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function AddProduct() {
     const navigate = useNavigate();
-    
-    // 상태 변수
     const [rec, setRec] = useState(false);
     const [name, setName] = useState("");
     const [color, setColor] = useState("WHITE");
     const [price, setPrice] = useState("");
     const [status, setStatus ] = useState("ACTIVE")
-    const [task_time, settask_time] = useState(120);
+    const [taskTime, settaskTime] = useState(120);
     const [indoor, setIndoor] = useState(true);
     const [outdoor, setOutdoor] = useState(false);
     const [images, setImages] = useState([]);
@@ -27,9 +26,8 @@ function AddProduct() {
     const [categoryCode, setCategoryCode] = useState("");
     const writeRef = useRef();
 
-
-    // product/add 페이지를 열때 백엔드에서 카테고리를 불러옴
     useEffect(() => {
+        // 업체 카테고리 불러오기기
         axios.get(`${baseUrl}/company/category`,{
             withCredentials: true
         })
@@ -37,13 +35,13 @@ function AddProduct() {
                 const category = res.data;
                 setCategoryCode(category);
 
+                // 드레스면 사이즈옵션을 자동 추가가 
                 if (category  === "D") {
                     const sizeList = [
                         { size: "S"},
                         { size: "M"},
                         { size: "L"}
                     ];
-            
                     const sizeOption = {
                         title: "사이즈",
                         isRequired: false,
@@ -55,40 +53,24 @@ function AddProduct() {
                             extraTime: ""
                         }))
                     };
-            
                     setOptions([sizeOption]);
                 }
             })
             .catch(err => console.error("카테고리 불러오기 실패", err));
     }, []);
 
-    // 백엔드 요청 대신 하드코딩된 더미 코드 사용 -> 삭제예정
-    // useEffect(() => {
-    //     const code = "m"; // 드레스라고 가정
-    //     setCategoryCode(code);
-    
-    //     if (code === "d") {
-    //         const sizeList = [
-    //             { size: "S"},
-    //             { size: "M"},
-    //             { size: "L"}
-    //         ];
-    
-    //         const sizeOption = {
-    //             title: "사이즈",
-    //             isRequired: false,
-    //             isMultiSelect: false,
-    //             details: sizeList.map(s => ({
-    //                 name: s.size,
-    //                 stock: s.stock,
-    //                 extraPrice: s.plus_cost,
-    //                 extraTime: ""
-    //             }))
-    //         };
-    
-    //         setOptions([sizeOption]);
-    //     }
-    // }, []);
+    // BASE64 파일 변환 함수
+    function base64toBlob(base64) {
+        const arr = base64.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
 
     // 옵션 추가
     const handleAddOption = () => {
@@ -115,7 +97,7 @@ function AddProduct() {
         }
     
         const newImageList = files.map(file => ({
-            file, // 실제 전송용
+            file,
             previewUrl: URL.createObjectURL(file), 
         }));
     
@@ -135,92 +117,131 @@ function AddProduct() {
     //이미지 처리(formdata 파일을 백엔드로 보내야함) 
     const uploadImages = async () => {
         const formData = new FormData();
-        images.forEach((img) => formData.append("image", img.file)); 
-    
+        images.forEach((img) => formData.append("images", img.file)); 
         try {
-            const res = await axios.post(`${baseUrl}/product/image/upload`, formData, {
+            const res = await apiClient.post("/product/image/upload", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             console.log("🟢 업로드 응답:", res.data);
-            return res.data.urls; 
+    
+            const urls = res.data.data;
+            console.log("🖼️ 최종 이미지 URL 목록:", urls);
+    
+            return urls;
         } catch (err) {
             console.error("이미지 업로드 실패", err);
             return [];
         }
     };
 
+    // 상세설명 이미지 업로드
+    const uploadImageToServer = async (file) => {
+        const formData = new FormData();
+        formData.append("images", file);
+        try {
+            const res = await apiClient.post("/product/image/upload", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log("상세설명칸 이미지", res.data);
+        return res.data.data[0];
+        } catch (err) {
+            console.error("이미지 업로드 실패", err);
+            return null;
+        }
+    };
+
+    // 상세설명 이미지 URL변환
+    const processDescriptionList = async (descriptionList) => {
+        const processedList = [];
+        
+        for (const item of descriptionList) {
+        if (item.type === "IMAGE" && item.value.startsWith("data:")) {
+            const blob = base64toBlob(item.value);
+            const url = await uploadImageToServer(blob);
+            if (url) {
+            processedList.push({ ...item, value: url });
+            }
+        } else {
+            processedList.push(item);
+        }
+        }
+    
+        return processedList.map((item, index) => ({ ...item, order: index }));
+    };
+
     // 백엔드 전송 코드 
     const handleSubmit = async () => {
-        // 1. 이미지 업로드 (FormData)
         const imageUrls = await uploadImages();
-
-        // 2. payload 구성
         const descriptionArray = writeRef.current?.getContentAsJsonArray();
+        console.log("🟨 에디터 원본 배열:", descriptionArray);
+        const processedDescriptionList = await processDescriptionList(descriptionArray);
+        console.log("🟨 최종 descriptionList:", processedDescriptionList);
+
         const data = {
             name,
             price: parseInt(price || 0),
             status,
             rec: rec ? "Y" : "N",
-            task_time: parseInt(task_time),
-            description: JSON.stringify(descriptionArray || []),
-            // image_url_list: imageUrls, 
-            hash_tag_list: [],
-            in_available: indoor ? "Y" : "N",
-            out_available: outdoor ? "Y" : "N",
+            taskTime: parseInt(taskTime),
+            imageUrlList: imageUrls,
+            hashTagList: [],
+            inAvailable: indoor ? "Y" : "N",
+            outAvailable: outdoor ? "Y" : "N",
             color,
+            descriptionList: processedDescriptionList,
         };
-
-        // 3. 옵션 구성
-        let postUrl = "";
-        if (categoryCode  === "D") {
-            postUrl = `${baseUrl}/product/dress/register`;
-            data.size_list = options[0].details.map(detail => ({
-                size: detail.name,
-                stock: parseInt(detail.stock || 0),
-                plus_cost: parseInt(detail.extraPrice || 0)
-            }));
-            data.option_list = options.slice(1).map(opt => ({
-                name: opt.title,
-                overlap: opt.isMultiSelect ? "Y" : "N",
-                essential: opt.isRequired ? "Y" : "N",
-                status: "ACTIVE",
-                option_dt_list: opt.details.map(dt => ({
-                    op_dt_name: dt.name,
-                    plus_cost: parseInt(dt.extraPrice || 0),
-                    plus_time: parseInt(dt.extraTime || 0)
-                }))
-            }));
-        } else if (categoryCode  === "S") {
-            postUrl = `${baseUrl}/product/studio/register`;
-        } else if (categoryCode  === "M") {
-            postUrl = `${baseUrl}/product/makeup/register`;
-        }
-
-        if (categoryCode  !== "D") {
-            data.option_list = options.map(opt => ({
-                name: opt.title,
-                overlap: opt.isMultiSelect ? "Y" : "N",
-                essential: opt.isRequired ? "Y" : "N",
-                status: "ACTIVE",
-                option_dt_list: opt.details.map(dt => ({
-                    op_dt_name: dt.name,
-                    plus_cost: parseInt(dt.extraPrice || 0),
-                    plus_time: parseInt(dt.extraTime || 0)
-                }))
-            }));
-        }
-        
-        // 4. 상품 등록 JSON 전송
-        console.log("최종 전송할 data:", data);
-        axios.post(postUrl, data)
-            .then(res => {
-                console.log("등록 성공", res.data);
-                navigate("/product/list");
-            })
-            .catch(err => {
-                console.error("등록 실패", err);
-            });
+        console.log("🟨 최종 전송 데이터:", data);
     
+        let postUrl = "";
+        if (categoryCode === "D") {
+            postUrl = "/product/dress/register";
+            data.sizeList = options[0].details.map((d) => ({
+                size: d.name,
+                stock: parseInt(d.stock || 0),
+                plusCost: parseInt(d.extraPrice || 0),
+            }));
+            data.optionList = options.slice(1).map((opt) => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                optionDtList: opt.details.map((dt) => ({
+                opDtName: dt.name,
+                plusCost: parseInt(dt.extraPrice || 0),
+                plusTime: parseInt(dt.extraTime || 0),
+                })),
+            }));
+        } else if (categoryCode === "S") {
+        postUrl = "/product/studio/register";
+        } else if (categoryCode === "M") {
+        postUrl = "/product/makeup/register";
+        }
+    
+        if (categoryCode !== "D") {
+            data.optionList = options.map((opt) => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                optionDtList: opt.details.map((dt) => ({
+                    opDtName: dt.name,
+                    plusCost: parseInt(dt.extraPrice || 0),
+                    plusTime: parseInt(dt.extraTime || 0),
+                    })),
+                }));
+        }
+    
+        try {
+            const res = await apiClient.post(postUrl, data);
+            console.log("등록 성공", res.data);
+            navigate("/company/product");
+        } catch (err) {
+            if (err.response) {
+            console.error("등록 실패", err.response.data);
+            } else {
+            console.error("등록 실패", err);
+            }
+        }
     };
 
 
@@ -284,7 +305,6 @@ function AddProduct() {
                             />
                             <span className="text-black">실내촬영가능</span>
                         </label>
-
                         <label className="flex items-center space-x-2 cursor-pointer">
                             <input 
                                 type="checkbox" 
@@ -351,7 +371,7 @@ function AddProduct() {
                             {/* 대여시간 */}
                             <div className="flex items-center">
                                 <label className="w-24">대여시간</label>
-                                <select value={task_time} onChange={(e) => settask_time(e.target.value)}
+                                <select value={taskTime} onChange={(e) => settaskTime(e.target.value)}
                                     className="border p-2 rounded flex-grow bg-white text-black">
                                     <option value="30">30분 대여</option>
                                     <option value="60">1시간 대여</option>
@@ -415,7 +435,6 @@ function AddProduct() {
                                     </label>
                                 </div>
                             </div>
-
                                 {/* 옵션 상세 항목 반복 */}
                                 {option.details.map((detail, detailIdx) => (
                                 <div key={detailIdx} className="flex space-x-2 mb-2 bg-white p-2 rounded">
@@ -512,8 +531,10 @@ function AddProduct() {
                 </div>
             </div>
             
-            <AddWrite ref={writeRef} />
-
+            {/* 상세설명 작성칸 */}
+            <AddWrite ref={writeRef} onImageUpload={uploadImageToServer} />
+                            
+            {/* 상품 추가/취소 버튼 */}
             <div className="flex justify-end mt-6 space-x-4">
                 <button onClick={handleSubmit} 
                 className="bg-[#845EC2] text-white px-6 py-2 rounded hover:bg-purple-500">추가</button>

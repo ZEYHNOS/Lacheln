@@ -3,6 +3,8 @@ package aba3.lucid.schedule.Business;
 
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.enums.Weekdays;
+import aba3.lucid.common.validate.Validator;
+import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.schedule.convertor.WeekdaysScheduleConvertor;
@@ -11,6 +13,7 @@ import aba3.lucid.domain.schedule.dto.WeekdaysScheduleResponse;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
 import aba3.lucid.domain.schedule.repository.TemporaryHolidayRepository;
 import aba3.lucid.domain.schedule.repository.WeekdaysScheduleRepository;
+import aba3.lucid.schedule.Service.WeekdaysScheduleService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +34,13 @@ public class WeekdaysScheduleBusiness {
     private final TemporaryHolidayRepository temporaryHolidayRepository;
     private final WeekdaysScheduleConvertor weekdaysScheduleConvertor;
     private final CompanyRepository companyRepository;
+    private final CompanyService companyService;
+    private final WeekdaysScheduleService weekdaysScheduleService;
 
     public List<WeekdaysScheduleResponse> createSchedule(WeekdaysScheduleRequest request, Long cpId) {
-        CompanyEntity company = companyRepository.findById(cpId).orElseThrow(EntityNotFoundException::new);
-
+        Validator.throwIfInvalidId(cpId);
+        Validator.throwIfNull(request);
+        CompanyEntity company = companyService.findByIdWithThrow(cpId);
         List<WeekdaysScheduleRequest.DayScheduleDto> dtoList = resolveScheduleList(request.getScheduleList());
 
         List<WeekdaysScheduleEntity> entities = weekdaysScheduleConvertor.toEntity(
@@ -43,9 +49,9 @@ public class WeekdaysScheduleBusiness {
                         .build(),
                 company
         );
-        //Response 변환
-        weekdaysScheduleRepository.saveAll(entities);
-        return weekdaysScheduleConvertor.toResponseList(entities);
+
+        List<WeekdaysScheduleEntity> savedEntity = weekdaysScheduleService.createWeekdaysSchedule(entities);
+        return weekdaysScheduleConvertor.toResponseList(savedEntity);
 
     }
     private List<WeekdaysScheduleRequest.DayScheduleDto> resolveScheduleList(
@@ -99,16 +105,16 @@ public class WeekdaysScheduleBusiness {
 
 
 
-        //  DTO → Entity 변환 & 저장
-        List<WeekdaysScheduleEntity> toSave = weekdaysScheduleConvertor
+        //          DTO → Entity 변환 & 수정
+        List<WeekdaysScheduleEntity> toUpdate = weekdaysScheduleConvertor
                 .toEntity(
                         WeekdaysScheduleRequest.builder().scheduleList(dtoList).build(),
                         company
                 );
-        List<WeekdaysScheduleEntity> saved = weekdaysScheduleRepository.saveAll(toSave);
+        List<WeekdaysScheduleEntity> updated = weekdaysScheduleService.updateWeekdaysSchedule(WsId, (WeekdaysScheduleRequest.DayScheduleDto) dtoList);
 
         //  저장된 엔티티를 Response DTO 로 변환
-        return weekdaysScheduleConvertor.toResponseList(saved);
+        return weekdaysScheduleConvertor.toResponseList(updated);
     }
 
 }

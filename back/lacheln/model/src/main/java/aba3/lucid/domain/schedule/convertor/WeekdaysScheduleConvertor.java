@@ -50,6 +50,13 @@ public class WeekdaysScheduleConvertor {
                 .end(entity.getWsEnd())
                 .build();
     }
+    //한 DTO ->>> 한 Entity 매필 명화해짐
+    public void updateEntity (WeekdaysScheduleRequest.DayScheduleDto dto, WeekdaysScheduleEntity entity) {
+        entity.setWsWeekdays(dto.getWeekday());
+        entity.setWsStart(dto.getStart().toLocalTime());
+        entity.setWsEnd(dto.getEnd().toLocalTime());
+
+    }
 
 
 

@@ -73,14 +73,14 @@ public class UserBusiness {
     }
 
     // 유저 프로필 조회
-    public API<UserCheckResponse> getUser() {
+    public API<UserCheckResponse> getUser(String userId) {
         // 현재 세션 존재 여부 확인
         if(AuthUtil.getAuth() == null)  {
             throw new ApiException(ErrorCode.UNAUTHORIZED, "세션이 존재하지 않습니다.");
         }
         
         // 유저 정보 추출 및 프로필에 저장되는 정보 반환
-        UsersEntity user = userService.findByIdWithThrow(AuthUtil.getUserId());
+        UsersEntity user = userService.findByIdWithThrow(userId);
         UserCheckResponse responseData = userConvertor.entityToCheckResponse(user);
 
         return API.OK(responseData);

@@ -23,11 +23,10 @@ public class WishListController {
     private final WishListBusiness wishListBusiness;
 
     // 세션에 존재하는 유저의 찜 목록 조회하여 찜한 상품들의 ID를 가져오는 Controller
-    @GetMapping("/search")
+    @GetMapping("/search/{userId}")
     @Operation(summary = "상품 찜 목록 조회", description = "해당하는 소비자의 찜 목록을 조회합니다.")
-    public API<List<Long>> findAll() {
-        String id = AuthUtil.getUserId();
-        List<Long> list = wishListBusiness.findByUser(id);
+    public API<List<Long>> findAll(@PathVariable String userId) {
+        List<Long> list = wishListBusiness.findByUser(userId);
         return API.OK(list);
     }
 

@@ -15,6 +15,7 @@ public enum ErrorCode implements StatusCodeIfs {
     REQUEST_TIMEOUT(408, 408, "처리하는 시간이 오래 걸립니다."),
     GONE(404, 410, "현재 존재하지 않는 리소스입니다."),
     TOO_MANY_REQUESTS(400, 429, "짧은 시간동안 너무 많은 요청을 보내셨습니다."),
+    IT_ALREADY_EXISTS(407, 407, "이미 존재합니다."),
 
     SERVER_ERROR(500, 500, "서버에서 에러가 발생했습니다."),
 

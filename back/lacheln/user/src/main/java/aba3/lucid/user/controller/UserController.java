@@ -2,14 +2,22 @@ package aba3.lucid.user.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.user.dto.*;
 import aba3.lucid.user.business.UserBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.attribute.UserPrincipal;
+import java.security.Principal;
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
@@ -35,10 +43,10 @@ public class UserController {
     }
 
     // 유저 프로필 조회
-    @GetMapping("/profile")
+    @GetMapping("/profile/{userId}")
     @Operation(summary = "소비자 조회", description = "소비자 정보를 조회합니다.")
-    public API<UserCheckResponse> getUser()   {
-        return userBusiness.getUser();
+    public API<UserCheckResponse> getUser(@PathVariable String userId)   {
+        return userBusiness.getUser(userId);
     }
 
     // 암호 인증
@@ -51,9 +59,9 @@ public class UserController {
     }
 
     // 소비자 타입 조회
-    @GetMapping("/type")
+    @GetMapping("/type/{userId}")
     @Operation(summary = "소비자 타입 조회", description = "소비자가 소셜, 로컬 로그인인지 정보를 반환합니다.")
-    public API<String> getSocial()  {
-        return userBusiness.getUserSocial(AuthUtil.getUserId());
+    public API<String> getSocial(@PathVariable String userId)   {
+        return userBusiness.getUserSocial(userId);
     }
 }

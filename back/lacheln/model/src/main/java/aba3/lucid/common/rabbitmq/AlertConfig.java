@@ -45,6 +45,7 @@ public class AlertConfig {
 
         Map<String, Class<?>> allowedMappings = new HashMap<>();
         allowedMappings.put("aba3.lucid.domain.alert.dto.CompanyAlertDto", aba3.lucid.domain.alert.dto.CompanyAlertDto.class);
+        allowedMappings.put("aba3.lucid.domain.chat.dto.ChatMessageDto", aba3.lucid.domain.chat.dto.ChatMessageDto.class);
         typeMapper.setIdClassMapping(allowedMappings); // ➤ 위에 정의한 클래스만 역직렬화 허용
 
         converter.setJavaTypeMapper(typeMapper); // ➤ 타입 매핑 정보 적용
@@ -63,9 +64,12 @@ public class AlertConfig {
 
     // 자동 ACK 방지: 수동 ACK 모드 설정
     @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory connectionFactory,
+            Jackson2JsonMessageConverter converter) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
+        factory.setMessageConverter(converter);
         factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);  // 반드시 수동 ACK으로 변경
         return factory;
     }

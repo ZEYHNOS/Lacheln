@@ -1,6 +1,7 @@
 package aba3.lucid.config;
 
 import aba3.lucid.common.auth.CustomAuthenticationToken;
+import aba3.lucid.common.auth.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;

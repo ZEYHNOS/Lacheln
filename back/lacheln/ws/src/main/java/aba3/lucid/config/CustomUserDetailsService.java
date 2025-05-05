@@ -1,5 +1,6 @@
 package aba3.lucid.config;
 
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.password.CustomPasswordEncoder;
 import aba3.lucid.common.status_code.UserCode;
@@ -43,7 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             if(!usersEntity.getUserSocial().getSocialCode().equals("LOCAL"))    {
                 return CustomUserDetails.builder()
                         .email(usersEntity.getUserEmail())
-                        .role("ROLE_" + usersEntity.getUserRole())
+                        .role(usersEntity.getUserRole())
                         .password(null)
                         .userId(usersEntity.getUserId())
                         .build();
@@ -51,7 +52,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             // 유저가 Social 형태로 로그인을 진행할때
             return CustomUserDetails.builder()
                     .email(usersEntity.getUserEmail())
-                    .role("ROLE_" + usersEntity.getUserRole())
+                    .role(usersEntity.getUserRole())
                     .password(usersEntity.getUserPassword())
                     .userId(usersEntity.getUserId())
                     .build();
@@ -60,11 +61,16 @@ public class CustomUserDetailsService implements UserDetailsService {
             companyEntity = company.get();
             return CustomUserDetails.builder()
                     .email(companyEntity.getCpEmail())
-                    .role("ROLE_" + companyEntity.getCpRole())
+                    .role(companyEntity.getCpRole())
                     .password(companyEntity.getCpPassword())
                     .companyId(companyEntity.getCpId())
                     .build();
         }
         throw new ApiException(UserCode.USER_NOT_FOUND, "User Not Found");
+    }
+
+    public String getUserIdByEmail(String email)   {
+        Optional<UsersEntity> usersEntity = usersRepository.findByUserEmail(email);
+        return usersEntity.map(UsersEntity::getUserId).orElse(null);
     }
 }

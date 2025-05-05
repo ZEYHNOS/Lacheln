@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -35,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 토큰이 없는 경우는 생략
         if(accessToken != null && refreshToken != null)  {
             // AccessToken 만료 확인
-            if(jwtTokenProvider.isExpired(accessToken)) {
+            if(jwtTokenProvider.isValid(accessToken)) {
                 // AccessToken이 만료되었을 시 재발급 로직
                 accessToken = authService.refreshAccessToken(refreshToken);
                 ResponseCookie accessCookie = ResponseCookie.from("AccessToken", accessToken)

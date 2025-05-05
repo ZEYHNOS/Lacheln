@@ -7,10 +7,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.dto.ProductRequest;
 import aba3.lucid.domain.product.dto.ProductDetailResponse;
-import aba3.lucid.domain.product.entity.HashtagEntity;
-import aba3.lucid.domain.product.entity.OptionEntity;
-import aba3.lucid.domain.product.entity.ProductEntity;
-import aba3.lucid.domain.product.entity.ProductImageEntity;
+import aba3.lucid.domain.product.entity.*;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -23,6 +20,7 @@ public abstract class ProductAbstractConverter<ENTITY extends ProductEntity, REQ
     protected final OptionConverter optionConverter;
     protected final HashtagConverter hashtagConverter;
     protected final ProductImageConverter productImageConverter;
+    protected final DescriptionConverter descriptionConverter;
 
 
     public ENTITY toEntity(REQ request, CompanyEntity company) {
@@ -35,8 +33,9 @@ public abstract class ProductAbstractConverter<ENTITY extends ProductEntity, REQ
         List<OptionEntity> optionEntityList = optionConverter.toEntityList(request.getOptionList(), entity);
         List<HashtagEntity> hashtagEntityList = hashtagConverter.toEntityList(request.getHashTagList(), entity);
         List<ProductImageEntity> productImageEntityList = productImageConverter.toEntityList(request.getImageUrlList(), entity);
+        List<ProductDescriptionEntity> productDescriptionEntityList = descriptionConverter.toEntityList(entity, request.getDescriptionList());
 
-        entity.updateFormList(optionEntityList, hashtagEntityList, productImageEntityList);
+        entity.updateFormList(optionEntityList, hashtagEntityList, productImageEntityList, productDescriptionEntityList);
         return entity;
     }
 

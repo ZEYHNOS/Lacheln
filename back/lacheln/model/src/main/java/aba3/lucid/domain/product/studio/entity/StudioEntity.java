@@ -71,7 +71,6 @@ public class StudioEntity extends ProductEntity{
     public void updateAdditionalField(StudioRequest request) {
         Validator.throwIfNull(request);
 
-        updateDescription(request.getDescription());
         updateProductName(request.getName());
         updateStatus(request.getStatus());
         updateTaskTime(request.getTaskTime());

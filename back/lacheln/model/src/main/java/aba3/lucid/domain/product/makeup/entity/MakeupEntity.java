@@ -54,7 +54,6 @@ public class MakeupEntity extends ProductEntity {
     public void updateAdditionalField(MakeupRequest request) {
         Validator.throwIfNull(request);
 
-        updateDescription(request.getDescription());
         updateProductName(request.getName());
         updateStatus(request.getStatus());
         updateTaskTime(request.getTaskTime());

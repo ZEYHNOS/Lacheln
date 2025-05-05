@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Entity
 @Builder
@@ -30,7 +32,7 @@ public class ProductInfoEntity {
     @JoinColumn(name = "cp_country_id")
     private CompanyCountryEntity companyCountry;
 
-
-    @Column(name = "pd_info_content", columnDefinition = "VARCHAR(255)", nullable = false)
-    private String content;
+//    // 글
+//    @OneToMany(mappedBy = "product_info", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ProductDescriptionEntity> productDescriptionEntityList;
 }

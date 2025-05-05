@@ -2,10 +2,7 @@ package aba3.lucid.domain.product.studio.convertor;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.product.converter.HashtagConverter;
-import aba3.lucid.domain.product.converter.OptionConverter;
-import aba3.lucid.domain.product.converter.ProductAbstractConverter;
-import aba3.lucid.domain.product.converter.ProductImageConverter;
+import aba3.lucid.domain.product.converter.*;
 import aba3.lucid.domain.product.studio.dto.StudioRequest;
 import aba3.lucid.domain.product.studio.dto.StudioResponse;
 import aba3.lucid.domain.product.studio.entity.StudioEntity;
@@ -13,8 +10,11 @@ import aba3.lucid.domain.product.studio.entity.StudioEntity;
 @Converter
 public class StudioConverter extends ProductAbstractConverter<StudioEntity, StudioRequest, StudioResponse> {
 
-    public StudioConverter(OptionConverter optionConverter, HashtagConverter hashtagConverter, ProductImageConverter productImageConverter) {
-        super(optionConverter, hashtagConverter, productImageConverter);
+    public StudioConverter(OptionConverter optionConverter
+            , HashtagConverter hashtagConverter
+            , ProductImageConverter productImageConverter
+            , DescriptionConverter descriptionConverter) {
+        super(optionConverter, hashtagConverter, productImageConverter, descriptionConverter);
     }
 
     @Override
@@ -26,7 +26,6 @@ public class StudioConverter extends ProductAbstractConverter<StudioEntity, Stud
                 .pdPrice(request.getPrice())
                 .pdStatus(request.getStatus())
                 .pdTaskTime(request.getTaskTime())
-                .pdDescription(request.getDescription())
                 .stdBgOptions(request.getStdBgOptions())
                 .stdInAvailable(request.getStdInAvailable())
                 .stdMaxPeople(request.getStdMaxPeople())
@@ -42,13 +41,13 @@ public class StudioConverter extends ProductAbstractConverter<StudioEntity, Stud
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
                 .status(entity.getPdStatus())
-                .description(entity.getPdDescription())
                 .rec(entity.getPdRec())
                 .taskTime(entity.getPdTaskTime())
                 .stdOutAvailable(entity.getStdOutAvailable())
                 .stdInAvailable(entity.getStdInAvailable())
                 .stdBgOptions(entity.getStdBgOptions())
                 .stdMaxPeople(entity.getStdMaxPeople())
+                .descriptionList(descriptionConverter.toResponseList(entity.getProductDescriptionEntityList()))
                 .hashTagList(hashtagConverter.toDtoList(entity.getHashtagList()))
                 .optionList(optionConverter.toDtoList(entity.getOpList()))
                 .productImageUrl(productImageConverter.toDtoList(entity.getImageList()))

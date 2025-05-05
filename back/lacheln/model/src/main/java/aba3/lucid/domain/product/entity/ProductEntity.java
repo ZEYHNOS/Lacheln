@@ -63,8 +63,9 @@ public abstract class ProductEntity {
     private int pdTaskTime;
 
     // 상품 설명(블로그처럼 이미지, 동영상을 업체가 자유롭게 저장)
-    @Column(name = "pd_description", columnDefinition = "LONGTEXT")
-    private String pdDescription;
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductDescriptionEntity> productDescriptionEntityList;
 
     // 옵션 리스트
     @JsonIgnore
@@ -164,6 +165,19 @@ public abstract class ProductEntity {
         this.pdRec = rec;
     }
 
+    public void updateDescription(List<ProductDescriptionEntity> descriptionEntityList) {
+        if (this.productDescriptionEntityList == null) {
+            this.productDescriptionEntityList = new ArrayList<>();
+        }
+
+        this.productDescriptionEntityList.clear();
+        if (descriptionEntityList == null) {
+            return;
+        }
+
+        this.productDescriptionEntityList.addAll(descriptionEntityList);;
+    }
+
     // 소요 시간 변경
     public void updateTaskTime(int time) {
         if (time <= 0) {
@@ -171,11 +185,6 @@ public abstract class ProductEntity {
         }
 
         this.pdTaskTime = time;
-    }
-
-    // 상세 설명 변경
-    public void updateDescription(String description) {
-        this.pdDescription = description;
     }
 
     public void updateOptionList(List<OptionEntity> optionEntityList) {
@@ -214,10 +223,11 @@ public abstract class ProductEntity {
         this.hashtagList.addAll(uniqueList);
     }
 
-    public void updateFormList(List<OptionEntity> opList, List<HashtagEntity> hashtagEntityList, List<ProductImageEntity> productImageEntityList) {
+    public void updateFormList(List<OptionEntity> opList, List<HashtagEntity> hashtagEntityList, List<ProductImageEntity> productImageEntityList, List<ProductDescriptionEntity> descriptionEntityList) {
         updateOptionList(opList);
         updateProductImage(productImageEntityList);
         updateHashTag(hashtagEntityList);
+        updateDescription(descriptionEntityList);
     }
 
     public void deleteProduct(LocalDateTime now) {

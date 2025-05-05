@@ -3,6 +3,8 @@ package aba3.lucid.domain.product.dress.dto;
 import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.common.enums.Color;
 import aba3.lucid.domain.product.dto.ProductDetailResponse;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

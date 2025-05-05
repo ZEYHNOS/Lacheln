@@ -4,6 +4,8 @@ import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.common.enums.Color;
 import aba3.lucid.domain.product.enums.DressSize;
 import aba3.lucid.domain.product.dto.ProductRequest;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
@@ -21,6 +23,7 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class DressRequest extends ProductRequest {
 
     // 실내 여부

@@ -9,7 +9,8 @@ public enum Schedules {
     EXPECTED("예정"),
     PROGRESS("진행중"),
     COMPLETE("완료"),
-    CANCEL("취소")
+    CANCEL("취소"),
+    BLOCK("결제 진행 중")
     ;
 
     private final String schedules;

@@ -2,13 +2,11 @@ package aba3.lucid.domain.product.dress.convertor;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.product.converter.HashtagConverter;
-import aba3.lucid.domain.product.converter.OptionConverter;
-import aba3.lucid.domain.product.converter.ProductAbstractConverter;
-import aba3.lucid.domain.product.converter.ProductImageConverter;
+import aba3.lucid.domain.product.converter.*;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
+import aba3.lucid.domain.product.entity.ProductDescriptionEntity;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -20,9 +18,10 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
     public DressConverter(OptionConverter optionConverter
             , HashtagConverter hashtagConverter
             , ProductImageConverter productImageConverter
-            , DressSizeConverter dressSizeConverter) {
+            , DressSizeConverter dressSizeConverter
+            , DescriptionConverter descriptionConverter) {
 
-        super(optionConverter, hashtagConverter, productImageConverter);
+        super(optionConverter, hashtagConverter, productImageConverter, descriptionConverter);
         this.dressSizeConverter = dressSizeConverter;
     }
 
@@ -35,7 +34,6 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
                 .pdPrice(request.getPrice())
                 .pdStatus(request.getStatus())
                 .pdTaskTime(request.getTaskTime())
-                .pdDescription(request.getDescription())
                 .dressColor(request.getColor())
                 .dressInAvailable(request.getInAvailable())
                 .dressOutAvailable(request.getOutAvailable())
@@ -55,9 +53,9 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
                 .status(entity.getPdStatus())
                 .outAvailable(entity.getDressOutAvailable())
                 .inAvailable(entity.getDressInAvailable())
-                .description(entity.getPdDescription())
                 .rec(entity.getPdRec())
                 .taskTime(entity.getPdTaskTime())
+                .descriptionList(descriptionConverter.toResponseList(entity.getProductDescriptionEntityList()))
                 .hashTagList(hashtagConverter.toDtoList(entity.getHashtagList()))
                 .optionList(optionConverter.toDtoList(entity.getOpList()))
                 .dressSizeList(dressSizeConverter.toDtoList(entity.getDressSizeList()))

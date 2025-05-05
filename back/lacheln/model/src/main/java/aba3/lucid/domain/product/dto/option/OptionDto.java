@@ -2,6 +2,8 @@ package aba3.lucid.domain.product.dto.option;
 
 import aba3.lucid.common.enums.ActiveEnum;
 import aba3.lucid.common.enums.BinaryChoice;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Negative;
 import jakarta.validation.constraints.NegativeOrZero;
@@ -17,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class OptionDto {
 
     @NotBlank
@@ -43,6 +46,7 @@ public class OptionDto {
     @NoArgsConstructor
     @Builder
     @ToString
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class OptionDetailDto {
 
         // 옵션 상세 이름

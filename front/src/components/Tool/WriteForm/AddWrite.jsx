@@ -93,43 +93,39 @@ const AddWrite = forwardRef(({ onImageUpload }, ref) => {
   useImperativeHandle(ref, () => ({
     getContentAsJsonArray: () => {
       if (!editor) return [];
-  
+    
       const result = [];
-  
+    
       const traverse = (nodes) => {
         if (!nodes) return;
-  
+    
         nodes.forEach((node) => {
           if (node.type === 'paragraph' && node.content) {
-            const text = node.content.map((c) => c.text || '').join('').trim();
-            if (text) {
-              result.push({ type: 'TEXT', value: text });
-            }
-  
-            // paragraph 내부의 이미지나 유튜브도 처리
             node.content.forEach((child) => {
-              if (child.type === 'inlineImage') {
-                result.push({ type: 'IMAGE', value: child.attrs.src });
+              if (child.type === 'text') {
+                const text = child.text?.trim();
+                if (text) {
+                  result.push({ type: 'TEXT', value: text });
+                }
+              } else if (child.type === 'inlineImage') {
+                result.push({ type: 'IMAGE', value: child.attrs?.src });
               } else if (child.type === 'youtube') {
                 result.push({ type: 'YOUTUBE', value: child.attrs.src });
               }
             });
           } else if (node.type === 'inlineImage') {
-            result.push({ type: 'IMAGE', value: node.attrs.src });
+            result.push({ type: 'IMAGE', value: node.attrs?.src });
           } else if (node.type === 'youtube') {
             result.push({ type: 'YOUTUBE', value: node.attrs.src });
+          } else if (node.content) {
+            traverse(node.content);
           }
-  
-          // 중첩 노드 순회
-            if (node.content) {
-              traverse(node.content);
-            }
-          });
-        };
-  
+        });
+      };
+    
       const json = editor.getJSON();
       traverse(json.content);
-  
+    
       return result.map((item, index) => ({ ...item, order: index }));
     },
   

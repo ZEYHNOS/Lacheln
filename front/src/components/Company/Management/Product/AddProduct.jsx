@@ -35,7 +35,7 @@ function AddProduct() {
                 const category = res.data;
                 setCategoryCode(category);
 
-                // 드레스면 사이즈옵션을 자동 추가가 
+                // 드레스면 사이즈옵션을 자동 추가
                 if (category  === "D") {
                     const sizeList = [
                         { size: "S"},
@@ -60,8 +60,8 @@ function AddProduct() {
     }, []);
 
     // BASE64 파일 변환 함수
-    function base64toBlob(base64) {
-        const arr = base64.split(',');
+    function base64toBlob(base64Data) {
+        const arr = base64Data.split(',');
         const mime = arr[0].match(/:(.*?);/)[1];
         const bstr = atob(arr[1]);
         let n = bstr.length;
@@ -123,10 +123,7 @@ function AddProduct() {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             console.log("🟢 업로드 응답:", res.data);
-    
             const urls = res.data.data;
-            console.log("🖼️ 최종 이미지 URL 목록:", urls);
-    
             return urls;
         } catch (err) {
             console.error("이미지 업로드 실패", err);
@@ -140,10 +137,9 @@ function AddProduct() {
         formData.append("images", file);
         try {
             const res = await apiClient.post("/product/image/upload", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
-        console.log("상세설명칸 이미지", res.data);
-        return res.data.data[0];
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            return res.data.data[0];
         } catch (err) {
             console.error("이미지 업로드 실패", err);
             return null;
@@ -153,17 +149,25 @@ function AddProduct() {
     // 상세설명 이미지 URL변환
     const processDescriptionList = async (descriptionList) => {
         const processedList = [];
-        
+    
         for (const item of descriptionList) {
-        if (item.type === "IMAGE" && item.value.startsWith("data:")) {
-            const blob = base64toBlob(item.value);
-            const url = await uploadImageToServer(blob);
-            if (url) {
-            processedList.push({ ...item, value: url });
+            if (
+                item.type === "IMAGE" &&
+                typeof item.value === "string" &&
+                item.value.startsWith("data:")
+            ) {
+                const blob = base64toBlob(item.value);
+                const extension = blob.type.split('/')[1];
+                const file = new File([blob], `image_${Date.now()}.${extension}`, {
+                    type: blob.type,
+                });
+                const url = await uploadImageToServer(file); // ✅ 이제 정상 작동
+                if (url) {
+                    processedList.push({ ...item, value: url });
+                }
+            } else {
+                processedList.push(item);
             }
-        } else {
-            processedList.push(item);
-        }
         }
     
         return processedList.map((item, index) => ({ ...item, order: index }));
@@ -173,9 +177,7 @@ function AddProduct() {
     const handleSubmit = async () => {
         const imageUrls = await uploadImages();
         const descriptionArray = writeRef.current?.getContentAsJsonArray();
-        console.log("🟨 에디터 원본 배열:", descriptionArray);
         const processedDescriptionList = await processDescriptionList(descriptionArray);
-        console.log("🟨 최종 descriptionList:", processedDescriptionList);
 
         const data = {
             name,

@@ -3,9 +3,13 @@ package aba3.lucid.company.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.image.ImageType;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.validate.Validator;
 import aba3.lucid.config.ImageConfig;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.repository.ProductImageRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,11 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ImageService {
 
     private final ImageConfig imageConfig;
+
+    private final ProductImageRepository productImageRepository;
+
 
     // 파일 업로드
     public List<String> imagesUpload(CompanyEntity company, List<MultipartFile> images, ImageType type) throws IOException {
@@ -60,4 +68,26 @@ public class ImageService {
         return filePathList;
     }
 
+    public void deleteProductImage(Long productId) {
+        Validator.throwIfInvalidId(productId);
+
+        // 1. DB에서 해당 productId에 연결된 이미지 경로 조회
+        List<String> imagePaths = productImageRepository.findImageUrlsByProductId(productId);
+
+        // 2. 실제 파일 시스템에서 이미지 삭제
+        for (String path : imagePaths) {
+            File file = new File(imageConfig.getDir() + path);
+            if (file.exists()) {
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    log.warn("이미지 삭제 실패: {}", file.getAbsolutePath());
+                }
+            } else {
+                log.warn("이미지를 찾을 수 없음: {}", file.getAbsolutePath());
+            }
+        }
+
+        // 3. DB에서 이미지 메타데이터 삭제
+        productImageRepository.deleteByProduct_PdId(productId);
+    }
 }

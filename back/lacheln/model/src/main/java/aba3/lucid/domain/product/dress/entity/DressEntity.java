@@ -44,6 +44,14 @@ public class DressEntity extends ProductEntity {
     @Enumerated(EnumType.STRING)
     private Color dressColor; //색상
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "dress_size_required", nullable = false)
+    private BinaryChoice dressSizeEssential;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "dress_size_duplication", nullable = false)
+    private BinaryChoice dressSizeOverlap;
+
     @JsonIgnore
     @OneToMany(mappedBy = "dress", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DressSizeEntity> dressSizeList;

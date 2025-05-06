@@ -10,6 +10,10 @@ import java.util.List;
 public class HashtagConverter {
 
     public List<HashtagEntity> toEntityList(List<String> hashtagList, ProductEntity product) {
+        if (hashtagList == null || hashtagList.isEmpty()) {
+            return null;
+        }
+
         return hashtagList.stream()
                 .map(it -> toEntity(it.trim(), product))
                 .toList()
@@ -18,6 +22,10 @@ public class HashtagConverter {
 
 
     public List<String> toDtoList(List<HashtagEntity> hashtagEntityList) {
+        if (hashtagEntityList == null || hashtagEntityList.isEmpty()) {
+            return null;
+        }
+
         return hashtagEntityList.stream()
                 .map(HashtagEntity::getTagName)
                 .toList()

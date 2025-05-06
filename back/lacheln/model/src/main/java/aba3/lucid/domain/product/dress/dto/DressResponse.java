@@ -28,6 +28,10 @@ public class DressResponse extends ProductDetailResponse {
     private Color color;
 
     // 드레스 사이즈
-    private List<DressSizeDto> dressSizeList;
+    private List<DressSizeDto> sizeList;
+
+    private BinaryChoice overlap;
+
+    private BinaryChoice essential;
 
 }

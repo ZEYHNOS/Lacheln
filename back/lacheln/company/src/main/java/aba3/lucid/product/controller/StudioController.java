@@ -1,7 +1,7 @@
 package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
-import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.product.studio.dto.StudioRequest;
 import aba3.lucid.domain.product.studio.dto.StudioResponse;
 import aba3.lucid.product.business.StudioBusiness;
@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -25,9 +26,10 @@ public class StudioController {
     @Operation(summary = "스튜디오 등록", description = "새로운 스튜디오 상품을 등록")
     public API<StudioResponse> registerStudio(
             @Valid
-            @RequestBody StudioRequest req
+            @RequestBody StudioRequest req,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        StudioResponse res = studioBusiness.registerProduct(AuthUtil.getCompanyId(), req);
+        StudioResponse res = studioBusiness.registerProduct(customUserDetails.getCompanyId(), req);
         log.debug("Register StudioResponse : {}", res);
 
         return API.OK(res);
@@ -38,9 +40,10 @@ public class StudioController {
     public API<StudioResponse> updateStudio(
             @PathVariable Long productId,
             @Valid
-            @RequestBody StudioRequest request
+            @RequestBody StudioRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        StudioResponse response = studioBusiness.updateProduct(AuthUtil.getCompanyId(), productId, request);
+        StudioResponse response = studioBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
         log.debug("Update StudioResponse : {}", response);
 
         return API.OK(response);
@@ -50,9 +53,10 @@ public class StudioController {
     @DeleteMapping("/delete/{productId}")
     @Operation(summary = "스튜디오 상품 삭제", description = "스튜디오 엔터티 삭제")
     public API<String> deleteStudio(
-            @PathVariable Long productId
+            @PathVariable Long productId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        studioBusiness.deleteProduct(AuthUtil.getCompanyId(), productId);
+        studioBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 
@@ -60,9 +64,10 @@ public class StudioController {
     @GetMapping("/{productId}")
     @Operation(summary = "스튜디오 상품 상세")
     public API<StudioResponse> getStudioDetailInfo(
-            @PathVariable Long productId
+            @PathVariable Long productId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        StudioResponse studioResponse = studioBusiness.getProductDetailInfo(AuthUtil.getCompanyId(), productId);
+        StudioResponse studioResponse = studioBusiness.getProductDetailInfo(customUserDetails.getCompanyId(), productId);
 
         return API.OK(studioResponse);
     }

@@ -2,6 +2,7 @@ package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.makeup.dto.MakeUpResponse;
 import aba3.lucid.domain.product.makeup.dto.MakeupRequest;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +32,10 @@ public class MakeupController {
     @Operation(summary = "메이크업 등록", description = "새로운 메이크업 상품을 등록")
     public API<MakeUpResponse> registerMakeup(
             @Valid
-            @RequestBody MakeupRequest req
+            @RequestBody MakeupRequest req,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        MakeUpResponse res = makeupBusiness.registerProduct(AuthUtil.getCompanyId(), req);
+        MakeUpResponse res = makeupBusiness.registerProduct(customUserDetails.getCompanyId(), req);
         log.debug("Register MakeupResponse : {}", res);
 
         return API.OK(res);
@@ -43,9 +46,10 @@ public class MakeupController {
     public API<MakeUpResponse> updateMakeup(
             @PathVariable Long productId,
             @Valid
-            @RequestBody MakeupRequest request
+            @RequestBody MakeupRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        MakeUpResponse response = makeupBusiness.updateProduct(AuthUtil.getCompanyId(), productId, request);
+        MakeUpResponse response = makeupBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
         log.debug("Update MakeupResponse : {}", response);
 
         return API.OK(response);
@@ -54,18 +58,20 @@ public class MakeupController {
     @DeleteMapping("/delete/{productId}")
     @Operation(summary = "메이크업 상품 삭제", description = "메이크업 엔터티 삭제")
     public API<String> deleteMakeup(
-            @PathVariable Long productId
+            @PathVariable Long productId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        makeupBusiness.deleteProduct(AuthUtil.getCompanyId(), productId);
+        makeupBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 
     @GetMapping("/{productId}")
     @Operation(summary = "메이크업 상품 상세")
     public API<MakeUpResponse> getStudioDetailInfo(
-            @PathVariable Long productId
+            @PathVariable Long productId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(AuthUtil.getCompanyId(), productId);
+        MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(customUserDetails.getCompanyId(), productId);
 
         return API.OK(makeUpResponse);
     }

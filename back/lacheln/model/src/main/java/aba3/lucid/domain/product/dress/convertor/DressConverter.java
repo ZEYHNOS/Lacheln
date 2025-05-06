@@ -37,6 +37,8 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
                 .dressColor(request.getColor())
                 .dressInAvailable(request.getInAvailable())
                 .dressOutAvailable(request.getOutAvailable())
+                .dressSizeOverlap(request.getOverlap())
+                .dressSizeEssential(request.getEssential())
                 .build();
 
         entity.updateDressSizeList(dressSizeConverter.toEntityList(request.getSizeList(), entity));
@@ -55,10 +57,12 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
                 .inAvailable(entity.getDressInAvailable())
                 .rec(entity.getPdRec())
                 .taskTime(entity.getPdTaskTime())
+                .overlap(entity.getDressSizeOverlap())
+                .essential(entity.getDressSizeEssential())
                 .descriptionList(descriptionConverter.toResponseList(entity.getProductDescriptionEntityList()))
                 .hashTagList(hashtagConverter.toDtoList(entity.getHashtagList()))
                 .optionList(optionConverter.toDtoList(entity.getOpList()))
-                .dressSizeList(dressSizeConverter.toDtoList(entity.getDressSizeList()))
+                .sizeList(dressSizeConverter.toDtoList(entity.getDressSizeList()))
                 .productImageUrl(productImageConverter.toDtoList(entity.getImageList()))
                 .build()
                 ;

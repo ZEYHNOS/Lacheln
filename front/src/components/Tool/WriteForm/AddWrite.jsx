@@ -22,6 +22,8 @@ import AddImage from '../../../image/AddWrite/addimage.png';
 import { Node, mergeAttributes } from '@tiptap/core';
 import Youtube from '@tiptap/extension-youtube';
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const InlineImage = Node.create({
   name: 'inlineImage',
   inline: true,
@@ -93,12 +95,12 @@ const AddWrite = forwardRef(({ onImageUpload }, ref) => {
   useImperativeHandle(ref, () => ({
     getContentAsJsonArray: () => {
       if (!editor) return [];
-    
+  
       const result = [];
-    
+  
       const traverse = (nodes) => {
         if (!nodes) return;
-    
+  
         nodes.forEach((node) => {
           if (node.type === 'paragraph' && node.content) {
             node.content.forEach((child) => {
@@ -122,11 +124,40 @@ const AddWrite = forwardRef(({ onImageUpload }, ref) => {
           }
         });
       };
-    
+  
       const json = editor.getJSON();
       traverse(json.content);
-    
+  
       return result.map((item, index) => ({ ...item, order: index }));
+    },
+  
+    setContentFromJsonArray: (jsonArray) => {
+      if (!editor || !jsonArray) return;
+  
+      const nodes = jsonArray.map((item) => {
+        if (item.type === "TEXT") {
+          return {
+            type: "paragraph",
+            content: [{ type: "text", text: item.value }]
+          };
+        } else if (item.type === "IMAGE") {
+          return {
+            type: "inlineImage",
+            attrs: { src: item.value.startsWith("http") ? item.value : `${baseUrl}${item.value}` }
+          };
+        } else if (item.type === "YOUTUBE") {
+          return {
+            type: "youtube",
+            attrs: { src: item.value }
+          };
+        }
+        return null;
+      }).filter(Boolean);
+  
+      editor.commands.setContent({
+        type: "doc",
+        content: nodes
+      });
     },
   
     setHTML: (html) => editor?.commands.setContent(html),

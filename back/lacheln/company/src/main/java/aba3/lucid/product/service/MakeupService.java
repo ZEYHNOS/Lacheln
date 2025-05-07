@@ -1,6 +1,6 @@
 package aba3.lucid.product.service;
 
-import aba3.lucid.company.service.ImageService;
+import aba3.lucid.image.service.ImageService;
 import aba3.lucid.domain.product.converter.DescriptionConverter;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;

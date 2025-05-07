@@ -1,4 +1,4 @@
-package aba3.lucid.company.service;
+package aba3.lucid.image.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.image.ImageType;
@@ -6,7 +6,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.config.ImageConfig;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.entity.ProductImageEntity;
 import aba3.lucid.domain.product.repository.ProductImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +66,37 @@ public class ImageService {
         }
 
         return filePathList;
+    }
+
+    public void deleteProductImageByImageIdList(List<Long> productImageIdList, Long companyId) {
+        // 이미지 Id 리스트가 없으면 return
+        if (productImageIdList == null || productImageIdList.isEmpty()) {
+            return;
+        }
+
+        List<ProductImageEntity> imageList = productImageRepository.findAllById(productImageIdList);
+        // 요청하는 업체가 해당 이미지의 주인이 아닌 경우
+        imageList.forEach(it -> {
+                    if (it.getProduct().getCompany().getCpId() != companyId) {
+                        throw new ApiException(ErrorCode.BAD_REQUEST);
+                    } else {
+                        deleteProductImageByImageId(it);
+                    }
+                });
+    }
+
+    public void deleteProductImageByImageId(ProductImageEntity productImage) {
+        File file = new File(imageConfig.getDir() + productImage.getPdImageUrl());
+        if (file.exists()) {
+            boolean deleted = file.delete();
+            if (!deleted) {
+                log.warn("이미지 삭제 실패 URL : {}", productImage.getPdImageUrl());
+            }
+
+            productImageRepository.delete(productImage);
+        } else {
+            log.warn("이미 삭제된 이미지 : {}", productImage.getPdImageUrl());
+        }
     }
 
     public void deleteProductImage(Long productId) {

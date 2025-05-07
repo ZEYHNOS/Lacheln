@@ -9,6 +9,7 @@ import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.product.enums.PackageStatus;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,13 +32,14 @@ public class PackageConverter {
                 .packName(request.getPackageName())
                 .packComment(request.getPackageComment())
                 .packAdmin(admin)
-                .packImageUrl("static/default/images/package")
+                .packImageUrl("/default/images/package.png")
                 .packDiscountrate(0)
                 .packCreateDate(LocalDateTime.now())
                 .packEndDate(LocalDateTime.of(2099, 12, 31, 0, 0, 0))
                 .packStatus(PackageStatus.PRIVATE)
                 .build()
                 ;
+
     }
 
 
@@ -53,6 +55,7 @@ public class PackageConverter {
                 .createAt(entity.getPackCreateDate())
                 .endDate(entity.getPackEndDate())
                 .status(entity.getPackStatus())
+                .imageUrl(entity.getPackImageUrl())
                 .build()
                 ;
     }

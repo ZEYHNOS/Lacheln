@@ -6,6 +6,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.PackageErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.domain.alert.dto.CompanyAlertDto;
+import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -189,5 +191,22 @@ public class PackageService {
     // 업체가 속한 패키지 리스트 출력
     public List<PackageEntity> getPackageList(Long companyId) {
         return packageRepository.findByCompanyIdInAnyRole(companyId);
+    }
+
+    public void responseInsertPrice(List<PackageResponse> packageResponseList) {
+        packageResponseList.forEach(it -> {
+            it.setTotalPrice(getTotalPrice(it.getId()));
+        });
+    }
+
+    public BigInteger getTotalPrice(Long packageId) {
+        List<PackageToProductEntity> packageToProductEntityList = packageToProductRepository.findAllByPackageEntity_packId(packageId);
+
+        BigInteger result = BigInteger.ZERO;
+        for (PackageToProductEntity entity : packageToProductEntityList) {
+            result = result.add(entity.getProduct().getPdPrice());
+        }
+
+        return result;
     }
 }

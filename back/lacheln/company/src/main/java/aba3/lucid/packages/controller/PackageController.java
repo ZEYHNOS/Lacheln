@@ -2,6 +2,7 @@ package aba3.lucid.packages.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomAuthenticationToken;
 import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
 import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,8 +69,11 @@ public class PackageController {
 
     @GetMapping("/list")
     @Operation(summary = "업체가 속한 패키지 리스트 반환")
-    public API<List<PackageResponse>> getPackageList() {
-        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(AuthUtil.getCompanyId());
+    public API<List<PackageResponse>> getPackageList(
+//            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+    ) {
+//        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(customAuthenticationToken.getCompanyId());
+        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(1L);
 
         return API.OK(packageResponseList);
     }

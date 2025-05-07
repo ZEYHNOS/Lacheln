@@ -44,5 +44,5 @@ public class ProductDetailResponse {
     private List<OptionDto> optionList;
 
     // 상품 이미지 리스트
-    private List<String> productImageUrl;
+    private List<ProductImageResponse> productImageUrl;
 }

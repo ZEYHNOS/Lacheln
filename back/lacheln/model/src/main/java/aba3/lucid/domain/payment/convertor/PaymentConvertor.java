@@ -7,6 +7,8 @@ import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Converter
 @RequiredArgsConstructor
 public class PaymentConvertor {
@@ -46,6 +48,13 @@ public class PaymentConvertor {
                 .paidAt(entity.getPaidAt())
                 .payDetails(payDetailConverter.toResponseList(entity.getPayDetailEntityList()))
                 .build();
+    }
+
+    public List<PayManagementResponse> toResponseList(List<PayManagementEntity> entityList) {
+        return entityList.stream()
+                .map(this::toResponse)
+                .toList()
+                ;
     }
 
 }

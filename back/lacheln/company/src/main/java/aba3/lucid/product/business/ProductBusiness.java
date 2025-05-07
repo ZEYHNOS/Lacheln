@@ -6,7 +6,7 @@ import aba3.lucid.common.image.ImageType;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
-import aba3.lucid.company.service.ImageService;
+import aba3.lucid.image.service.ImageService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.packages.converter.PackageToProductConverter;

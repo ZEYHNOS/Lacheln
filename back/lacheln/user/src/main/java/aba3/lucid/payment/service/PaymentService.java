@@ -154,6 +154,10 @@ public class PaymentService {
         }
     }
 
+    public List<PayManagementEntity> getPaymentList(String userId) {
+        return payManagementRepository.findAllByUser_userId(userId);
+    }
+
 //    // 결제해야 하는 총 금액
 //    protected BigInteger getTotalAmount(List<CartEntity> cartEntityList, CouponVerifyResponse response) {
 //        // 업체 별 사용되는 돈

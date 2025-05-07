@@ -38,7 +38,7 @@ function ViewProduct() {
                 const data = res.data.data;
                 setProduct(data);
                 if (data.productImageUrl?.length > 0) {
-                    setSelectedImage(`${imageBaseUrl}${data.productImageUrl[0]}`);
+                    setSelectedImage(`${imageBaseUrl}${data.productImageUrl[0].url}`);
                 }
             })
             .catch(err => console.error("상품 상세 정보 불러오기 실패", err));
@@ -58,13 +58,18 @@ function ViewProduct() {
         color,
         productImageUrl,
         optionList,
-        descriptionList
+        descriptionList,
+        overlap,
+        essential
     } = product;
+    const isDress = categoryCode === "D";
+    const showOverlap = isDress ? overlap : null;
+    const showEssential = isDress ? essential : null;
 
     // 상세정보 추출
     const sortedDescription = descriptionList
-        .sort((a, b) => a.order - b.order)  // order 기준으로 정렬
-        .map(item => item.value);          // value만 추출
+        .sort((a, b) => a.order - b.order) 
+        .map(item => item.value)
 
 
     return (
@@ -91,7 +96,7 @@ function ViewProduct() {
 
                     <div className="mt-4 flex space-x-2 overflow-x-auto max-w-full p-1">
                         {productImageUrl?.map((img, index) => {
-                            const fullUrl = `${imageBaseUrl}${img}`;
+                            const fullUrl = `${imageBaseUrl}${img.url}`;
                             return (
                                 <img
                                     key={index}
@@ -186,11 +191,29 @@ function ViewProduct() {
                     </div>
 
                     {/* 드레스 사이즈 리스트 출력 */}
-                    {product.dressSizeList?.length > 0 && (
+                    {product.sizeList?.length > 0 && (
                         <div className="mt-6">
                             <h3 className="font-semibold mb-2">드레스 사이즈 리스트</h3>
+                            <div className="flex items-center space-x-4">
+                                <label className="flex items-center space-x-1">
+                                    <input type="checkbox" checked={showOverlap === "Y"} readOnly className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                        bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                        checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                        checked:after:font-bold checked:after:block checked:after:text-center
+                                        checked:after:leading-[18px]" />
+                                    <span>중복 선택</span>
+                                </label>
+                                <label className="flex items-center space-x-1">
+                                    <input type="checkbox" checked={showEssential === "Y"} readOnly className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                        bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                        checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                        checked:after:font-bold checked:after:block checked:after:text-center
+                                        checked:after:leading-[18px]" />
+                                    <span>필수 선택</span>
+                                </label>
+                            </div>
                             <div className="space-y-2">
-                                {product.dressSizeList.map((sizeItem, idx) => (
+                                {product.sizeList.map((sizeItem, idx) => (
                                     <div key={idx} className="flex space-x-4 bg-white border p-2 rounded">
                                         <input
                                             type="text"
@@ -260,27 +283,41 @@ function ViewProduct() {
             <h2 className="text-lg font-semibold mb-2">상품 상세 설명</h2>
                 <div className="prose max-w-none bg-white border rounded p-4 space-y-4">
                     {descriptionList
-                    .sort((a, b) => a.order - b.order)
-                    .map((item, idx) => {
+                        .sort((a, b) => a.order - b.order)
+                        .map((item, idx) => {
                         if (item.type === "TEXT") {
-                        return <p key={idx} className="whitespace-pre-wrap">{item.value}</p>;
+                            return (
+                            <p key={idx} className="whitespace-pre-wrap">
+                                {item.value}
+                            </p>
+                            );
                         } else if (item.type === "IMAGE") {
-                        return <img key={idx} src={item.value} alt={`이미지-${idx}`} className="max-w-xs mx-auto" />;
+                            const imageUrl = item.value.startsWith("http")
+                            ? item.value
+                            : `${imageBaseUrl.replace(/\/$/, "")}${item.value.replaceAll("##", "/")}`;
+                            return (
+                            <img
+                                key={idx}
+                                src={imageUrl}
+                                alt={`이미지-${idx}`}
+                                className="max-w-xs mx-auto block"
+                            />
+                            );
                         } else if (item.type === "YOUTUBE") {
-                        return (
+                            return (
                             <div key={idx} className="youtube-wrapper">
-                            <iframe
+                                <iframe
                                 src={item.value}
                                 width="560"
                                 height="315"
                                 title={`유튜브-${idx}`}
                                 allowFullScreen
                                 className="mx-auto"
-                            />
+                                />
                             </div>
-                        );
+                            );
                         } else {
-                        return null;
+                            return null;
                         }
                     })}
                 </div>

@@ -27,7 +27,7 @@ function AddProduct() {
     const writeRef = useRef();
 
     useEffect(() => {
-        // 업체 카테고리 불러오기기
+        // 업체 카테고리 불러오기
         axios.get(`${baseUrl}/company/category`,{
             withCredentials: true
         })
@@ -58,19 +58,6 @@ function AddProduct() {
             })
             .catch(err => console.error("카테고리 불러오기 실패", err));
     }, []);
-
-    // BASE64 파일 변환 함수
-    function base64toBlob(base64Data) {
-        const arr = base64Data.split(',');
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new Blob([u8arr], { type: mime });
-    }
 
     // 옵션 추가
     const handleAddOption = () => {
@@ -130,6 +117,19 @@ function AddProduct() {
             return [];
         }
     };
+
+    // BASE64 파일 변환 함수
+    function base64toBlob(base64Data) {
+        const arr = base64Data.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
 
     // 상세설명 이미지 업로드
     const uploadImageToServer = async (file) => {
@@ -191,6 +191,10 @@ function AddProduct() {
             outAvailable: outdoor ? "Y" : "N",
             color,
             descriptionList: processedDescriptionList,
+            ...(categoryCode === "D" && {
+                overlap: options[0]?.isMultiSelect ? "Y" : "N",
+                essential: options[0]?.isRequired ? "Y" : "N",
+            })
         };
         console.log("🟨 최종 전송 데이터:", data);
     

@@ -91,14 +91,13 @@ public abstract class ProductEntity {
     // 상품 이미지 리스트 업데이트
     public void updateProductImage(List<ProductImageEntity> productImageEntityList) {
         if (productImageEntityList.isEmpty()) {
-            throw new ApiException(ErrorCode.INVALID_PARAMETER, "상품 이미지가 존재하지 않습니다.");
+            // TODO 생각해보자
+            return;
         }
 
         if (this.imageList == null) {
             this.imageList = new ArrayList<>();
         }
-
-        this.imageList.clear();
 
         this.imageList.addAll(productImageEntityList);
     }
@@ -171,7 +170,7 @@ public abstract class ProductEntity {
         }
 
         this.productDescriptionEntityList.clear();
-        if (descriptionEntityList == null) {
+        if (descriptionEntityList == null || descriptionEntityList.isEmpty()) {
             return;
         }
 

@@ -2,6 +2,8 @@ package aba3.lucid.payment.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomAuthenticationToken;
+import aba3.lucid.domain.payment.dto.PayDetailResponse;
 import aba3.lucid.domain.payment.dto.PayManagementResponse;
 import aba3.lucid.domain.payment.dto.PaymentRequest;
 import aba3.lucid.domain.payment.dto.PaymentVerifyRequest;
@@ -9,12 +11,11 @@ import aba3.lucid.payment.business.PaymentBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Slf4j
 @RequestMapping("/payment")
@@ -47,6 +48,28 @@ public class PaymentController {
         BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, AuthUtil.getUserId());
 
         return API.OK(totalAmount);
+    }
+
+    @GetMapping("/user/list")
+    @Operation(summary = "사용자의 결제 내역")
+    public API<List<PayManagementResponse>> getUserPaymentList(
+            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+    ) {
+//        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(customAuthenticationToken.getUserId());
+        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList("");
+
+        return API.OK(payManagementResponseList);
+    }
+
+    @GetMapping("/company/list")
+    @Operation(summary = "업체에 결제한 내역")
+    public API<List<PayDetailResponse>> getCompanyPaymentList(
+            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+    ) {
+//        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(customAuthenticationToken.getCompanyId());
+        List<PayDetailResponse> payManagementResponseList = paymentBusiness.getPaymentList(1L);
+
+        return API.OK(payManagementResponseList);
     }
 
 }

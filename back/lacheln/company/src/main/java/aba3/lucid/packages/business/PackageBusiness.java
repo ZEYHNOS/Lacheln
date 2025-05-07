@@ -12,9 +12,11 @@ import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.packages.service.PackageService;
+import aba3.lucid.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Slf4j
@@ -73,7 +75,9 @@ public class PackageBusiness {
         Validator.throwIfInvalidId(companyId);
 
         List<PackageEntity> packageEntityList = packageService.getPackageList(companyId);
+        List<PackageResponse> packageResponseList = packageConverter.toResponseList(packageEntityList);
+        packageService.responseInsertPrice(packageResponseList);
 
-        return packageConverter.toResponseList(packageEntityList);
+        return packageResponseList;
     }
 }

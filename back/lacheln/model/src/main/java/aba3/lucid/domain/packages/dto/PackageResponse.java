@@ -4,6 +4,7 @@ import aba3.lucid.domain.company.dto.CompanyResponse;
 import aba3.lucid.domain.product.enums.PackageStatus;
 import lombok.*;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -36,5 +37,7 @@ public class PackageResponse {
     private int discountrate;
 
     private String imageUrl;
+
+    private BigInteger totalPrice;
 
 }

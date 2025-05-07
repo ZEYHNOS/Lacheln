@@ -1,6 +1,7 @@
 package aba3.lucid.domain.product.converter;
 
 import aba3.lucid.common.annotation.Converter;
+import aba3.lucid.domain.product.dto.ProductImageResponse;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.entity.ProductImageEntity;
 
@@ -16,10 +17,18 @@ public class ProductImageConverter {
                 ;
     }
 
-    public List<String> toDtoList(List<ProductImageEntity> entityList) {
+    public List<ProductImageResponse> toDtoList(List<ProductImageEntity> entityList) {
         return entityList.stream()
-                .map(ProductImageEntity::getPdImageUrl)
+                .map(this::toDto)
                 .toList()
+                ;
+    }
+
+    public ProductImageResponse toDto(ProductImageEntity entity) {
+        return ProductImageResponse.builder()
+                .id(entity.getPdImageId())
+                .url(entity.getPdImageUrl())
+                .build()
                 ;
     }
 
@@ -29,11 +38,6 @@ public class ProductImageConverter {
                 .pdImageUrl(imageUrl)
                 .build()
                 ;
-    }
-
-
-    public String toDto(ProductImageEntity entity) {
-        return entity.getPdImageUrl();
     }
 
 }

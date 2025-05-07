@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +31,7 @@ public class CompanyAlertBusiness {
     private final CompanyService companyService;
     private final SseService sseService;
 
-    private final ObjectMapper objectMapper;
+    private final RabbitTemplate rabbitTemplate;
 
 
     // 알림 생성하기
@@ -77,7 +78,7 @@ public class CompanyAlertBusiness {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
             // JSON 변환 직접 수행
-            CompanyAlertDto dto = objectMapper.readValue(message.getBody(), CompanyAlertDto.class);
+            CompanyAlertDto dto = (CompanyAlertDto) rabbitTemplate.getMessageConverter().fromMessage(message);
             
             CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
             CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);

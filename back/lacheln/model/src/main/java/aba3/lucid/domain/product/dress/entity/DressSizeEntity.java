@@ -6,6 +6,8 @@ import aba3.lucid.domain.product.enums.DressSize;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigInteger;
+
 @Getter
 @Entity
 @Table(name = "dress_size")
@@ -31,6 +33,9 @@ public class DressSizeEntity {
 
     @Column(name = "dress_size_stock")
     private int dressSizeStock; //재고
+
+    @Column(name = "dress_size_plus_cost")
+    private BigInteger plusCost;
 
     public void changeStock(int stock) {
         if (stock <= 0) {

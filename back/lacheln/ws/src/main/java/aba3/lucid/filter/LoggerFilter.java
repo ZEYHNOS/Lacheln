@@ -56,16 +56,27 @@ public class LoggerFilter implements Filter {
 
     // 응답 로그 생성
     public void logResponse(ContentCachingResponseWrapper res) {
+        String contentType = res.getContentType();
+
+        // 이미지나 바이너리 파일은 로그에서 제외
+        if (contentType != null && (
+                contentType.startsWith("image/") ||
+                        contentType.equals("application/octet-stream")
+        )) {
+            log.info("<<<<<<<<<< Status: {}, Content-Type: {} (바이너리 응답 생략)",
+                    res.getStatus(), contentType);
+            return;
+        }
+
         StringBuilder headers = new StringBuilder();
         res.getHeaderNames().forEach(header -> {
-            headers.append("[").append(header).append(" : ").append(res.getHeader(header));
+            headers.append("[").append(header).append(" : ").append(res.getHeader(header)).append("] ");
         });
 
         String responseBody = new String(res.getContentAsByteArray(), StandardCharsets.UTF_8);
 
         log.info("<<<<<<<<<< Status: {}, HeaderNames: {}, headers: {}, body: {}",
                 res.getStatus(), res.getHeaderNames(), headers, responseBody);
-
     }
 
     @Override

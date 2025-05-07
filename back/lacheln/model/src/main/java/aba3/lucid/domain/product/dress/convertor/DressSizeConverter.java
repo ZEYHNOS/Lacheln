@@ -31,6 +31,7 @@ public class DressSizeConverter {
                 .size(dto.getSize())
                 .dress(dress)
                 .dressSizeStock(dto.getStock())
+                .plusCost(dto.getPlusCost())
                 .build()
                 ;
     }
@@ -40,6 +41,7 @@ public class DressSizeConverter {
         return DressSizeDto.builder()
                 .size(entity.getSize())
                 .stock(entity.getDressSizeStock())
+                .plusCost(entity.getPlusCost())
                 .build()
                 ;
     }

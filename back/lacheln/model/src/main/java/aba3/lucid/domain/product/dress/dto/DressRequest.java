@@ -38,6 +38,12 @@ public class DressRequest extends ProductRequest {
     @NotNull
     private Color color;
 
+    @NotNull
+    private BinaryChoice overlap;
+
+    @NotNull
+    private BinaryChoice essential;
+
     // 해당 드레스 상품 사이즈 리스트
     @Valid
     private List<DressSizeDto> sizeList;

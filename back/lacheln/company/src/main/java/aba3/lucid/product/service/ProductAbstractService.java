@@ -3,6 +3,7 @@ package aba3.lucid.product.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
+import aba3.lucid.company.service.ImageService;
 import aba3.lucid.domain.product.converter.DescriptionConverter;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
@@ -31,6 +32,7 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
     protected final HashtagConverter hashtagConverter;
     protected final ProductImageConverter productImageConverter;
     protected final DescriptionConverter descriptionConverter;
+    protected final ImageService imageService;
 
     // 상품 저장
     @Override
@@ -44,14 +46,18 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
 
     // 상품 정보 업데이트
     @Override
+    @Transactional
     public T updateProduct(T existingEntity, R req) {
         List<OptionEntity> optionEntityList = optionConverter.toEntityList(req.getOptionList(), existingEntity);
         List<HashtagEntity> hashtagEntityList = hashtagConverter.toEntityList(req.getHashTagList(), existingEntity);
         List<ProductImageEntity> productImageEntityList = productImageConverter.toEntityList(req.getImageUrlList(), existingEntity);
         List<ProductDescriptionEntity> productDescriptionEntityList = descriptionConverter.toEntityList(existingEntity, req.getDescriptionList());
-        
+
+        imageService.deleteProductImage(existingEntity.getPdId());
+
         updateAdditionalFields(existingEntity, req);
         existingEntity.updateFormList(optionEntityList, hashtagEntityList, productImageEntityList, productDescriptionEntityList);
+
 
         return repository.save(existingEntity);
     }

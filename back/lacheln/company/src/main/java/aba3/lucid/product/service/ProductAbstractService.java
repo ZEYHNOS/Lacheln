@@ -4,7 +4,7 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.image.service.ImageService;
-import aba3.lucid.domain.product.converter.DescriptionConverter;
+import aba3.lucid.domain.product.converter.ProductDescriptionConverter;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
@@ -31,7 +31,7 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
     protected final OptionConverter optionConverter;
     protected final HashtagConverter hashtagConverter;
     protected final ProductImageConverter productImageConverter;
-    protected final DescriptionConverter descriptionConverter;
+    protected final ProductDescriptionConverter descriptionConverter;
     protected final ImageService imageService;
 
     // 상품 저장
@@ -51,7 +51,7 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
         List<OptionEntity> optionEntityList = optionConverter.toEntityList(req.getOptionList(), existingEntity);
         List<HashtagEntity> hashtagEntityList = hashtagConverter.toEntityList(req.getHashTagList(), existingEntity);
         List<ProductImageEntity> productImageEntityList = productImageConverter.toEntityList(req.getImageUrlList(), existingEntity);
-        List<ProductDescriptionEntity> productDescriptionEntityList = descriptionConverter.toEntityList(existingEntity, req.getDescriptionList());
+        List<ProductDescriptionEntity> productDescriptionEntityList = descriptionConverter.toDescriptionEntityList(existingEntity, req.getDescriptionList());
 
 //        imageService.deleteProductImage(existingEntity.getPdId());
 

@@ -1,34 +1,23 @@
 package aba3.lucid.domain.product.entity;
 
 import aba3.lucid.common.enums.DescriptionType;
+import aba3.lucid.domain.description.Description;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "pd_description")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @ToString
-public class ProductDescriptionEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long pdDescriptionId;
+public class ProductDescriptionEntity extends Description {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pd_id")
+    @JoinColumn(name = "product_id")
     private ProductEntity product;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private DescriptionType type;
-
-    @Column(name = "block_value", nullable = false)
-    private String value;
-
-    @Column(name = "block_order")
-    private int order;
 
 }

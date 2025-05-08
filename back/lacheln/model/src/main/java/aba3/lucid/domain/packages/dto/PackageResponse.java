@@ -1,12 +1,14 @@
 package aba3.lucid.domain.packages.dto;
 
 import aba3.lucid.domain.company.dto.CompanyResponse;
+import aba3.lucid.domain.product.dto.DescriptionResponse;
 import aba3.lucid.domain.product.enums.PackageStatus;
 import lombok.*;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +22,7 @@ public class PackageResponse {
 
     private String name;
 
-    private String comment;
+    private List<DescriptionResponse> descriptionResponseList;
 
     private CompanyResponse admin;
 

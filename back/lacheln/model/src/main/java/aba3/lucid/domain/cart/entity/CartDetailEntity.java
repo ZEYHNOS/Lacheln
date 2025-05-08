@@ -39,20 +39,20 @@ public class CartDetailEntity {
     private Long optionId; //옵션ID
 
     @Column(name = "op_name", nullable = false)
-    private String optionName;
+    private String optionName; // 옵션 이름
 
     @Column(name = "op_dt_id", nullable=false)
     private Long optionDetailId; //옵션상세ID
 
     @Column(name = "op_dt_name", nullable = false)
-    private String optionDetailName;
+    private String optionDetailName; // 옵션 상세 이름
 
     @Column(name = "cart_dt_quantity")
     private int cartDtQuantity; // 상세 옵션 갯수
 
     @Column(name = "op_price", nullable = false)
-    private BigInteger optionPrice;
+    private BigInteger optionPrice; // 해당 옵션 가격
 
     @Column(name = "op_tasktime", nullable = false)
-    private int optionTaskTime;
+    private int optionTaskTime; // 옵션 작업 추가 시간
 }

@@ -54,6 +54,8 @@ public class CompanyConvertor {
                 .bnRegNo(entity.getCpBnRegNo())
                 .mos(entity.getCpMos())
                 .contact(entity.getCpContact())
+                .category(entity.getCpCategory())
+                .profileImageUrl(entity.getCpProfile())
                 .build();
 
     }

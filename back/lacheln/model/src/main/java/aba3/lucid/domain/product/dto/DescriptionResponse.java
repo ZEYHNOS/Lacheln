@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductDescriptionResponse {
+public class DescriptionResponse {
 
     private DescriptionType type;
 

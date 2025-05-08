@@ -33,19 +33,22 @@ public class PaymentController {
 
     @PostMapping("/save")
     public API<PayManagementResponse> savedPayment(
-            @RequestBody PaymentRequest request
+            @RequestBody PaymentRequest request,
+            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
     ) {
-        PayManagementResponse response = paymentBusiness.save(AuthUtil.getUserId(), request);
+        PayManagementResponse response = paymentBusiness.save(customAuthenticationToken.getUserId(), request);
 
         return API.OK(response);
     }
 
     @PostMapping("/verify")
-    @Operation(summary = "결제 전 검증 및 총액", description = "결제 전 쿠폰, 마일리지, 상품 스냅샷 유효성 검사 및 총 결제하는 금액 반환")
+    @Operation(summary = "결제 전 검증 및 결제해야 하는 금액 반환", description = "결제 전 쿠폰, 마일리지, 상품 스냅샷 유효성 검사 및 총 결제하는 금액 반환")
     public API<BigInteger> paymentVerification(
-            @RequestBody PaymentVerifyRequest request
+            @RequestBody PaymentVerifyRequest request,
+            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
     ) {
-        BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, AuthUtil.getUserId());
+//        BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, customAuthenticationToken.getUserId());
+        BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, "");
 
         return API.OK(totalAmount);
     }
@@ -56,7 +59,7 @@ public class PaymentController {
             @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
     ) {
 //        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(customAuthenticationToken.getUserId());
-        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList("");
+        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getUserPaymentList("");
 
         return API.OK(payManagementResponseList);
     }

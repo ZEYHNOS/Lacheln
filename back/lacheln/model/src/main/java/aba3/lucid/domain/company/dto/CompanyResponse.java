@@ -27,7 +27,6 @@ public class CompanyResponse implements Serializable {
 
     private String name;
 
-
     private String address;
 
     private String role;
@@ -40,5 +39,8 @@ public class CompanyResponse implements Serializable {
 
     private String contact;
 
+    private CompanyCategory category;
+
+    private String profileImageUrl;
 
 }

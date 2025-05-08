@@ -10,6 +10,8 @@ import aba3.lucid.domain.payment.dto.PaymentVerifyRequest;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
+import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -33,6 +35,7 @@ public class PaymentService {
     private final RabbitTemplate rabbitTemplate;
 
     private final CartService cartService;
+    private final UserService userService;
 
     private final PayManagementRepository payManagementRepository;
 
@@ -82,21 +85,24 @@ public class PaymentService {
         // 카트 Entity List
         List<CartEntity> cartEntityList = cartService.findAllById(request.getCardIdList());
 
+        // 업체마다 그룹을 만들고 업체 별 결제해야 하는 금액 더하기
+        Map<Long, BigInteger> groupByCompanyAmountMap = initGroupByCompanyAmount(cartEntityList);
+
         // 쿠폰 확인을 위해 메세지 보내기
-        CouponVerifyResponse response = couponVerificationSendMessage(userId, request, cartEntityList);
+        CouponVerifyResponse response = couponVerificationSendMessage(userId, request, cartEntityList, groupByCompanyAmountMap);
 
+        // 마일리지 확인하기
+        verifyMileage(userId, request.getMileage());
 
+        // Redis를 사용하여 일정 블락 하기
 
-        // TODO RPC 패턴 사용하기
-
-
-//        return getTotalAmount(cartEntityList, response);
-        return null;
+        // 총액에서 쿠폰으로 할인 금액 빼고 마일리지 뺀 금액
+        return getTotalAmount(response, request.getMileage(), groupByCompanyAmountMap);
     }
 
     // 쿠폰 유효성 검사하기
     // userId, couponBoxIdList, productId, totalAmount
-    private CouponVerifyResponse couponVerificationSendMessage(String userId, PaymentVerifyRequest request, List<CartEntity> cartEntityList) {
+    private CouponVerifyResponse couponVerificationSendMessage(String userId, PaymentVerifyRequest request, List<CartEntity> cartEntityList, Map<Long, BigInteger> groupByCompanyAmount) {
         // 상품 스냅샷 리스트
         List<ProductSnapshot> productSnapshotList = cartEntityList.stream()
                 .map(ProductSnapshot::new)
@@ -121,74 +127,86 @@ public class PaymentService {
                 .userId(userId)
                 .couponBoxIdList(request.getCouponBoxIdList())
                 .productIdList(productIdList)
-                .amount(null)
+                .amount(groupByCompanyAmount)
                 .build()
                 ;
 
         // 메세지 생성 및 보내기
         Message message = rabbitTemplate.getMessageConverter().toMessage(requestMessage, props);
-        log.info("Message Send : {}", message);
         rabbitTemplate.send("company.exchange", "to.company", message);
 
         // 메세지 받기(Timeout : 5초)
         Message reply = rabbitTemplate.receive("to.user", 5000);
-        log.info("Message reply : {}", reply);
 
-        // TODO 쿠폰 Response로 받아서 결제해야 하는 금액 계산하기
-        // 필요한 필드 : 쿠폰 할인율, companyID
 
         // 성공적으로 통신 했을 때(쿠폰 유효성 통과)
         if (reply != null && correlationId.equals(reply.getMessageProperties().getCorrelationId())) {
             // 응답 메시지를 객체로 변환
             CouponVerifyResponse result = (CouponVerifyResponse) rabbitTemplate.getMessageConverter().fromMessage(reply);
-            log.info("RPC result: {}", result);
             return result;
         }
-        // TODO 통신은 성공했지만 쿠폰 유효성 검사 실패했을 때
-
         // 타임아웃일 때
         else {
             // 타임아웃 처리
             log.error("Timeout: No response received within 5 seconds");
-            throw new RuntimeException("No response received within timeout period.");
+            throw new ApiException(ErrorCode.SERVER_ERROR);
         }
     }
 
-    public List<PayManagementEntity> getPaymentList(String userId) {
+    public List<PayManagementEntity> getUserPaymentList(String userId) {
         return payManagementRepository.findAllByUser_userId(userId);
     }
 
-//    // 결제해야 하는 총 금액
-//    protected BigInteger getTotalAmount(List<CartEntity> cartEntityList, CouponVerifyResponse response) {
-//        // 업체 별 사용되는 돈
-//        Map<Long, BigInteger> groupByCompanyAmountMap = new HashMap<>();
-//
-//        for (CartEntity cart : cartEntityList) {
-//            groupByCompanyAmountMap.put(
-//                    cart.getCpId(),
-//                    groupByCompanyAmountMap.getOrDefault(cart.getCpId(), BigInteger.ZERO).add(cart.getPrice())
-//            );
-//        }
-//
-//        // 할인 된 금액 총합
-//        BigInteger totalAmount = BigInteger.ZERO;
-//        for (Long companyId : groupByCompanyAmountMap.keySet()) {
-//            int discountRate = response.getKeyCompanyIdValueDiscountRate().getOrDefault(companyId, 0);
-//
-//            BigInteger companyAmount = groupByCompanyAmountMap.get(companyId);
-//            BigInteger discountedAmount;
-//            if (discountRate > 0) {
-//                discountedAmount = companyAmount.multiply(BigInteger.valueOf(100))
-//                        .divide(BigInteger.valueOf(discountRate));
-//            } else {
-//                // 할인 없음 -> 원금 그대로
-//                discountedAmount = companyAmount;
-//            }
-//
-//            totalAmount = totalAmount.add(discountedAmount);
-//
-//        }
-//
-//        return totalAmount;
-//    }
+    private void verifyMileage(String userId, BigInteger mileage) {
+        UsersEntity user = userService.findByIdWithThrow(userId);
+
+        if (user.getUserMileage().compareTo(mileage) < 0) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "마일리지가 부족합니다.");
+        }
+    }
+
+    // 결제해야 하는 총 금액
+    private BigInteger getTotalAmount(CouponVerifyResponse response, BigInteger mileage, Map<Long, BigInteger> groupByCompanyAmountMap) {
+
+        // 할인 된 금액 총합
+        BigInteger totalAmount = BigInteger.ZERO;
+        for (Long companyId : groupByCompanyAmountMap.keySet()) {
+            // 할인율
+            int discountRate = response.getKeyCompanyIdValueDiscountRate().getOrDefault(companyId, 0);
+
+            BigInteger companyAmount = groupByCompanyAmountMap.get(companyId);
+            BigInteger discountedAmount;
+            if (discountRate > 0) {
+                discountedAmount = companyAmount.multiply(BigInteger.valueOf(100 - discountRate))
+                        .divide(BigInteger.valueOf(100));
+            } else {
+                // 할인 없음 -> 원금 그대로
+                discountedAmount = companyAmount;
+            }
+
+            totalAmount = totalAmount.add(discountedAmount);
+
+        }
+
+        // 마일리지 사용 시 음수 값이 나올 때
+        if (totalAmount.compareTo(mileage) < 0) {
+            return BigInteger.ZERO;
+        }
+
+        return totalAmount;
+    }
+
+    // 업체를 그룹으로 생성하고 해당 업체 별 결제해야하는 금액을 계산
+    private Map<Long, BigInteger> initGroupByCompanyAmount(List<CartEntity> cartEntityList) {
+        Map<Long, BigInteger> groupByCompanyAmountMap = new HashMap<>();
+
+        for (CartEntity cart : cartEntityList) {
+            groupByCompanyAmountMap.put(
+                    cart.getCpId(),
+                    groupByCompanyAmountMap.getOrDefault(cart.getCpId(), BigInteger.ZERO).add(cart.getPrice())
+            );
+        }
+
+        return groupByCompanyAmountMap;
+    }
 }

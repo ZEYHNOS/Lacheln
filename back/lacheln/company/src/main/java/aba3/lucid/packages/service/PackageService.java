@@ -81,8 +81,6 @@ public class PackageService {
     // 패키지 정보 수정
     @Transactional
     public PackageEntity packageUpdate(PackageEntity packageEntity, PackageUpdateRequest request, Long adminId) {
-        // 방장의 요청이 아닐 때
-        throwIfNotAdminRequest(packageEntity, adminId);
 
         // 정보 변경(상태는 변경 X)
         packageEntity.updateAdditionalField(request);
@@ -92,7 +90,7 @@ public class PackageService {
             switch (request.getStatus()) {
                 // 활성화 하기 전 모든 정보가 들어있는지
                 case PUBLIC :
-                    throwIfImpossibleToPublicChange(packageEntity);
+                    throwIfImpossibleToPublicChange(packageEntity, adminId);
                     break;
                 case REMOVE:
                     // todo 삭제하기 전 예약 현황 확인하기
@@ -130,16 +128,24 @@ public class PackageService {
 
 
     // 상품 등록 가능 여부 확인
-    protected void throwIfImpossibleToPublicChange(PackageEntity entity) {
-        // 비공개 상태여야 함
-        if (entity.getPackStatus() != PackageStatus.PRIVATE) {
-            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "비공개 상태여야합니다.");
-        }
+    protected void throwIfImpossibleToPublicChange(PackageEntity entity, Long companyId) {
+        // 방장의 요청이 아닐 때
+        throwIfNotAdminRequest(entity, companyId);
+        // 패키지 상태가 private 아닐 때
+        throwIfNotPackageStatusPrivate(entity);
+        // 3가지 업체가 초대가 되었는지
+        throwIfNotInvitedAllRequiredCompanies(entity);
 
-        // 모든 상품이 등록되어야 한다.
+        // 모든 상품이 등록되었는지
         if (countDistinctProductsByPackage(entity.getPackId()) != 3) {
             throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION);
         }
+
+        // 패키지 설명이 존재하는 지
+
+        // 패키지 대표 이미지가 있는지
+
+        // 해당 요청이 해당 패키지의 대표가 요청했는지
 
         // 패키지 종료일이 등록되지 않았거나 오늘보다 하루 이상이지 않을 때
         LocalDateTime minimumDateTime = LocalDate.now().plusDays(1).atStartOfDay();
@@ -148,8 +154,21 @@ public class PackageService {
         }
     }
 
+    private void throwIfNotInvitedAllRequiredCompanies(PackageEntity entity) {
+        if (entity.getPackAdmin() == null || entity.getPackCompany1() == null || entity.getPackCompany2() == null) {
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "모든 업체가 초대가 되어있지 않습니다.");
+        }
+    }
+
+    // 비공개 상태여야 함
+    private void throwIfNotPackageStatusPrivate(PackageEntity entity) {
+        if (entity.getPackStatus() != PackageStatus.PRIVATE) {
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "비공개 상태여야합니다.");
+        }
+    }
+
     // 현재 패키지에 등록된 상품 갯수
-    public long countDistinctProductsByPackage(Long packageId) {
+    private long countDistinctProductsByPackage(Long packageId) {
         return packageToProductRepository.countDistinctProductsByPackage(packageId);
     }
 

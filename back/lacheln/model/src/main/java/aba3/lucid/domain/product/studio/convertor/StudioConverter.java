@@ -13,7 +13,7 @@ public class StudioConverter extends ProductAbstractConverter<StudioEntity, Stud
     public StudioConverter(OptionConverter optionConverter
             , HashtagConverter hashtagConverter
             , ProductImageConverter productImageConverter
-            , DescriptionConverter descriptionConverter) {
+            , ProductDescriptionConverter descriptionConverter) {
         super(optionConverter, hashtagConverter, productImageConverter, descriptionConverter);
     }
 
@@ -47,7 +47,7 @@ public class StudioConverter extends ProductAbstractConverter<StudioEntity, Stud
                 .stdInAvailable(entity.getStdInAvailable())
                 .stdBgOptions(entity.getStdBgOptions())
                 .stdMaxPeople(entity.getStdMaxPeople())
-                .descriptionList(descriptionConverter.toResponseList(entity.getProductDescriptionEntityList()))
+                .descriptionList(descriptionConverter.toDescriptionResponseList(entity.getProductDescriptionEntityList()))
                 .hashTagList(hashtagConverter.toDtoList(entity.getHashtagList()))
                 .optionList(optionConverter.toDtoList(entity.getOpList()))
                 .productImageUrl(productImageConverter.toDtoList(entity.getImageList()))

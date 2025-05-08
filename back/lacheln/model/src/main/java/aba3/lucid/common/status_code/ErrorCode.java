@@ -22,6 +22,9 @@ public enum ErrorCode implements StatusCodeIfs {
     NULL_POINT(400, 400, "존재하지 않습니다."),
     INVALID_PARAMETER(400, 4001, "잘못된 파라미터 값입니다."),
     REQUIRED_FIELD_MISSING(400, 4002, "필수 값이 누락되었습니다."),
+    USER_BANNED(400, 400, "사용자가 차단됐습니다"),
+    CANNOT_REPORT_YOURSELF(400, 400, "신고할 수 없습니다"),
+    RESTRICTED_CONTENT(403, 403, "신고 내용이 잘 못 됩니다"),
     ;
 
     private final Integer httpStatusCode;

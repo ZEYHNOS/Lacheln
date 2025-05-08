@@ -5,13 +5,11 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class ReportResponse {
-
 
     private Long reportId;
     private LocalDateTime createdAt;

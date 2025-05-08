@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CompanyController {
     private final CompanyBusiness companyBusiness;
-    private final CompanyService companyService;
 
 
 

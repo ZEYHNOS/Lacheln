@@ -16,7 +16,7 @@ import Statistics from "./components/Company/Companyinfo/Statistics";
 import ProductManagement from "./components/Company/Management/Product/Product";
 import OrderManagement from "./components/Company/Management/Order";
 import ReviewManagement from "./components/Company/Management/Review";
-import Collaboration from "./components/Company/Work/Collaboration";
+import Collaboration from "./components/Company/Work/Collaboration/Collaboration.jsx";
 import Messenger from "./components/Company/Work/Messenger";
 import Notification from "./components/Company/Work/Notification";
 import Schedule from "./components/Company/Work/Schedule";

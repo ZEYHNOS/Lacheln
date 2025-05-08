@@ -1,11 +1,9 @@
 package aba3.lucid.domain.inquiry.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Setter
 @Getter
 @Entity
 @Table(name = "report_image")

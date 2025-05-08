@@ -6,6 +6,7 @@ import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
 import aba3.lucid.domain.product.enums.PackageStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -13,6 +14,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -47,8 +49,9 @@ public class PackageEntity {
     private CompanyEntity packCompany2; // 패키지 업체 2
 
 
-    @Column(name = "pack_comment", columnDefinition = "TEXT", nullable = false)
-    private String packComment; // 패키지 설명
+    @JsonIgnore
+    @OneToMany(mappedBy = "packageEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PackageDescriptionEntity> packageDescriptionEntityList;
 
     @Column(name = "pack_discountrate", columnDefinition = "INT", nullable = false)
     private int packDiscountrate; // 패키지 할인율
@@ -117,13 +120,6 @@ public class PackageEntity {
         this.packName = name;
     }
 
-    // 패키지 설명 변경
-    public void updatePackageComment(String packComment) {
-        Validator.assertStringValid(packComment, 10, 255);
-
-        this.packComment = packComment;
-    }
-
     // 패키지 종료일 변경
     public void updatePackageEndDate(LocalDateTime endDate) {
         // TODO 종료일 후에 예약이 존재하는지 유무 확인하기
@@ -155,7 +151,6 @@ public class PackageEntity {
 
     public void updateAdditionalField(PackageUpdateRequest request) {
         updatePackageName(request.getName());
-        updatePackageComment(request.getComment());
         updatePackageEndDate(request.getEndDate());
         updatePackageImageUrl(request.getImageUrl());
         updatePackageDiscountrate(request.getDiscountrate());

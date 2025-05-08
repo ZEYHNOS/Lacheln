@@ -2,7 +2,7 @@ package aba3.lucid.product.service;
 
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.image.service.ImageService;
-import aba3.lucid.domain.product.converter.DescriptionConverter;
+import aba3.lucid.domain.product.converter.ProductDescriptionConverter;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
@@ -25,7 +25,7 @@ public class StudioService extends ProductAbstractService<StudioEntity, StudioRe
                          OptionConverter optionConverter,
                          HashtagConverter hashtagConverter,
                          ProductImageConverter productImageConverter,
-                         DescriptionConverter descriptionConverter,
+                         ProductDescriptionConverter descriptionConverter,
                          ImageService imageService) {
         super(studioRepository, optionConverter, hashtagConverter, productImageConverter, descriptionConverter, imageService);
         this.studioRepository = studioRepository;

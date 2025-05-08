@@ -13,7 +13,7 @@ public class MakeUpConverter extends ProductAbstractConverter<MakeupEntity, Make
     public MakeUpConverter(OptionConverter optionConverter
             , HashtagConverter hashtagConverter
             , ProductImageConverter productImageConverter
-            , DescriptionConverter descriptionConverter) {
+            , ProductDescriptionConverter descriptionConverter) {
         super(optionConverter, hashtagConverter, productImageConverter, descriptionConverter);
     }
 
@@ -45,7 +45,7 @@ public class MakeUpConverter extends ProductAbstractConverter<MakeupEntity, Make
                 .visit(entity.getMakeupVisit())
                 .manager(entity.getMakeupManager())
                 .businessTrip(entity.getMakeupBt())
-                .descriptionList(descriptionConverter.toResponseList(entity.getProductDescriptionEntityList()))
+                .descriptionList(descriptionConverter.toDescriptionResponseList(entity.getProductDescriptionEntityList()))
                 .hashTagList(hashtagConverter.toDtoList(entity.getHashtagList()))
                 .optionList(optionConverter.toDtoList(entity.getOpList()))
                 .productImageUrl(productImageConverter.toDtoList(entity.getImageList()))

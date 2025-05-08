@@ -6,10 +6,10 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
 import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.entity.PackageEntity;
+import aba3.lucid.domain.product.converter.ProductDescriptionConverter;
 import aba3.lucid.domain.product.enums.PackageStatus;
 import lombok.RequiredArgsConstructor;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,6 +18,7 @@ import java.util.List;
 public class PackageConverter {
 
     private final CompanyConvertor companyConvertor;
+    private final ProductDescriptionConverter descriptionConverter;
 
 
     public List<PackageResponse> toResponseList(List<PackageEntity> entityList) {
@@ -30,7 +31,7 @@ public class PackageConverter {
     public PackageEntity toEntity(PackageRegisterRequest request, CompanyEntity admin) {
         return PackageEntity.builder()
                 .packName(request.getPackageName())
-                .packComment(request.getPackageComment())
+                .packageDescriptionEntityList(List.of())
                 .packAdmin(admin)
                 .packImageUrl("/default/images/package.png")
                 .packDiscountrate(0)
@@ -47,7 +48,6 @@ public class PackageConverter {
         return PackageResponse.builder()
                 .id(entity.getPackId())
                 .name(entity.getPackName())
-                .comment(entity.getPackComment())
                 .admin(companyConvertor.toResponse(entity.getPackAdmin()))
                 .cp1(companyConvertor.toResponse(entity.getPackCompany1()))
                 .cp2(companyConvertor.toResponse(entity.getPackCompany2()))

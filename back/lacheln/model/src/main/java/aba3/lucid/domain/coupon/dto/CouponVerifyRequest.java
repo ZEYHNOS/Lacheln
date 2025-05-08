@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -20,6 +21,6 @@ public class CouponVerifyRequest {
 
     private List<Long> productIdList;
 
-    private BigInteger amount;
+    private Map<Long, BigInteger> amount;
 
 }

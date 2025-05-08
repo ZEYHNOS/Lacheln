@@ -1,7 +1,7 @@
 package aba3.lucid.product.service;
 
 import aba3.lucid.image.service.ImageService;
-import aba3.lucid.domain.product.converter.DescriptionConverter;
+import aba3.lucid.domain.product.converter.ProductDescriptionConverter;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
@@ -30,7 +30,7 @@ public class DressService extends ProductAbstractService<DressEntity, DressReque
                         HashtagConverter hashtagConverter,
                         ProductImageConverter productImageConverter,
                         DressSizeConverter dressSizeConverter,
-                        DescriptionConverter descriptionConverter,
+                        ProductDescriptionConverter descriptionConverter,
                         ImageService imageService) {
         super(dressRepository, optionConverter, hashtagConverter, productImageConverter, descriptionConverter, imageService);
         this.dressRepository = dressRepository;

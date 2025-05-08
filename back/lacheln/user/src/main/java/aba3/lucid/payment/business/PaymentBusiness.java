@@ -49,7 +49,7 @@ public class PaymentBusiness {
         return paymentConvertor.toResponse(savedPayManagement);
     }
 
-
+    // Merchant ID 발급하기
     public String getMerchantUid() {
         return paymentService.generateMerchantUid();
     }
@@ -68,16 +68,16 @@ public class PaymentBusiness {
         return totalAmount;
     }
 
-    // 결제 내역 리스트 가지고 오기
-    public List<PayManagementResponse> getPaymentList(String userId) {
+    // 유저 결제 내역 리스트 가지고 오기
+    public List<PayManagementResponse> getUserPaymentList(String userId) {
         Validator.throwIfNull(userId);
 
-        List<PayManagementEntity> payManagementEntityList = paymentService.getPaymentList(userId);
+        List<PayManagementEntity> payManagementEntityList = paymentService.getUserPaymentList(userId);
 
         return paymentConvertor.toResponseList(payManagementEntityList);
     }
 
-    // 결제 내역 리스트 가지고 오기
+    // 업체 결제 내역 리스트 가지고 오기
     public List<PayDetailResponse> getPaymentList(Long companyId) {
         Validator.throwIfNull(companyId);
 

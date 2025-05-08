@@ -1,7 +1,7 @@
 package aba3.lucid.product.service;
 
 import aba3.lucid.image.service.ImageService;
-import aba3.lucid.domain.product.converter.DescriptionConverter;
+import aba3.lucid.domain.product.converter.ProductDescriptionConverter;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
@@ -24,7 +24,7 @@ public class MakeupService extends ProductAbstractService<MakeupEntity, MakeupRe
                          OptionConverter optionConverter,
                          HashtagConverter hashtagConverter,
                          ProductImageConverter imageConverter,
-                         DescriptionConverter descriptionConverter,
+                         ProductDescriptionConverter descriptionConverter,
                          ImageService imageService) {
         super(makeupRepository, optionConverter, hashtagConverter, imageConverter, descriptionConverter, imageService);
         this.makeupRepository = makeupRepository;

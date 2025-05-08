@@ -20,7 +20,7 @@ public abstract class ProductAbstractConverter<ENTITY extends ProductEntity, REQ
     protected final OptionConverter optionConverter;
     protected final HashtagConverter hashtagConverter;
     protected final ProductImageConverter productImageConverter;
-    protected final DescriptionConverter descriptionConverter;
+    protected final ProductDescriptionConverter descriptionConverter;
 
 
     public ENTITY toEntity(REQ request, CompanyEntity company) {
@@ -33,7 +33,7 @@ public abstract class ProductAbstractConverter<ENTITY extends ProductEntity, REQ
         List<OptionEntity> optionEntityList = optionConverter.toEntityList(request.getOptionList(), entity);
         List<HashtagEntity> hashtagEntityList = hashtagConverter.toEntityList(request.getHashTagList(), entity);
         List<ProductImageEntity> productImageEntityList = productImageConverter.toEntityList(request.getImageUrlList(), entity);
-        List<ProductDescriptionEntity> productDescriptionEntityList = descriptionConverter.toEntityList(entity, request.getDescriptionList());
+        List<ProductDescriptionEntity> productDescriptionEntityList = descriptionConverter.toDescriptionEntityList(entity, request.getDescriptionList());
 
         entity.updateFormList(optionEntityList, hashtagEntityList, productImageEntityList, productDescriptionEntityList);
         return entity;

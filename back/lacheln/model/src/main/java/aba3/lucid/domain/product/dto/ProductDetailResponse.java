@@ -35,7 +35,7 @@ public class ProductDetailResponse {
     private int taskTime;
 
     // 설명
-    private List<ProductDescriptionResponse> descriptionList;
+    private List<DescriptionResponse> descriptionList;
 
     // 태그 리스트
     private List<String> hashTagList;

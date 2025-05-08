@@ -6,7 +6,6 @@ import aba3.lucid.domain.product.converter.*;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
-import aba3.lucid.domain.product.entity.ProductDescriptionEntity;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,7 +18,7 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
             , HashtagConverter hashtagConverter
             , ProductImageConverter productImageConverter
             , DressSizeConverter dressSizeConverter
-            , DescriptionConverter descriptionConverter) {
+            , ProductDescriptionConverter descriptionConverter) {
 
         super(optionConverter, hashtagConverter, productImageConverter, descriptionConverter);
         this.dressSizeConverter = dressSizeConverter;
@@ -59,7 +58,7 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
                 .taskTime(entity.getPdTaskTime())
                 .overlap(entity.getDressSizeOverlap())
                 .essential(entity.getDressSizeEssential())
-                .descriptionList(descriptionConverter.toResponseList(entity.getProductDescriptionEntityList()))
+                .descriptionList(descriptionConverter.toDescriptionResponseList(entity.getProductDescriptionEntityList()))
                 .hashTagList(hashtagConverter.toDtoList(entity.getHashtagList()))
                 .optionList(optionConverter.toDtoList(entity.getOpList()))
                 .sizeList(dressSizeConverter.toDtoList(entity.getDressSizeList()))

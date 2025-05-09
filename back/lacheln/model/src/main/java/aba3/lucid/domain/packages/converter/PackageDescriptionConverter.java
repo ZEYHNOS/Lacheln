@@ -11,7 +11,7 @@ public class PackageDescriptionConverter extends AbstractDescriptionConverter<Pa
     @Override
     public PackageDescriptionEntity toDescriptionEntity(DescriptionRequest request, PackageEntity entity, int order) {
         return PackageDescriptionEntity.builder()
-                .entity(entity)
+                .packageEntity(entity)
                 .type(request.getType())
                 .value(request.getValue())
                 .order(order)

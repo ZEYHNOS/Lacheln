@@ -12,7 +12,7 @@ public class ProductDescriptionConverter extends AbstractDescriptionConverter<Pr
     @Override
     public ProductDescriptionEntity toDescriptionEntity(DescriptionRequest request, ProductEntity entity, int order) {
         return ProductDescriptionEntity.builder()
-                .entity(entity)
+                .product(entity)
                 .type(request.getType())
                 .value(request.getValue())
                 .order(order)

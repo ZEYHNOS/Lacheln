@@ -4,6 +4,7 @@ import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
+import aba3.lucid.domain.review.dto.ReviewResponse;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.entity.ReviewImageEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -52,5 +53,26 @@ public class ReviewConvertor {
                         .rvImageUrl(url)
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public static ReviewResponse toReviewResponse(ReviewEntity review) {
+        /*
+         * ReviewEntity → ReviewResponse 변환 메서드
+         * - 사용자에게 보여줄 데이터만 포함된 DTO를 생성한다.
+         * - 작성자 닉네임, 리뷰 내용, 평점, 이미지 URL 리스트, 작성일시를 포함한다.
+         */
+        return ReviewResponse.builder()
+                .nickname(review.getUser().getUserNickName()) // 작성자 닉네임
+                .content(review.getRvContent())               // 리뷰 본문 내용
+                .score(review.getRvScore())                   // 리뷰 평점
+                .imageUrls(
+                        review.getImageList() != null             // 이미지가 존재하는 경우에만 변환
+                                ? review.getImageList().stream()
+                                .map(ReviewImageEntity::getRvImageUrl)
+                                .toList()
+                                : List.of()                           // 이미지가 없으면 빈 리스트 반환
+                )
+                .createdAt(review.getRvCreate())              // 작성일시
+                .build();
     }
 }

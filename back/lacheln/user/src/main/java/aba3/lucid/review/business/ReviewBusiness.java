@@ -6,6 +6,7 @@ import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
 import aba3.lucid.domain.review.convertor.ReviewConvertor;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
+import aba3.lucid.domain.review.dto.ReviewResponse;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.entity.ReviewImageEntity;
 import aba3.lucid.domain.review.repository.ReviewImageRepository;
@@ -69,5 +70,24 @@ public class ReviewBusiness {
 
         // 5. MQ 전송 (옵션)
         // rabbitTemplate.convertAndSend("exchange", "routing.key", payload);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewResponse> getReviewsByProductId(Long productId) {
+        /*
+         * [1] 리뷰 엔티티 목록 조회
+         * - ReviewRepository에서 productId를 기준으로 리뷰 리스트를 가져온다.
+         * - ReviewEntity는 상품(ProductEntity)과 연관관계를 가지고 있으므로, product.productId로 조회 가능
+         */
+        List<ReviewEntity> reviewList = reviewRepository.findByProductProductId(productId);
+
+        /*
+         * [2] 리뷰 응답 DTO로 변환
+         * - 사용자에게 보여줄 정보만 골라서 담은 ReviewResponse로 변환한다.
+         * - 변환은 ReviewConvertor의 toReviewResponse 메서드에서 처리
+         */
+        return reviewList.stream()
+                .map(ReviewConvertor::toReviewResponse) // ReviewEntity → ReviewResponse
+                .toList(); // 변환된 리스트를 반환
     }
 }

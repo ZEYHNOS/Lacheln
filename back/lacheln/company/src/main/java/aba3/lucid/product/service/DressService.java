@@ -19,7 +19,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Transactional
 public class DressService extends ProductAbstractService<DressEntity, DressRequest> {
 
     private final DressRepository dressRepository;

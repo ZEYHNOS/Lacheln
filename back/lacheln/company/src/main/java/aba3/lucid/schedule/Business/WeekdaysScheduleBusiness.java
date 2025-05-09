@@ -65,11 +65,11 @@ public class WeekdaysScheduleBusiness {
                     LocalDateTime start;
                     LocalDateTime end;
                     switch (day) {
-                        case SAT:
+                        case SATURDAY:
                             start = LocalDateTime.of(LocalDate.now(), LocalTime.of(10, 0));
                             end   = LocalDateTime.of(LocalDate.now(), LocalTime.of(20, 0));
                             break;
-                        case SUN:
+                        case SUNDAY:
                             start = end = null;  // 혹은 별도 휴무 플래그 세팅
                             break;
                         default:

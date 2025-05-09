@@ -6,14 +6,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Weekdays {
-    MON("월"),
-    TUE("화"),
-    WED("수"),
-    THU("목"),
-    FRI("금"),
-    SAT("토"),
-    SUN("일")
+    MONDAY(1),
+    TUESDAY(2),
+    WEDNESDAY(3),
+    THURSDAY(4),
+    FRIDAY(5),
+    SATURDAY(6),
+    SUNDAY(7)
     ;
 
-    private final String weekdays;
+    private final int value;
 }

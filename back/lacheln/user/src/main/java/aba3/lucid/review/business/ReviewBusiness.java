@@ -79,7 +79,7 @@ public class ReviewBusiness {
          * - ReviewRepository에서 productId를 기준으로 리뷰 리스트를 가져온다.
          * - ReviewEntity는 상품(ProductEntity)과 연관관계를 가지고 있으므로, product.productId로 조회 가능
          */
-        List<ReviewEntity> reviewList = reviewRepository.findByProductProductId(productId);
+        List<ReviewEntity> reviewList = reviewRepository.findByProductPdId(productId);
 
         /*
          * [2] 리뷰 응답 DTO로 변환

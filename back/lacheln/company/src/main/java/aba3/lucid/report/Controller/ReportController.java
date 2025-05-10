@@ -30,7 +30,7 @@ public class ReportController {
             @PathVariable String userId,
             @RequestBody ReportRequest reportRequest
     ) {
-        ReportResponse response = reportBusiness.reportCompanyByUser(reportRequest,AuthUtil.getUserId());
+        ReportResponse response = reportBusiness.reportCompanyByUser(reportRequest,userId);
         return API.OK();
     }
 

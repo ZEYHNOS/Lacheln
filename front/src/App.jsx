@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from "react-route
 import Header from "./components/Tool/Header";
 import Footer from "./components/Tool/Footer";
 import LoginPage from "./components/Login/LoginPage";
+import ReportPage from "./components/Report/ReportPage";
 import UserRegisterPage from "./components/Login/Register/UserRegisterPage";
 import UserRegisterForm from "./components/Login/Register/UserRegisterForm";
 import CompanyRegisterPage from "./components/Login/Register/CompanyRegisterPage";
@@ -139,6 +140,12 @@ function App() {
                 <Route path="/company/messenger" element={<CompanyLayout><Messenger /></CompanyLayout>} />
                 <Route path="/company/notification" element={<CompanyLayout><Notification /></CompanyLayout>} />
                 <Route path="/company/schedule" element={<CompanyLayout><Schedule /></CompanyLayout>} />
+                <Route path="/report" element={<ReportPage />} />
+                <Route path="/report/:id" element={<ReportPage />} />
+                {/* … your existing routes … */}
+                <Route path="/report" element={<ReportPage />} />
+                {/* or if you want to accept params */}
+                <Route path="/report/:id" element={<ReportPage />} />
             </Routes>
         </Router>
     );

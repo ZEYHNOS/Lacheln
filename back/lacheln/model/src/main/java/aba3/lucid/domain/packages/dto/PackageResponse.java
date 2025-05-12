@@ -18,7 +18,7 @@ import java.util.List;
 @ToString
 public class PackageResponse {
 
-    private long id;
+    private Long id;
 
     private String name;
 

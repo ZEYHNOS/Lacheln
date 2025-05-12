@@ -81,6 +81,6 @@ public class ProductBusiness {
         }
 
         CompanyEntity company = companyService.findByIdWithThrow(companyId);
-        return imageService.imagesUpload(company, images, ImageType.PRODUCT_IMAGE);
+        return imageService.imagesUpload(company, images, ImageType.PRODUCT);
     }
 }

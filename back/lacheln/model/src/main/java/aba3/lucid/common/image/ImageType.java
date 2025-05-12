@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum ImageType {
 
     PROFILE("profile"),
-    PRODUCT_IMAGE("product")
+    PRODUCT("product"),
+    REPORT("report")
     ;
 
     private final String type;

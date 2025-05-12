@@ -37,7 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 토큰이 없는 경우는 생략
         if(accessToken != null && refreshToken != null)  {
             // AccessToken 만료 확인
-            if(jwtTokenProvider.isValid(accessToken)) {
+            if(!jwtTokenProvider.isValid(accessToken)) {
+                log.info("AceessToken 만료됨");
                 // AccessToken이 만료되었을 시 재발급 로직
                 accessToken = authService.refreshAccessToken(refreshToken);
                 ResponseCookie accessCookie = ResponseCookie.from("AccessToken", accessToken)
@@ -48,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .maxAge(Duration.ofDays(10))
                         .build();
                 response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+                log.info("Access Token 재발급 완료");
             }
             
             // 토큰에서 추출한 인증정보를 바탕으로 ContextHolder에 정보저장

@@ -3,9 +3,10 @@ package aba3.lucid.domain.chat.dto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Builder
-public class ChatEnterRequest {
-    private String userId;
-    private Long companyId;
+public class ChatRoomListResponse {
+    List<ChatRoomDto> chatRooms;
 }

@@ -28,25 +28,44 @@ public class MessageEntity {
     @JoinColumn(name = "chat_room_id")
     private ChatRoomEntity chatRoomId;
 
-    //메시지
+    // 메시지
     @Column(name = "msg_content", columnDefinition = "VARCHAR(255)", nullable = false)
     private String msgContent;
 
-    //전송시각
+    // 전송시각
     @Column(name = "msg_send_time", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime msgSendTime;
 
-    //읽음여부
+    // 읽음여부
     @Enumerated(EnumType.STRING)
     @Column(name = "msg_read", columnDefinition = "CHAR(1)", nullable = false)
     private BinaryChoice msgRead;
 
-    //발신자식별코드
-    @Enumerated(EnumType.STRING)
-    @Column(name = "msg_sender", columnDefinition = "CHAR(1)", nullable = false)
-    private UserType msgSender;
+    // 발신자 ID
+    @Column(name = "msg_sender", columnDefinition = "CHAR(36)", nullable = false)
+    private String msgSender;
+
+    // 발신자 NAME
+    @Column(name = "msg_sender_name", columnDefinition = "CHAR(36)", nullable = false)
+    private String msgSenderName;
+
+    // 수신자 ID
+    @Column(name = "msg_receiver", columnDefinition = "CHAR(36)", nullable = false)
+    private String msgReceiver;
+
+    // 수신자 NAME
+    @Column(name = "msg_receiver_name", columnDefinition = "CHAR(36)", nullable = false)
+    private String msgReceiverName;
 
     public void changeMsgRead(BinaryChoice binaryChoice) {
         this.msgRead = binaryChoice;
+    }
+
+    public void changeSender(Object sender) {
+        this.msgSender = sender + "";
+    }
+
+    public void changeReceiver(Object receiver) {
+        this.msgReceiver = receiver + "";
     }
 }

@@ -8,6 +8,7 @@
     import aba3.lucid.jwt.JwtAuthenticationFilter;
     import aba3.lucid.service.AuthService;
     import aba3.lucid.service.OAuth2UserService;
+    import com.nimbusds.jose.crypto.impl.PBKDF2;
     import lombok.RequiredArgsConstructor;
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,7 @@
         private final OAuth2LoginFailureHandler Oauth2LoginFailureHandler;
 
         // ROLE(소비자, 업체, 일반사용자)에 따라 접근 가능한 URL들을 저장하는 리스트
-        private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/email/send", "/email/verify", "/static/**", "/ws/**" };
+        private final String[] permitAlls = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/email/send", "/email/verify", "/static/**", "/ws/**", "/chatroom/**" };
         private final String[] roleUser = {"/user/**", "/board/**"};
         private final String[] roleCompany = {"/company/**", "/product/**"};
 

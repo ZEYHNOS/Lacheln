@@ -1,26 +1,21 @@
-package aba3.lucid.config;
+package aba3.lucid.service;
 
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.password.CustomPasswordEncoder;
 import aba3.lucid.common.status_code.UserCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -37,6 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<UsersEntity> user = usersRepository.findByUserEmail(userEmail);
         Optional<CompanyEntity> company = companyRepository.findByCpEmail(userEmail);
 
+        log.info("userEmail : {}", userEmail);
         // 유저 정보가 있을 시 로직
         if(user.isPresent()) {
             usersEntity = user.get();
@@ -70,7 +66,18 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public String getUserIdByEmail(String email)   {
+        log.info("getUserIdByEmail() -> email : {}", email);
         Optional<UsersEntity> usersEntity = usersRepository.findByUserEmail(email);
-        return usersEntity.map(UsersEntity::getUserId).orElse(null);
+        String userId = null;
+        if(usersEntity.isPresent()) {
+            userId = usersEntity.get().getUserId();
+        } else {
+            Optional<CompanyEntity> company = companyRepository.findByCpEmail(email);
+            if(company.isPresent()) {
+                userId = company.get().getCpEmail();
+            }
+        }
+        log.info("userId : {}", userId);
+        return userId;
     }
 }

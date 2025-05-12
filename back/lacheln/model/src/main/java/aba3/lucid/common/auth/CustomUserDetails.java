@@ -2,6 +2,7 @@ package aba3.lucid.common.auth;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

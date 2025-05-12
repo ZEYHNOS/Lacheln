@@ -5,7 +5,12 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> {
-    ChatRoomEntity findByUsersAndCompany(String userId, Long cpId);
+    Optional<ChatRoomEntity> findByUsersAndCompany(String userId, Long cpId);
+    List<ChatRoomEntity> findAllByUsers(String userId);
+    List<ChatRoomEntity> findAllByCompany(Long userId);
 }

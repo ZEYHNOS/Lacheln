@@ -139,7 +139,8 @@ function App() {
                 {/* 업무페이지(협업, 메신저, 알림, 일정) */}
                 <Route path="/company/collaboration" element={<CompanyLayout><Collaboration /></CompanyLayout>} />
                 <Route path="/company/collaboration/setproduct" element={<CompanyLayout><Setproduct /></CompanyLayout>} />
-                <Route path="/company/collaboration/setpackage" element={<CompanyLayout><Setpackage /></CompanyLayout>} />
+                <Route path="/company/collaboration/setproduct/:id" element={<CompanyLayout><Setproduct /></CompanyLayout>} />
+                <Route path="/company/collaboration/setpackage/:id" element={<CompanyLayout><Setpackage /></CompanyLayout>} />
                 <Route path="/company/messenger" element={<CompanyLayout><Messenger /></CompanyLayout>} />
                 <Route path="/company/notification" element={<CompanyLayout><Notification /></CompanyLayout>} />
                 <Route path="/company/schedule" element={<CompanyLayout><Schedule /></CompanyLayout>} />

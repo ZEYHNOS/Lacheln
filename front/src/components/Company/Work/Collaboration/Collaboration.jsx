@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import apiClient from "../../../../lib/apiClient";
 import axios from 'axios';
-import { data } from 'react-router-dom';
+import { data, useNavigate } from 'react-router-dom';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -10,6 +10,7 @@ function Collaboration() {
     const [myCategory, setMyCategory] = useState(null);
     const [companies, setCompanies] = useState([]);
     const [currentTab, setCurrentTab] = useState("product");
+    const navigate = useNavigate();
 
     // 업체 타입을 category 값으로만 구분 (대문자)
     const getCompanyType = (company) => {
@@ -49,42 +50,65 @@ function Collaboration() {
     }, []);
 
     return (
-        <div className="p-8 relative">
+        <div className="p-8 relative w-full">
             {/* 탭 버튼 + 밑줄 */}
-            <div className="relative">
-                <div className="flex space-x-4 text-lg font-semibold mb-2 z-10 relative">
-                    <button
-                        onClick={() => setCurrentTab('product')}
-                        className={`px-4 py-2 rounded-none bg-transparent border-none shadow-none outline-none 
-                            ${
-                            currentTab === 'product'
-                                ? 'text-purple-700 font-bold'
-                                : 'text-purple-300'
-                            } 
-                            hover:bg-transparent
-                            focus:outline-none focus:ring-0 
-                            active:outline-none active:ring-0 
-                            focus-visible:outline-none focus-visible:ring-0`}
-                        style={{ border: 'none', boxShadow: 'none' }}
-                    >
-                    협업 중인 상품
-                    </button>
-
-                    <button
-                        onClick={() => setCurrentTab('company')}
-                        className={`px-4 py-2 rounded-none bg-transparent border-none shadow-none outline-none 
-                            ${
-                            currentTab === 'company'
-                                ? 'text-purple-700 font-bold'
-                                : 'text-purple-300'
-                            } 
-                            hover:bg-transparent
-                            focus:outline-none focus:ring-0 
-                            active:outline-none active:ring-0 
-                            focus-visible:outline-none focus-visible:ring-0`}
-                        style={{ border: 'none', boxShadow: 'none' }}
+            <div className="relative w-full">
+                <div className="flex justify-between items-center text-lg font-semibold mb-2 z-10 relative">
+                    <div className="flex space-x-4">
+                        <button
+                            onClick={() => setCurrentTab('product')}
+                            className={`px-4 py-2 rounded-none bg-transparent border-none shadow-none outline-none 
+                                ${
+                                currentTab === 'product'
+                                    ? 'text-purple-700 font-bold'
+                                    : 'text-purple-300'
+                                } 
+                                hover:bg-transparent
+                                focus:outline-none focus:ring-0 
+                                active:outline-none active:ring-0 
+                                focus-visible:outline-none focus-visible:ring-0`}
+                            style={{ border: 'none', boxShadow: 'none' }}
                         >
-                    협업 중인 업체
+                        협업 중인 상품
+                        </button>
+                        <button
+                            onClick={() => setCurrentTab('company')}
+                            className={`px-4 py-2 rounded-none bg-transparent border-none shadow-none outline-none 
+                                ${
+                                currentTab === 'company'
+                                    ? 'text-purple-700 font-bold'
+                                    : 'text-purple-300'
+                                } 
+                                hover:bg-transparent
+                                focus:outline-none focus:ring-0 
+                                active:outline-none active:ring-0 
+                                focus-visible:outline-none focus-visible:ring-0`}
+                            style={{ border: 'none', boxShadow: 'none' }}
+                        >
+                        협업 중인 업체
+                        </button>
+                        <button
+                            onClick={() => setCurrentTab('ongoing')}
+                            className={`px-4 py-2 rounded-none bg-transparent border-none shadow-none outline-none 
+                                ${
+                                currentTab === 'ongoing'
+                                    ? 'text-purple-700 font-bold'
+                                    : 'text-purple-300'
+                                } 
+                                hover:bg-transparent
+                                focus:outline-none focus:ring-0 
+                                active:outline-none active:ring-0 
+                                focus-visible:outline-none focus-visible:ring-0`}
+                            style={{ border: 'none', boxShadow: 'none' }}
+                        >
+                        진행중인 협업
+                        </button>
+                    </div>
+                    <button
+                        onClick={() => navigate('/company/collaboration/setproduct')}
+                        className="min-w-[90px] px-3 py-1.5 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+                    >
+                        패키지 추가
                     </button>
                 </div>
                 {/* absolute 밑줄 */}
@@ -118,7 +142,7 @@ function Collaboration() {
                         </div>
                     ))}
                 </div>
-            ) : (
+            ) : currentTab === 'company' ? (
                 myCategory && (
                     <div className="space-y-12">
                         {/* 스튜디오 (S) */}
@@ -197,6 +221,69 @@ function Collaboration() {
                         )}
                     </div>
                 )
+            ) : (
+                // 진행중인 협업 탭 내용
+                <div className="space-y-6 mt-4">
+                    <h3 className="text-xl font-semibold text-purple-700 mb-4">진행중인 협업</h3>
+                    {packages.filter(pkg => pkg.status === 'PRIVATE').length > 0 ? (
+                        <div className="border rounded-lg overflow-hidden">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">패키지명</th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">협업 업체</th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작업</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {packages.filter(pkg => pkg.status === 'PRIVATE').map((pkg, index) => (
+                                        <tr key={index} className="hover:bg-gray-50">
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-medium text-gray-900">{pkg.name || '이름 없음'}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm text-gray-900">
+                                                    {[
+                                                        pkg.admin?.name, 
+                                                        pkg.cp1?.name, 
+                                                        pkg.cp2?.name
+                                                    ].filter(Boolean).join(', ')}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                                    (pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                                }`}>
+                                                    {(pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? '패키지설정중' : '상품설정중'}
+                                                </span>
+                                                {pkg.adminProduct || pkg.cp1Product || pkg.cp2Product ? (
+                                                    <div className="mt-1 text-xs text-gray-500">
+                                                        {[
+                                                            pkg.adminProduct ? pkg.admin?.name : null,
+                                                            pkg.cp1Product ? pkg.cp1?.name : null,
+                                                            pkg.cp2Product ? pkg.cp2?.name : null
+                                                        ].filter(Boolean).join(', ')} 상품 등록 완료
+                                                    </div>
+                                                ) : null}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                <button 
+                                                    className="text-purple-600 hover:text-purple-900 mr-3 bg-white border border-purple-600 rounded-md px-2 py-1"
+                                                    onClick={() => navigate(`/company/collaboration/setproduct/${pkg.id || pkg.packageId}`)}
+                                                >
+                                                    상세보기
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 text-gray-500">진행중인 협업이 없습니다</div>
+                    )}
+                </div>
             )}
         </div>
     );

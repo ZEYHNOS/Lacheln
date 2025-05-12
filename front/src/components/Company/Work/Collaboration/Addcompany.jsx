@@ -1,54 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../../../lib/apiClient';
 
-function AddCompany() {
+function AddCompany({ onClose, onComplete }) {
     const [isModalVisible, setIsModalVisible] = useState(true);
+    const [showPackageNameModal, setShowPackageNameModal] = useState(false);
+    const [packageName, setPackageName] = useState('');
     const [searchEmail, setSearchEmail] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [invitedUsers, setInvitedUsers] = useState([]);
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [myCompanyInfo, setMyCompanyInfo] = useState(null);
     const navigate = useNavigate();
 
-    // 실제 API 연동 부분은 주석처리, 더미데이터 사용
+    // 내 회사 정보 가져오기
+    useEffect(() => {
+        const fetchMyCompanyInfo = async () => {
+            try {
+                const res = await apiClient.get('/company/info', { withCredentials: true });
+                if (res.data && res.data.data) {
+                    setMyCompanyInfo(res.data.data);
+                }
+            } catch (err) {
+                console.error('회사 정보 불러오기 실패:', err);
+            }
+        };
+        
+        fetchMyCompanyInfo();
+    }, []);
+
     const handleSearch = async (value) => {
         setLoading(true);
         setError('');
         setSearchResults([]);
-        // try {
-        //     const res = await apiClient.get('/company-controller/searchCompany', {
-        //         params: { email: value }
-        //     });
-        //     if (res.data && res.data.data) {
-        //         setSearchResults([
-        //             {
-        //                 id: res.data.data.id,
-        //                 email: res.data.data.email,
-        //                 name: res.data.data.name
-        //             }
-        //         ]);
-        //     } else {
-        //         setSearchResults([]);
-        //         setError('검색 결과가 없습니다.');
-        //     }
-        // } catch (err) {
-        //     setSearchResults([]);
-        //     setError('검색 중 오류가 발생했습니다.');
-        // } finally {
-        //     setLoading(false);
-        // }
-        
-        // 더미데이터
-        setTimeout(() => {
-            setSearchResults([
-                { id: 1, email: 'user1@example.com', name: '홍길동' },
-                { id: 2, email: 'user2@example.com', name: '김철수' },
-                { id: 3, email: 'user3@example.com', name: '이영희' },
-            ]);
+        try {
+            const res = await apiClient.get(`/company/search/${value}`, { withCredentials: true });
+            if (res.data && res.data.data) {
+                // 내 회사인 경우 검색 결과에서 제외
+                if (myCompanyInfo && myCompanyInfo.id === res.data.data.id) {
+                    setSearchResults([]);
+                    setError('자기 회사는 초대할 수 없습니다.');
+                } else {
+                    setSearchResults([
+                        {
+                            id: res.data.data.id,
+                            email: res.data.data.email,
+                            name: res.data.data.name
+                        }
+                    ]);
+                }
+            } else {
+                setSearchResults([]);
+                setError('검색 결과가 없습니다.');
+            }
+        } catch (err) {
+            setSearchResults([]);
+            setError('검색 중 오류가 발생했습니다.');
+        } finally {
             setLoading(false);
-        }, 500);
+        }
     };
 
     const handleInvite = (user) => {
@@ -64,7 +76,28 @@ function AddCompany() {
     };
 
     const handleComplete = () => {
-        setIsModalVisible(false);
+        setShowPackageNameModal(true);
+    };
+
+    const handlePackageRegister = async () => {
+        try {
+            const requestData = {
+                package_name: packageName,
+                cp_email1: invitedUsers[0].email,
+                cp_email2: invitedUsers[1].email
+            };
+            
+            const response = await apiClient.post('/package/register', requestData);
+            console.log('패키지 등록 성공:', response.data);
+            
+            // 패키지 ID와 함께 초대된 사용자 정보를 전달
+            const packageId = response.data.data.id;
+            onComplete(invitedUsers, packageId);
+            setIsModalVisible(false);
+        } catch (err) {
+            console.error('패키지 등록 실패:', err);
+            setError('패키지 등록 중 오류가 발생했습니다.');
+        }
     };
 
     const handleClose = () => {
@@ -73,7 +106,7 @@ function AddCompany() {
 
     return (
         <div>
-            {isModalVisible && (
+            {isModalVisible && !showPackageNameModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
                     <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
                         <h2 className="text-xl font-bold mb-6 text-gray-800">패키지 초대</h2>
@@ -144,6 +177,38 @@ function AddCompany() {
                         >
                             완료
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* 패키지명 입력 모달 */}
+            {showPackageNameModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+                        <h2 className="text-xl font-bold mb-6 text-gray-800">패키지명 설정</h2>
+                        <input
+                            type="text"
+                            placeholder="패키지명을 입력하세요"
+                            value={packageName}
+                            onChange={(e) => setPackageName(e.target.value)}
+                            className="w-full px-3 py-2 bg-white text-black border-2 border-violet-400 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-400"
+                        />
+                        {error && <div className="mt-2 text-red-500 font-semibold text-sm">{error}</div>}
+                        <div className="flex justify-end mt-6 space-x-4">
+                            <button
+                                onClick={() => setShowPackageNameModal(false)}
+                                className="bg-white px-4 py-2 text-purple-600 hover:text-gray-800"
+                            >
+                                이전
+                            </button>
+                            <button
+                                onClick={handlePackageRegister}
+                                disabled={!packageName.trim()}
+                                className="px-4 py-2 bg-violet-600 text-white rounded hover:bg-violet-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                            >
+                                완료
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

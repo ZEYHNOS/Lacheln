@@ -76,8 +76,21 @@ public class PackageBusiness {
 
         List<PackageEntity> packageEntityList = packageService.getPackageList(companyId);
         List<PackageResponse> packageResponseList = packageConverter.toResponseList(packageEntityList);
+
         packageService.responseInsertPrice(packageResponseList);
 
         return packageResponseList;
+    }
+
+    public PackageResponse getPackageByPackageId(Long packageId) {
+        PackageEntity entity = packageService.findByIdWithThrow(packageId);
+
+        return packageConverter.toResponse(entity);
+    }
+
+    public void deletePackageProduct(Long companyId, Long packageId, Long productId) {
+        Validator.throwIfInvalidId(companyId, packageId, productId);
+
+        packageService.deletePackageProduct(companyId, packageId, productId);
     }
 }

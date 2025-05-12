@@ -18,17 +18,17 @@ import java.util.List;
 @ToString
 public class PackageResponse {
 
-    private Long id;
+    private Long packageId;
 
     private String name;
 
     private List<DescriptionResponse> descriptionResponseList;
 
-    private CompanyResponse admin;
+    private PackageCompanyResponse admin;
 
-    private CompanyResponse cp1;
+    private PackageCompanyResponse cp1;
 
-    private CompanyResponse cp2;
+    private PackageCompanyResponse cp2;
 
     private LocalDateTime createAt;
 

@@ -19,7 +19,7 @@ public class PackageToProductEntity {
     // Package와 Product의 Mapping Table 고유키 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long packMapId;
+    private Long packMapId;
     
     // 부모 테이블에서 데이터 제거시 매핑 테이블에서도 제거되도록 Cascade 적용
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,5 +32,8 @@ public class PackageToProductEntity {
     @JoinColumn(name = "pack_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PackageEntity packageEntity;
+
+    @Column(name = "cp_id")
+    private Long cpId;
 
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -45,6 +46,9 @@ public class PayDetailEntity {
     // 할인된 가격
     @Column(name = "pay_dc_price", nullable = false)
     private BigInteger payDcPrice;
+
+    @Column(nullable = false)
+    private LocalDateTime scheduleDate;
 
     @JsonIgnore
     @OneToMany(mappedBy = "payDetail", cascade = CascadeType.ALL, orphanRemoval = true)

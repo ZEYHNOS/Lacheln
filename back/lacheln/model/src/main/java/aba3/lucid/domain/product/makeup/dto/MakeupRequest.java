@@ -2,6 +2,8 @@ package aba3.lucid.domain.product.makeup.dto;
 
 import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.domain.product.dto.ProductRequest;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MakeupRequest extends ProductRequest {
 
     // 출장 여부

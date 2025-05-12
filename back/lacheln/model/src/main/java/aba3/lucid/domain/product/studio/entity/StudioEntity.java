@@ -75,9 +75,9 @@ public class StudioEntity extends ProductEntity{
         updateStatus(request.getStatus());
         updateTaskTime(request.getTaskTime());
         updateRec(request.getRec());
-        updateInAvailable(request.getStdInAvailable());
-        updateOutAvailable(request.getStdOutAvailable());
-        updateMaxPeople(request.getStdMaxPeople());
-        updateBackGroundOptions(request.getStdBgOptions());
+        updateInAvailable(request.getInAvailable());
+        updateOutAvailable(request.getOutAvailable());
+        updateMaxPeople(request.getMaxPeople());
+        updateBackGroundOptions(request.getBgOptions());
     }
 }

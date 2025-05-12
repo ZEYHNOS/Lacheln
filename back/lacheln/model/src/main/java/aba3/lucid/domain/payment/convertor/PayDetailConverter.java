@@ -23,6 +23,7 @@ public class PayDetailConverter {
                 .productName(request.getProductName())
                 .payCost(request.getPayCost())
                 .payDcPrice(request.getPayDcPrice())
+                .scheduleDate(request.getScheduleDate())
                 .build()
                 ;
 

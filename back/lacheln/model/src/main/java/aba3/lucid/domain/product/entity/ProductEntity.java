@@ -128,6 +128,11 @@ public abstract class ProductEntity {
             throw new ApiException(ErrorCode.NULL_POINT, "상태 값이 존재하지 않습니다.");
         }
 
+        // 변경하지 않을 때 return
+        if (this.getPdStatus().equals(changeStatus)) {
+            return;
+        }
+
 
         // 비공개 -> 삭제
         // TODO 예약 현황 확인하기 만약 예약자가 있다면 삭제 불가능
@@ -136,7 +141,17 @@ public abstract class ProductEntity {
 
         }
 
+
         this.pdStatus = changeStatus;
+    }
+
+    // 패키지에서 해당 상품을 삭제 시킬 때
+    public void updateStatusToPackageDelete() {
+        if (!this.pdStatus.equals(ProductStatus.PACKAGE)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+
+        this.pdStatus = ProductStatus.INACTIVE;
     }
 
     // 상품을 패키지에 등록

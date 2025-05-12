@@ -28,8 +28,8 @@ public class PayDetailRequest {
     // 상품 할인 가격
     private BigInteger payDcPrice;
 
-    // 결제 일시
-    private LocalDateTime paidAt;
+    // 일정 날짜
+    private LocalDateTime scheduleDate;
 
     // 해당 상품 옵션 리스트
     private List<PayDetailOptionRequest> payDetailOptionEntityList;

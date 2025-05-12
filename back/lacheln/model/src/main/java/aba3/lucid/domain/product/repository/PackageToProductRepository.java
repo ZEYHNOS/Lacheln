@@ -10,16 +10,19 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PackageToProductRepository extends JpaRepository<PackageToProductEntity, Long> {
 
-    boolean existsByPackageEntityAndProduct(PackageEntity packageEntity, ProductEntity product);
+    boolean existsByPackageEntity_packIdAndCpId(Long packageId, Long companyId);
 
     @Query("SELECT COUNT(DISTINCT p.product) FROM PackageToProductEntity p " +
             "WHERE p.packageEntity.packId = :packId ")
-    long countDistinctProductsByPackage(@Param("packId") long packId);
+    long countDistinctProductsByPackage(@Param("packId") Long packId);
 
     List<PackageToProductEntity> findAllByPackageEntity_packId(Long packageId);
+
+    Optional<PackageToProductEntity> findByPackageEntity_PackIdAndCpId(Long packId, Long cpId);
 
 }

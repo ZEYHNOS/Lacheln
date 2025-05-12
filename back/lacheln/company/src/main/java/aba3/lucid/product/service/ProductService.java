@@ -1,30 +1,25 @@
 package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.image.ImageType;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.common.validate.Validator;
-import aba3.lucid.config.ImageConfig;
-import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
 import aba3.lucid.domain.product.dto.option.OptionSnapshot;
 import aba3.lucid.domain.product.entity.OptionDetailEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,12 +30,17 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     // 특정 업체 상품 리스트
-    public List<ProductEntity> getCompanyProductList(Long companyId) {
+    public List<ProductEntity> getCompanyProductList(Long companyId, ProductStatus status) {
         log.info("CompanyProductList : {}", companyId);
-        List<ProductEntity> productEntityList = productRepository.findAllByCompany_CpId(companyId);
+        List<ProductEntity> productEntityList = productRepository.findAllByCompany_CpIdAndPdStatusNot(companyId, ProductStatus.REMOVE);
+        if (status == null) {
+            return productEntityList;
+        }
 
-        log.info("CompanyProductList : {}", productEntityList);
-        return productEntityList;
+        return productEntityList.stream()
+                .filter(it -> it.getPdStatus().equals(status))
+                .toList()
+                ;
     }
 
     // todo 검색어 만들기
@@ -112,5 +112,11 @@ public class ProductService {
 
     public List<ProductEntity> findAllById(List<Long> productIdList) {
         return productRepository.findAllById(productIdList);
+    }
+
+    public void throwIfNotOwnProduct(ProductEntity product, Long companyId) {
+        if (product.getCompany().getCpId() != companyId) {
+            throw new ApiException(ProductErrorCode.NO_PRODUCT_OWNERSHIP);
+        }
     }
 }

@@ -14,14 +14,14 @@ import lombok.experimental.SuperBuilder;
 public class StudioResponse extends ProductDetailResponse {
 
     // 실내촬영여부
-    private BinaryChoice stdInAvailable;
+    private BinaryChoice inAvailable;
 
     // 야외촬영여부
-    private BinaryChoice stdOutAvailable;
+    private BinaryChoice outAvailable;
 
     // 최대수용인원
-    private int stdMaxPeople;
+    private int maxPeople;
 
     // 배경선택여부
-    private BinaryChoice stdBgOptions;
+    private BinaryChoice bgOptions;
 }

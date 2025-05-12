@@ -1,11 +1,11 @@
 package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
-import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.product.business.ProductBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,7 +45,7 @@ public class ProductController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
 //        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, customUserDetails.getCompanyId(), productId);
-        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, 1L, productId);
+        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, 3L, productId);
 
         return API.OK(response);
     }
@@ -53,10 +53,11 @@ public class ProductController {
     @GetMapping("/list")
     @Operation(summary = "해당 번호의 업체 상품 리스트 반환", description = "상품 리스트 반환 (삭제된 상품 제외)")
     public API<List<ProductResponse>> getProductList(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam(required = false) ProductStatus status
     ) {
 //        List<ProductResponse> productResponseList = productBusiness.getValidProductList(customUserDetails.getCompanyId());
-        List<ProductResponse> productResponseList = productBusiness.getValidProductList(1L);
+        List<ProductResponse> productResponseList = productBusiness.getValidProductList(3L, status);
 
         return API.OK(productResponseList);
     }
@@ -68,7 +69,7 @@ public class ProductController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) throws IOException {
 //        List<String> imageUrlList = productBusiness.productImagesUpload(customUserDetails.getCompanyId(), images);
-        List<String> imageUrlList = productBusiness.productImagesUpload(1L, images);
+        List<String> imageUrlList = productBusiness.productImagesUpload(3L, images);
 
         return API.OK(imageUrlList);
     }

@@ -1,12 +1,10 @@
 package aba3.lucid.domain.packages.converter;
 
 import aba3.lucid.common.annotation.Converter;
-import aba3.lucid.domain.company.convertor.CompanyConvertor;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
 import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.entity.PackageEntity;
-import aba3.lucid.domain.product.converter.ProductDescriptionConverter;
 import aba3.lucid.domain.product.enums.PackageStatus;
 import lombok.RequiredArgsConstructor;
 
@@ -17,9 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PackageConverter {
 
-    private final CompanyConvertor companyConvertor;
-    private final ProductDescriptionConverter descriptionConverter;
-
+    private final PackageToProductConverter packageToProductConverter;
 
     public List<PackageResponse> toResponseList(List<PackageEntity> entityList) {
         return entityList.stream()
@@ -46,12 +42,12 @@ public class PackageConverter {
 
     public PackageResponse toResponse(PackageEntity entity) {
         return PackageResponse.builder()
-                .id(entity.getPackId())
+                .packageId(entity.getPackId())
                 .name(entity.getPackName())
-                .admin(companyConvertor.toResponse(entity.getPackAdmin()))
-                .cp1(companyConvertor.toResponse(entity.getPackCompany1()))
-                .cp2(companyConvertor.toResponse(entity.getPackCompany2()))
                 .discountrate(entity.getPackDiscountrate())
+                .admin(packageToProductConverter.toResponse(entity.getPackId(), entity.getPackAdmin()))
+                .cp1(packageToProductConverter.toResponse(entity.getPackId(), entity.getPackCompany1()))
+                .cp2(packageToProductConverter.toResponse(entity.getPackId(), entity.getPackCompany2()))
                 .createAt(entity.getPackCreateDate())
                 .endDate(entity.getPackEndDate())
                 .status(entity.getPackStatus())

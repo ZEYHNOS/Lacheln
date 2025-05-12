@@ -123,7 +123,7 @@ public class PackageService {
 
     // 패키지에 상품을 등록했는지
     public boolean existsByPackageEntityAndProduct(PackageEntity packageEntity, ProductEntity productEntity) {
-        return packageToProductRepository.existsByPackageEntityAndProduct(packageEntity, productEntity);
+        return packageToProductRepository.existsByPackageEntity_packIdAndCpId(packageEntity.getPackId(), productEntity.getCompany().getCpId());
     }
 
 
@@ -154,6 +154,7 @@ public class PackageService {
         }
     }
 
+    // 3개의 업체가 모두 초대가 되었는지
     private void throwIfNotInvitedAllRequiredCompanies(PackageEntity entity) {
         if (entity.getPackAdmin() == null || entity.getPackCompany1() == null || entity.getPackCompany2() == null) {
             throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "모든 업체가 초대가 되어있지 않습니다.");
@@ -214,7 +215,7 @@ public class PackageService {
 
     public void responseInsertPrice(List<PackageResponse> packageResponseList) {
         packageResponseList.forEach(it -> {
-            it.setTotalPrice(getTotalPrice(it.getId()));
+            it.setTotalPrice(getTotalPrice(it.getPackageId()));
         });
     }
 
@@ -227,5 +228,24 @@ public class PackageService {
         }
 
         return result;
+    }
+
+    // 패키지에서 상품 삭제하기
+    public void deletePackageProduct(Long packageId, Long companyId, Long productId) {
+        // 해당 패키지의 해당 업체가 존재하면 Entity 가지고 오기
+        PackageEntity packageEntity = findByPackIdAndCompanyIdWithThrow(packageId, companyId);
+
+        ProductEntity product = productService.findByIdWithThrow(productId);
+
+        // 해당 삼품의 소유가 아니라면 에러
+        productService.throwIfNotOwnProduct(product, companyId);
+
+
+    }
+
+    // 패키지 ID 와 업체 ID 로 매핑된 패키지 상품 찾기
+    public PackageToProductEntity findByPackIdAndCpId(Long packId, Long cpId) {
+        return packageToProductRepository.findByPackageEntity_PackIdAndCpId(packId, cpId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 }

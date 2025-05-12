@@ -65,10 +65,8 @@ public class ProductBusiness {
         return productConverter.toResponse(newPackageToProductEntity);
     }
 
-    public List<ProductResponse> getValidProductList(Long companyId) {
-        return productService.getCompanyProductList(companyId).stream()
-                // 삭제된 상품 제외하고 보여주기
-                .filter(it -> !it.getPdStatus().equals(ProductStatus.REMOVE))
+    public List<ProductResponse> getValidProductList(Long companyId, ProductStatus status) {
+        return productService.getCompanyProductList(companyId, status).stream()
                 .map(productConverter::toResponse)
                 .toList()
                 ;

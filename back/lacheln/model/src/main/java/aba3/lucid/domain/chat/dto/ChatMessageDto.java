@@ -20,29 +20,37 @@ public class ChatMessageDto {
     private Long chatRoomId;
     private String message;
     private BinaryChoice read;
-    private UserType userType;
+    private String senderId;
+    private String receiverId;
     private LocalDateTime sendAt;
+    private String senderName;
+    private String receiverName;
 
     @JsonCreator
     public ChatMessageDto(@JsonProperty("messageId") Long messageId,
                           @JsonProperty("chatRoomId") Long chatRoomId,
                           @JsonProperty("message") String message,
                           @JsonProperty("read") BinaryChoice read,
-                          @JsonProperty("sender") UserType userType,
-                          @JsonProperty("sendAt") LocalDateTime sendAt) {
+                          @JsonProperty("senderId") String senderId,
+                          @JsonProperty("receiverId") String receiverId,
+                          @JsonProperty("sendAt") LocalDateTime sendAt,
+                          @JsonProperty("senderName") String senderName,
+                          @JsonProperty("receiverName") String receiverName
+        ) {
         this.messageId = messageId;
         this.chatRoomId = chatRoomId;
         this.message = message;
-        this.userType = userType;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
         this.read = read;
         this.sendAt = sendAt;
+        this.senderName = senderName;
+        this.receiverName = receiverName;
     }
 
-    public void changeRead(BinaryChoice read)   {
-        this.read = read;
-    }
-
+    public void changeRead(BinaryChoice read)   { this.read = read; }
     public void sendAt(LocalDateTime sendAt) {
         this.sendAt = sendAt;
     }
+    public void setId(Long messageId) { this.messageId = messageId; }
 }

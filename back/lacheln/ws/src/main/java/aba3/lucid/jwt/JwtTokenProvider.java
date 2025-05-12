@@ -2,7 +2,7 @@ package aba3.lucid.jwt;
 
 import aba3.lucid.common.auth.CustomAuthenticationToken;
 import aba3.lucid.common.auth.CustomUserDetails;
-import aba3.lucid.config.CustomUserDetailsService;
+import aba3.lucid.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,26 +74,42 @@ public class JwtTokenProvider {
     }
 
     public String getUserId(String token)   {
-        return customUserDetailsService.getUserIdByEmail(getUserEmail(token));
+        String userEmail = getUserEmail(token);
+        log.info("userEmail : {}", userEmail);
+        return customUserDetailsService.getUserIdByEmail(userEmail);
     }
 
     // 토큰에서 유저 이메일 추출
     public String getUserEmail(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (ExpiredJwtException e) {
+            log.warn("만료된 JWT에서 사용자 이메일 추출 실패: {}", e.getMessage());
+            return null;
+        } catch (JwtException e) {
+            log.error("잘못된 JWT에서 사용자 이메일 추출 실패: {}", e.getMessage());
+            return null;
+        }
     }
 
     // 토큰에서 유저 권한 추출
     public String getUserRole(String token) {
-        Claims claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-        return claim.get("role").toString();
-    }
-
-    // 토큰 만료시간 검증
-    public boolean isExpired(Jws<Claims> claims) {
         try {
-            return claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            return true;
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get("role").toString();
+        } catch (ExpiredJwtException e) {
+            log.warn("만료된 JWT에서 권한(role) 추출 실패: {}", e.getMessage());
+            return null; // 혹은 Optional<String> 사용도 가능
+        } catch (JwtException e) {
+            log.error("잘못된 JWT에서 권한(role) 추출 실패: {}", e.getMessage());
+            return null;
         }
     }
 
@@ -104,11 +120,16 @@ public class JwtTokenProvider {
             Jws<Claims> claimsJws = Jwts.parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token);  // 유효한 토큰이면 예외가 발생하지 않음
-
-            return !isExpired(claimsJws); // 만료되었으면 false 반환
+            Date expiration = claimsJws.getBody().getExpiration();
+            log.info("expiration : {}", expiration.toString());
+            log.info("expired? : {}", expiration.after(new Date()));
+            return expiration.after(new Date());
+        } catch (ExpiredJwtException e) {
+            log.warn("JWT 토큰 만료: {}", e.getMessage());
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
-            log.error("Invalid JWT token: {}", e.getMessage());
-            return false;  // 예외 발생 시 유효하지 않은 토큰으로 간주
+            log.error("유효하지 않은 JWT 토큰: {}", e.getMessage());
+            return false;
         }
     }
 

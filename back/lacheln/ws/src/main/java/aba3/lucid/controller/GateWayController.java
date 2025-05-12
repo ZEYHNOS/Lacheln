@@ -60,7 +60,7 @@ public class GateWayController {
         return routeRequest("http://localhost:5051", request);
     }
 
-    // 로그아웃 로직
+    //TODO LogoutFilter로 로직 처리해야댐 로그아웃 로직
     @GetMapping("/userlogout")
     @Operation(summary = "로그아웃", description = "사용자 세션을 제거하고 로그아웃 로직을 수행합니다.")
     public API<String> routeToLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {

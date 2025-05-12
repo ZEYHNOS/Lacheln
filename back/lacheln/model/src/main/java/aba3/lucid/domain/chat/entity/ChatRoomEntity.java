@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name = "chatting_room")
@@ -29,4 +31,8 @@ public class ChatRoomEntity {
     //소비자ID
     @Column(name = "user_id")
     private String users;
+
+    // 메시지들
+    @OneToMany(mappedBy = "chatRoomId", cascade = CascadeType.ALL)
+    private List<MessageEntity> messages;
 }

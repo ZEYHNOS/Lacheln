@@ -20,10 +20,27 @@ public class ChatMessageConvertor {
         return MessageEntity
                 .builder()
                 .chatRoomId(chatRoom)
-                .msgSender(dto.getUserType())
+                .msgSender(dto.getSenderId()+"")
+                .msgReceiver(dto.getReceiverId()+"")
                 .msgContent(dto.getMessage())
                 .msgSendTime(LocalDateTime.now())
                 .msgRead(dto.getRead())
+                .msgSenderName(dto.getSenderName())
+                .msgReceiverName(dto.getReceiverName())
+                .build();
+    }
+
+    public ChatMessageDto convertToDto(Long chatRoomId, MessageEntity messageEntity) {
+        return ChatMessageDto
+                .builder()
+                .chatRoomId(chatRoomId)
+                .senderId(messageEntity.getMsgSender())
+                .receiverId(messageEntity.getMsgReceiver())
+                .messageId(messageEntity.getMsgId())
+                .read(messageEntity.getMsgRead())
+                .sendAt(messageEntity.getMsgSendTime())
+                .senderName(messageEntity.getMsgSenderName())
+                .receiverName(messageEntity.getMsgReceiverName())
                 .build();
     }
 }

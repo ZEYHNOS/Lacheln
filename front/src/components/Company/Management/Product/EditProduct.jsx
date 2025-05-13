@@ -40,6 +40,15 @@ function EditProduct() {
     const [overlap, setOverlap] = useState([]);
     const [essential, setEssential] = useState([]);
 
+    // 스튜디오 전용 필드
+    const [maxPeople, setMaxPeople] = useState(1);
+    const [backgroundOption, setBackgroundOption] = useState("Y");
+
+    // 메이크업 전용 필드
+    const [visitAvailable, setVisitAvailable] = useState(true);
+    const [makeupVisit, setMakeupVisit] = useState(true);
+    const [manager, setManager] = useState("");
+
     useEffect(() => {
         apiClient.get("/company/category")
             .then(res => {
@@ -116,10 +125,22 @@ function EditProduct() {
                     url: `${imageBaseUrl}${img.url}`,
                 })));
                 setSelectedImage(data.productImageUrl?.[0]?.url ? `${imageBaseUrl}${data.productImageUrl[0].url}` : null);                
-                if(categoryCode === "D") {
+                
+                // 카테고리 별 추가 필드 설정
+                if (categoryCode === "D") {
                     setEssential(data.essential === "Y");
                     setOverlap(data.overlap === "Y");
+                } else if (categoryCode === "S") {
+                    // 스튜디오 전용 필드 설정
+                    setMaxPeople(data.maxPeople || 1);
+                    setBackgroundOption(data.bgOptions || "Y");
+                } else if (categoryCode === "M") {
+                    // 메이크업 전용 필드 설정
+                    setVisitAvailable(data.business_trip === "Y");
+                    setMakeupVisit(data.visit === "Y");
+                    setManager(data.manager || "");
                 }
+                
                 setOptions(
                     (data.optionList || []).map(opt => ({
                         title: opt.name,
@@ -253,12 +274,24 @@ function EditProduct() {
                     plus_cost: parseInt(dt.extraPrice || 0),
                 })),
             })),
-            ...(categoryCode?.toUpperCase() === "D" && { 
-                sizeList, 
-                essential: essential ? "Y" : "N",
-                overlap: overlap ? "Y" : "N"
-            }),
         };
+        
+        // 카테고리별 추가 필드
+        if (categoryCode === "D") {
+            // 드레스 전용 필드
+            payload.sizeList = sizeList;
+            payload.essential = essential ? "Y" : "N";
+            payload.overlap = overlap ? "Y" : "N";
+        } else if (categoryCode === "S") {
+            // 스튜디오 전용 필드
+            payload.maxPeople = parseInt(maxPeople);
+            payload.bgOptions = backgroundOption;
+        } else if (categoryCode === "M") {
+            // 메이크업 전용 필드
+            payload.business_trip = visitAvailable ? "Y" : "N";
+            payload.visit = makeupVisit ? "Y" : "N";
+            payload.manager = manager;
+        }
     
         apiClient.put(`${baseUrl}/product/${category}/update/${id}`, payload)
             .then(() => {
@@ -318,35 +351,112 @@ function EditProduct() {
                         <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageUpload} />
                     </label>
                     
-                    {/* 실내 혹은 야외 촬영 여부 선택 */}
-                    <div className="bg-white rounded-md flex items-center space-x-6 mt-4">
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                            <input 
-                                type="checkbox" 
-                                checked={indoor} 
-                                onChange={() => setIndoor(!indoor)} 
-                                className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
-                                                    bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                                    checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                                    checked:after:font-bold checked:after:block checked:after:text-center
-                                                    checked:after:leading-[18px]"
-                            />
-                            <span className="text-black">실내촬영가능</span>
-                        </label>
+                    <div className="bg-white rounded-md mt-4">
+                        {/* 카테고리별 필드 */}
+                        {categoryCode === "D" && (
+                            <div className="flex items-center space-x-6 mb-4">
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={indoor} 
+                                        onChange={() => setIndoor(!indoor)} 
+                                        className={checkboxStyle}
+                                    />
+                                    <span className="text-black">실내촬영가능</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={outdoor} 
+                                        onChange={() => setOutdoor(!outdoor)} 
+                                        className={checkboxStyle}
+                                    />
+                                    <span className="text-black">야외촬영가능</span>
+                                </label>
+                            </div>
+                        )}
 
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                            <input 
-                                type="checkbox" 
-                                checked={outdoor} 
-                                onChange={() => setOutdoor(!outdoor)} 
-                                className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
-                                                    bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                                    checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                                    checked:after:font-bold checked:after:block checked:after:text-center
-                                                    checked:after:leading-[18px]"
-                            />
-                            <span className="text-black">야외촬영가능</span>
-                        </label>
+                        {categoryCode === "S" && (
+                            <div className="space-y-4">
+                                <div className="flex items-center space-x-6 mb-4">
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={indoor} 
+                                            onChange={() => setIndoor(!indoor)} 
+                                            className={checkboxStyle}
+                                        />
+                                        <span className="text-black">실내촬영가능</span>
+                                    </label>
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={outdoor} 
+                                            onChange={() => setOutdoor(!outdoor)}
+                                            className={checkboxStyle}
+                                        />
+                                        <span className="text-black">야외촬영가능</span>
+                                    </label>
+                                </div>
+                                <div className="flex items-center">
+                                    <label className="w-32">최대수용인원</label>
+                                    <input 
+                                        type="number" 
+                                        min="1"
+                                        value={maxPeople} 
+                                        onChange={(e) => setMaxPeople(e.target.value)}
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                    />
+                                </div>
+                                <div className="flex items-center">
+                                    <label className="w-32">배경선택여부</label>
+                                    <select
+                                        value={backgroundOption}
+                                        onChange={(e) => setBackgroundOption(e.target.value)}
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                    >
+                                        <option value="Y">가능</option>
+                                        <option value="N">불가능</option>
+                                    </select>
+                                </div>
+                            </div>
+                        )}
+
+                        {categoryCode === "M" && (
+                            <div className="space-y-4">
+                                <div className="flex items-center space-x-6 mb-4">
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={visitAvailable} 
+                                            onChange={() => setVisitAvailable(!visitAvailable)} 
+                                            className={checkboxStyle}
+                                        />
+                                        <span className="text-black">출장</span>
+                                    </label>
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={makeupVisit} 
+                                            onChange={() => setMakeupVisit(!makeupVisit)} 
+                                            className={checkboxStyle}
+                                        />
+                                        <span className="text-black">방문</span>
+                                    </label>
+                                </div>
+                                <div className="flex items-center">
+                                    <label className="w-24">담당자</label>
+                                    <input 
+                                        type="text"
+                                        maxLength="10" 
+                                        value={manager} 
+                                        onChange={(e) => setManager(e.target.value)}
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                        placeholder="담당자 이름"
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -382,23 +492,25 @@ function EditProduct() {
                                 <input type="text" value={price} onChange={(e) => setPrice(e.target.value)}
                                     className="flex-grow border p-2 rounded bg-white text-black"/>
                             </div>
-                            {/* 색상 */}
-                            <div className="flex items-center">
-                                <label className="w-24">색상</label>
-                                <select
-                                    value={color}
-                                    onChange={(e) => setColor(e.target.value)}
-                                    className="flex-grow border p-2 rounded bg-white text-black"
-                                >
-                                    {Object.entries(COLOR_MAP).map(([eng, kor]) => (
-                                        <option key={eng} value={eng}>
-                                            {kor}
-                                        </option>
-                                    ))}
-                                </select>
-                                <div className="ml-2 w-24 h-10 rounded" 
-                                    style={{ backgroundColor: color, border: '1px solid #ccc'}}/>
-                            </div>
+                            {/* 색상 - 드레스일 경우에만 표시 */}
+                            {categoryCode === "D" && (
+                                <div className="flex items-center">
+                                    <label className="w-24">색상</label>
+                                    <select
+                                        value={color}
+                                        onChange={(e) => setColor(e.target.value)}
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                    >
+                                        {Object.entries(COLOR_MAP).map(([eng, kor]) => (
+                                            <option key={eng} value={eng}>
+                                                {kor}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <div className="ml-2 w-24 h-10 rounded" 
+                                        style={{ backgroundColor: color, border: '1px solid #ccc'}}/>
+                                </div>
+                            )}
                             {/* 대여시간 */}
                             <div className="flex items-center">
                                 <label className="w-24">대여시간</label>
@@ -419,19 +531,21 @@ function EditProduct() {
                                     <h3 className="text-md font-semibold mb-2">드레스 사이즈 리스트</h3>
                                     <div className="flex items-center space-x-4">
                                         <label className="flex items-center space-x-1">
-                                            <input type="checkbox" checked={overlap} className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
-                                                bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                                checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                                checked:after:font-bold checked:after:block checked:after:text-center
-                                                checked:after:leading-[18px]" />
+                                            <input 
+                                                type="checkbox" 
+                                                checked={overlap} 
+                                                onChange={() => setOverlap(!overlap)}
+                                                className={checkboxStyle} 
+                                            />
                                             <span>중복 선택</span>
                                         </label>
                                         <label className="flex items-center space-x-1">
-                                            <input type="checkbox" checked={essential} className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
-                                                bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                                checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                                checked:after:font-bold checked:after:block checked:after:text-center
-                                                checked:after:leading-[18px]" />
+                                            <input 
+                                                type="checkbox" 
+                                                checked={essential} 
+                                                onChange={() => setEssential(!essential)}
+                                                className={checkboxStyle} 
+                                            />
                                             <span>필수 선택</span>
                                         </label>
                                     </div>

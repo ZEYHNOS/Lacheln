@@ -35,6 +35,7 @@ function Collaboration() {
         apiClient.get("/package/list", { withCredentials: true })
             .then((res) => {
                 const rawData = res.data.data || [];
+                console.log("패키지 목록 데이터:", rawData);
                 setPackages(rawData);
 
                 // admin, cp1, cp2 모두 업체로 바인딩, id 기준 중복 제거
@@ -225,7 +226,7 @@ function Collaboration() {
                 // 진행중인 협업 탭 내용
                 <div className="space-y-6 mt-4">
                     <h3 className="text-xl font-semibold text-purple-700 mb-4">진행중인 협업</h3>
-                    {packages.filter(pkg => pkg.status === 'PRIVATE').length > 0 ? (
+                    {packages.filter(pkg => pkg.status === 'PRIVATE' || pkg.status === 'ACTIVE').length > 0 ? (
                         <div className="border rounded-lg overflow-hidden">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
@@ -237,7 +238,7 @@ function Collaboration() {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {packages.filter(pkg => pkg.status === 'PRIVATE').map((pkg, index) => (
+                                    {packages.filter(pkg => pkg.status === 'PRIVATE' || pkg.status === 'ACTIVE').map((pkg, index) => (
                                         <tr key={index} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm font-medium text-gray-900">{pkg.name || '이름 없음'}</div>
@@ -253,11 +254,17 @@ function Collaboration() {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                                    pkg.status === 'ACTIVE' ? 'bg-blue-100 text-blue-800' :
                                                     (pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                                                 }`}>
-                                                    {(pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? '패키지설정중' : '상품설정중'}
+                                                    {pkg.status === 'ACTIVE' ? '패키지설정완료' :
+                                                     (pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? '패키지설정중' : '상품설정중'}
                                                 </span>
-                                                {pkg.adminProduct || pkg.cp1Product || pkg.cp2Product ? (
+                                                {pkg.status === 'ACTIVE' ? (
+                                                    <div className="mt-1 text-xs text-gray-500">
+                                                        패키지 상세 설정이 완료되었습니다
+                                                    </div>
+                                                ) : (pkg.adminProduct || pkg.cp1Product || pkg.cp2Product) ? (
                                                     <div className="mt-1 text-xs text-gray-500">
                                                         {[
                                                             pkg.adminProduct ? pkg.admin?.name : null,

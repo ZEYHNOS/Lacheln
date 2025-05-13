@@ -1,15 +1,22 @@
 package aba3.lucid.domain.cart.dto;
 
-import aba3.lucid.domain.cart.entity.CartEntity;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Builder
 public class CartResponse {
+    private Long cpId;
     private Long cartId;
     private Long productIds;
-    private List<Long> productDetailIds;
+    private LocalDateTime createdAt;
+    private int cartQuantity;
+    private String productName;
+    private BigInteger price;
+    private int taskTime;
+    private List<CartDetailResponse> cartDetails;
 }

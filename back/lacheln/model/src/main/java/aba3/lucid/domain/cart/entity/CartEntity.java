@@ -21,11 +21,11 @@
         @Id
         @Column(name = "cart_id")
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private long cartId; //장바구니ID
+        private long cartId; // 장바구니 ID
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user_id")
-        private UsersEntity users; //소비자ID
+        private UsersEntity users; // 소비자 ID
 
         @Column(name = "pd_id", nullable = false)
         private Long productId; // 상품 ID

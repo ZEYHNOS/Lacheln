@@ -14,6 +14,6 @@ public class CartDetailResponse {
     private int quantity;
     private String optionName;
     private String optionDetailName;
-    private int detailQuantity;
+    private BigInteger detailPrice;
     private int detailTaskTime;
 }

@@ -12,8 +12,7 @@ import java.util.List;
 public class CartResponse {
     private Long cpId;
     private Long cartId;
-    private Long productIds;
-    private LocalDateTime createdAt;
+    private Long productId;
     private int cartQuantity;
     private String productName;
     private BigInteger price;

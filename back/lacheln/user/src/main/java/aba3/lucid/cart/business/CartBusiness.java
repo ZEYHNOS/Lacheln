@@ -3,6 +3,7 @@ package aba3.lucid.cart.business;
 import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
+import aba3.lucid.domain.cart.convertor.CartConvertor;
 import aba3.lucid.domain.cart.dto.*;
 import aba3.lucid.domain.cart.entity.CartDetailEntity;
 import aba3.lucid.domain.cart.entity.CartEntity;
@@ -21,23 +22,12 @@ public class CartBusiness {
 
     private final CartService cartService;
     private final UserService userService;
+    private final CartConvertor cartConvertor;
 
     // 장바구니 리스트 검색
     public API<List<CartResponse>> getCartList(String userId)    {
         List<CartEntity> cart = cartService.getCartByUserIdWithThrow(userId);
-        List<CartResponse> list = cart
-                .stream()
-                .map(carts -> CartResponse.builder()
-                        .productIds(carts.getProductId())
-                        .productDetailIds(
-                                carts.getCartDetails()
-                                        .stream()
-                                        .map(CartDetailEntity::getCartDtId)
-                                        .toList()
-                        )
-                        .build())
-                .toList();
-        return API.OK(list);
+        return API.OK(cartConvertor.convertToResponses(cart));
     }
     
     // 장바구니에 담기

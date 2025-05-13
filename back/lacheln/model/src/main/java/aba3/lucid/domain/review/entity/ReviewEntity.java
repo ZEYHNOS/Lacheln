@@ -61,4 +61,19 @@ public class ReviewEntity {
     //리뷰이미지
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewImageEntity> imageList;
+
+    // 리뷰 삭제 일시 (논리 삭제 시 기록)
+    @Column(name = "rv_deleted_at")
+    private LocalDateTime rvDeletedAt;
+
+    // 리뷰 삭제 처리 메서드
+    public void markAsDeleted() {
+        this.rvStatus = "DELETED";            // 리뷰 상태를 '삭제됨'으로 변경
+        this.rvDeletedAt = LocalDateTime.now(); // 삭제 시각 기록
+    }
+
+    public void updateContentAndScore(String content, Double score) {
+        this.rvContent = content;
+        this.rvScore = score;
+    }
 }

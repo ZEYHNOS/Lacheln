@@ -2,6 +2,7 @@ package aba3.lucid.review.service;
 
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewResponse;
+import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
 import aba3.lucid.review.business.ReviewBusiness;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,5 +42,25 @@ public class ReviewService {
         return reviewBusiness.getReviewsByProductId(productId);
     }
 
-    // 추후에 수정, 삭제, 조회 등의 기능도 이 안에 추가될 예정
+    @Transactional
+    public void updateReview(String userId, Long reviewId, ReviewUpdateRequest request) {
+        /*
+         * [서비스 계층 역할]
+         * - 컨트롤러로부터 받은 수정 요청을 비즈니스 계층으로 전달
+         * - 트랜잭션은 @Transactional로 감싸 수정이 반영되도록 처리
+         */
+        reviewBusiness.updateReview(userId, reviewId, request);
+    }
+
+    /**
+     * 리뷰 삭제 서비스
+     * - 비즈니스 계층에 위임
+     *
+     * @param userId 현재 로그인한 사용자 UUID
+     * @param reviewId 삭제할 리뷰 ID
+     */
+    @Transactional
+    public void deleteReview(String userId, Long reviewId) {
+        reviewBusiness.deleteReview(userId, reviewId);
+    }
 }

@@ -7,6 +7,7 @@ import aba3.lucid.domain.payment.repository.PayManagementRepository;
 import aba3.lucid.domain.review.convertor.ReviewConvertor;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewResponse;
+import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.entity.ReviewImageEntity;
 import aba3.lucid.domain.review.repository.ReviewImageRepository;
@@ -72,22 +73,81 @@ public class ReviewBusiness {
         // rabbitTemplate.convertAndSend("exchange", "routing.key", payload);
     }
 
+    /**
+     * 상품 ID 기준으로 리뷰 목록 조회
+     *
+     * @param productId 상품 ID
+     * @return ReviewResponse 리스트
+     */
     @Transactional(readOnly = true)
     public List<ReviewResponse> getReviewsByProductId(Long productId) {
-        /*
-         * [1] 리뷰 엔티티 목록 조회
-         * - ReviewRepository에서 productId를 기준으로 리뷰 리스트를 가져온다.
-         * - ReviewEntity는 상품(ProductEntity)과 연관관계를 가지고 있으므로, product.productId로 조회 가능
-         */
         List<ReviewEntity> reviewList = reviewRepository.findByProductPdId(productId);
 
-        /*
-         * [2] 리뷰 응답 DTO로 변환
-         * - 사용자에게 보여줄 정보만 골라서 담은 ReviewResponse로 변환한다.
-         * - 변환은 ReviewConvertor의 toReviewResponse 메서드에서 처리
-         */
+        // 삭제된 리뷰("DELETED" 상태)는 제외하고 응답 리스트로 변환
         return reviewList.stream()
-                .map(ReviewConvertor::toReviewResponse) // ReviewEntity → ReviewResponse
-                .toList(); // 변환된 리스트를 반환
+                .filter(review -> !"DELETED".equals(review.getRvStatus()))
+                .map(ReviewConvertor::toReviewResponse)
+                .toList();
+    }
+
+    /**
+     * 리뷰 수정 처리
+     *
+     * @param userId 로그인한 사용자 ID (UUID)
+     * @param reviewId 수정할 리뷰 ID
+     * @param request 리뷰 수정 요청 DTO
+     */
+    @Transactional
+    public void updateReview(String userId, Long reviewId, ReviewUpdateRequest request) {
+        // 1. 리뷰 조회
+        ReviewEntity review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰를 찾을 수 없습니다."));
+
+        // 2. 작성자 검증
+        UsersEntity writer = review.getUser();
+        if (!writer.getUserId().equals(userId)) {
+            throw new IllegalStateException("해당 리뷰를 수정할 권한이 없습니다.");
+        }
+
+        // 3. 본문 및 평점 수정
+        review.updateContentAndScore(request.getRvContent(), request.getRvScore());
+
+        // 4. 기존 이미지 삭제 후 새 이미지 등록
+        reviewImageRepository.deleteAll(review.getImageList());
+
+        if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
+            List<ReviewImageEntity> newImages =
+                    ReviewConvertor.toReviewImageEntities(review, request.getImageUrls());
+            reviewImageRepository.saveAll(newImages);
+        }
+
+        log.info("리뷰 수정 완료: reviewId={}, userId={}", reviewId, userId);
+    }
+
+    /**
+     * 리뷰 삭제 처리
+     *
+     * - 작성자 본인만 삭제할 수 있음
+     * - 삭제 시 리뷰 상태를 DELETED로 설정하고 삭제 시각을 기록
+     *
+     * @param userId 현재 로그인한 사용자 UUID
+     * @param reviewId 삭제할 리뷰 ID
+     */
+    @Transactional
+    public void deleteReview(String userId, Long reviewId) {
+        // 1. 리뷰 조회
+        ReviewEntity review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰를 찾을 수 없습니다."));
+
+        // 2. 작성자 검증
+        UsersEntity writer = review.getUser();
+        if (!writer.getUserId().equals(userId)) {
+            throw new IllegalStateException("해당 리뷰를 삭제할 권한이 없습니다.");
+        }
+
+        // 3. 논리 삭제 처리
+        review.markAsDeleted(); // 상태를 DELETED로 바꾸고 삭제일시 기록
+
+        log.info("리뷰 삭제 완료: reviewId={}, userId={}", reviewId, userId);
     }
 }

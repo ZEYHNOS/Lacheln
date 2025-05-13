@@ -3,6 +3,7 @@ package aba3.lucid.payment.controller;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomAuthenticationToken;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.payment.dto.PayDetailResponse;
 import aba3.lucid.domain.payment.dto.PayManagementResponse;
 import aba3.lucid.domain.payment.dto.PaymentRequest;
@@ -34,9 +35,9 @@ public class PaymentController {
     @PostMapping("/save")
     public API<PayManagementResponse> savedPayment(
             @RequestBody PaymentRequest request,
-            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-        PayManagementResponse response = paymentBusiness.save(customAuthenticationToken.getUserId(), request);
+        PayManagementResponse response = paymentBusiness.save(user.getUserId(), request);
 
         return API.OK(response);
     }
@@ -45,9 +46,9 @@ public class PaymentController {
     @Operation(summary = "결제 전 검증 및 결제해야 하는 금액 반환", description = "결제 전 쿠폰, 마일리지, 상품 스냅샷 유효성 검사 및 총 결제하는 금액 반환")
     public API<BigInteger> paymentVerification(
             @RequestBody PaymentVerifyRequest request,
-            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, customAuthenticationToken.getUserId());
+//        BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, user.getUserId());
         BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, "");
 
         return API.OK(totalAmount);
@@ -56,9 +57,9 @@ public class PaymentController {
     @GetMapping("/user/list")
     @Operation(summary = "사용자의 결제 내역")
     public API<List<PayManagementResponse>> getUserPaymentList(
-            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(customAuthenticationToken.getUserId());
+//        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(user.getUserId());
         List<PayManagementResponse> payManagementResponseList = paymentBusiness.getUserPaymentList("");
 
         return API.OK(payManagementResponseList);
@@ -67,12 +68,10 @@ public class PaymentController {
     @GetMapping("/company/list")
     @Operation(summary = "업체에 결제한 내역")
     public API<List<PayDetailResponse>> getCompanyPaymentList(
-            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(customAuthenticationToken.getCompanyId());
+//        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(user.getCompanyId());
         List<PayDetailResponse> payManagementResponseList = paymentBusiness.getPaymentList(1L);
-
         return API.OK(payManagementResponseList);
     }
-
 }

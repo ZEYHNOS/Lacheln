@@ -2,6 +2,7 @@ package aba3.lucid.wishlist.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.user.dto.WishListAddRequest;
 import aba3.lucid.domain.user.dto.WishListDeleteRequest;
 import aba3.lucid.wishlist.business.WishListBusiness;
@@ -9,6 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,14 +36,18 @@ public class WishListController {
     // 특정 상품을 찜 목록에 추가
     @PostMapping("/add")
     @Operation(summary = "상품 찜 목록 추가", description = "해당하는 소비자의 찜 목록을 추가합니다.")
-    public API<String> add(@RequestBody WishListAddRequest wishListAddRequest) {
-        return wishListBusiness.addWishList(AuthUtil.getUserId(), wishListAddRequest);
+    public API<String> add(
+            @RequestBody WishListAddRequest wishListAddRequest,
+            @AuthenticationPrincipal CustomUserDetails user) {
+        return wishListBusiness.addWishList(user.getUserId(), wishListAddRequest);
     }
     
     // 찜 목록에 있는 상품 제거
     @DeleteMapping("/delete")
     @Operation(summary = "상품 찜 목록 제거", description = "해당하는 소비자의 찜 목록을 제거합니다.")
-    public API<String> delete(@RequestBody WishListDeleteRequest wishListDeleteRequest) {
-        return wishListBusiness.deleteWishList(AuthUtil.getUserId(), wishListDeleteRequest);
+    public API<String> delete(
+            @RequestBody WishListDeleteRequest wishListDeleteRequest,
+            @AuthenticationPrincipal CustomUserDetails user) {
+        return wishListBusiness.deleteWishList(user.getUserId(), wishListDeleteRequest);
     }
 }

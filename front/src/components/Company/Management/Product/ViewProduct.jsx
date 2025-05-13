@@ -60,9 +60,18 @@ function ViewProduct() {
         optionList,
         descriptionList,
         overlap,
-        essential
+        essential,
+        // 스튜디오 전용 필드
+        maxPeople,
+        bgOptions,
+        // 메이크업 전용 필드
+        visit,
+        manager,
+        business_trip
     } = product;
     const isDress = categoryCode === "D";
+    const isStudio = categoryCode === "S";
+    const isMakeup = categoryCode === "M";
     const showOverlap = isDress ? overlap : null;
     const showEssential = isDress ? essential : null;
 
@@ -110,34 +119,82 @@ function ViewProduct() {
                         })}
                     </div>
 
-                    <div className="bg-white rounded-md flex items-center space-x-6 mt-4">
-                        <label className="flex items-center space-x-2 cursor-default">
-                            <input
-                                type="checkbox"
-                                checked={inAvailable === "Y"}
-                                readOnly
-                                className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-default
-                                bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                checked:after:font-bold checked:after:block checked:after:text-center
-                                checked:after:leading-[18px]"
-                            />
-                            <span className="text-black">실내촬영가능</span>
-                        </label>
+                    <div className="bg-white rounded-md mt-4">
+                        {/* 공통 필드: 실내/야외 촬영 가능 여부 */}
+                        <div className="flex items-center space-x-6 mb-4">
+                            <label className="flex items-center space-x-2 cursor-default">
+                                <input
+                                    type="checkbox"
+                                    checked={isMakeup ? (business_trip === "Y") : (inAvailable === "Y")}
+                                    readOnly
+                                    className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-default
+                                    bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                    checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                    checked:after:font-bold checked:after:block checked:after:text-center
+                                    checked:after:leading-[18px]"
+                                />
+                                <span className="text-black">
+                                    {isMakeup ? "출장" : "실내촬영가능"}
+                                </span>
+                            </label>
 
-                        <label className="flex items-center space-x-2 cursor-default">
-                            <input
-                                type="checkbox"
-                                checked={outAvailable === "Y"}
-                                readOnly
-                                className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-default
-                                bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                checked:after:font-bold checked:after:block checked:after:text-center
-                                checked:after:leading-[18px]"
-                            />
-                            <span className="text-black">야외촬영가능</span>
-                        </label>
+                            <label className="flex items-center space-x-2 cursor-default">
+                                <input
+                                    type="checkbox"
+                                    checked={outAvailable === "Y" || visit === "Y"}
+                                    readOnly
+                                    className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-default
+                                    bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                    checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                    checked:after:font-bold checked:after:block checked:after:text-center
+                                    checked:after:leading-[18px]"
+                                />
+                                <span className="text-black">
+                                    {isMakeup ? "방문" : "야외촬영가능"}
+                                </span>
+                            </label>
+                        </div>
+
+                        {/* 스튜디오 전용 필드 */}
+                        {isStudio && (
+                            <div className="space-y-4">
+                                <div className="flex items-center">
+                                    <label className="w-32">최대수용인원</label>
+                                    <input 
+                                        type="text" 
+                                        value={maxPeople}
+                                        disabled
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                    />
+                                </div>
+                                <div className="flex items-center">
+                                    <label className="w-32">배경선택여부</label>
+                                    <select
+                                        value={bgOptions}
+                                        disabled
+                                        className="flex-grow border p-2 rounded bg-white text-black appearance-none"
+                                    >
+                                        <option value="Y">가능</option>
+                                        <option value="N">불가능</option>
+                                    </select>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 메이크업 전용 필드 */}
+                        {isMakeup && (
+                            <div className="space-y-4">
+                                <div className="flex items-center">
+                                    <label className="w-24">담당자</label>
+                                    <input 
+                                        type="text" 
+                                        value={manager || "-"}
+                                        disabled
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

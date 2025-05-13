@@ -26,6 +26,15 @@ function AddProduct() {
     const [categoryCode, setCategoryCode] = useState("");
     const writeRef = useRef();
 
+    // 스튜디오 전용 필드
+    const [maxPeople, setMaxPeople] = useState(1);
+    const [backgroundOption, setBackgroundOption] = useState("Y");
+
+    // 메이크업 전용 필드
+    const [visitAvailable, setVisitAvailable] = useState(true);
+    const [makeupVisit, setMakeupVisit] = useState(true);
+    const [manager, setManager] = useState("");
+
     useEffect(() => {
         // 업체 카테고리 불러오기
         axios.get(`${baseUrl}/company/category`,{
@@ -187,40 +196,55 @@ function AddProduct() {
             taskTime: parseInt(taskTime),
             imageUrlList: imageUrls,
             hashTagList: [],
-            inAvailable: indoor ? "Y" : "N",
-            outAvailable: outdoor ? "Y" : "N",
-            color,
             descriptionList: processedDescriptionList,
-            ...(categoryCode === "D" && {
-                overlap: options[0]?.isMultiSelect ? "Y" : "N",
-                essential: options[0]?.isRequired ? "Y" : "N",
-            })
         };
-        console.log("🟨 최종 전송 데이터:", data);
-    
-        let postUrl = "";
+
+        // 카테고리별 추가 필드
         if (categoryCode === "D") {
-            postUrl = "/product/dress/register";
+            // 드레스 전용 필드
+            data.inAvailable = indoor ? "Y" : "N";
+            data.outAvailable = outdoor ? "Y" : "N";
+            data.color = color;
+            data.overlap = options[0]?.isMultiSelect ? "Y" : "N";
+            data.essential = options[0]?.isRequired ? "Y" : "N";
             data.sizeList = options[0].details.map((d) => ({
                 size: d.name,
                 stock: parseInt(d.stock || 0),
                 plusCost: parseInt(d.extraPrice || 0),
             }));
+        } else if (categoryCode === "S") {
+            // 스튜디오 전용 필드
+            data.inAvailable = indoor ? "Y" : "N";
+            data.outAvailable = outdoor ? "Y" : "N";
+            data.maxPeople = parseInt(maxPeople);
+            data.bgOptions = backgroundOption;
+        } else if (categoryCode === "M") {
+            // 메이크업 전용 필드
+            data.business_trip = visitAvailable ? "Y" : "N";
+            data.visit = makeupVisit ? "Y" : "N";
+            data.manager = manager;
+        }
+
+        console.log("🟨 최종 전송 데이터:", data);
+    
+        let postUrl = "";
+        if (categoryCode === "D") {
+            postUrl = "/product/dress/register";
             data.optionList = options.slice(1).map((opt) => ({
                 name: opt.title,
                 overlap: opt.isMultiSelect ? "Y" : "N",
                 essential: opt.isRequired ? "Y" : "N",
                 status: "ACTIVE",
                 optionDtList: opt.details.map((dt) => ({
-                opDtName: dt.name,
-                plusCost: parseInt(dt.extraPrice || 0),
-                plusTime: parseInt(dt.extraTime || 0),
+                    opDtName: dt.name,
+                    plusCost: parseInt(dt.extraPrice || 0),
+                    plusTime: parseInt(dt.extraTime || 0),
                 })),
             }));
         } else if (categoryCode === "S") {
-        postUrl = "/product/studio/register";
+            postUrl = "/product/studio/register";
         } else if (categoryCode === "M") {
-        postUrl = "/product/makeup/register";
+            postUrl = "/product/makeup/register";
         }
     
         if (categoryCode !== "D") {
@@ -243,9 +267,9 @@ function AddProduct() {
             navigate("/company/product");
         } catch (err) {
             if (err.response) {
-            console.error("등록 실패", err.response.data);
+                console.error("등록 실패", err.response.data);
             } else {
-            console.error("등록 실패", err);
+                console.error("등록 실패", err);
             }
         }
     };
@@ -272,10 +296,10 @@ function AddProduct() {
                         {images.map((img, index) => (
                             <img 
                             key={index}
-                            src={img.previewUrl}  // ✅ 수정 포인트
+                            src={img.previewUrl}
                             alt={`업로드된 이미지 ${index}`} 
                             className="w-16 h-16 object-cover rounded-md cursor-pointer border-2 border-transparent hover:border-[#845EC2] flex-shrink-0" 
-                            onClick={() => setSelectedImage(img.previewUrl)}  // ✅ 대표 이미지도 바꿔야 함
+                            onClick={() => setSelectedImage(img.previewUrl)}
                             />
                         ))}
                     </div>
@@ -296,35 +320,135 @@ function AddProduct() {
                         <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageUpload} />
                     </label>
                     
-                    {/* 실내 혹은 야외 촬영 여부 선택 */}
-                    <div className="bg-white rounded-md flex items-center space-x-6 mt-4">
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                            <input 
-                                type="checkbox" 
-                                checked={indoor} 
-                                onChange={() => setIndoor(!indoor)} 
-                                className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
-                                                    bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                                    checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                                    checked:after:font-bold checked:after:block checked:after:text-center
-                                                    checked:after:leading-[18px]"
-                            />
-                            <span className="text-black">실내촬영가능</span>
-                        </label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                            <input 
-                                type="checkbox" 
-                                checked={outdoor} 
-                                onChange={() => setOutdoor(!outdoor)} 
-                                className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
-                                                    bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                                    checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                                    checked:after:font-bold checked:after:block checked:after:text-center
-                                                    checked:after:leading-[18px]"
-                            />
-                            <span className="text-black">야외촬영가능</span>
-                        </label>
-                    </div>
+                    {/* 카테고리별 추가 옵션 */}
+                    {categoryCode === "D" && (
+                        <div className="bg-white rounded-md flex items-center space-x-6 mt-4">
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                                <input 
+                                    type="checkbox" 
+                                    checked={indoor} 
+                                    onChange={() => setIndoor(!indoor)} 
+                                    className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                                        bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                                        checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                                        checked:after:font-bold checked:after:block checked:after:text-center
+                                                        checked:after:leading-[18px]"
+                                />
+                                <span className="text-black">실내촬영가능</span>
+                            </label>
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                                <input 
+                                    type="checkbox" 
+                                    checked={outdoor} 
+                                    onChange={() => setOutdoor(!outdoor)} 
+                                    className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                                        bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                                        checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                                        checked:after:font-bold checked:after:block checked:after:text-center
+                                                        checked:after:leading-[18px]"
+                                />
+                                <span className="text-black">야외촬영가능</span>
+                            </label>
+                        </div>
+                    )}
+
+                    {categoryCode === "S" && (
+                        <div className="bg-white rounded-md mt-4 space-y-4">
+                            <div className="flex items-center space-x-6">
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={indoor} 
+                                        onChange={() => setIndoor(!indoor)} 
+                                        className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                                            bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                                            checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                                            checked:after:font-bold checked:after:block checked:after:text-center
+                                                            checked:after:leading-[18px]"
+                                    />
+                                    <span className="text-black">실내촬영가능</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={outdoor} 
+                                        onChange={() => setOutdoor(!outdoor)} 
+                                        className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                                            bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                                            checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                                            checked:after:font-bold checked:after:block checked:after:text-center
+                                                            checked:after:leading-[18px]"
+                                    />
+                                    <span className="text-black">야외촬영가능</span>
+                                </label>
+                            </div>
+                            <div className="flex items-center">
+                                <label className="w-32">최대수용인원</label>
+                                <input 
+                                    type="number" 
+                                    min="1"
+                                    value={maxPeople} 
+                                    onChange={(e) => setMaxPeople(e.target.value)}
+                                    className="flex-grow border p-2 rounded bg-white text-black"
+                                />
+                            </div>
+                            <div className="flex items-center">
+                                <label className="w-32">배경선택여부</label>
+                                <select
+                                    value={backgroundOption}
+                                    onChange={(e) => setBackgroundOption(e.target.value)}
+                                    className="flex-grow border p-2 rounded bg-white text-black"
+                                >
+                                    <option value="Y">가능</option>
+                                    <option value="N">불가능</option>
+                                </select>
+                            </div>
+                        </div>
+                    )}
+
+                    {categoryCode === "M" && (
+                        <div className="bg-white rounded-md mt-4 space-y-4">
+                            <div className="flex items-center space-x-6">
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={visitAvailable} 
+                                        onChange={() => setVisitAvailable(!visitAvailable)} 
+                                        className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                                            bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                                            checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                                            checked:after:font-bold checked:after:block checked:after:text-center
+                                                            checked:after:leading-[18px]"
+                                    />
+                                    <span className="text-black">출장</span>
+                                </label>
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={makeupVisit} 
+                                        onChange={() => setMakeupVisit(!makeupVisit)} 
+                                        className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                                            bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                                            checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                                            checked:after:font-bold checked:after:block checked:after:text-center
+                                                            checked:after:leading-[18px]"
+                                    />
+                                    <span className="text-black">방문</span>
+                                </label>
+                            </div>
+                            <div className="flex items-center">
+                                <label className="w-24">담당자</label>
+                                <input 
+                                    type="text"
+                                    maxLength="10" 
+                                    value={manager} 
+                                    onChange={(e) => setManager(e.target.value)}
+                                    className="flex-grow border p-2 rounded bg-white text-black"
+                                    placeholder="담당자 이름"
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="w-2/3 p-2">
@@ -359,21 +483,23 @@ function AddProduct() {
                                 <input type="text" value={price} onChange={(e) => setPrice(e.target.value)}
                                     className="flex-grow border p-2 rounded bg-white text-black"/>
                             </div>
-                            {/* 색상 */}
-                            <div className="flex items-center">
-                                <label className="w-24">색상</label>
-                                <select
-                                    value={color}
-                                    onChange={(e) => setColor(e.target.value)}
-                                    className="flex-grow border p-2 rounded bg-white text-black"
-                                >
-                                    {Object.entries(COLOR_MAP).map(([eng, kor]) => (
-                                        <option key={eng} value={eng}>{kor}</option>
-                                    ))}
-                                </select>
-                                <div className="ml-2 w-24 h-10 rounded" 
-                                    style={{ backgroundColor: color, border: '1px solid #ccc'}}/>
-                            </div>
+                            {/* 색상 - 드레스일 때만 표시 */}
+                            {categoryCode === "D" && (
+                                <div className="flex items-center">
+                                    <label className="w-24">색상</label>
+                                    <select
+                                        value={color}
+                                        onChange={(e) => setColor(e.target.value)}
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                    >
+                                        {Object.entries(COLOR_MAP).map(([eng, kor]) => (
+                                            <option key={eng} value={eng}>{kor}</option>
+                                        ))}
+                                    </select>
+                                    <div className="ml-2 w-24 h-10 rounded" 
+                                        style={{ backgroundColor: color, border: '1px solid #ccc'}}/>
+                                </div>
+                            )}
                             {/* 대여시간 */}
                             <div className="flex items-center">
                                 <label className="w-24">대여시간</label>

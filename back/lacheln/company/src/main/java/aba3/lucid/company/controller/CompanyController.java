@@ -76,7 +76,7 @@ public class CompanyController {
     @GetMapping("/category")
     @Operation(summary = "해당 업체의 카테고리")
     public CompanyCategory getCategory() {
-        return companyBusiness.getCategory(3L);
+        return companyBusiness.getCategory(1L);
     }
 
 

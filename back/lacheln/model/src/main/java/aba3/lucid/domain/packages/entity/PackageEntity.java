@@ -5,6 +5,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
+import aba3.lucid.domain.product.dto.DescriptionRequest;
 import aba3.lucid.domain.product.enums.PackageStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -14,6 +15,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -114,14 +116,14 @@ public class PackageEntity {
     }
 
     // 패키지명 변경
-    public void updatePackageName(String name) {
+    private void updatePackageName(String name) {
         Validator.assertStringValid(name, 5,  30);
 
         this.packName = name;
     }
 
     // 패키지 종료일 변경
-    public void updatePackageEndDate(LocalDateTime endDate) {
+    private void updatePackageEndDate(LocalDateTime endDate) {
         // TODO 종료일 후에 예약이 존재하는지 유무 확인하기
 
         // 현재 날짜 + 1보다 커야함
@@ -133,19 +135,31 @@ public class PackageEntity {
     }
 
     // 패키지 이미지 업데이트
-    public void updatePackageImageUrl(String url) {
+    private void updatePackageImageUrl(String url) {
         Validator.assertStringValid(url, 0, url.length());
 
         this.packImageUrl = url;
     }
 
     // 패키지 할인율 변경
-    public void updatePackageDiscountrate(int packDiscountrate) {
+    private void updatePackageDiscountrate(int packDiscountrate) {
         if (packDiscountrate < 0 || packDiscountrate > 100) {
             throw new ApiException(ErrorCode.INVALID_PARAMETER);
         }
 
         this.packDiscountrate = packDiscountrate;
+    }
+
+    public void updateDescription(List<PackageDescriptionEntity> entityList) {
+        if (entityList.isEmpty()) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+
+        if (this.packageDescriptionEntityList == null) {
+            this.packageDescriptionEntityList = new ArrayList<>();
+        }
+
+        this.packageDescriptionEntityList.addAll(entityList);
     }
 
 
@@ -154,5 +168,6 @@ public class PackageEntity {
         updatePackageEndDate(request.getEndDate());
         updatePackageImageUrl(request.getImageUrl());
         updatePackageDiscountrate(request.getDiscountrate());
+
     }
 }

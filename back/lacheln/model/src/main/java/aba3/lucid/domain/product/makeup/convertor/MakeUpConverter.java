@@ -3,6 +3,7 @@ package aba3.lucid.domain.product.makeup.convertor;
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.converter.*;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.domain.product.makeup.dto.MakeUpResponse;
 import aba3.lucid.domain.product.makeup.dto.MakeupRequest;
 import aba3.lucid.domain.product.makeup.entity.MakeupEntity;
@@ -24,7 +25,7 @@ public class MakeUpConverter extends ProductAbstractConverter<MakeupEntity, Make
                 .pdName(request.getName().trim())
                 .pdRec(request.getRec())
                 .pdPrice(request.getPrice())
-                .pdStatus(request.getStatus())
+                .pdStatus(ProductStatus.INACTIVE)
                 .pdTaskTime(request.getTaskTime())
                 .makeupVisit(request.getVisit())
                 .makeupManager(request.getManager())

@@ -2,6 +2,8 @@ package aba3.lucid.domain.packages.dto;
 
 import aba3.lucid.domain.product.dto.DescriptionRequest;
 import aba3.lucid.domain.product.enums.PackageStatus;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,13 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PackageUpdateRequest {
 
     private String name;
 
     private List<DescriptionRequest> descriptionRequestList;
-
-    private PackageStatus status;
 
     private int discountrate;
 

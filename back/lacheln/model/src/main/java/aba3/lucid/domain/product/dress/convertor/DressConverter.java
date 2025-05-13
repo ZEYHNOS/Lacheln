@@ -6,6 +6,7 @@ import aba3.lucid.domain.product.converter.*;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
 import aba3.lucid.domain.product.dress.dto.DressResponse;
 import aba3.lucid.domain.product.dress.entity.DressEntity;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
                 .pdName(request.getName().trim())
                 .pdRec(request.getRec())
                 .pdPrice(request.getPrice())
-                .pdStatus(request.getStatus())
+                .pdStatus(ProductStatus.INACTIVE)
                 .pdTaskTime(request.getTaskTime())
                 .dressColor(request.getColor())
                 .dressInAvailable(request.getInAvailable())

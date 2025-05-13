@@ -6,8 +6,10 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.PackageErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.domain.alert.dto.CompanyAlertDto;
+import aba3.lucid.domain.description.AbstractDescriptionConverter;
 import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
+import aba3.lucid.domain.packages.entity.PackageDescriptionEntity;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
@@ -36,6 +38,7 @@ public class PackageService {
 
     private final PackageRepository packageRepository;
     private final PackageToProductRepository packageToProductRepository;
+    private final AbstractDescriptionConverter<PackageEntity, PackageDescriptionEntity> descriptionConverter;
 
     // 패키지 등록
     @Transactional
@@ -78,34 +81,62 @@ public class PackageService {
         return newEntity;
     }
 
+
+    // 상품 등록 가능 여부 확인
+    protected void throwIfImpossibleToPublicChange(PackageEntity entity, Long companyId) {
+        // 방장의 요청이 아닐 때
+        throwIfNotAdminRequest(entity, companyId);
+        // 패키지 상태가 비공개가 아닐 때
+        throwIfNotEqualsStatus(entity, PackageStatus.PRIVATE, "상품이 삭제되거나 이미 등록되어있습니다.");
+        // 3가지 업체가 초대가 되었는지
+        throwIfNotInvitedAllRequiredCompanies(entity);
+
+        // 모든 상품이 등록되었는지
+        if (countDistinctProductsByPackage(entity.getPackId()) != 3) {
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "모든 상품이 등록되지 않았습니다.");
+        }
+
+        // 패키지 설명이 존재하는 지
+        if (entity.getPackageDescriptionEntityList().isEmpty()) {
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "패키지 설명이 존재하지 않습니다.");
+        }
+
+        // 패키지 대표 이미지가 있는지
+        if (entity.getPackImageUrl() == null || entity.getPackImageUrl().isBlank()) {
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "패키지의 대표 이미지가 없습니다.");
+        }
+
+        // 패키지 종료일이 등록되지 않았거나 오늘보다 하루 이상이지 않을 때
+        LocalDateTime minimumDateTime = LocalDate.now().plusDays(1).atStartOfDay();
+        if (entity.getPackEndDate().isBefore(minimumDateTime)) {
+            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_END_DATE, "패키지 종료 일자가 조건에 맞지 않습니다.");
+        }
+    }
+
     // 패키지 정보 수정
     @Transactional
     public PackageEntity packageUpdate(PackageEntity packageEntity, PackageUpdateRequest request, Long adminId) {
-
         // 정보 변경(상태는 변경 X)
         packageEntity.updateAdditionalField(request);
-
-        // 상태 변경
-        if (packageEntity.getPackStatus() != request.getStatus()) {
-            switch (request.getStatus()) {
-                // 활성화 하기 전 모든 정보가 들어있는지
-                case PUBLIC :
-                    throwIfImpossibleToPublicChange(packageEntity, adminId);
-                    break;
-                case REMOVE:
-                    // todo 삭제하기 전 예약 현황 확인하기
-                    break;
-                case PRIVATE:
-                    // todo PUBLIC 일 때 막기
-                    break;
-            }
-
-            // 패키지 Entity 상태 Update
-            packageEntity.updatePackageStatus(request.getStatus());
-        }
-
+        packageEntity.updateDescription(descriptionConverter.toDescriptionEntityList(packageEntity, request.getDescriptionRequestList()));
 
         return packageRepository.save(packageEntity);
+    }
+
+    public void throwIfNotEqualsStatus(PackageEntity packageEntity, PackageStatus status) {
+        if (packageEntity.getPackStatus().equals(status)) {
+            return;
+        }
+
+        throw new ApiException(ErrorCode.BAD_REQUEST, "현재 패키지 상태에서 할 수 없습니다");
+    }
+
+    public void throwIfNotEqualsStatus(PackageEntity packageEntity, PackageStatus status, String description) {
+        if (packageEntity.getPackStatus().equals(status)) {
+            return;
+        }
+
+        throw new ApiException(ErrorCode.BAD_REQUEST, description);
     }
 
     // 패키지에 해당 회사가 존재하는지
@@ -126,45 +157,10 @@ public class PackageService {
         return packageToProductRepository.existsByPackageEntity_packIdAndCpId(packageEntity.getPackId(), productEntity.getCompany().getCpId());
     }
 
-
-    // 상품 등록 가능 여부 확인
-    protected void throwIfImpossibleToPublicChange(PackageEntity entity, Long companyId) {
-        // 방장의 요청이 아닐 때
-        throwIfNotAdminRequest(entity, companyId);
-        // 패키지 상태가 private 아닐 때
-        throwIfNotPackageStatusPrivate(entity);
-        // 3가지 업체가 초대가 되었는지
-        throwIfNotInvitedAllRequiredCompanies(entity);
-
-        // 모든 상품이 등록되었는지
-        if (countDistinctProductsByPackage(entity.getPackId()) != 3) {
-            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION);
-        }
-
-        // 패키지 설명이 존재하는 지
-
-        // 패키지 대표 이미지가 있는지
-
-        // 해당 요청이 해당 패키지의 대표가 요청했는지
-
-        // 패키지 종료일이 등록되지 않았거나 오늘보다 하루 이상이지 않을 때
-        LocalDateTime minimumDateTime = LocalDate.now().plusDays(1).atStartOfDay();
-        if (entity.getPackEndDate().isBefore(minimumDateTime)) {
-            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_END_DATE);
-        }
-    }
-
     // 3개의 업체가 모두 초대가 되었는지
     private void throwIfNotInvitedAllRequiredCompanies(PackageEntity entity) {
         if (entity.getPackAdmin() == null || entity.getPackCompany1() == null || entity.getPackCompany2() == null) {
             throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "모든 업체가 초대가 되어있지 않습니다.");
-        }
-    }
-
-    // 비공개 상태여야 함
-    private void throwIfNotPackageStatusPrivate(PackageEntity entity) {
-        if (entity.getPackStatus() != PackageStatus.PRIVATE) {
-            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION, "비공개 상태여야합니다.");
         }
     }
 
@@ -176,25 +172,8 @@ public class PackageService {
 
     // 패키지 업로드
     public PackageEntity packageUpload(PackageEntity packageEntity, Long adminId) {
-        // 방장이 아닐 때
-        throwIfNotAdminRequest(packageEntity, adminId);
-
-        // 모든 상품이 등록되었는지
-        if (countDistinctProductsByPackage(packageEntity.getPackId()) != 3) {
-            throw new ApiException(PackageErrorCode.INVALID_PACKAGE_REGISTRATION);
-        }
-
-        // 패키지가 삭제되었을 때
-        if (packageEntity.getPackStatus().equals(PackageStatus.REMOVE)) {
-            throw new ApiException(PackageErrorCode.PACKAGE_NOT_FOUND);
-        }
-
-        // 패키지가 이미 공개 상태일 때
-        if (packageEntity.getPackStatus().equals(PackageStatus.PUBLIC)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST, "이미 공개 상태입니다.");
-        }
-
-        // todo 모든 패키지 정보가 잘 저장되었는지
+        // 유효성 검사
+        throwIfImpossibleToPublicChange(packageEntity, adminId);
 
         // 상태 변경 후 저장
         packageEntity.updatePackageStatus(PackageStatus.PUBLIC);
@@ -213,6 +192,7 @@ public class PackageService {
         return packageRepository.findByCompanyIdInAnyRole(companyId);
     }
 
+    // 패키지 Response 리스트에 가격 삽입하기
     public void responseInsertPrice(List<PackageResponse> packageResponseList) {
         packageResponseList.forEach(it -> {
             it.setTotalPrice(getTotalPrice(it.getPackageId()));
@@ -231,16 +211,27 @@ public class PackageService {
     }
 
     // 패키지에서 상품 삭제하기
+    @Transactional
     public void deletePackageProduct(Long packageId, Long companyId, Long productId) {
         // 해당 패키지의 해당 업체가 존재하면 Entity 가지고 오기
         PackageEntity packageEntity = findByPackIdAndCompanyIdWithThrow(packageId, companyId);
 
         ProductEntity product = productService.findByIdWithThrow(productId);
 
-        // 해당 삼품의 소유가 아니라면 에러
+        // 해당 삼품의 소유가 아니라면 에러 (방장은 삭제할 수 있을려나?)
         productService.throwIfNotOwnProduct(product, companyId);
 
+        // 이미 패키지가 PUBLIC 이면 BLOCK
+        if (packageEntity.getPackStatus().equals(PackageStatus.PUBLIC)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "이미 패키지를 등록하셨습니다. 삭제를 원하신다면 고객센터에 문의해주세요");
+        }
 
+        // 상품 정보 수정하기
+        product.updateStatus(ProductStatus.INACTIVE);
+
+        // 테이블에서 삭제하기
+        PackageToProductEntity packageToProduct = findByPackIdAndCpId(packageId, companyId);
+        packageToProductRepository.delete(packageToProduct);
     }
 
     // 패키지 ID 와 업체 ID 로 매핑된 패키지 상품 찾기

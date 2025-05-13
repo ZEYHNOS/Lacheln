@@ -45,7 +45,7 @@ public class ProductController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
 //        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, customUserDetails.getCompanyId(), productId);
-        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, 3L, productId);
+        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, 1L, productId);
 
         return API.OK(response);
     }
@@ -57,7 +57,7 @@ public class ProductController {
             @RequestParam(required = false) ProductStatus status
     ) {
 //        List<ProductResponse> productResponseList = productBusiness.getValidProductList(customUserDetails.getCompanyId());
-        List<ProductResponse> productResponseList = productBusiness.getValidProductList(3L, status);
+        List<ProductResponse> productResponseList = productBusiness.getValidProductList(1L, status);
 
         return API.OK(productResponseList);
     }
@@ -68,8 +68,8 @@ public class ProductController {
             @RequestPart List<MultipartFile> images,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) throws IOException {
-//        List<String> imageUrlList = productBusiness.productImagesUpload(customUserDetails.getCompanyId(), images);
-        List<String> imageUrlList = productBusiness.productImagesUpload(3L, images);
+//        List<String> imageUrlList = productBusiness.productImagesUpload(user.getCompanyId(), images);
+        List<String> imageUrlList = productBusiness.productImagesUpload(1L, images);
 
         return API.OK(imageUrlList);
     }

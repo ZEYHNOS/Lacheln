@@ -1,6 +1,5 @@
 package aba3.lucid.schedule.Service;
 
-import aba3.lucid.common.enums.Weekdays;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.company.service.CompanyService;
@@ -18,8 +17,6 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Slf4j
 @Service
@@ -65,7 +62,7 @@ public class ReservationService {
 
     // 해당 년월의 요일 리스트 반환
     public List<LocalDateTime> getMonthOfWeek(YearMonth yearMonth, WeekdaysScheduleEntity[] weekdaysScheduleEntityArray, ProductEntity product) {
-        List<LocalDateTime> result = new java.util.ArrayList<>();
+        List<LocalDateTime> result = new ArrayList<>();
         for (int i = 1; i <= yearMonth.lengthOfMonth(); i++) {
             LocalDate date = yearMonth.atDay(i);
             int weekdayIndex = date.getDayOfWeek().getValue(); // 월요일 1, 일요일 7

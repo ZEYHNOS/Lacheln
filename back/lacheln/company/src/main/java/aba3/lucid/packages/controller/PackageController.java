@@ -1,7 +1,7 @@
 package aba3.lucid.packages.controller;
 
 import aba3.lucid.common.api.API;
-import aba3.lucid.common.auth.CustomAuthenticationToken;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
 import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
@@ -32,11 +32,11 @@ public class PackageController {
             @Valid
             @RequestBody
             PackageRegisterRequest request,
-            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        PackageResponse response = packageBusiness.packageRegister(request, customAuthenticationToken.getCompanyId());
+//        PackageResponse response = packageBusiness.packageRegister(request, user.getCompanyId());
         log.info("Package Register Request : {}", request);
-        PackageResponse response = packageBusiness.packageRegister(request, 3L);
+        PackageResponse response = packageBusiness.packageRegister(request, 1L);
 
         return API.OK(response);
     }
@@ -50,10 +50,10 @@ public class PackageController {
             @RequestBody
             PackageUpdateRequest request,
             @PathVariable Long packageId,
-            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        PackageResponse response = packageBusiness.packageUpdate(request, customAuthenticationToken.getCompanyId(), packageId);
-        PackageResponse response = packageBusiness.packageUpdate(request, 3L, packageId);
+//        PackageResponse response = packageBusiness.packageUpdate(request, user.getCompanyId(), packageId);
+        PackageResponse response = packageBusiness.packageUpdate(request, 1L, packageId);
 
         return API.OK("");
     }
@@ -64,10 +64,10 @@ public class PackageController {
     @Operation(summary = "패키지 업로드하기", description = "모든 상품이 등록되었을 때 private -> public으로 변경")
     public API<PackageResponse> packageUpload(
             @PathVariable Long packageId,
-            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        PackageResponse response = packageBusiness.packageUpload(packageId, customAuthenticationToken.getCompanyId());
-        PackageResponse response = packageBusiness.packageUpload(packageId, 3L);
+//        PackageResponse response = packageBusiness.packageUpload(packageId, user.getCompanyId());
+        PackageResponse response = packageBusiness.packageUpload(packageId, 1L);
 
         return API.OK(response);
     }
@@ -75,10 +75,10 @@ public class PackageController {
     @GetMapping("/list")
     @Operation(summary = "업체가 속한 패키지 리스트 반환")
     public API<List<PackageResponse>> getPackageList(
-//            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(customAuthenticationToken.getCompanyId());
-        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(3L);
+//        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(user.getCompanyId());
+        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(1L);
 
         return API.OK(packageResponseList);
     }
@@ -98,9 +98,9 @@ public class PackageController {
     public API<String> deletePackageProduct(
             @PathVariable Long packageId,
             @RequestParam Long productId,
-            @AuthenticationPrincipal CustomAuthenticationToken customAuthenticationToken
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        packageBusiness.deletePackageProduct(customAuthenticationToken.getCompanyId(), packageId, productId);
+//        packageBusiness.deletePackageProduct(user.getCompanyId(), packageId, productId);
         packageBusiness.deletePackageProduct(1L, packageId, productId);
 
         return API.OK("상품이 삭제되었습니다.");

@@ -15,7 +15,8 @@ public class Description {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long pdDescriptionId;
+    @Column(name = "description_id")
+    private Long descriptionId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)

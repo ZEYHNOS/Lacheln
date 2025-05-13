@@ -3,6 +3,7 @@ package aba3.lucid.domain.product.studio.convertor;
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.converter.*;
+import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.domain.product.studio.dto.StudioRequest;
 import aba3.lucid.domain.product.studio.dto.StudioResponse;
 import aba3.lucid.domain.product.studio.entity.StudioEntity;
@@ -24,7 +25,7 @@ public class StudioConverter extends ProductAbstractConverter<StudioEntity, Stud
                 .pdName(request.getName().trim())
                 .pdRec(request.getRec())
                 .pdPrice(request.getPrice())
-                .pdStatus(request.getStatus())
+                .pdStatus(ProductStatus.INACTIVE)
                 .pdTaskTime(request.getTaskTime())
                 .stdBgOptions(request.getBgOptions())
                 .stdInAvailable(request.getInAvailable())

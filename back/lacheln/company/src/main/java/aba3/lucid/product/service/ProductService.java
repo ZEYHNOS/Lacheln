@@ -4,6 +4,7 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.common.validate.Validator;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
 import aba3.lucid.domain.product.dto.option.OptionSnapshot;
@@ -67,7 +68,7 @@ public class ProductService {
 
 
     public void updateStatusToPackage(ProductEntity product) {
-        product.updateStatusToPackage();
+        product.setStatusToPackage();
 
         productRepository.save(product);
     }
@@ -104,6 +105,14 @@ public class ProductService {
         }
     }
 
+    // 상품 상태 변경하기
+    public ProductEntity updateStatus(CompanyEntity company, ProductEntity product, ProductStatus status) {
+        throwIfNotOwnProduct(product, company.getCpId());
+        product.setStatus(status);
+
+        return productRepository.save(product);
+    }
+
     // 상품 찾기
     public ProductEntity findByIdWithThrow(Long productId) {
         return productRepository.findById(productId)
@@ -114,6 +123,7 @@ public class ProductService {
         return productRepository.findAllById(productIdList);
     }
 
+    // 해당 상품의 소유 업체인지
     public void throwIfNotOwnProduct(ProductEntity product, Long companyId) {
         if (product.getCompany().getCpId() != companyId) {
             throw new ApiException(ProductErrorCode.NO_PRODUCT_OWNERSHIP);

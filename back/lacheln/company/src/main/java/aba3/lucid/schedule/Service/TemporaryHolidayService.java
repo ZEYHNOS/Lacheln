@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -39,6 +41,10 @@ public class TemporaryHolidayService {
     public TemporaryHolidayEntity findByIdWithThrow( long temHolidayId) {
         return temporaryHolidayRepository.findByTemHolidayId(temHolidayId).orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND,
                 "TemporaryHolidayEntity 정보기 없습니다"));
+    }
+
+    public List<TemporaryHolidayEntity> findAllByCompanyId(Long companyId) {
+        return temporaryHolidayRepository.findAllByCompany_CpId(companyId);
     }
 
 

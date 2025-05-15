@@ -41,19 +41,19 @@ public class StudioEntity extends ProductEntity{
     private BinaryChoice stdBgOptions;
 
 
-    public void updateInAvailable(BinaryChoice stdInAvailable) {
+    public void setInAvailable(BinaryChoice stdInAvailable) {
         Validator.throwIfNull(stdInAvailable);
 
         this.stdInAvailable = stdInAvailable;
     }
 
-    public void updateOutAvailable(BinaryChoice stdOutAvailable) {
+    public void setOutAvailable(BinaryChoice stdOutAvailable) {
         Validator.throwIfNull(stdOutAvailable);
 
         this.stdOutAvailable = stdOutAvailable;
     }
 
-    public void updateMaxPeople(int n) {
+    public void setMaxPeople(int n) {
         if (n <= 0) {
             throw new ApiException(ErrorCode.INVALID_PARAMETER);
         }
@@ -61,23 +61,20 @@ public class StudioEntity extends ProductEntity{
         this.stdMaxPeople = n;
     }
 
-    public void updateBackGroundOptions(BinaryChoice stdBgOptions) {
+    public void setBackGroundOptions(BinaryChoice stdBgOptions) {
         Validator.throwIfNull(stdBgOptions);
 
         this.stdBgOptions = stdBgOptions;
     }
 
 
-    public void updateAdditionalField(StudioRequest request) {
-        Validator.throwIfNull(request);
-
-        updateProductName(request.getName());
-        updateStatus(request.getStatus());
-        updateTaskTime(request.getTaskTime());
-        updateRec(request.getRec());
-        updateInAvailable(request.getInAvailable());
-        updateOutAvailable(request.getOutAvailable());
-        updateMaxPeople(request.getMaxPeople());
-        updateBackGroundOptions(request.getBgOptions());
+    public void setAdditionalField(StudioRequest request) {
+        setProductName(request.getName());
+        setTaskTime(request.getTaskTime());
+        setRec(request.getRec());
+        setInAvailable(request.getInAvailable());
+        setOutAvailable(request.getOutAvailable());
+        setMaxPeople(request.getMaxPeople());
+        setBackGroundOptions(request.getBgOptions());
     }
 }

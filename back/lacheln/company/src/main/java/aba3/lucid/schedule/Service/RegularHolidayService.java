@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -43,5 +45,9 @@ public class RegularHolidayService {
     public RegularHolidayEntity findByThrowId(long regularHolidayEntityId ) {
         return regularHolidayRepository.findByRegHolidayId(regularHolidayEntityId).orElseThrow(()->
                 new ApiException(ErrorCode.NOT_FOUND, "RegularHolidayEntity 정보가 없습니다" +regularHolidayEntityId));
+    }
+
+    public List<RegularHolidayEntity> findAllByCompanyId(Long companyId) {
+        return regularHolidayRepository.findAllByCompany_CpId(companyId);
     }
 }

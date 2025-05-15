@@ -41,7 +41,7 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
                 .dressSizeEssential(request.getEssential())
                 .build();
 
-        entity.updateDressSizeList(dressSizeConverter.toEntityList(request.getSizeList(), entity));
+        entity.setDressSizeList(dressSizeConverter.toEntityList(request.getSizeList(), entity));
         return entity;
     }
 

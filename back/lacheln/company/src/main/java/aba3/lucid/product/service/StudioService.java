@@ -44,6 +44,6 @@ public class StudioService extends ProductAbstractService<StudioEntity, StudioRe
     @Override
     protected void updateAdditionalFields(StudioEntity existingEntity, StudioRequest request) {
         Validator.throwIfNull(existingEntity, request);
-        existingEntity.updateAdditionalField(request);
+        existingEntity.setAdditionalField(request);
     }
 }

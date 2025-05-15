@@ -35,7 +35,7 @@ public abstract class ProductAbstractConverter<ENTITY extends ProductEntity, REQ
         List<ProductImageEntity> productImageEntityList = productImageConverter.toEntityList(request.getImageUrlList(), entity);
         List<ProductDescriptionEntity> productDescriptionEntityList = descriptionConverter.toDescriptionEntityList(entity, request.getDescriptionList());
 
-        entity.updateFormList(optionEntityList, hashtagEntityList, productImageEntityList, productDescriptionEntityList);
+        entity.setFormList(optionEntityList, hashtagEntityList, productImageEntityList, productDescriptionEntityList);
         return entity;
     }
 

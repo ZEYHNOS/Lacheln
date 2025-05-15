@@ -42,7 +42,7 @@ public class MakeupService extends ProductAbstractService<MakeupEntity, MakeupRe
 
     @Override
     protected void updateAdditionalFields(MakeupEntity existingEntity, MakeupRequest request) {
-        existingEntity.updateAdditionalField(request);
+        existingEntity.setAdditionalField(request);
     }
 }
 

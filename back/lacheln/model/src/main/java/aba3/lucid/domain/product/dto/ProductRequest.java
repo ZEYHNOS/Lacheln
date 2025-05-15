@@ -35,10 +35,6 @@ public class ProductRequest implements ProductRequestIfs {
     @PositiveOrZero
     private BigInteger price;
 
-    // 상품 상태
-    @NotNull
-    private ProductStatus status;
-
     // 추천 상태
     @NotNull
     private BinaryChoice rec;

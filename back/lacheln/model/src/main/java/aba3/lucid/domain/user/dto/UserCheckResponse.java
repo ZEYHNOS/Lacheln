@@ -9,6 +9,7 @@ import java.math.BigInteger;
 @Getter
 @Builder
 public class UserCheckResponse {
+    private String userId;
     private String name;
     private String nickname;
     private String email;

@@ -5,14 +5,14 @@ import aba3.lucid.domain.inquiry.enums.ReportCategory;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.util.List;
 
 import java.time.LocalDateTime;
 
+@Setter
 @Getter
 @Entity
 @Table(name = "report")
@@ -36,6 +36,7 @@ public class ReportEntity {
     private String reportContent;
 
     @Column(name = "report_created_at", nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime reportCreatedAt;
 
     @Column(name = "report_target", columnDefinition = "char(1)", nullable = false)
@@ -48,7 +49,7 @@ public class ReportEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
-    private List<ReportImageEntity> reportImageId;
+    private List<ReportImageEntity> reportImages;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cp_id")

@@ -3,6 +3,7 @@ package aba3.lucid.user.business;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.user.convertor.UserConvertor;
@@ -83,6 +84,16 @@ public class UserBusiness {
         UsersEntity user = userService.findByIdWithThrow(userId);
         UserCheckResponse responseData = userConvertor.entityToCheckResponse(user);
 
+        return API.OK(responseData);
+    }
+
+    //유저 프로필 이메일로 조회
+    public API<UserCheckResponse> checkUserByEmail( String userEmail) {
+        if(userEmail == null) {
+            throw  new ApiException(ErrorCode.UNAUTHORIZED, "이메일 존제하지 않습니다");
+        }
+        UsersEntity user = userService.findByEmailWithThrow(userEmail);
+        UserCheckResponse responseData = userConvertor.entityToCheckResponse(user);
         return API.OK(responseData);
     }
     

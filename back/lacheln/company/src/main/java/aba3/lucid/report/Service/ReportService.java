@@ -30,7 +30,7 @@ public class ReportService {
     @Transactional
     public ReportEntity submitReport(ReportEntity entity) {
         ReportEntity savedEntity = reportRepository.save(entity);
-        List<ReportImageEntity> images = entity.getReportImageId();
+        List<ReportImageEntity> images = entity.getReportImages();
         if(images != null && !images.isEmpty()) {
             images.forEach(img-> img.setReport(savedEntity));
             reportImageRepository.saveAll(images);
@@ -40,6 +40,14 @@ public class ReportService {
 
 
 
+    public List<ReportImageEntity> saveImages(List<ReportImageEntity> images) {
+        return reportImageRepository.saveAll(images);
+    }
+
+    public ReportEntity findByIdWithThrow(long reportId) {
+        return reportRepository.findById(reportId).orElseThrow(()
+                -> new ApiException(ErrorCode.NOT_FOUND));
+    }
 
 
     //자기 자신을 신고할 수 없다

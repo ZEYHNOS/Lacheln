@@ -8,6 +8,7 @@ import aba3.lucid.domain.company.dto.CompanyUpdateRequest;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.domain.inquiry.entity.ReportEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,8 @@ public class CompanyService {
         return companyRepository.findById(companyId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
+
+
 
 
 

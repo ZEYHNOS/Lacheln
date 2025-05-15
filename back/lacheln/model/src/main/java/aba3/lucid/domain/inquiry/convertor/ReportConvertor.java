@@ -21,15 +21,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReportConvertor {
     public ReportEntity toReportEntity(ReportRequest request, CompanyEntity company, UsersEntity user) {
-        return ReportEntity.builder()
+        //ReportEntity 본체 생성
+      ReportEntity report = ReportEntity.builder()
+                .reportTarget(request.getReportTarget())
                 .reportContent(request.getReportContent())
                 .reportCategory(request.getReportCategory())
                 .reportTitle(request.getReportTitle())
-                .reportContent(request.getReportContent())
-                .reportImageId(request.getImageUrls())
                 .company(company)
                 .user(user)
                 .build();
+
+        //imageUrls -> ReportImageEntity 변환
+        if(request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
+            List<ReportImageEntity> images = request.getImageUrls().stream()
+                    .map(url -> ReportImageEntity.builder()
+                            .reportImageUrl(url)
+                            .report(report)
+                            .build())
+                    .collect(Collectors.toList());
+            report.setReportImages(images);
+        }
+        return  report;
     }
 
     public ReportResponse toReportResponse(ReportEntity reportEntity) {
@@ -46,32 +58,54 @@ public class ReportConvertor {
 
 //    ReportImageRequest 리스트 +  ReportEntity를
 //      ReportImageEntity 리스트로 바꿔줌
+//    public List<ReportImageEntity> toImagesEntities(List<ReportImageRequest> imageRequests, ReportEntity report) {
+//        if(imageRequests == null) return Collections.emptyList();
+//        return imageRequests.stream()
+//                .map(r-> ReportImageEntity.builder()
+//                        .report(report)
+//                        .reportImageUrl(r.getUrl())
+//                        .build())
+//                .collect(Collectors.toList());
+//
+//    }
 
-    public List<ReportImageEntity> toImagesEntities(List<ReportImageRequest> imageRequests, ReportEntity report) {
-        if(imageRequests == null) return Collections.emptyList();
-        return imageRequests.stream()
-                .map(r-> ReportImageEntity.builder()
+    public List<ReportImageEntity> toImageEntities(
+            List<String> imageUrls,
+            ReportEntity report
+    ) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return imageUrls.stream()
+                .map(url -> ReportImageEntity.builder()
                         .report(report)
-                        .reportImageUrl(r.getUrl())
+                        .reportImageUrl(url)
                         .build())
                 .collect(Collectors.toList());
-
     }
 
 
 //    ?  ReportEntity에 연결된 엔티티 리스트를 이미지 응답 DTO로 변환
 //     */
 
-    public List<ReportImageResponse> toImageResponses(
-            List<ReportImageEntity> imageEntities
-    ) {
-        if (imageEntities == null) return Collections.emptyList();
-        return imageEntities.stream()
-                .map(e -> ReportImageResponse.builder()
-                        .imageId(e.getReportImageId())
-                        .url(e.getReportImageUrl())
-                        .build())
-                .collect(Collectors.toList());
+//    public List<ReportImageResponse> toImageResponses(
+//            List<ReportImageEntity> imageEntities
+//    ) {
+//        if (imageEntities == null) return Collections.emptyList();
+//        return imageEntities.stream()
+//                .map(e -> ReportImageResponse.builder()
+//                        .imageId(e.getReportImageId())
+//                        .url(e.getReportImageUrl())
+//                        .build())
+//                .collect(Collectors.toList());
+//    }
+
+    public ReportImageResponse toImageResponse(ReportImageEntity reportImageEntity) {
+        return ReportImageResponse.builder()
+                .imageId(reportImageEntity.getReportImageId())
+                .url(reportImageEntity.getReportImageUrl())
+                .build();
     }
 
 

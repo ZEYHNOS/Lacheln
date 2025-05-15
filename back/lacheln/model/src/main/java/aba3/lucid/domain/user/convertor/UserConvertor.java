@@ -73,6 +73,7 @@ public class UserConvertor {
 
     public UserCheckResponse entityToCheckResponse(UsersEntity user) {
         return UserCheckResponse.builder()
+                .userId(user.getUserId())
                 .email(user.getUserEmail())
                 .name(user.getUserName())
                 .phone(user.getUserPhone())

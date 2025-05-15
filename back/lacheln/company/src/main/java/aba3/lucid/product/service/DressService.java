@@ -49,7 +49,7 @@ public class DressService extends ProductAbstractService<DressEntity, DressReque
     @Override
     protected void updateAdditionalFields(DressEntity existingEntity, DressRequest request) {
         List<DressSizeEntity> dressSizeEntityList = dressSizeConverter.toEntityList(request.getSizeList(), existingEntity);
-        existingEntity.updateAdditionalField(request, dressSizeEntityList);
+        existingEntity.setAdditionalField(request, dressSizeEntityList);
     }
 }
 

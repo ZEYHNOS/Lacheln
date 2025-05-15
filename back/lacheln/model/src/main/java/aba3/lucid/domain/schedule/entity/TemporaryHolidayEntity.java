@@ -18,7 +18,7 @@ public class TemporaryHolidayEntity {
     // 임시 휴일 ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long temHolidayId;
+    private Long temHolidayId;
 
     // 업체
     @ManyToOne(fetch = FetchType.LAZY)

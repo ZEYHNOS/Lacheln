@@ -40,4 +40,8 @@ public class WeekdaysScheduleService {
         return weekdaysScheduleRepository.findByWsId(wsId).orElseThrow(() ->
                 new ApiException(ErrorCode.NOT_FOUND, " WeekdaysScheduleEntity 정보가 없습니다" + wsId));
     }
+
+    public List<WeekdaysScheduleEntity> findAllByCompanyId(Long companyId) {
+        return weekdaysScheduleRepository.findAllByCompany_CpId(companyId);
+    }
 }

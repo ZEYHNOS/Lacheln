@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface WeekdaysScheduleRepository extends JpaRepository<WeekdaysScheduleEntity, Long> {
     // 특정 회사의 스케줄을 전부 조회
-    List<WeekdaysScheduleEntity> findByCompany_CpId(Long cpId);
+    List<WeekdaysScheduleEntity> findAllByCompany_CpId(Long cpId);
 
 
     //특정 회사 + 특정 요일 스케줄 조회

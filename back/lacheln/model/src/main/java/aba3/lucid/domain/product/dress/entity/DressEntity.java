@@ -57,7 +57,7 @@ public class DressEntity extends ProductEntity {
     private List<DressSizeEntity> dressSizeList;
 
     // 내부 촬영 변경
-    public void updateInAvailable(BinaryChoice binaryChoice) {
+    public void setInAvailable(BinaryChoice binaryChoice) {
         if (binaryChoice == null) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "내부촬영여부 값이 존재하지 않습니다.");
         }
@@ -66,7 +66,7 @@ public class DressEntity extends ProductEntity {
     }
 
     // 외부 촬영 변경
-    public void updateOutAvailable(BinaryChoice binaryChoice) {
+    public void setOutAvailable(BinaryChoice binaryChoice) {
         if (binaryChoice == null) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "외부촬영여부 값이 존재하지 않습니다.");
         }
@@ -75,7 +75,7 @@ public class DressEntity extends ProductEntity {
     }
 
     // 드레스 색 변경
-    public void updateColor(Color color) {
+    public void setColor(Color color) {
         if (color == null) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "color 값이 존재하지 않습니다.");
         }
@@ -84,8 +84,8 @@ public class DressEntity extends ProductEntity {
     }
 
 
-    // 드래스 사이즈 List Update
-    public void updateDressSizeList(List<DressSizeEntity> dressSizeList) {
+    // 드래스 사이즈 List set
+    public void setDressSizeList(List<DressSizeEntity> dressSizeList) {
         if (dressSizeList.isEmpty()) {
             throw new ApiException(ErrorCode.INVALID_PARAMETER, "드래스 사이즈값이 없습니다.");
         }
@@ -104,15 +104,14 @@ public class DressEntity extends ProductEntity {
         this.dressSizeList.addAll(dressSizeList);
     }
 
-    // updateFormRequest
-    public void updateAdditionalField(DressRequest request, List<DressSizeEntity> dressSizeList) {
-        updateProductName(request.getName());
-        updateStatus(request.getStatus());
-        updateTaskTime(request.getTaskTime());
-        updateRec(request.getRec());
-        updateColor(request.getColor());
-        updateDressSizeList(dressSizeList);
-        updateOutAvailable(request.getOutAvailable());
-        updateInAvailable(request.getInAvailable());
+    // setFormRequest
+    public void setAdditionalField(DressRequest request, List<DressSizeEntity> dressSizeList) {
+        setProductName(request.getName());
+        setTaskTime(request.getTaskTime());
+        setRec(request.getRec());
+        setColor(request.getColor());
+        setDressSizeList(dressSizeList);
+        setOutAvailable(request.getOutAvailable());
+        setInAvailable(request.getInAvailable());
     }
 }

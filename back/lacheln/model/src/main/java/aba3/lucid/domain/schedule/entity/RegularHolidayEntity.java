@@ -19,7 +19,7 @@ public class RegularHolidayEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "regular_holiday")
-    private long regHolidayId;
+    private Long regHolidayId;
 
     // ManyToOne
     @JoinColumn(name = "cp_id")

@@ -6,6 +6,8 @@ import aba3.lucid.common.image.ImageType;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.domain.product.dto.ProductDetailResponse;
+import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
 import aba3.lucid.image.service.ImageService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
@@ -72,6 +74,7 @@ public class ProductBusiness {
                 ;
     }
 
+    // 상품 이미지 업로드
     public List<String> productImagesUpload(Long companyId, List<MultipartFile> images) throws IOException {
         Validator.throwIfInvalidId(companyId);
         if(images.isEmpty()) {
@@ -80,5 +83,28 @@ public class ProductBusiness {
 
         CompanyEntity company = companyService.findByIdWithThrow(companyId);
         return imageService.imagesUpload(company, images, ImageType.PRODUCT);
+    }
+
+    // 상품 상태 변경
+    public void updateStatus(Long companyId, ProductStatusUpdateRequest request) {
+        Validator.throwIfInvalidId(companyId);
+        Validator.throwIfNull(request);
+
+
+        CompanyEntity company = companyService.findByIdWithThrow(companyId);
+        ProductEntity product = productService.findByIdWithThrow(request.getProductId());
+
+        productService.updateStatus(company, product, request.getStatus());
+    }
+
+    public ProductResponse uploadProduct(Long productId, Long companyId) {
+        Validator.throwIfInvalidId(productId, companyId);
+
+        ProductEntity product = productService.findByIdWithThrow(productId);
+        CompanyEntity company = companyService.findByIdWithThrow(companyId);
+
+        ProductEntity activateProduct = productService.updateStatus(company, product, ProductStatus.ACTIVE);
+
+        return productConverter.toResponse(activateProduct);
     }
 }

@@ -227,7 +227,7 @@ public class PackageService {
         }
 
         // 상품 정보 수정하기
-        product.updateStatus(ProductStatus.INACTIVE);
+        product.setStatus(ProductStatus.REMOVE);
 
         // 테이블에서 삭제하기
         PackageToProductEntity packageToProduct = findByPackIdAndCpId(packageId, companyId);

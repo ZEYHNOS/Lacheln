@@ -36,30 +36,29 @@ public class MakeupEntity extends ProductEntity {
     private String makeupManager;
 
 
-    public void updateBusinessTrip(BinaryChoice businessTrip) {
+    public void setBusinessTrip(BinaryChoice businessTrip) {
         Validator.throwIfNull(businessTrip);
         this.makeupBt = businessTrip;
     }
 
-    public void updateVisit(BinaryChoice visit) {
+    public void setVisit(BinaryChoice visit) {
         Validator.throwIfNull(visit);
         this.makeupVisit = visit;
     }
 
-    public void updateManager(String makeupManager) {
+    public void setManager(String makeupManager) {
         Validator.throwIfNull(makeupManager);
         this.makeupManager = makeupManager;
     }
 
-    public void updateAdditionalField(MakeupRequest request) {
+    public void setAdditionalField(MakeupRequest request) {
         Validator.throwIfNull(request);
 
-        updateProductName(request.getName());
-        updateStatus(request.getStatus());
-        updateTaskTime(request.getTaskTime());
-        updateRec(request.getRec());
-        updateBusinessTrip(request.getBusinessTrip());
-        updateVisit(request.getVisit());
-        updateManager(request.getManager());
+        setProductName(request.getName());
+        setTaskTime(request.getTaskTime());
+        setRec(request.getRec());
+        setBusinessTrip(request.getBusinessTrip());
+        setVisit(request.getVisit());
+        setManager(request.getManager());
     }
 }

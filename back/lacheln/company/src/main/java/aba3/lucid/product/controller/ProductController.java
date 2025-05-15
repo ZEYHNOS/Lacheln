@@ -4,7 +4,10 @@ import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
+import aba3.lucid.domain.product.dto.ProductDetailResponse;
+import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
+import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.product.business.ProductBusiness;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,5 +75,28 @@ public class ProductController {
         List<String> imageUrlList = productBusiness.productImagesUpload(1L, images);
 
         return API.OK(imageUrlList);
+    }
+
+    @PostMapping("/status")
+    @Operation(summary = "상품 상태 변경")
+    public API<String> updateStatus(
+            @RequestBody ProductStatusUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        productBusiness.updateStatus(user.getCompanyId(), request);
+
+        return API.OK("상품 상태가 변경되었습니다.");
+    }
+
+    @PostMapping("/upload/{productId}")
+    @Operation(summary = "상품 업로드 하기")
+    public API<ProductResponse> uploadProduct(
+            @PathVariable Long productId,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+//        productBusiness.uploadProduct(productId, user.getCompanyId);
+        ProductResponse response = productBusiness.uploadProduct(productId, 1L);
+
+        return API.OK(response);
     }
 }

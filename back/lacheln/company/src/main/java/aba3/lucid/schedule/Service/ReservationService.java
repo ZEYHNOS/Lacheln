@@ -1,13 +1,8 @@
 package aba3.lucid.schedule.Service;
 
-import aba3.lucid.common.enums.HolidayWeek;
-import aba3.lucid.common.enums.Weekdays;
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
-import aba3.lucid.domain.schedule.dto.ScheduleResponse;
 import aba3.lucid.domain.schedule.entity.RegularHolidayEntity;
 import aba3.lucid.domain.schedule.entity.TemporaryHolidayEntity;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
@@ -98,7 +93,7 @@ public class ReservationService {
 
     private List<LocalDate> getDateList(YearMonth yearMonth) {
         List<LocalDate> result = new ArrayList<>();
-        for (int day = 1; day <= yearMonth.lengthOfMonth(); i++) {
+        for (int day = 1; day <= yearMonth.lengthOfMonth(); day++) {
             result.add(LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), day));
         }
 

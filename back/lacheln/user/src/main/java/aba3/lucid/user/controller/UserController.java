@@ -49,6 +49,13 @@ public class UserController {
         return userBusiness.getUser(userId);
     }
 
+    //유저 프로필 이메일로 조회
+    @GetMapping("/profile/email/{userEmail}")
+    @Operation(summary = "소비자 조회", description = "소비자 정보를 조회합니다")
+    public API<UserCheckResponse> getUserByEmail(@PathVariable String userEmail)   {
+        return userBusiness.checkUserByEmail(userEmail);
+    }
+
     // 암호 인증
     @PostMapping("/verify")
     @Operation(summary = "소비자 암호 검증", description = "소비자 프로필 수정과 같은 인증 요소가 필요할 때 암호를 검증하는 역할을 합니다.")

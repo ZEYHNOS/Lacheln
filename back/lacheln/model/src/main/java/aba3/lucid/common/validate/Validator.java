@@ -21,6 +21,14 @@ public class Validator {
             }
         }
     }
+    public static void throwIfInvalidId(String... ids) {
+        for (String id : ids) {
+            if (id == null || id.isEmpty()) {
+                throw new ApiException(ErrorCode.INVALID_PARAMETER);
+            }
+        }
+    }
+
 
 
     public static void assertStringValid(String s, int minimum, int maximum) {

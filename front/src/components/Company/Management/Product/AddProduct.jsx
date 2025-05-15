@@ -15,7 +15,6 @@ function AddProduct() {
     const [name, setName] = useState("");
     const [color, setColor] = useState("WHITE");
     const [price, setPrice] = useState("");
-    const [status, setStatus ] = useState("ACTIVE")
     const [taskTime, settaskTime] = useState(120);
     const [indoor, setIndoor] = useState(true);
     const [outdoor, setOutdoor] = useState(false);
@@ -106,10 +105,6 @@ function AddProduct() {
         setIsDragging(false);
     };
 
-    const handleChangeStatus = (event) => {
-        setStatus(event.target.value);
-    };
-
     //이미지 처리(formdata 파일을 백엔드로 보내야함) 
     const uploadImages = async () => {
         const formData = new FormData();
@@ -191,7 +186,6 @@ function AddProduct() {
         const data = {
             name,
             price: parseInt(price || 0),
-            status,
             rec: rec ? "Y" : "N",
             taskTime: parseInt(taskTime),
             imageUrlList: imageUrls,
@@ -462,12 +456,6 @@ function AddProduct() {
                                     fill={rec ? "currentColor" : "none"}
                                     onClick={() => setRec(!rec)}/>
                             </div>
-                            {/* 상태 설정 */}
-                            <select onChange={handleChangeStatus} className="border p-1 rounded bg-white text-black">
-                                <option value="ACTIVE">공개</option>
-                                <option value="INACTIVE">비공개</option>
-                                <option value="PACKAGE">패키지전용</option>
-                            </select>
                         </div>
 
                         <div className="mt-3 space-y-2">

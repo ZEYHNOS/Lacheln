@@ -13,6 +13,8 @@ function ViewProduct() {
     const [product, setProduct] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [categoryCode, setCategoryCode] = useState(null);
+    const [isPublishing, setIsPublishing] = useState(false);
+    const [isActive, setIsActive] = useState(false);
 
     // 카테고리를 불러옴
     useEffect(() => {
@@ -37,6 +39,7 @@ function ViewProduct() {
             .then(res => {
                 const data = res.data.data;
                 setProduct(data);
+                setIsActive(data.status === "ACTIVE");
                 if (data.productImageUrl?.length > 0) {
                     setSelectedImage(`${imageBaseUrl}${data.productImageUrl[0].url}`);
                 }
@@ -44,13 +47,43 @@ function ViewProduct() {
             .catch(err => console.error("상품 상세 정보 불러오기 실패", err));
     }, [categoryCode, id]);
 
+    // 퍼블릭으로 전환하는 함수
+    const handlePublish = () => {
+        if (!id) return;
+
+        setIsPublishing(true);
+
+        apiClient.post(`/product/upload/${id}`)
+            .then(res => {
+                alert("상품이 공개 상태로 전환되었습니다.");
+                // 상품 정보 다시 불러오기
+                const categoryMap = {
+                    S: "studio",
+                    D: "dress",
+                    M: "makeup"
+                };
+                const category = categoryMap[categoryCode];
+                return apiClient.get(`/product/${category}/${id}`);
+            })
+            .then(res => {
+                const updatedProduct = res.data.data;
+                setProduct(updatedProduct);
+                setIsActive(updatedProduct.status === "ACTIVE");
+                setIsPublishing(false);
+            })
+            .catch(err => {
+                console.error("상품 공개 전환 실패", err);
+                alert("상품 공개 전환에 실패했습니다.");
+                setIsPublishing(false);
+            });
+    };
+
     if (!product) return <div className="p-6">로딩 중...</div>;
 
     // 백엔드에서 받아오는 정보
     const {
         name,
         price,
-        status,
         rec,
         taskTime,
         inAvailable,
@@ -207,11 +240,13 @@ function ViewProduct() {
                                 fill={rec === "Y" ? "currentColor" : "none"}
                             />
                         </div>
-                        <select value={status} disabled className="border p-1 rounded bg-white text-black appearance-none">
-                            <option value="ACTIVE">공개</option>
-                            <option value="INACTIVE">비공개</option>
-                            <option value="PACKAGE">패키지전용</option>
-                        </select>
+                        <button
+                            onClick={handlePublish}
+                            disabled={isPublishing || isActive}
+                            className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        >
+                            {isPublishing ? "처리 중..." : isActive ? "판매중" : "판매 시작"}
+                        </button>
                     </div>
 
                     <div className="space-y-2">

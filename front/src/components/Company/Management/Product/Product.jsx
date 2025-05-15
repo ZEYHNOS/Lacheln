@@ -107,7 +107,12 @@ function Product() {
                                     />
                                     </td>
                                     <td className="border border-gray-300 p-2">{product.name}</td>
-                                    <td className="border border-gray-300 p-2">{product.status}</td>
+                                    <td className="border border-gray-300 p-2">
+                                        {product.status === "ACTIVE" ? "판매중" : 
+                                            product.status === "INACTIVE" ? "판매 대기중" : 
+                                            product.status === "PACKAGE" ? "패키지상품 판매중" : 
+                                            product.status}
+                                    </td>
                                     <td className="border border-gray-300 p-2">{product.price.toLocaleString()}￦</td>
                                 </tr>
                             ))}

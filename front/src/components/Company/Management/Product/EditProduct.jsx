@@ -25,7 +25,6 @@ function EditProduct() {
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [color, setColor] = useState("white");
-    const [status, setStatus] = useState("ACTIVE");
     const [rec, setRec] = useState(false);
     const [task_time, settask_time] = useState("60");
     const [indoor, setIndoor] = useState(false);
@@ -89,10 +88,6 @@ function EditProduct() {
     };
     
 
-    const handleChangeStatus = (e) => {
-        setStatus(e.target.value);
-    };
-
     // 백엔드에서 정보 받아옴 
     useEffect(() => {
         if (!categoryCode || !id) return;
@@ -115,7 +110,6 @@ function EditProduct() {
                 setName(data.name);
                 setPrice(data.price);
                 setColor(data.color);
-                setStatus(data.status);
                 setRec(data.rec === "Y");
                 settask_time(String(data.taskTime));
                 setIndoor(data.inAvailable === "Y");
@@ -254,7 +248,6 @@ function EditProduct() {
             name,
             price: parseInt(price || 0),
             color,
-            status,
             rec: rec ? "Y" : "N",
             task_time: parseInt(task_time),
             in_available: indoor ? "Y" : "N",
@@ -471,12 +464,6 @@ function EditProduct() {
                                     fill={rec ? "currentColor" : "none"}
                                     onClick={() => setRec(!rec)}/>
                             </div>
-                            {/* 상태 설정 */}
-                            <select onChange={handleChangeStatus} className="border p-1 rounded bg-white text-black">
-                                <option value="ACTIVE">공개</option>
-                                <option value="INACTIVE">비공개</option>
-                                <option value="PACKAGE">패키지전용</option>
-                            </select>
                         </div>
 
                         <div className="mt-3 space-y-2">

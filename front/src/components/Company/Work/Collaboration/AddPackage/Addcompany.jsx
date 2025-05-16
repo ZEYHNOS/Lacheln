@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiClient from '../../../../lib/apiClient';
+import apiClient from '../../../../../lib/apiClient';
 
 function AddCompany({ onClose, onComplete }) {
     const [isModalVisible, setIsModalVisible] = useState(true);

@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Addphoto from "../../../../image/Company/addimage.png";
-import apiClient from "../../../../lib/apiClient";
-import AddWrite from "../../../Tool/WriteForm/AddWrite";
+import Addphoto from "../../../../../image/Company/addimage.png";
+import apiClient from "../../../../../lib/apiClient";
+import AddWrite from "../../../../Tool/WriteForm/AddWrite";
 
 function Setpackage() {
     const { id } = useParams(); // 라우트 경로의 :id와 일치하는 매개변수명 사용

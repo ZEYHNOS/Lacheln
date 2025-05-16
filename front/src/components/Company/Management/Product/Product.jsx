@@ -101,9 +101,10 @@ function Product() {
                                 >
                                     <td className="border border-gray-300 p-2">
                                     <img 
-                                        src={`${baseUrl}${product.imageUrl}`} 
+                                        src={product.imageUrl ? `${baseUrl}${product.imageUrl.replace(/\\/g, '/')}` : '/default/images/product.png'} 
                                         alt="상품 이미지" 
-                                        className="mx-auto w-12 h-12 object-cover rounded" 
+                                        className="mx-auto w-12 h-12 object-cover rounded"
+                                        onError={e => e.currentTarget.src = '/default/images/product.png'}
                                     />
                                     </td>
                                     <td className="border border-gray-300 p-2">{product.name}</td>

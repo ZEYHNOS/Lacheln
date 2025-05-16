@@ -73,7 +73,7 @@ const CustomYoutube = Youtube.extend({
   }
 });
 
-const AddWrite = forwardRef(({ onImageUpload }, ref) => {
+const AddWrite = forwardRef(({ onImageUpload, readOnly = false }, ref) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
 
   const editor = useEditor({
@@ -90,6 +90,7 @@ const AddWrite = forwardRef(({ onImageUpload }, ref) => {
       Placeholder.configure({ placeholder: ' 내용을 여기에 작성하세요 ' }),
     ],
     content: '',
+    editable: !readOnly,
   });
 
   useImperativeHandle(ref, () => ({
@@ -193,6 +194,12 @@ const AddWrite = forwardRef(({ onImageUpload }, ref) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (editor) {
+      editor.setEditable(!readOnly);
+    }
+  }, [editor, readOnly]);
+
   if (!editor) return null;
 
   const insertImage = () => {
@@ -271,57 +278,59 @@ const AddWrite = forwardRef(({ onImageUpload }, ref) => {
     <div className="p-4 bg-white shadow rounded-xl">
       <style>{`.youtube-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; }
               .youtube-wrapper iframe { position: absolute; top: 0; left: 0; width: 75%; height: 75%; }`}</style>
-      <div className="flex flex-wrap items-center gap-2 mb-4 bg-gray-100 p-2 rounded-md">
-        <button onClick={() => editor.chain().focus().toggleBold().run()} className={`btn-toolbar ${editor.isActive('bold') ? 'bg-gray-300' : ''}`}>
-          <img src={BoldIcon} alt="글씨 두껍게" className="w-5 h-5" />
-        </button>
-        <button onClick={() => editor.chain().focus().toggleItalic().run()} className="btn-toolbar italic font-bold">/</button>
-        <button onClick={() => editor.chain().focus().toggleUnderline().run()} className="btn-toolbar underline">U</button>
-        <button onClick={() => editor.chain().focus().toggleStrike().run()} className="btn-toolbar line-through">S</button>
-        <select onChange={(e) => editor.chain().focus().setFontSize(e.target.value).run()} className="btn-toolbar bg-white text-black">
-          <option value="32px">제목1</option>
-          <option value="24px">제목2</option>
-          <option value="20px">제목3</option>
-          <option value="16px">본문1</option>
-          <option value="14px">본문2</option>
-          <option value="12px">본문3</option>
-        </select>
-        <button onClick={() => setShowColorPicker(!showColorPicker)} className="btn-toolbar flex items-center gap-1">
-          <img src={Palette} alt="색상 선택하기" className="w-5 h-5" /> 색상
-        </button>
-        {showColorPicker && (
-          <div className="absolute z-10 mt-2">
-            <SketchPicker
-              color="#000"
-              onChangeComplete={(color) => {
-                editor.chain().focus().setColor(color.hex).run();
-                setShowColorPicker(false);
-              }}
-            />
-          </div>
-        )}
-        <button onClick={() => alignImageOrText('left')} className="btn-toolbar">
-          <img src={TextAlignLeft} alt="좌측 정렬" className="w-5 h-5" />
-        </button>
-        <button onClick={() => alignImageOrText('center')} className="btn-toolbar">
-          <img src={TextAlignCenter} alt="중앙 정렬" className="w-5 h-5" />
-        </button>
-        <button onClick={() => alignImageOrText('right')} className="btn-toolbar">
-          <img src={TextAlignRight} alt="우측 정렬" className="w-5 h-5" />
-        </button>
-        <button onClick={insertYoutube} className="btn-toolbar flex items-center gap-1">
-          <img src={AddYoutube} alt="유튜브 추가하기" className="w-5 h-5" /> 유튜브
-        </button>
-        <button onClick={insertLink} className="btn-toolbar flex items-center gap-1">
-          <img src={AddLink} alt="링크 추가하기" className="w-5 h-5" /> 링크
-        </button>
-        <button onClick={insertImage} className="btn-toolbar flex items-center gap-1">
-          <img src={AddImage} alt="이미지 추가하기" className="w-5 h-5" /> 이미지
-        </button>
-      </div>
+      {!readOnly && (
+        <div className="flex flex-wrap items-center gap-2 mb-4 bg-gray-100 p-2 rounded-md">
+          <button onClick={() => editor.chain().focus().toggleBold().run()} className={`btn-toolbar ${editor.isActive('bold') ? 'bg-gray-300' : ''}`}>
+            <img src={BoldIcon} alt="글씨 두껍게" className="w-5 h-5" />
+          </button>
+          <button onClick={() => editor.chain().focus().toggleItalic().run()} className="btn-toolbar italic font-bold">/</button>
+          <button onClick={() => editor.chain().focus().toggleUnderline().run()} className="btn-toolbar underline">U</button>
+          <button onClick={() => editor.chain().focus().toggleStrike().run()} className="btn-toolbar line-through">S</button>
+          <select onChange={(e) => editor.chain().focus().setFontSize(e.target.value).run()} className="btn-toolbar bg-white text-black">
+            <option value="32px">제목1</option>
+            <option value="24px">제목2</option>
+            <option value="20px">제목3</option>
+            <option value="16px">본문1</option>
+            <option value="14px">본문2</option>
+            <option value="12px">본문3</option>
+          </select>
+          <button onClick={() => setShowColorPicker(!showColorPicker)} className="btn-toolbar flex items-center gap-1">
+            <img src={Palette} alt="색상 선택하기" className="w-5 h-5" /> 색상
+          </button>
+          {showColorPicker && (
+            <div className="absolute z-10 mt-2">
+              <SketchPicker
+                color="#000"
+                onChangeComplete={(color) => {
+                  editor.chain().focus().setColor(color.hex).run();
+                  setShowColorPicker(false);
+                }}
+              />
+            </div>
+          )}
+          <button onClick={() => alignImageOrText('left')} className="btn-toolbar">
+            <img src={TextAlignLeft} alt="좌측 정렬" className="w-5 h-5" />
+          </button>
+          <button onClick={() => alignImageOrText('center')} className="btn-toolbar">
+            <img src={TextAlignCenter} alt="중앙 정렬" className="w-5 h-5" />
+          </button>
+          <button onClick={() => alignImageOrText('right')} className="btn-toolbar">
+            <img src={TextAlignRight} alt="우측 정렬" className="w-5 h-5" />
+          </button>
+          <button onClick={insertYoutube} className="btn-toolbar flex items-center gap-1">
+            <img src={AddYoutube} alt="유튜브 추가하기" className="w-5 h-5" /> 유튜브
+          </button>
+          <button onClick={insertLink} className="btn-toolbar flex items-center gap-1">
+            <img src={AddLink} alt="링크 추가하기" className="w-5 h-5" /> 링크
+          </button>
+          <button onClick={insertImage} className="btn-toolbar flex items-center gap-1">
+            <img src={AddImage} alt="이미지 추가하기" className="w-5 h-5" /> 이미지
+          </button>
+        </div>
+      )}
       <EditorContent
         editor={editor}
-        className="min-h-[400px] border-[2px] border-[#845ec2] p-4 rounded bg-white text-black outline-none focus:outline-none overflow-hidden"
+        className={`${readOnly ? 'min-h-[200px]' : 'min-h-[400px]'} border-[2px] border-[#845ec2] p-4 rounded bg-white text-black outline-none focus:outline-none overflow-hidden`}
       />
     </div>
   );

@@ -11,16 +11,7 @@ function Collaboration() {
     const [companies, setCompanies] = useState([]);
     const [currentTab, setCurrentTab] = useState("product");
     const navigate = useNavigate();
-
-    // 업체 타입을 category 값으로만 구분 (대문자)
-    const getCompanyType = (company) => {
-        if (!company) return null;
-        return (company.category || '').toUpperCase();
-    };
-
-    const filteredByType = (type) =>
-        companies.filter((c) => getCompanyType(c) === type);
-
+    
     useEffect(() => {
         axios.get(`${baseUrl}/company/category`,{
             withCredentials: true})
@@ -49,6 +40,17 @@ function Collaboration() {
             })
             .catch((err) => console.error("❌ 데이터 불러오기 실패:", err));
     }, []);
+
+    // 할인율을 적용한 가격 계산 함수
+    const calculateDiscountedPrice = (pkg) => {
+        const originalPrice = (pkg.admin?.productPrice || 0) + (pkg.cp1?.productPrice || 0) + (pkg.cp2?.productPrice || 0);
+        // 할인율 계산 수정 - 1에서 할인율을 빼는 것이 아니라 할인율만큼 금액을 차감
+        const discountAmount = Math.round(originalPrice * ((pkg.discountrate || 0) / 100));
+        // 서버 가격이 있어도 할인된 가격을 적용
+        const discountedPrice = originalPrice - discountAmount;
+                
+        return { originalPrice, discountedPrice };
+    };
 
     return (
         <div className="p-8 relative w-full">
@@ -118,116 +120,141 @@ function Collaboration() {
 
             {/* 탭 내용 */}
             {currentTab === 'product' ? (
-                <div className="grid grid-cols-4 gap-6">
-                    {packages.map((item, i) => (
-                        <div
-                            key={i}
-                            className="rounded-lg border overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                            onClick={() => navigate(`/company/collaboration/package/${item.packageId || item.id}`)}
-                        >
-                            <img
-                                src={item.imageUrl ? `${baseUrl}${item.imageUrl.replace(/\\/g, '/')}` : '/default/images/package.png'}
-                                alt={item.name || '패키지 이미지'}
-                                className="w-full aspect-[3/4] object-cover"
-                            />
-                            <div className="p-3 text-sm">
-                                <p className="text-sm font-bold text-center text-black">{item.name || '이름 없음'}</p>
-                                <p className="text-xs text-center text-gray-500">
+                <div className="grid grid-cols-5 gap-4">
+                    {packages.filter(item => item.status === 'PUBLIC' || item.status === 'PRIVATE').map((item, i) => {
+                        const { originalPrice, discountedPrice } = calculateDiscountedPrice(item);
+                        return (
+                            <div
+                                key={i}
+                                className="text-center border p-2 rounded bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                                onClick={() => navigate(`/company/collaboration/package/${item.packageId || item.id}`)}
+                            >
+                                <img
+                                    src={item.imageUrl ? `${baseUrl}${item.imageUrl.replace(/\\/g, '/')}` : '/default/images/package.png'}
+                                    alt={item.name || '패키지 이미지'}
+                                    className="w-full aspect-[3/4] object-cover rounded-md mb-2"
+                                />
+                                <p className="text-sm font-bold text-black">{item.name || '이름 없음'}</p>
+                                <p className="text-xs text-gray-500">
                                     {item.startDate && item.endDate
                                         ? `${item.startDate[0]}.${item.startDate[1]}.${item.startDate[2]} ~ ${item.endDate[0]}.${item.endDate[1]}.${item.endDate[2]}`
                                         : '기간 정보 없음'}
                                 </p>
-                                <p className="font-bold text-right text-blue-500 text-lg mt-1">
-                                    {(item.totalPrice || 0).toLocaleString()}원
-                                </p>
+                                <div className="mt-2">
+                                    <p className="text-right text-gray-500 line-through text-sm">
+                                        {originalPrice.toLocaleString()}원
+                                    </p>
+                                    <p className="font-bold text-right text-purple-700 text-lg">
+                                        {discountedPrice.toLocaleString()}원
+                                    </p>
+                                    {item.discountrate > 0 && (
+                                        <p className="text-xs text-right text-red-500">
+                                            {item.discountrate}% 할인 적용
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             ) : currentTab === 'company' ? (
-                myCategory && (
-                    <div className="space-y-12">
-                        {/* 스튜디오 (S) */}
-                        {myCategory !== 'S' && (
-                            <div>
-                                <h3 className="text-xl font-semibold text-purple-700 mb-4">스튜디오</h3>
-                                <div className="grid grid-cols-5 gap-4">
-                                    {filteredByType('S').length > 0 ? (
-                                        filteredByType('S').map((studio, i) => (
-                                            <div key={i} className="text-center border p-2 rounded">
-                                                <img
-                                                    src={studio.profileImageUrl ? `${baseUrl}${studio.profileImageUrl.replace(/\\/g, '/')}` : '/default/images/company.png'}
-                                                    className="w-full aspect-[3/4] object-cover rounded-md mb-2"
-                                                    alt={studio.name || '스튜디오 이미지'}
-                                                    onError={e => e.currentTarget.src = '/default/images/company.png'}
-                                                />
-                                                <p className="text-sm font-bold text-black">{studio.name}</p>
-                                                <p className="text-xs text-gray-500">{studio.address}</p>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="col-span-5 text-center text-gray-400 py-12">협업 중인 스튜디오가 없습니다.</div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
+                myCategory && (() => {
+                    // PUBLIC/PRIVATE 패키지에 포함된 모든 업체 추출
+                    const publicOrPrivateCompanies = packages
+                        .filter(pkg => pkg.status === 'PUBLIC' || pkg.status === 'PRIVATE')
+                        .flatMap(pkg => [pkg.admin, pkg.cp1, pkg.cp2])
+                        .filter(Boolean);
 
-                        {/* 드레스 (D) */}
-                        {myCategory !== 'D' && (
-                            <div>
-                                <h3 className="text-xl font-semibold text-purple-700 mb-4">드레스</h3>
-                                <div className="grid grid-cols-5 gap-4">
-                                    {filteredByType('D').length > 0 ? (
-                                        filteredByType('D').map((dress, i) => (
-                                            <div key={i} className="text-center border p-2 rounded">
-                                                <img
-                                                    src={dress.profileImageUrl ? `${baseUrl}${dress.profileImageUrl.replace(/\\/g, '/')}` : '/default/images/company.png'}
-                                                    className="w-full aspect-[3/4] object-cover rounded-md mb-2"
-                                                    alt={dress.name || '드레스샵 이미지'}
-                                                    onError={e => e.currentTarget.src = '/default/images/company.png'}
-                                                />
-                                                <p className="text-sm font-bold text-center text-black">{dress.name}</p>
-                                                <p className="text-xs text-gray-500">{dress.address}</p>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="col-span-5 text-center text-gray-400 py-12">협업 중인 드레스 업체가 없습니다.</div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
+                    // 카테고리별 중복 제거 함수
+                    const getUniqueCompaniesByCategory = (category) => {
+                        const filtered = publicOrPrivateCompanies.filter(company => company.category === category);
+                        return filtered.filter((company, idx, arr) => arr.findIndex(c => c.id === company.id) === idx);
+                    };
 
-                        {/* 메이크업 (M) */}
-                        {myCategory !== 'M' && (
-                            <div>
-                                <h3 className="text-xl font-semibold text-purple-700 mb-4">메이크업</h3>
-                                <div className="grid grid-cols-5 gap-4">
-                                    {filteredByType('M').length > 0 ? (
-                                        filteredByType('M').map((makeup, i) => (
-                                            <div key={i} className="text-center border p-2 rounded">
-                                                <img
-                                                    src={makeup.profileImageUrl ? `${baseUrl}${makeup.profileImageUrl.replace(/\\/g, '/')}` : '/default/images/company.png'}
-                                                    className="w-full aspect-[3/4] object-cover rounded-md mb-2"
-                                                    alt={makeup.name || '메이크업샵 이미지'}
-                                                    onError={e => e.currentTarget.src = '/default/images/company.png'}
-                                                />
-                                                <p className="text-sm font-bold text-center text-black">{makeup.name}</p>
-                                                <p className="text-xs text-gray-500">{makeup.address}</p>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="col-span-5 text-center text-gray-400 py-12">협업 중인 메이크업 업체가 없습니다.</div>
-                                    )}
+                    return (
+                        <div className="space-y-12">
+                            {/* 스튜디오 (S) */}
+                            {myCategory !== 'S' && (
+                                <div>
+                                    <h3 className="text-xl font-semibold text-purple-700 mb-4">스튜디오</h3>
+                                    <div className="grid grid-cols-5 gap-4">
+                                        {getUniqueCompaniesByCategory('S').length > 0 ? (
+                                            getUniqueCompaniesByCategory('S').map((studio, i) => (
+                                                <div key={studio.id} className="text-center border p-2 rounded">
+                                                    <img
+                                                        src={studio.profileImageUrl ? `${baseUrl}${studio.profileImageUrl.replace(/\\/g, '/')}` : '/default/images/company.png'}
+                                                        className="w-full aspect-[3/4] object-cover rounded-md mb-2"
+                                                        alt={studio.name || '스튜디오 이미지'}
+                                                        onError={e => e.currentTarget.src = '/default/images/company.png'}
+                                                    />
+                                                    <p className="text-sm font-bold text-black">{studio.name}</p>
+                                                    <p className="text-xs text-gray-500">{studio.address}</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="col-span-5 text-center text-gray-400 py-12">협업 중인 스튜디오가 없습니다.</div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                    </div>
-                )
+                            )}
+
+                            {/* 드레스 (D) */}
+                            {myCategory !== 'D' && (
+                                <div>
+                                    <h3 className="text-xl font-semibold text-purple-700 mb-4">드레스</h3>
+                                    <div className="grid grid-cols-5 gap-4">
+                                        {getUniqueCompaniesByCategory('D').length > 0 ? (
+                                            getUniqueCompaniesByCategory('D').map((dress, i) => (
+                                                <div key={dress.id} className="text-center border p-2 rounded">
+                                                    <img
+                                                        src={dress.profileImageUrl ? `${baseUrl}${dress.profileImageUrl.replace(/\\/g, '/')}` : '/default/images/company.png'}
+                                                        className="w-full aspect-[3/4] object-cover rounded-md mb-2"
+                                                        alt={dress.name || '드레스샵 이미지'}
+                                                        onError={e => e.currentTarget.src = '/default/images/company.png'}
+                                                    />
+                                                    <p className="text-sm font-bold text-center text-black">{dress.name}</p>
+                                                    <p className="text-xs text-gray-500">{dress.address}</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="col-span-5 text-center text-gray-400 py-12">협업 중인 드레스 업체가 없습니다.</div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 메이크업 (M) */}
+                            {myCategory !== 'M' && (
+                                <div>
+                                    <h3 className="text-xl font-semibold text-purple-700 mb-4">메이크업</h3>
+                                    <div className="grid grid-cols-5 gap-4">
+                                        {getUniqueCompaniesByCategory('M').length > 0 ? (
+                                            getUniqueCompaniesByCategory('M').map((makeup, i) => (
+                                                <div key={makeup.id} className="text-center border p-2 rounded">
+                                                    <img
+                                                        src={makeup.profileImageUrl ? `${baseUrl}${makeup.profileImageUrl.replace(/\\/g, '/')}` : '/default/images/company.png'}
+                                                        className="w-full aspect-[3/4] object-cover rounded-md mb-2"
+                                                        alt={makeup.name || '메이크업샵 이미지'}
+                                                        onError={e => e.currentTarget.src = '/default/images/company.png'}
+                                                    />
+                                                    <p className="text-sm font-bold text-center text-black">{makeup.name}</p>
+                                                    <p className="text-xs text-gray-500">{makeup.address}</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="col-span-5 text-center text-gray-400 py-12">협업 중인 메이크업 업체가 없습니다.</div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })()
             ) : (
                 // 진행중인 협업 탭 내용
                 <div className="space-y-6 mt-4">
                     <h3 className="text-xl font-semibold text-purple-700 mb-4">진행중인 협업</h3>
-                    {packages.filter(pkg => pkg.status === 'PRIVATE' || pkg.status === 'ACTIVE').length > 0 ? (
+                    {packages.filter(pkg => pkg.status === 'SETTING').length > 0 ? (
                         <div className="border rounded-lg overflow-hidden">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
@@ -239,7 +266,7 @@ function Collaboration() {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {packages.filter(pkg => pkg.status === 'PRIVATE' || pkg.status === 'ACTIVE').map((pkg, index) => (
+                                    {packages.filter(pkg => pkg.status === 'SETTING').map((pkg, index) => (
                                         <tr key={index} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div 
@@ -251,34 +278,16 @@ function Collaboration() {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-900">
-                                                    {[
-                                                        pkg.admin?.name, 
-                                                        pkg.cp1?.name, 
-                                                        pkg.cp2?.name
-                                                    ].filter(Boolean).join(', ')}
+                                                    {[pkg.admin?.name, pkg.cp1?.name, pkg.cp2?.name].filter(Boolean).join(', ')}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                    pkg.status === 'ACTIVE' ? 'bg-blue-100 text-blue-800' :
-                                                    (pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                                                }`}>
-                                                    {pkg.status === 'ACTIVE' ? '패키지설정완료' :
-                                                        (pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? '패키지설정중' : '상품설정중'}
+                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800`}>
+                                                    패키지설정중
                                                 </span>
-                                                {pkg.status === 'ACTIVE' ? (
-                                                    <div className="mt-1 text-xs text-gray-500">
-                                                        패키지 상세 설정이 완료되었습니다
-                                                    </div>
-                                                ) : (pkg.adminProduct || pkg.cp1Product || pkg.cp2Product) ? (
-                                                    <div className="mt-1 text-xs text-gray-500">
-                                                        {[
-                                                            pkg.adminProduct ? pkg.admin?.name : null,
-                                                            pkg.cp1Product ? pkg.cp1?.name : null,
-                                                            pkg.cp2Product ? pkg.cp2?.name : null
-                                                        ].filter(Boolean).join(', ')} 상품 등록 완료
-                                                    </div>
-                                                ) : null}
+                                                <div className="mt-1 text-xs text-gray-500">
+                                                    패키지 설정이 진행중입니다
+                                                </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <button 

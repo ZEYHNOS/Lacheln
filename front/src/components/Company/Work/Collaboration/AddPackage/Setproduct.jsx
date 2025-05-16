@@ -321,21 +321,21 @@ function AddPackage() {
                                     <>
                                         {packageInfo.admin && String(packageInfo.admin.id) === String(myCompanyId) && packageInfo.admin.productId && (
                                             <div className="flex items-center mt-3">
-                                                <span className="font-medium mr-2">등록된 상품:</span>
+                                                <span className="font-medium mr-2 text-black">등록된 상품:</span>
                                                 <span className="text-green-600 font-semibold">{packageInfo.admin.productName}</span>
                                                 <span className="ml-2 text-gray-600">{packageInfo.admin.productPrice?.toLocaleString()}원</span>
                                             </div>
                                         )}
                                         {packageInfo.cp1 && String(packageInfo.cp1.id) === String(myCompanyId) && packageInfo.cp1.productId && (
                                             <div className="flex items-center mt-3">
-                                                <span className="font-medium mr-2">등록된 상품:</span>
+                                                <span className="font-medium mr-2 text-black">등록된 상품:</span>
                                                 <span className="text-green-600 font-semibold">{packageInfo.cp1.productName}</span>
                                                 <span className="ml-2 text-gray-600">{packageInfo.cp1.productPrice?.toLocaleString()}원</span>
                                             </div>
                                         )}
                                         {packageInfo.cp2 && String(packageInfo.cp2.id) === String(myCompanyId) && packageInfo.cp2.productId && (
                                             <div className="flex items-center mt-3">
-                                                <span className="font-medium mr-2">등록된 상품:</span>
+                                                <span className="font-medium mr-2 text-black">등록된 상품:</span>
                                                 <span className="text-green-600 font-semibold">{packageInfo.cp2.productName}</span>
                                                 <span className="ml-2 text-gray-600">{packageInfo.cp2.productPrice?.toLocaleString()}원</span>
                                             </div>
@@ -368,7 +368,7 @@ function AddPackage() {
                                                                     className="w-10 h-10 object-cover rounded mr-3"
                                                                     onError={(e) => { e.target.onerror = null; e.target.src = '/default/images/product.png'; }}
                                                                 />
-                                                                <span>{selectedProduct.name} - {selectedProduct.price?.toLocaleString()}원</span>
+                                                                <span className="text-black font-bold">{selectedProduct.name} - {selectedProduct.price?.toLocaleString()}원</span>
                                                             </>
                                                         );
                                                     })()}
@@ -401,7 +401,7 @@ function AddPackage() {
                                                                 onError={(e) => { e.target.onerror = null; e.target.src = '/default/images/product.png'; }}
                                                             />
                                                             <div>
-                                                                <p className="font-semibold">{product.name}</p>
+                                                                <p className="font-semibold text-black">{product.name}</p>
                                                                 <p className="text-blue-600">{product.price?.toLocaleString()}원</p>
                                                             </div>
                                                         </div>
@@ -428,7 +428,7 @@ function AddPackage() {
                     </div>
                 </div>
                 {/* 오른쪽: 참여 회사 상태 */}
-                <div className="w-96 flex-shrink-0 mt-16">
+                <div className="w-100 flex-shrink-0 mt-16">
                     <h3 className="font-semibold mb-6 text-xl text-black">참여 회사 상태</h3>
                     <ul className="space-y-4">
                         {packageInfo ? (

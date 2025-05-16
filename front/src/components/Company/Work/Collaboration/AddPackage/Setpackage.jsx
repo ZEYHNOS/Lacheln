@@ -316,7 +316,6 @@ function Setpackage() {
                 imageUrl: imageUrl
             };
             
-            // API 호출 - /package/upload/{packageId} 엔드포인트로 요청
             const response = await apiClient.put(`/package/update/${packageId}`, packageData, {
                 headers: { 'Content-Type': 'application/json' }
             });

@@ -108,7 +108,7 @@ function AddCompany({ onClose, onComplete }) {
         <div>
             {isModalVisible && !showPackageNameModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+                    <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-3xl relative">
                         <h2 className="text-xl font-bold mb-6 text-gray-800">패키지 초대</h2>
                         <button
                             className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center bg-white border border-gray-200 rounded-lg shadow text-2xl text-black hover:bg-gray-100 focus:outline-none"
@@ -184,7 +184,7 @@ function AddCompany({ onClose, onComplete }) {
             {/* 패키지명 입력 모달 */}
             {showPackageNameModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+                    <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-3xl relative">
                         <h2 className="text-xl font-bold mb-6 text-gray-800">패키지명 설정</h2>
                         <input
                             type="text"

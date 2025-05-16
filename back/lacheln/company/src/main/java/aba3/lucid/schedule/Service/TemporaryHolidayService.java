@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -48,5 +49,8 @@ public class TemporaryHolidayService {
     }
 
 
+    public boolean existsByCompanyIdAndDate(Long companyId, LocalDate date) {
+        return temporaryHolidayRepository.existsByCompany_CpIdAndThDate(companyId, date);
+    }
 
 }

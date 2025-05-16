@@ -192,13 +192,6 @@ public class PackageService {
         return packageRepository.findByCompanyIdInAnyRole(companyId);
     }
 
-    // 패키지 Response 리스트에 가격 삽입하기
-    public void responseInsertPrice(List<PackageResponse> packageResponseList) {
-        packageResponseList.forEach(it -> {
-            it.setTotalPrice(getTotalPrice(it.getPackageId()));
-        });
-    }
-
     public BigInteger getTotalPrice(Long packageId) {
         List<PackageToProductEntity> packageToProductEntityList = packageToProductRepository.findAllByPackageEntity_packId(packageId);
 

@@ -101,6 +101,15 @@ public class PackageEntity {
 
     }
 
+    public void setPackageDescriptionEntityList(List<PackageDescriptionEntity> packageDescriptionEntityList) {
+        if (packageDescriptionEntityList.isEmpty()) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "패키지 설명이 없습니다.");
+        }
+
+        this.packageDescriptionEntityList.clear();
+        this.packageDescriptionEntityList = packageDescriptionEntityList;
+    }
+
 
     // 패키지를 같이하는 업체들이 다른 카테고리인지 확인하기
     private boolean isNotUniqueCompanyCategory(CompanyEntity packAdmin, CompanyEntity company1, CompanyEntity company2) {
@@ -159,6 +168,7 @@ public class PackageEntity {
             this.packageDescriptionEntityList = new ArrayList<>();
         }
 
+        this.packageDescriptionEntityList.clear();
         this.packageDescriptionEntityList.addAll(entityList);
     }
 
@@ -168,6 +178,6 @@ public class PackageEntity {
         updatePackageEndDate(request.getEndDate());
         updatePackageImageUrl(request.getImageUrl());
         updatePackageDiscountrate(request.getDiscountrate());
-
+        updatePackageStatus(PackageStatus.PRIVATE);
     }
 }

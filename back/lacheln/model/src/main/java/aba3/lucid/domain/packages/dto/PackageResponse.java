@@ -40,6 +40,4 @@ public class PackageResponse {
 
     private String imageUrl;
 
-    private BigInteger totalPrice;
-
 }

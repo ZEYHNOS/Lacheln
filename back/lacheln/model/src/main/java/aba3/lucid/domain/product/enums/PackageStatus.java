@@ -14,7 +14,9 @@ public enum PackageStatus {
     PRIVATE("비공개"),
 
     // 기간 만료
-    REMOVE("삭제")
+    REMOVE("삭제"),
+
+    SETTING("설정중")
     ;
 
     private final String description;

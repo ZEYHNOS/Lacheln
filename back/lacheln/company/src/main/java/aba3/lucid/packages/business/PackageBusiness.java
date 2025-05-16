@@ -77,8 +77,6 @@ public class PackageBusiness {
         List<PackageEntity> packageEntityList = packageService.getPackageList(companyId);
         List<PackageResponse> packageResponseList = packageConverter.toResponseList(packageEntityList);
 
-        packageService.responseInsertPrice(packageResponseList);
-
         return packageResponseList;
     }
 

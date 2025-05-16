@@ -4,6 +4,7 @@ import aba3.lucid.domain.schedule.entity.TemporaryHolidayEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,5 @@ public interface TemporaryHolidayRepository  extends JpaRepository<TemporaryHoli
 
     List<TemporaryHolidayEntity> findAllByCompany_CpId(Long companyId);
 
+    boolean existsByCompany_CpIdAndThDate(Long companyId, LocalDate date);
 }

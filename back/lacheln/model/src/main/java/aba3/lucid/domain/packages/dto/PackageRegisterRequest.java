@@ -13,6 +13,7 @@ import lombok.*;
 @ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PackageRegisterRequest {
+
     // 패키지 명
     @NotBlank
     private String packageName;

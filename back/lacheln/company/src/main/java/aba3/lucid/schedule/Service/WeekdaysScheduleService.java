@@ -1,6 +1,7 @@
 package aba3.lucid.schedule.Service;
 
 
+import aba3.lucid.common.enums.Weekdays;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.schedule.convertor.WeekdaysScheduleConvertor;
@@ -43,5 +44,10 @@ public class WeekdaysScheduleService {
 
     public List<WeekdaysScheduleEntity> findAllByCompanyId(Long companyId) {
         return weekdaysScheduleRepository.findAllByCompany_CpId(companyId);
+    }
+
+    public WeekdaysScheduleEntity findByCompanyIdAndWsWeekdays(Long companyId, Weekdays weekdays) {
+        return weekdaysScheduleRepository.findByCompany_CpIdAndWsWeekdays(companyId, weekdays)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 public class PackageConverter {
 
     private final PackageToProductConverter packageToProductConverter;
+    private final PackageDescriptionConverter packageDescriptionConverter;
 
     public List<PackageResponse> toResponseList(List<PackageEntity> entityList) {
         return entityList.stream()
@@ -33,7 +34,7 @@ public class PackageConverter {
                 .packDiscountrate(0)
                 .packCreateDate(LocalDateTime.now())
                 .packEndDate(LocalDateTime.of(2099, 12, 31, 0, 0, 0))
-                .packStatus(PackageStatus.PRIVATE)
+                .packStatus(PackageStatus.SETTING)
                 .build()
                 ;
 
@@ -52,6 +53,7 @@ public class PackageConverter {
                 .endDate(entity.getPackEndDate())
                 .status(entity.getPackStatus())
                 .imageUrl(entity.getPackImageUrl())
+                .descriptionResponseList(packageDescriptionConverter.toDescriptionResponseList(entity.getPackageDescriptionEntityList()))
                 .build()
                 ;
     }

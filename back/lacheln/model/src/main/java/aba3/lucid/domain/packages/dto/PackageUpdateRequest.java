@@ -1,7 +1,6 @@
 package aba3.lucid.domain.packages.dto;
 
 import aba3.lucid.domain.product.dto.DescriptionRequest;
-import aba3.lucid.domain.product.enums.PackageStatus;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -26,6 +25,8 @@ public class PackageUpdateRequest {
     private LocalDateTime endDate;
 
     private String imageUrl;
+
+    private List<String> hashTagList;
 
 
 }

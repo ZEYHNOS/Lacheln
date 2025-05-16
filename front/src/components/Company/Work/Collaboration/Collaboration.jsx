@@ -122,7 +122,8 @@ function Collaboration() {
                     {packages.map((item, i) => (
                         <div
                             key={i}
-                            className="rounded-lg border overflow-hidden shadow-sm"
+                            className="rounded-lg border overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                            onClick={() => navigate(`/company/collaboration/package/${item.packageId || item.id}`)}
                         >
                             <img
                                 src={item.imageUrl ? `${baseUrl}${item.imageUrl.replace(/\\/g, '/')}` : '/default/images/package.png'}
@@ -241,7 +242,12 @@ function Collaboration() {
                                     {packages.filter(pkg => pkg.status === 'PRIVATE' || pkg.status === 'ACTIVE').map((pkg, index) => (
                                         <tr key={index} className="hover:bg-gray-50">
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900">{pkg.name || '이름 없음'}</div>
+                                                <div 
+                                                    className="text-sm font-medium text-gray-900 cursor-pointer hover:text-purple-600"
+                                                    onClick={() => navigate(`/company/collaboration/viewpackage/${pkg.packageId || pkg.id}`)}
+                                                >
+                                                    {pkg.name || '이름 없음'}
+                                                </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-900">
@@ -258,7 +264,7 @@ function Collaboration() {
                                                     (pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                                                 }`}>
                                                     {pkg.status === 'ACTIVE' ? '패키지설정완료' :
-                                                     (pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? '패키지설정중' : '상품설정중'}
+                                                        (pkg.adminProduct && pkg.cp1Product && pkg.cp2Product) ? '패키지설정중' : '상품설정중'}
                                                 </span>
                                                 {pkg.status === 'ACTIVE' ? (
                                                     <div className="mt-1 text-xs text-gray-500">

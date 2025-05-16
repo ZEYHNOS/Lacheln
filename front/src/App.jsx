@@ -18,8 +18,9 @@ import ProductManagement from "./components/Company/Management/Product/Product";
 import OrderManagement from "./components/Company/Management/Order";
 import ReviewManagement from "./components/Company/Management/Review";
 import Collaboration from "./components/Company/Work/Collaboration/Collaboration.jsx";
-import Setproduct from "./components/Company/Work/Collaboration/Setproduct.jsx";
-import Setpackage from "./components/Company/Work/Collaboration/Setpackage.jsx";
+import Setproduct from "./components/Company/Work/Collaboration/Add/Setproduct.jsx";
+import Setpackage from "./components/Company/Work/Collaboration/Add/Setpackage.jsx";
+import ViewPackage from "./components/Company/Work/Collaboration/ViewPackage.jsx";
 import Messenger from "./components/Company/Work/Messenger";
 import Notification from "./components/Company/Work/Notification";
 import Schedule from "./components/Company/Work/Schedule";
@@ -142,6 +143,7 @@ function App() {
                 <Route path="/company/collaboration/setproduct" element={<CompanyLayout><Setproduct /></CompanyLayout>} />
                 <Route path="/company/collaboration/setproduct/:id" element={<CompanyLayout><Setproduct /></CompanyLayout>} />
                 <Route path="/company/collaboration/setpackage/:id" element={<CompanyLayout><Setpackage /></CompanyLayout>} />
+                <Route path="/company/collaboration/package/:id" element={<CompanyLayout><ViewPackage /></CompanyLayout>} />
                 <Route path="/company/messenger" element={<CompanyLayout><Messenger /></CompanyLayout>} />
                 <Route path="/company/notification" element={<CompanyLayout><Notification /></CompanyLayout>} />
                 <Route path="/company/schedule" element={<CompanyLayout><Schedule /></CompanyLayout>} />

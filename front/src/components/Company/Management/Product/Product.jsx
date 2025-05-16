@@ -101,13 +101,19 @@ function Product() {
                                 >
                                     <td className="border border-gray-300 p-2">
                                     <img 
-                                        src={`${baseUrl}${product.imageUrl}`} 
+                                        src={product.imageUrl ? `${baseUrl}${product.imageUrl.replace(/\\/g, '/')}` : '/default/images/product.png'} 
                                         alt="상품 이미지" 
-                                        className="mx-auto w-12 h-12 object-cover rounded" 
+                                        className="mx-auto w-12 h-12 object-cover rounded"
+                                        onError={e => e.currentTarget.src = '/default/images/product.png'}
                                     />
                                     </td>
                                     <td className="border border-gray-300 p-2">{product.name}</td>
-                                    <td className="border border-gray-300 p-2">{product.status}</td>
+                                    <td className="border border-gray-300 p-2">
+                                        {product.status === "ACTIVE" ? "판매중" : 
+                                            product.status === "INACTIVE" ? "판매 대기중" : 
+                                            product.status === "PACKAGE" ? "패키지상품 판매중" : 
+                                            product.status}
+                                    </td>
                                     <td className="border border-gray-300 p-2">{product.price.toLocaleString()}￦</td>
                                 </tr>
                             ))}

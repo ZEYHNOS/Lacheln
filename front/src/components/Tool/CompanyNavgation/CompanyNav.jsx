@@ -37,7 +37,7 @@ export function Location() {
 // 회사 네비게이션
 export default function CompanyNav() {
     return (
-        <div>
+        <div className="flex space-x-4">
             <a href="/about">회사소개</a>
             <a href="/terms">이용약관</a>
             <a href="/privacy">개인정보처리방침</a>

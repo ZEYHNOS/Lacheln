@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Addcompany from './Addcompany';
-import apiClient from '../../../../lib/apiClient';
+import apiClient from '../../../../../lib/apiClient';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;

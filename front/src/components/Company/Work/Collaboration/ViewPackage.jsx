@@ -110,12 +110,14 @@ function ViewPackage() {
                     )}
                 </div>
                 <div className="flex gap-3">
-                    <button
-                        onClick={() => navigate(`/company/collaboration/edit/${id}`)}
-                        className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
-                    >
-                        패키지 수정
-                    </button>
+                    {status !== 'PUBLIC' && (
+                        <button
+                            onClick={() => navigate(`/company/collaboration/package/edit/${id}`)}
+                            className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+                        >
+                            패키지 수정
+                        </button>
+                    )}
                     <button
                         onClick={() => {
                             if (window.confirm('이 패키지를 삭제하시겠습니까?')) {

@@ -19,7 +19,7 @@ public class SocialController {
     private final SocialService socialService;
     private final SocialRepository socialRepository;
 
-    @PostMapping("{companyId}/create")
+    @PostMapping("/create")
     public API<SnsResponse> createSocial(
             @PathVariable Long companyId,
             @RequestBody SnsRequest request
@@ -29,7 +29,7 @@ public class SocialController {
         return API.OK(response);
     }
 
-    @PutMapping("{companyId}")
+    @PutMapping("/update")
     public API<SnsResponse> updateSocial(
             @PathVariable Long companyId,
             @RequestBody SnsRequest request

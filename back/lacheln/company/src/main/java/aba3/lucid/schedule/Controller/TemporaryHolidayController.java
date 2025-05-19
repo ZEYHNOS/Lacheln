@@ -18,7 +18,7 @@ public class TemporaryHolidayController {
     private final TemporaryHolidayService temporaryHolidayService;
     private final TemporaryHolidayBusiness temporaryHolidayBusiness;
 
-    @PostMapping("/{cpId}/temporary")
+    @PostMapping("/temporary")
     public API<TemporaryHolidayResponse> createTemporaryHoliday(
             @PathVariable Long cpId,
             @RequestBody TemporaryHolidayRequest request
@@ -27,7 +27,7 @@ public class TemporaryHolidayController {
         return API.OK(response);
     }
 
-    @PutMapping("{cpId}/{thId}/temporary")
+    @PutMapping("/update/temporary")
     public API<TemporaryHolidayResponse> updateTemporaryHoliday(
             @PathVariable Long cpId,
             @PathVariable Long thId,

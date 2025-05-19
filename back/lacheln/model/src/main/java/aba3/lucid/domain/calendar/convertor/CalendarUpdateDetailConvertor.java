@@ -51,7 +51,6 @@ public class CalendarUpdateDetailConvertor {
                 : null;
         // 빌더 패턴을 사용하여 CalendarDetailResponse 객체를 생성합니다.
         return CalendarDetailResponse.builder()
-                .calDtId(entity.getCalDtId())
                 .title(entity.getCalDtTitle())
                 .content(entity.getCalDtContent())
                 .startTime(entity.getCalDtStart())

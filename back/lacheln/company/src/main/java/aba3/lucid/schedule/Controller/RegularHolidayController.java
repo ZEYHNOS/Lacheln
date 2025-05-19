@@ -17,7 +17,7 @@ public class RegularHolidayController {
     private  final RegularHolidayRepository repository;
     private final RegularHolidayBusiness regularHolidayBusiness;
 
-    @PostMapping("{cpId}/regular")
+    @PostMapping("/regular")
     public API<RegularHolidayResponse> createRegular(
             @PathVariable Long cpId,
             @RequestBody RegularHolidayRequest regularHolidayRequest
@@ -26,7 +26,7 @@ public class RegularHolidayController {
         return API.OK();
     }
 
-    @PutMapping("/{cpId}/{regId}/regularHoliday")
+    @PutMapping("/update/regularHoliday")
     public API<RegularHolidayResponse> updateRegular(
             @PathVariable Long cpId,
             @PathVariable Long regId,

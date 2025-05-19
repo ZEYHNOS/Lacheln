@@ -3,6 +3,7 @@ package aba3.lucid.company.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.company.business.CompanyBusiness;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.dto.*;

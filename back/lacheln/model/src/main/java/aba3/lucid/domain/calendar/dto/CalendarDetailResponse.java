@@ -15,7 +15,6 @@ import java.time.LocalTime;
 @Builder
 @Getter
 public class CalendarDetailResponse {
-    private long calDtId;
     private String title;
     private String content;
     private LocalDateTime startTime;

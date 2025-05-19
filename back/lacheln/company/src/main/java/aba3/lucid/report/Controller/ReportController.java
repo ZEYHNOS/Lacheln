@@ -2,9 +2,7 @@ package aba3.lucid.report.Controller;
 
 
 import aba3.lucid.common.api.API;
-import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomUserDetails;
-import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.inquiry.dto.ReportImageRequest;
 import aba3.lucid.domain.inquiry.dto.ReportImageResponse;
 import aba3.lucid.domain.inquiry.dto.ReportRequest;
@@ -85,6 +83,5 @@ public class ReportController {
         );
         return API.OK(urls);
     }
-
 
 }

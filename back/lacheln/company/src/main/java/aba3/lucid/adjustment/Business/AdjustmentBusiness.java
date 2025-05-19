@@ -10,12 +10,8 @@ import aba3.lucid.domain.company.dto.AdjustmentRequest;
 import aba3.lucid.domain.company.dto.AdjustmentResponse;
 import aba3.lucid.domain.company.entity.AdjustmentEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.payment.enums.Bank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Business
 @Component

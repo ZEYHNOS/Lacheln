@@ -20,7 +20,7 @@ public class AdjustmentController {
     private final AdjustmentBusiness adjustmentBusiness;
     private final AdjustmentService adjustmentService;
 
-    @PostMapping("{companyId}/create")
+    @PostMapping("/create")
     public API<AdjustmentResponse> createAdjustment(
             @PathVariable Long companyId,
             @RequestBody AdjustmentRequest request
@@ -30,7 +30,7 @@ public class AdjustmentController {
 
    }
 
-   @PutMapping("{companyId}/update")
+   @PutMapping("/update")
     public API<AdjustmentResponse> updateAdjustment(
            @PathVariable Long companyId,
            @RequestBody AdjustmentRequest request

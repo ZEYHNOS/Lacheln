@@ -17,6 +17,8 @@ import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +26,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Optional;
 
 
+
+@Slf4j
 @Business
-@Component
+@RequiredArgsConstructor
 public class CompanyBusiness {
     private final CompanyService companyService;
     private final CompanyRepository companyRepository;
@@ -38,20 +42,20 @@ public class CompanyBusiness {
     private final ApplicationContext applicationContext;
     private final CompanySetConvertor companySetConvertor;
 
-    public CompanyBusiness(CompanyService companyService,
-                           CompanyRepository companyRepository,
-                           CompanyConvertor companyConvertor,
-                           ApplicationContext applicationContext,
-                           CompanySetConvertor companySetConvertor, CompanyUpdateConvertor companyUpdateConvertor)
-    {
-
-        this.companyService = companyService;
-        this.companyRepository = companyRepository;
-        this.companyConvertor = companyConvertor;
-        this.applicationContext = applicationContext;
-        this.companySetConvertor = companySetConvertor;
-        this.companyUpdateConvertor = companyUpdateConvertor;
-    }
+//    public CompanyBusiness(CompanyService companyService,
+//                           CompanyRepository companyRepository,
+//                           CompanyConvertor companyConvertor,
+//                           ApplicationContext applicationContext,
+//                           CompanySetConvertor companySetConvertor, CompanyUpdateConvertor companyUpdateConvertor)
+//    {
+//
+//        this.companyService = companyService;
+//        this.companyRepository = companyRepository;
+//        this.companyConvertor = companyConvertor;
+//        this.applicationContext = applicationContext;
+//        this.companySetConvertor = companySetConvertor;
+//        this.companyUpdateConvertor = companyUpdateConvertor;
+//    }
 
     //passwordEncoder.encode(rawPassword)를 호출하여 비밀번호를 암호화합니다.
 

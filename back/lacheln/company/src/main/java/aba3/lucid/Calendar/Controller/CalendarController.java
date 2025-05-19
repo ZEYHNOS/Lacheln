@@ -5,6 +5,7 @@ import aba3.lucid.Calendar.Business.CalendarBusiness;
 import aba3.lucid.Calendar.Service.CalendarService;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.calendar.dto.CalendarRequest;
@@ -28,7 +29,7 @@ public class CalendarController {
     private final CalendarRepository calendarRepository;
     private final CalendarService calendarService;
 
-    @PostMapping("{companyId}/create")
+    @PostMapping("/create")
     public API<CalendarResponse> createCalendar(
             @RequestBody CalendarRequest request
 
@@ -40,7 +41,7 @@ public class CalendarController {
 
     }
 
-    @PutMapping("{calId}")
+    @PutMapping("/update")
     public API<CalendarResponse> updateCalendar(
             @PathVariable Long calId,
             @RequestBody CalendarUpdateRequest request

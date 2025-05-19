@@ -16,7 +16,7 @@ import java.util.List;
 public class WeekdaysScheduleController {
     private final WeekdaysScheduleBusiness weekdaysScheduleBusiness;
 
-    @PostMapping("/{cpId}/weekdays-schedule")
+    @PostMapping("/weekdays-schedule")
     public API<List<WeekdaysScheduleResponse>>createSchedule(
             @PathVariable Long cpId,
             @RequestBody WeekdaysScheduleRequest request
@@ -26,7 +26,7 @@ public class WeekdaysScheduleController {
     }
 
 
-      @PutMapping("/update/{cpId}/weekdays-schedule")
+      @PutMapping("/update/weekdays-schedule")
       public API<List<WeekdaysScheduleResponse>>updateSchedule(
               @PathVariable Long cpId,
               @RequestParam Long wsId,

@@ -76,6 +76,7 @@ public class CompanyEntity {
 
     // 업체 소개 이미지(대표 이미지)
     // TODO 기본값 설정
+
     @Column(name = "cp_profile", columnDefinition = "CHAR(255)", nullable = false)
     private String cpProfile;
 

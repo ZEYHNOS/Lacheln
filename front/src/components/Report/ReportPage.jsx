@@ -77,90 +77,85 @@ export default function ReportPage() {
   // ────────────────────────────────────────────────────────
 
   // immediately upload your selected files
-  const handleFileChange = e => {
-    const chosen = Array.from(e.target.files || []);
-    setFiles(chosen);
+  // const handleFileChange = e => {
+  //   const chosen = Array.from(e.target.files || []);
+  //   setFiles(chosen);
+  //   setImageUrls([]);
+  //   // **use the actor’s ID** in the path, _not_ `reportedId`:
+  //   const uploadUrl =
+  //     targetType === "USER"
+  //       ? `${BASE_URL}/report/company/image/upload`
+  //       : `${BASE_URL}/report/user/image/upload`;
 
-    // **use the actor’s ID** in the path, _not_ `reportedId`:
-    const uploadUrl =
-      targetType === "USER"
+  //   const uploaded = [];
+  //   for (let file of chosen) {
+  //     const form = new FormData();
+  //     form.append("images", file);
+  //     try {
+  //       const res =  axios.post(uploadUrl, form, {
+  //         headers: { "Content-Type": "multipart/form-data" }
+  //       });
+  //       // our API returns { data: [ ...urls ] }
+  //       uploaded.push(...res.data.data);
+  //     } catch (err) {
+  //       console.error("upload failed:", err);
+  //       alert(`${file.name} 업로드에 실패했습니다.`);
+  //     }
+  //   }
+  //   console.log("신고업체 ID", reportedId);
+  //   setImageUrls(uploaded);
+  // };
+    const handleFileChange = e => {
+  const chosen = Array.from(e.target.files || []);
+  setFiles(chosen);       
+  setImageUrls([]);       
+};
+
+  
+  const handleSubmit = async () => {
+  const reportPayload = {
+    reportTitle: title,
+    reportTarget: targetType === "USER" ? "U" : "C",
+    reportCategory: category,
+    ...(targetType === "COMPANY" ? { cpId: Number(cpId) } : { userId: reportedId }),
+    reportContent: content
+  };
+  const endpoint = targetType === "USER"
+    ? `${BASE_URL}/report/company`
+    : `${BASE_URL}/report/user`;
+
+  try {
+    const res = await axios.post(endpoint, reportPayload, { withCredentials: true });
+    const reportId = res.data.data.reportId;
+
+    
+    if (files.length > 0) {
+      const uploadUrl = targetType === "USER"
         ? `${BASE_URL}/report/company/image/upload`
         : `${BASE_URL}/report/user/image/upload`;
 
-    const uploaded = [];
-    for (let file of chosen) {
-      const form = new FormData();
-      form.append("images", file);
-      try {
-        const res =  axios.post(uploadUrl, form, {
-          headers: { "Content-Type": "multipart/form-data" }
-        });
-        // our API returns { data: [ ...urls ] }
-        uploaded.push(...res.data.data);
-      } catch (err) {
-        console.error("upload failed:", err);
-        alert(`${file.name} 업로드에 실패했습니다.`);
-      }
-    }
-    console.log("신고업체 ID", reportedId);
-    setImageUrls(uploaded);
-  };
-
-  // final submission
-  const handleSubmit = async () => {
-    const payload = {
-    reportTitle:    title,
-    reportTarget: targetType === "USER" ? "U" : "C",
-    reportCategory: category,
-  // Company → User 신고일 때
-  ...(targetType === "COMPANY"
-    ? { cpId: Number(cpId) }
-    // User → Company 신고일 때
-    : { userId: reportedId }
-  ),
-  // 신고 내용 (backend ReportRequest 필드명에 맞춰주세요)
-    reportContent: content
-  };
-  console.log(payload);
-    const endpoint =
-      targetType === "USER"
-        ? `${BASE_URL}/report/company`
-        : `${BASE_URL}/report/user`;
-    console.log("신고타입 : ", targetType);
-    console.log("유저 ID : ", currentId);
-    try {
-      const res = await axios.post(`${endpoint}`, payload, { withCredentials: true });
-      const reportId = res.data.data.reportId;
-      if (files.length > 0) {
-      const uploadUrl =
-        targetType === "USER"
-          ? `${BASE_URL}/report/company/image/upload`
-          : `${BASE_URL}/report/user/image/upload`;
-
-      // Prepare FormData with images and the request DTO
       const form = new FormData();
       files.forEach(file => form.append("images", file));
-      // The backend expects a DTO with reportId (and userId/companyId if needed)
       form.append(
         "request",
-        new Blob(
-          [JSON.stringify({ reportId })],
-          { type: "application/json" }
-        )
+        new Blob([JSON.stringify({ reportId })], { type: "application/json" })
       );
-      await axios.post(uploadUrl, form, {
+
+      const uploadRes = await axios.post(uploadUrl, form, {
         headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
+        withCredentials: true
       });
+
+      setImageUrls(uploadRes.data.data); 
     }
 
-      alert("신고가 정상적으로 접수되었습니다.");
-      navigate(-1);
-    } catch (err) {
-      console.error(err);
-      alert("신고 처리 중 오류가 발생했습니다. 콘솔을 확인해 주세요.");
-    }
-  };
+    alert("신고가 정상적으로 접수되었습니다.");
+    navigate(-1);
+  } catch (err) {
+    console.error(err);
+    alert("신고 처리 중 오류가 발생했습니다.");
+  }
+};
 
   useEffect(() => {
     if (reportedId) {
@@ -281,8 +276,8 @@ export default function ReportPage() {
           <label className="block font-medium">이미지 업로드 (선택)</label>
           <input
             type="file"
-            accept="image/*"
             multiple
+            accept="image/*"
             onChange={handleFileChange}
             className="block w-full text-sm text-gray-700 mt-1"
           />
@@ -336,7 +331,7 @@ export default function ReportPage() {
               </ul>
             </div>
           ) : (
-            <div className="text-gray-400">업로드된 이미지가 없습니다</div>
+            <div className="text-gray-400">이미지 업로드가 되었습니다다</div>
           )}
 
           <div className="flex justify-between">

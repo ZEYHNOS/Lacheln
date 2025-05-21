@@ -27,7 +27,6 @@ import java.util.stream.IntStream;
 public class ReservationService {
 
     private final RegularHolidayService regularHolidayService; // 정기 휴일 service
-    private final ScheduleService scheduleService;  // 일정 service
     private final TemporaryHolidayService temporaryHolidayService; // 임시 휴일 service
     private final WeekdaysScheduleService weekdaysScheduleService; // 요일별 일정 service 월~일 시간
     private final ProductService productService; // 해당 상품의 갯수 파악을 위한 service

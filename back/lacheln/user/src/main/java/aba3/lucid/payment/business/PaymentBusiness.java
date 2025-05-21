@@ -6,10 +6,7 @@ import aba3.lucid.common.status_code.PaymentErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.payment.convertor.PayDetailConverter;
 import aba3.lucid.domain.payment.convertor.PaymentConvertor;
-import aba3.lucid.domain.payment.dto.PayDetailResponse;
-import aba3.lucid.domain.payment.dto.PayManagementResponse;
-import aba3.lucid.domain.payment.dto.PaymentRequest;
-import aba3.lucid.domain.payment.dto.PaymentVerifyRequest;
+import aba3.lucid.domain.payment.dto.*;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -19,8 +16,11 @@ import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.security.core.parameters.P;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -84,5 +84,17 @@ public class PaymentBusiness {
         List<PayDetailEntity> payManagementEntityList = payDetailService.getPayDetailList(companyId);
 
         return payDetailConverter.toResponseList(payManagementEntityList);
+    }
+    
+    // 상품 ID 및 날짜로 리스트 가지고 오기
+    public List<PayDetailBlockResponse> getPaymentPdIdAndDate(Long cpId, LocalDate date) {
+        Validator.throwIfNull(cpId, date);
+
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.plusDays(1).atStartOfDay();
+
+        List<PayDetailEntity> payManagementEntityList = payDetailService.getPayDetailList(cpId, start, end);
+
+        return payDetailConverter.toBlockResponseList(payManagementEntityList);
     }
 }

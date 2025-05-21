@@ -4,18 +4,17 @@ import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomAuthenticationToken;
 import aba3.lucid.common.auth.CustomUserDetails;
-import aba3.lucid.domain.payment.dto.PayDetailResponse;
-import aba3.lucid.domain.payment.dto.PayManagementResponse;
-import aba3.lucid.domain.payment.dto.PaymentRequest;
-import aba3.lucid.domain.payment.dto.PaymentVerifyRequest;
+import aba3.lucid.domain.payment.dto.*;
 import aba3.lucid.payment.business.PaymentBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -72,6 +71,16 @@ public class PaymentController {
     ) {
 //        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(user.getCompanyId());
         List<PayDetailResponse> payManagementResponseList = paymentBusiness.getPaymentList(1L);
+        return API.OK(payManagementResponseList);
+    }
+
+    @GetMapping("/block")
+    @Operation(summary = "상품ID, 날짜로 조회한 결제 내역 리스트")
+    public API<List<PayDetailBlockResponse>> getBlockDateTimeList(
+            @RequestParam Long pdId,
+            @RequestParam LocalDate date
+            )   {
+        List<PayDetailBlockResponse> payManagementResponseList = paymentBusiness.getPaymentPdIdAndDate(pdId, date);
         return API.OK(payManagementResponseList);
     }
 }

@@ -1,6 +1,8 @@
 package aba3.lucid.domain.payment.convertor;
 
 import aba3.lucid.common.annotation.Converter;
+import aba3.lucid.domain.payment.dto.PayDetailBlockOptionResponse;
+import aba3.lucid.domain.payment.dto.PayDetailBlockResponse;
 import aba3.lucid.domain.payment.dto.PayDetailOptionRequest;
 import aba3.lucid.domain.payment.dto.PayDetailOptionResponse;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
@@ -42,6 +44,23 @@ public class PayDetailOptionConverter {
     public List<PayDetailOptionResponse> toResponseList(List<PayDetailOptionEntity> entityList) {
         return entityList.stream()
                 .map(this::toResponse)
+                .toList();
+    }
+
+    public PayDetailBlockOptionResponse toBlockResponse(PayDetailOptionEntity entity) {
+        return PayDetailBlockOptionResponse.builder()
+                .payDetailOptionId(entity.getPayDetailOptionId())
+                .payOpName(entity.getPayOpName())
+                .payOpDtName(entity.getPayOpDtName())
+                .payDtQuantity(entity.getPayDtQuantity())
+                .payOpPlusCost(entity.getPayOpPlusCost())
+                .payOpTaskTime(entity.getPayOpTaskTime())
+                .build();
+    }
+
+    public List<PayDetailBlockOptionResponse> toBlockResponseList(List<PayDetailOptionEntity> entityList) {
+        return entityList.stream()
+                .map(this::toBlockResponse)
                 .toList();
     }
 }

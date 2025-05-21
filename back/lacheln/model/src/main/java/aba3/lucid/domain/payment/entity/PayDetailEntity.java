@@ -31,6 +31,10 @@ public class PayDetailEntity {
     @Column(name = "cp_id")
     private Long cpId;
 
+    // 상품ID
+    @Column(name = "pd_id")
+    private Long pdId;
+
     // 쿠폰
     @Column(name = "coupon_id")
     private Long couponId;
@@ -47,8 +51,13 @@ public class PayDetailEntity {
     @Column(name = "pay_dc_price", nullable = false)
     private BigInteger payDcPrice;
 
-    @Column(nullable = false)
+    // 작업 시작 시간
+    @Column(name = "schedule_date", nullable = false)
     private LocalDateTime scheduleDate;
+
+    // 소요 시간(분)
+    @Column(name = "task_time", nullable = false)
+    private Integer taskTime;
 
     @JsonIgnore
     @OneToMany(mappedBy = "payDetail", cascade = CascadeType.ALL, orphanRemoval = true)

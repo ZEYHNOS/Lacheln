@@ -76,4 +76,8 @@ public class ReviewEntity {
         this.rvContent = content;
         this.rvScore = score;
     }
+
+    // 답글(ReviewComment)와의 양방향 연관관계 설정
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ReviewCommentEntity reviewComment;
 }

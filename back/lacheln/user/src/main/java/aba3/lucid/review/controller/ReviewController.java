@@ -1,5 +1,6 @@
 package aba3.lucid.review.controller;
 
+import aba3.lucid.domain.review.dto.ReviewCommentUpdateRequest;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewResponse;
 import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
@@ -151,6 +152,58 @@ public class ReviewController {
             @PathVariable Long reviewId
     ) {
         reviewService.deleteReview(userId, reviewId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * [PUT] 리뷰 답글 수정 API
+     *
+     * - 작성자(판매자)만 수정 가능
+     * - 삭제된 답글은 수정 불가
+     *
+     * @param companyId 판매자 ID
+     * @param request 수정 요청 DTO
+     * @return HTTP 200 OK
+     */
+    @PutMapping("/reviews/comments")
+    @Operation(
+            summary = "리뷰 답글 수정",
+            description = "판매자 본인만 수정 가능하며, 삭제된 답글은 수정할 수 없습니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "답글 수정 성공"),
+            @ApiResponse(responseCode = "403", description = "수정 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "답글 없음"),
+            @ApiResponse(responseCode = "400", description = "입력값 오류")
+    })
+    public ResponseEntity<Void> updateReviewComment(
+            @Parameter(description = "판매자 ID", example = "3")
+            @RequestHeader("X-COMPANY-ID") Long companyId,
+
+            @Valid @RequestBody ReviewCommentUpdateRequest request
+    ) {
+        reviewService.updateReviewComment(companyId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/reviews/comments/{commentId}")
+    @Operation(
+            summary = "리뷰 답글 삭제",
+            description = "해당 리뷰에 작성한 답글을 판매자 본인이 삭제합니다. 삭제는 논리 삭제 처리됩니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "답글 삭제 성공"),
+            @ApiResponse(responseCode = "403", description = "삭제 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "답글 없음")
+    })
+    public ResponseEntity<Void> deleteReviewComment(
+            @Parameter(description = "판매자 ID", example = "3")
+            @RequestHeader("X-COMPANY-ID") Long companyId,
+
+            @Parameter(description = "삭제할 답글 ID", example = "123")
+            @PathVariable Long commentId
+    ) {
+        reviewService.deleteReviewComment(companyId, commentId);
         return ResponseEntity.ok().build();
     }
 }

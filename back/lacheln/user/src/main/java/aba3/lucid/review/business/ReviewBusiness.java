@@ -1,15 +1,18 @@
 package aba3.lucid.review.business;
 
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
+import aba3.lucid.domain.product.enums.ReviewCommentStatus;
 import aba3.lucid.domain.review.convertor.ReviewConvertor;
-import aba3.lucid.domain.review.dto.ReviewCreateRequest;
-import aba3.lucid.domain.review.dto.ReviewResponse;
-import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
+import aba3.lucid.domain.review.dto.*;
+import aba3.lucid.domain.review.entity.ReviewCommentEntity;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.entity.ReviewImageEntity;
+import aba3.lucid.domain.review.repository.ReviewCommentRepository;
 import aba3.lucid.domain.review.repository.ReviewImageRepository;
 import aba3.lucid.domain.review.repository.ReviewRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -27,6 +31,8 @@ public class ReviewBusiness {
     private final ReviewRepository reviewRepository;
     private final ReviewImageRepository reviewImageRepository;
     private final PayManagementRepository payManagementRepository;
+    private final ReviewCommentRepository reviewCommentRepository;
+    private final CompanyRepository companyRepository;
 
     /**
      * 리뷰 작성 처리
@@ -149,5 +155,64 @@ public class ReviewBusiness {
         review.markAsDeleted(); // 상태를 DELETED로 바꾸고 삭제일시 기록
 
         log.info("리뷰 삭제 완료: reviewId={}, userId={}", reviewId, userId);
+    }
+
+    @Transactional
+    public void writeReviewComment(Long companyId, ReviewCommentCreateRequest request) {
+        // 1. 리뷰 조회
+        ReviewEntity review = reviewRepository.findById(request.getReviewId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰를 찾을 수 없습니다."));
+
+        // 2. 판매자(CompanyEntity) 조회
+        CompanyEntity company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new IllegalArgumentException("판매자 정보를 찾을 수 없습니다."));
+
+        // 3. 해당 업체가 이미 답글을 작성했는지 검사
+        if (reviewCommentRepository.existsByReviewAndCompany(review, company)) {
+            throw new IllegalStateException("이미 답글을 작성한 리뷰입니다.");
+        }
+
+        // 4. 답글 엔티티 생성 및 저장
+        ReviewCommentEntity comment = ReviewCommentEntity.builder()
+                .review(review)
+                .company(company)
+                .rvcContent(request.getContent())
+                .rvcCreate(LocalDate.now())
+                .rvcStatus(ReviewCommentStatus.CREATED)
+                .build();
+
+        reviewCommentRepository.save(comment);
+    }
+
+    @Transactional
+    public void updateReviewComment(Long companyId, ReviewCommentUpdateRequest request) {
+        // 1. 답글 조회
+        ReviewCommentEntity comment = reviewCommentRepository.findById(request.getRvCommentId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 답글을 찾을 수 없습니다."));
+
+        // 2. 작성자(판매자) 검증
+        if (comment.getCompany().getCpId() != (companyId)) {
+            throw new IllegalStateException("해당 답글을 수정할 권한이 없습니다.");
+        }
+
+        // 3. 상태 확인 (삭제된 댓글은 수정 불가)
+        if (comment.getRvcStatus() == ReviewCommentStatus.DELETED) {
+            throw new IllegalStateException("삭제된 답글은 수정할 수 없습니다.");
+        }
+
+        // 4. 내용 수정
+        comment.updateContent(request.getContent());
+    }
+
+    @Transactional
+    public void deleteReviewComment(Long companyId, Long commentId) {
+        ReviewCommentEntity comment = reviewCommentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 답글을 찾을 수 없습니다."));
+
+        if (comment.getCompany().getCpId() != companyId) {
+            throw new IllegalStateException("해당 답글을 삭제할 권한이 없습니다.");
+        }
+
+        comment.markAsDeleted(); // Soft Delete 처리
     }
 }

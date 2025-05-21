@@ -1,8 +1,6 @@
 package aba3.lucid.review.service;
 
-import aba3.lucid.domain.review.dto.ReviewCreateRequest;
-import aba3.lucid.domain.review.dto.ReviewResponse;
-import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
+import aba3.lucid.domain.review.dto.*;
 import aba3.lucid.review.business.ReviewBusiness;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,5 +60,50 @@ public class ReviewService {
     @Transactional
     public void deleteReview(String userId, Long reviewId) {
         reviewBusiness.deleteReview(userId, reviewId);
+    }
+
+    /**
+     * 리뷰 답글 작성 서비스
+     *
+     * - 해당 상품의 판매자(CompanyEntity)만 작성 가능
+     * - 하나의 리뷰에 대해 한 업체당 하나의 답글만 작성 가능
+     * - Controller로부터 전달받은 요청을 비즈니스 계층에 위임
+     *
+     * @param companyId 현재 로그인한 판매자의 ID
+     * @param request 답글 작성 요청 DTO (리뷰 ID, 답글 내용 포함)
+     */
+    @Transactional
+    public void createReviewComment(Long companyId, ReviewCommentCreateRequest request) {
+        reviewBusiness.writeReviewComment(companyId, request);
+    }
+
+    /**
+     * 리뷰 답글 수정 서비스
+     *
+     * - 답글을 작성한 판매자 본인만 수정 가능
+     * - 삭제된 답글은 수정할 수 없음
+     * - Controller로부터 전달받은 요청을 비즈니스 계층에 위임
+     *
+     * @param companyId 현재 로그인한 판매자의 ID
+     * @param request 답글 수정 요청 DTO (답글 ID, 수정할 내용 포함)
+     */
+    @Transactional
+    public void updateReviewComment(Long companyId, ReviewCommentUpdateRequest request) {
+        reviewBusiness.updateReviewComment(companyId, request);
+    }
+
+    /**
+     * 리뷰 답글 삭제 서비스
+     *
+     * - 작성자(판매자) 본인만 삭제할 수 있음
+     * - 실제로 데이터를 삭제하는 것이 아니라 논리 삭제 처리
+     * - 비즈니스 계층으로 삭제 요청을 위임함
+     *
+     * @param companyId 현재 로그인한 판매자 ID
+     * @param commentId 삭제할 답글 ID
+     */
+    @Transactional
+    public void deleteReviewComment(Long companyId, Long commentId) {
+        reviewBusiness.deleteReviewComment(companyId, commentId);
     }
 }

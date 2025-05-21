@@ -3,8 +3,10 @@ package aba3.lucid.domain.review.convertor;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.enums.ReviewCommentStatus;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewResponse;
+import aba3.lucid.domain.review.entity.ReviewCommentEntity;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.entity.ReviewImageEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -60,19 +62,33 @@ public class ReviewConvertor {
          * ReviewEntity → ReviewResponse 변환 메서드
          * - 사용자에게 보여줄 데이터만 포함된 DTO를 생성한다.
          * - 작성자 닉네임, 리뷰 내용, 평점, 이미지 URL 리스트, 작성일시를 포함한다.
+         * - 리뷰에 달린 답글(ReviewCommentEntity)이 존재하고 삭제되지 않은 경우에만 답글 내용도 포함한다.
          */
+
+        ReviewCommentEntity comment = review.getReviewComment(); // 리뷰에 연결된 답글
+
         return ReviewResponse.builder()
-                .nickname(review.getUser().getUserNickName()) // 작성자 닉네임
-                .content(review.getRvContent())               // 리뷰 본문 내용
-                .score(review.getRvScore())                   // 리뷰 평점
-                .imageUrls(
-                        review.getImageList() != null             // 이미지가 존재하는 경우에만 변환
+                .nickname(review.getUser().getUserNickName())          // 작성자 닉네임
+                .content(review.getRvContent())                       // 리뷰 본문 내용
+                .score(review.getRvScore())                           // 리뷰 평점
+                .imageUrls(                                           // 이미지 URL 리스트
+                        review.getImageList() != null
                                 ? review.getImageList().stream()
                                 .map(ReviewImageEntity::getRvImageUrl)
                                 .toList()
-                                : List.of()                           // 이미지가 없으면 빈 리스트 반환
+                                : List.of()
                 )
-                .createdAt(review.getRvCreate())              // 작성일시
+                .createdAt(review.getRvCreate())                      // 리뷰 작성일시
+                .replyContent(                                        // 답글 내용 (있고, 삭제되지 않았을 때만)
+                        comment != null && comment.getRvcStatus() != ReviewCommentStatus.DELETED
+                                ? comment.getRvcContent()
+                                : null
+                )
+                .replyCreatedAt(                                      // 답글 작성일시
+                        comment != null && comment.getRvcStatus() != ReviewCommentStatus.DELETED
+                                ? comment.getRvcCreate()
+                                : null
+                )
                 .build();
     }
 }

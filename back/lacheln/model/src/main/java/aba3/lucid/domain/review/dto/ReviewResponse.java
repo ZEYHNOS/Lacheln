@@ -2,6 +2,7 @@ package aba3.lucid.domain.review.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,5 +23,7 @@ public class ReviewResponse {
     private Double score;                   // 리뷰 평점
     private List<String> imageUrls;         // 첨부 이미지 URL 리스트
     private LocalDateTime createdAt;        // 작성일시
+    private String replyContent;       // 판매자가 작성한 답글 내용
+    private LocalDate replyCreatedAt;  // 답글 작성일 (삭제된 경우 null)
 
 }

@@ -1,6 +1,8 @@
 package aba3.lucid.product.business;
 
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.api.Pagination;
+import aba3.lucid.common.api.PaginationConverter;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.image.ImageType;
 import aba3.lucid.common.status_code.ErrorCode;
@@ -23,6 +25,8 @@ import aba3.lucid.packages.service.PackageService;
 import aba3.lucid.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -40,12 +44,13 @@ public class ProductBusiness {
 
     private final ProductConverter productConverter;
     private final PackageToProductConverter packageToProductConverter;
+    private final PaginationConverter paginationConverter;
 
-    // 특정 업체의 상품 리스트 todo 로직 제대로 짜기
-    public List<ProductResponse> getProductList(CompanyCategory category, int minimum, int maximum, boolean isDesc) {
-        List<ProductEntity> productEntityList = productService.getProductList(category, minimum, maximum, isDesc);
+    // 특정 업체의 상품 리스트
+    public Page<ProductResponse> getProductList(CompanyCategory category, Integer minimum, Integer maximum, Boolean isDesc, Pageable pageable) {
+        Page<ProductEntity> productEntityPage = productService.getProductList(category, minimum, maximum, isDesc, pageable);
 
-        return productConverter.toResponseList(productEntityList);
+        return productConverter.toResponseList(productEntityPage);
     }
 
 

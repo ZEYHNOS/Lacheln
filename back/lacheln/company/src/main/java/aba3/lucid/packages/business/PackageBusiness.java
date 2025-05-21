@@ -1,22 +1,16 @@
 package aba3.lucid.packages.business;
 
-import aba3.lucid.alert.service.CompanyAlertService;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
-import aba3.lucid.domain.alert.dto.CompanyAlertDto;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.converter.PackageConverter;
-import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
-import aba3.lucid.domain.packages.dto.PackageResponse;
-import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
+import aba3.lucid.domain.packages.dto.*;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.packages.service.PackageService;
-import aba3.lucid.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @Slf4j
@@ -90,5 +84,18 @@ public class PackageBusiness {
         Validator.throwIfInvalidId(companyId, packageId, productId);
 
         packageService.deletePackageProduct(companyId, packageId, productId);
+    }
+
+
+    public List<PackageUserViewListResponse> getPackageList() {
+        List<PackageEntity> packageEntityList = packageService.findAllByActivePackage();
+
+        return packageConverter.toUserViewResponseList(packageEntityList);
+    }
+
+    public PackageDetailInfoUserViewResponse getPackageDetailInfo(Long packageId) {
+        PackageEntity packageEntity = packageService.findByIdWithThrow(packageId);
+
+        return packageConverter.toPackageDetailInfo(packageEntity);
     }
 }

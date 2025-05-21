@@ -30,7 +30,6 @@ public class PackageToProductEntity {
     // 부모 테이블에서 데이터 제거시 매핑 테이블에서도 제거되도록 Cascade 적용
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pack_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private PackageEntity packageEntity;
 
     @Column(name = "cp_id")

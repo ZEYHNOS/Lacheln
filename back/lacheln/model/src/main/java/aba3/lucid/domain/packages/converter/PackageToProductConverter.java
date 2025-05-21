@@ -5,12 +5,14 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.PackageCompanyResponse;
+import aba3.lucid.domain.packages.dto.PackageProductResponse;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.repository.PackageToProductRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 @Converter
@@ -55,6 +57,26 @@ public class PackageToProductConverter {
                 .category(company.getCpCategory())
                 .profileImageUrl(company.getCpProfile())
                 .build()
+                ;
+    }
+
+    public PackageProductResponse toPackageProductResponse(PackageToProductEntity packageToProduct) {
+        String productImageUrl = packageToProduct.getProduct().getImageList().isEmpty()
+                ? "/default/product.png" : packageToProduct.getProduct().getImageList().get(0).getPdImageUrl();
+
+        return PackageProductResponse.builder()
+                .companyName(packageToProduct.getProduct().getCompany().getCpName())
+                .productName(packageToProduct.getProduct().getPdName())
+                .price(packageToProduct.getProduct().getPdPrice())
+                .imageUrl(productImageUrl)
+                .build()
+                ;
+    }
+
+    public List<PackageProductResponse> toPackageProductResponseList(List<PackageToProductEntity> packageToProductEntityList) {
+        return packageToProductEntityList.stream()
+                .map(this::toPackageProductResponse)
+                .toList()
                 ;
     }
 }

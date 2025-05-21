@@ -14,18 +14,21 @@ import java.math.BigInteger;
 public class ProductResponse {
 
     // 정렬을 위한 id
-    private long id;
+    private Long productId;
 
     // 상품 이름
-    private String name;
+    private String productName;
+
+    // 업체 이름
+    private String companyName;
 
     // 가격
     private BigInteger price;
 
-    // 상태
-    private ProductStatus status;
-
     // 대표 이미지
     private String imageUrl;
+
+    // 상태
+    private ProductStatus status;
 
 }

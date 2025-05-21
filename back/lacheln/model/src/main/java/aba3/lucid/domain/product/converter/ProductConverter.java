@@ -8,6 +8,7 @@ import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -29,10 +30,11 @@ public class ProductConverter {
 //        }
 
         return ProductResponse.builder()
-                .id(entity.getPdId())
-                .name(entity.getPdName())
+                .productId(entity.getPdId())
+                .productName(entity.getPdName())
                 .price(entity.getPdPrice())
                 .imageUrl(entity.getImageList().get(0).getPdImageUrl())
+                .companyName(entity.getCompany().getCpName())
                 .status(entity.getPdStatus())
                 .build()
                 ;
@@ -42,6 +44,12 @@ public class ProductConverter {
         return productEntityList.stream()
                 .map(this::toResponse)
                 .toList()
+                ;
+    }
+
+    public Page<ProductResponse> toResponseList(Page<ProductEntity> productEntityPage) {
+        return productEntityPage
+                .map(this::toResponse)
                 ;
     }
 }

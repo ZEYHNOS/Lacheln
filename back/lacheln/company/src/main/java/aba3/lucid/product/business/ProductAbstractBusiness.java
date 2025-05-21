@@ -99,15 +99,10 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
     public abstract CompanyCategory getCategory();
 
     // 상품 상세 정보
-    public RES getProductDetailInfo(Long companyId, Long productId) {
-        Validator.throwIfInvalidId(companyId, productId);
+    public RES getProductDetailInfo(Long productId) {
+        Validator.throwIfInvalidId(productId);
 
         ENTITY existingProduct = productService.findByIdWithThrow(productId);
-
-        // 요청한 업체가 본인 상품이 아닐 경우
-        if (existingProduct.getCompany().getCpId() != companyId) {
-            throw new ApiException(ErrorCode.UNAUTHORIZED);
-        }
 
         // 삭제된 상품일 때
         if (existingProduct.getPdStatus() == ProductStatus.REMOVE) {

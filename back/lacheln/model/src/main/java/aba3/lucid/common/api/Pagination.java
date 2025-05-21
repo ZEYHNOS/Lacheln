@@ -26,9 +26,6 @@ public class Pagination {
     // 총 요소 수
     private Long totalElement;
 
-    // 정렬 기준 (word, added_date)
-    private String sortBy;
-
     // 정렬 순서 (asc, desc)
     private String order;
 

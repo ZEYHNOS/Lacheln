@@ -64,11 +64,9 @@ public class MakeupController {
     @GetMapping("/{productId}")
     @Operation(summary = "메이크업 상품 상세")
     public API<MakeUpResponse> getStudioDetailInfo(
-            @PathVariable Long productId,
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
+            @PathVariable Long productId
     ) {
-//        MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(customUserDetails.getCompanyId(), productId);
-        MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(3L, productId);
+        MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(productId);
 
         return API.OK(makeUpResponse);
     }

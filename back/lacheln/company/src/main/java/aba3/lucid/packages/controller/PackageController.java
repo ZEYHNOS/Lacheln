@@ -2,9 +2,7 @@ package aba3.lucid.packages.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
-import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
-import aba3.lucid.domain.packages.dto.PackageResponse;
-import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
+import aba3.lucid.domain.packages.dto.*;
 import aba3.lucid.packages.business.PackageBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -104,6 +102,26 @@ public class PackageController {
         packageBusiness.deletePackageProduct(1L, packageId, productId);
 
         return API.OK("상품이 삭제되었습니다.");
+    }
+
+
+    @GetMapping
+    @Operation(summary = "패키지 리스트", description = "유저용")
+    public API<List<PackageUserViewListResponse>> getPackageList() {
+        List<PackageUserViewListResponse> packageResponseList = packageBusiness.getPackageList();
+
+        return API.OK(packageResponseList);
+    }
+
+
+    @GetMapping("/info/{packageId}")
+    @Operation(summary = "패키지 상세 정보", description = "유저용")
+    public API<PackageDetailInfoUserViewResponse> getPackageInfoUserView(
+            @PathVariable Long packageId
+    ) {
+        PackageDetailInfoUserViewResponse result = packageBusiness.getPackageDetailInfo(packageId);
+
+        return API.OK(result);
     }
 
 

@@ -1,7 +1,6 @@
 package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -15,7 +14,8 @@ import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -45,10 +45,8 @@ public class ProductService {
     }
 
     // todo 검색어 만들기
-    public List<ProductEntity> getProductList(CompanyCategory category, int minimum, int maximum, boolean isDesc) {
-        Sort sort = isDesc ? Sort.by(Sort.Order.desc("id")) : Sort.by(Sort.Order.asc("id"));
-
-        return List.of();
+    public Page<ProductEntity> getProductList(CompanyCategory category, Integer minimum, Integer maximum, Boolean isDesc, Pageable pageable) {
+        return productRepository.filteringProducts(category, minimum, maximum, pageable, ProductStatus.ACTIVE);
     }
 
     // 해시 태그로 상품 찾기

@@ -2,8 +2,10 @@ package aba3.lucid.domain.packages.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.packages.dto.PackageDetailInfoUserViewResponse;
 import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
 import aba3.lucid.domain.packages.dto.PackageResponse;
+import aba3.lucid.domain.packages.dto.PackageUserViewListResponse;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.product.enums.PackageStatus;
 import lombok.RequiredArgsConstructor;
@@ -58,4 +60,34 @@ public class PackageConverter {
                 ;
     }
 
+    public List<PackageUserViewListResponse> toUserViewResponseList(List<PackageEntity> packageEntityList) {
+        return packageEntityList.stream()
+                .map(this::toUserViewResponse)
+                .toList()
+                ;
+    }
+
+    public PackageUserViewListResponse toUserViewResponse(PackageEntity packageEntity) {
+        return PackageUserViewListResponse.builder()
+                .packageId(packageEntity.getPackId())
+                .packageName(packageEntity.getPackName())
+                .imageUrl(packageEntity.getPackImageUrl())
+                .packageProductResponseList(packageToProductConverter.toPackageProductResponseList(packageEntity.getPackageToProductEntityList()))
+                .createAt(packageEntity.getPackCreateDate())
+                .discountrate(packageEntity.getPackDiscountrate())
+                .build()
+                ;
+    }
+
+    public PackageDetailInfoUserViewResponse toPackageDetailInfo(PackageEntity packageEntity) {
+        return PackageDetailInfoUserViewResponse.builder()
+                .packageId(packageEntity.getPackId())
+                .name(packageEntity.getPackName())
+                .descriptionList(packageDescriptionConverter.toDescriptionResponseList(packageEntity.getPackageDescriptionEntityList()))
+                .imageUrl(packageEntity.getPackImageUrl())
+                .productInfoList(packageToProductConverter.toPackageProductResponseList(packageEntity.getPackageToProductEntityList()))
+                .discountrate(packageEntity.getPackDiscountrate())
+                .build()
+                ;
+    }
 }

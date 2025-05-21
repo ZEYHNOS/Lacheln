@@ -5,9 +5,7 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.PackageErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
-import aba3.lucid.domain.alert.dto.CompanyAlertDto;
 import aba3.lucid.domain.description.AbstractDescriptionConverter;
-import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
 import aba3.lucid.domain.packages.entity.PackageDescriptionEntity;
 import aba3.lucid.domain.packages.entity.PackageEntity;
@@ -87,7 +85,7 @@ public class PackageService {
         // 방장의 요청이 아닐 때
         throwIfNotAdminRequest(entity, companyId);
         // 패키지 상태가 비공개가 아닐 때
-        throwIfNotEqualsStatus(entity, PackageStatus.PRIVATE, "상품이 삭제되거나 이미 등록되어있습니다.");
+        throwIfNotEqualsStatus(entity, PackageStatus.INACTIVE, "상품이 삭제되거나 이미 등록되어있습니다.");
         // 3가지 업체가 초대가 되었는지
         throwIfNotInvitedAllRequiredCompanies(entity);
 
@@ -176,7 +174,7 @@ public class PackageService {
         throwIfImpossibleToPublicChange(packageEntity, adminId);
 
         // 상태 변경 후 저장
-        packageEntity.updatePackageStatus(PackageStatus.PUBLIC);
+        packageEntity.updatePackageStatus(PackageStatus.ACTIVE);
         return packageRepository.save(packageEntity);
     }
 
@@ -215,7 +213,7 @@ public class PackageService {
         productService.throwIfNotOwnProduct(product, companyId);
 
         // 이미 패키지가 PUBLIC 이면 BLOCK
-        if (packageEntity.getPackStatus().equals(PackageStatus.PUBLIC)) {
+        if (packageEntity.getPackStatus().equals(PackageStatus.ACTIVE)) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "이미 패키지를 등록하셨습니다. 삭제를 원하신다면 고객센터에 문의해주세요");
         }
 
@@ -231,5 +229,13 @@ public class PackageService {
     public PackageToProductEntity findByPackIdAndCpId(Long packId, Long cpId) {
         return packageToProductRepository.findByPackageEntity_PackIdAndCpId(packId, cpId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+    }
+
+    // 활성화된 패키지 상품만 볼 수 있음
+    public List<PackageEntity> findAllByActivePackage() {
+        return packageRepository.findAll().stream()
+                .filter(it -> it.getPackStatus().equals(PackageStatus.ACTIVE))
+                .toList()
+                ;
     }
 }

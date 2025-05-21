@@ -73,11 +73,9 @@ public class DressController {
     @GetMapping("/{productId}")
     @Operation(summary = "드래스 상품 상세")
     public API<DressResponse> getDressDetailInfo(
-            @PathVariable Long productId,
-            @AuthenticationPrincipal CustomUserDetails customUserDetails
+            @PathVariable Long productId
     ) {
-//        DressResponse dressResponse = dressBusiness.getProductDetailInfo(customUserDetails.getCompanyId(), productId);
-        DressResponse dressResponse = dressBusiness.getProductDetailInfo(1L, productId);
+        DressResponse dressResponse = dressBusiness.getProductDetailInfo(productId);
 
         return API.OK(dressResponse);
     }

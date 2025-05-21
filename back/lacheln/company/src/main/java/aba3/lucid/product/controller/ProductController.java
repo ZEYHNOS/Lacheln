@@ -1,25 +1,30 @@
 package aba3.lucid.product.controller;
 
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.api.Pagination;
+import aba3.lucid.common.api.PaginationConverter;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
-import aba3.lucid.domain.product.dto.ProductDetailResponse;
 import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
-import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.product.business.ProductBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.data.domain.Pageable;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
@@ -27,17 +32,22 @@ import java.util.List;
 public class ProductController {
 
     private final ProductBusiness productBusiness;
+    private final PaginationConverter paginationConverter;
 
-    @GetMapping("/")
+    @GetMapping()
     public API<List<ProductResponse>> getProductList(
-            @RequestParam(required = false) CompanyCategory category,
-            @RequestParam(required = false) int minimum,
-            @RequestParam(required = false) int maximum,
-            @RequestParam(defaultValue = "true") boolean isDesc
-    ) {
-        List<ProductResponse> productResponseList = productBusiness.getProductList(category, minimum, maximum, isDesc);
+            @RequestParam(defaultValue = "D") CompanyCategory category,
+            @RequestParam(defaultValue = "0") Integer minimum,
+            @RequestParam(defaultValue = "1000000") Integer maximum,
+            @RequestParam(defaultValue = "true") Boolean isDesc,
+            @PageableDefault(page = 0, size = 12) Pageable pageable
+        ) {
+        log.info("정렬 중 :  카테고리 {}, minimum : {}, maximum : {}, isDesc : {}, page : {}", category, minimum, maximum, isDesc, pageable);
+        Page<ProductResponse> productResponsePage = productBusiness.getProductList(category, minimum, maximum, isDesc, pageable);
+        Pagination pagination = paginationConverter.createPagination(productResponsePage, pageable, "desc");
+        log.info("product Response : {}", productResponsePage);
 
-        return API.OK(productResponseList);
+        return API.OK(productResponsePage.stream().toList(), pagination);
     }
 
     @PostMapping("/package/register/{packageId}")

@@ -5,7 +5,6 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.PackageUpdateRequest;
-import aba3.lucid.domain.product.dto.DescriptionRequest;
 import aba3.lucid.domain.product.enums.PackageStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -50,6 +49,9 @@ public class PackageEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CompanyEntity packCompany2; // 패키지 업체 2
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "packageEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PackageToProductEntity> packageToProductEntityList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "packageEntity", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -178,6 +180,6 @@ public class PackageEntity {
         updatePackageEndDate(request.getEndDate());
         updatePackageImageUrl(request.getImageUrl());
         updatePackageDiscountrate(request.getDiscountrate());
-        updatePackageStatus(PackageStatus.PRIVATE);
+        updatePackageStatus(PackageStatus.INACTIVE);
     }
 }

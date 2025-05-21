@@ -5,6 +5,8 @@ import aba3.lucid.domain.payment.repository.PayDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,4 +19,7 @@ public class PayDetailService {
         return payDetailRepository.findAllByCpId(companyId);
     }
 
+    public List<PayDetailEntity> getPayDetailList(Long pdId, LocalDateTime start, LocalDateTime end)    {
+        return payDetailRepository.findByPdIdAndDateTime(pdId, start, end);
+    }
 }

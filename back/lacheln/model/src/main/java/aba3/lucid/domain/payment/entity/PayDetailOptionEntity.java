@@ -21,7 +21,7 @@ public class PayDetailOptionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long payDetailOptionId;
 
-    @JoinColumn(name = "pay_id", nullable = false)
+    @JoinColumn(name = "pay_detail_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private PayDetailEntity payDetail;
 
@@ -40,4 +40,8 @@ public class PayDetailOptionEntity {
     // 추가 금액
     @Column(name = "pay_op_plus_cost", nullable = false)
     private BigInteger payOpPlusCost;
+    
+    // 옵션 소요 시간
+    @Column(name = "pay_op_task_time", nullable = false)
+    private Integer payOpTaskTime;
 }

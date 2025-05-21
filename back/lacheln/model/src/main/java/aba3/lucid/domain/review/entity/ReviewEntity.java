@@ -1,5 +1,6 @@
 package aba3.lucid.domain.review.entity;
 
+import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -31,6 +32,9 @@ public class ReviewEntity {
     @OneToOne
     @JoinColumn(name = "pay_id")
     private PayManagementEntity payManagement;
+
+    @OneToOne
+    private PayDetailEntity payDetailEntity;
 
     // 상품
     @OneToOne

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from "react-route
 import Header from "./components/Tool/Header";
 import Footer from "./components/Tool/Footer";
 import LoginPage from "./components/Login/LoginPage";
+import ReportPage from "./components/Report/ReportPage";
 import UserRegisterPage from "./components/Login/Register/UserRegisterPage";
 import UserRegisterForm from "./components/Login/Register/UserRegisterForm";
 import CompanyRegisterPage from "./components/Login/Register/CompanyRegisterPage";
@@ -16,7 +17,11 @@ import Statistics from "./components/Company/Companyinfo/Statistics";
 import ProductManagement from "./components/Company/Management/Product/Product";
 import OrderManagement from "./components/Company/Management/Order";
 import ReviewManagement from "./components/Company/Management/Review";
-import Collaboration from "./components/Company/Work/Collaboration";
+import Collaboration from "./components/Company/Work/Collaboration/Collaboration.jsx";
+import Setproduct from "./components/Company/Work/Collaboration/AddPackage/Setproduct.jsx";
+import Setpackage from "./components/Company/Work/Collaboration/AddPackage/Setpackage.jsx";
+import ViewPackage from "./components/Company/Work/Collaboration/ViewPackage.jsx";
+import EditPackage from "./components/Company/Work/Collaboration/EditPackage.jsx";
 import Messenger from "./components/Company/Work/Messenger";
 import Notification from "./components/Company/Work/Notification";
 import Schedule from "./components/Company/Work/Schedule";
@@ -26,6 +31,7 @@ import EditProduct from "./components/Company/Management/Product/EditProduct.jsx
 import MainPage from "./components/User/Mainpage/MainPage.jsx"
 import Brand from "./components/User/BrandPage/Brand.jsx"
 import Product from "./components/User/ProductPage/Product.jsx"
+import Productdetail from "./components/User/ProductPage/Productdetail.jsx"
 import Package from "./components/User/PackagePage/Package.jsx"
 import Event from "./components/User/EventPage/Event.jsx"
 import BoardPage from "./components/User/CommunityPage/BoardPage.jsx"
@@ -33,6 +39,10 @@ import CreatePost from "./components/User/CommunityPage/CreatePost.jsx"
 import UpdatePost from "./components/User/CommunityPage/UpdatePost.jsx"
 import PostDetail from "./components/User/CommunityPage/PostDetail.jsx";
 import Support from "./components/User/SupportPage/Support.jsx"
+import InquiryForm from "./components/User/SupportPage/InquiryForm.jsx"
+import Consult from "./components/User/SupportPage/Consult.jsx"
+import Chatbot from "./components/User/SupportPage/Chatbot.jsx"
+import Suggestion from "./components/User/SupportPage/Suggestion.jsx"
 import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
 
 
@@ -102,6 +112,7 @@ function App() {
                 <Route path="/brand" element={<Layout><Brand /></Layout>} />
                 {/* 상품 페이지 */}
                 <Route path="/product" element={<Layout><Product /></Layout>} />
+                <Route path="/product/:productid" element={<Layout><Productdetail /></Layout>} />
                 {/* 패키지 페이지 */}
                 <Route path="/package" element={<Layout><Package /></Layout>} />
                 {/* 이벤트 페이지 */}
@@ -113,6 +124,11 @@ function App() {
                 <Route path="/post/:id" element={<Layout><PostDetail /></Layout>} />
                 {/* 고객지원 */}
                 <Route path="/support" element={<Layout><Support /></Layout>} />
+                <Route path="/inquiry" element={<Layout><InquiryForm /></Layout>} />
+                <Route path="/consult" element={<Layout><Consult /></Layout>} />
+                <Route path="/chatbot" element={<Layout><Chatbot /></Layout>} />
+                <Route path="/suggestion" element={<Layout><Suggestion /></Layout>} />
+            
                 {/* 회사관련 네비게이션 */}
                 <Route path="/about" element={<Layout><About /></Layout>} />
                 <Route path="/terms" element={<Layout><Terms /></Layout>} />
@@ -134,9 +150,20 @@ function App() {
                 <Route path="/company/review" element={<CompanyLayout><ReviewManagement /></CompanyLayout>} />
                 {/* 업무페이지(협업, 메신저, 알림, 일정) */}
                 <Route path="/company/collaboration" element={<CompanyLayout><Collaboration /></CompanyLayout>} />
+                <Route path="/company/collaboration/setproduct" element={<CompanyLayout><Setproduct /></CompanyLayout>} />
+                <Route path="/company/collaboration/setproduct/:id" element={<CompanyLayout><Setproduct /></CompanyLayout>} />
+                <Route path="/company/collaboration/setpackage/:id" element={<CompanyLayout><Setpackage /></CompanyLayout>} />
+                <Route path="/company/collaboration/package/:id" element={<CompanyLayout><ViewPackage /></CompanyLayout>} />
+                <Route path="/company/collaboration/package/edit/:packageId" element={<CompanyLayout><EditPackage /></CompanyLayout>} />
                 <Route path="/company/messenger" element={<CompanyLayout><Messenger /></CompanyLayout>} />
                 <Route path="/company/notification" element={<CompanyLayout><Notification /></CompanyLayout>} />
                 <Route path="/company/schedule" element={<CompanyLayout><Schedule /></CompanyLayout>} />
+                <Route path="/report" element={<ReportPage />} />
+                <Route path="/report/:id" element={<ReportPage />} />
+                {/* … your existing routes … */}
+                <Route path="/report" element={<ReportPage />} />
+                {/* or if you want to accept params */}
+                <Route path="/report/:id" element={<ReportPage />} />
             </Routes>
         </Router>
     );

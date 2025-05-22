@@ -7,9 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PaymentErrorCode implements StatusCodeIfs{
 
-    INTERNAL_SERVER_ERROR(500, 100500, "test"),
     NO_PRODUCT_FOR_PAYMENT(400, 100401, "결제할 상품이 존재하지 않습니다."),
-
+    CANCEL(400, 100402, "결제가 취소되었습니다."),
+    BAD_REQUEST(400, 100403, "잘못된 결제 요청")
     ;
 
 

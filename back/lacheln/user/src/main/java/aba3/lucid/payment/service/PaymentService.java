@@ -3,11 +3,13 @@ package aba3.lucid.payment.service;
 import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.status_code.PaymentErrorCode;
 import aba3.lucid.domain.cart.entity.CartEntity;
 import aba3.lucid.domain.coupon.dto.CouponVerifyRequest;
 import aba3.lucid.domain.coupon.dto.CouponVerifyResponse;
 import aba3.lucid.domain.payment.dto.PaymentVerifyRequest;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
+import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -36,25 +38,37 @@ public class PaymentService {
 
     private final CartService cartService;
     private final UserService userService;
+    private final PayDetailService payDetailService;
 
     private final PayManagementRepository payManagementRepository;
 
+    // PaymentErrorCode.BAD_REQUEST => ExceptionHandler 에서 환불 로직 실행
     @Transactional
-    public PayManagementEntity save(PayManagementEntity entity) {
-        // 가격 확인하기
+    public PayManagementEntity save(PayManagementEntity entity, List<Long> cartIdList) {
+        // 만약 취소 되었다면 취소 메세지 보내기
+        if (entity.getPayStatus().equals(PaymentStatus.Cancel)) {
+            throw new ApiException(PaymentErrorCode.CANCEL);
+        }
 
-        // 쿠폰 정합성 검사하기
+        // 마일리지 차감하기
+        userService.deductMileage(entity.getUser(), entity.getPayMileage());
 
-        // 일정이 요청 사이에 예약 되었는지 확인하기
-        // 만약 그 사이에 일정이 등록되었다면 환불 로직을 실행하기
+        // 장바구니에서 삭제하기
+        cartService.removeCart(cartIdList);
 
-        // 전부 확인이 되었다면 저장하고 쿠폰 사용으로 처리하고 일정에 등록하기
+        // TODO RABBITMQ SETTING
+
+        // 업체에 알림 보내기
+        rabbitTemplate.convertAndSend("메세지 객체 생성한 후 보내기");
+
+        // 업체 캘린더에 데이터 넣기
+        rabbitTemplate.convertAndSend("캘린더 용 데이터 만들어서 보내기");
 
         return payManagementRepository.save(entity);
     }
 
-    public PayManagementEntity refund(String id) {
-        PayManagementEntity entity = findByIdWithThrow(id);
+    @Transactional
+    public PayManagementEntity refund(PayManagementEntity entity) {
 
         entity.refund();
         // TODO 환불 로직
@@ -68,6 +82,7 @@ public class PaymentService {
         return payManagementRepository.save(entity);
     }
 
+    // MerchantID 발급
     public String generateMerchantUid() {
         return "order-" + LocalDate.now() + "-" + UUID.randomUUID();
     }
@@ -157,6 +172,7 @@ public class PaymentService {
         return payManagementRepository.findAllByUser_userId(userId);
     }
 
+    // 마일리지 검증하기
     private void verifyMileage(String userId, BigInteger mileage) {
         UsersEntity user = userService.findByIdWithThrow(userId);
 

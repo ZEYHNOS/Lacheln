@@ -5,6 +5,7 @@ import aba3.lucid.common.enums.Weekdays;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.schedule.convertor.WeekdaysScheduleConvertor;
+import aba3.lucid.domain.schedule.dto.BusinessHourResponse;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
 import aba3.lucid.domain.schedule.repository.WeekdaysScheduleRepository;
@@ -35,6 +36,22 @@ public class WeekdaysScheduleService {
         weekdaysScheduleConvertor.updateEntity(dtoList, entity);
         return Collections.singletonList(weekdaysScheduleRepository.save(entity));
 
+    }
+
+    // [일,월,화,수,목,금,토] 영업 시간 리스트
+    public BusinessHourResponse[] getBusinessHour(Long companyId) {
+        BusinessHourResponse[] result = new BusinessHourResponse[7];
+
+        List<WeekdaysScheduleEntity> weekdaysScheduleEntityList = findAllByCompanyId(companyId);
+        for (WeekdaysScheduleEntity entity : weekdaysScheduleEntityList) {
+            result[entity.getWsWeekdays().getValue()-1] = BusinessHourResponse.builder()
+                    .start(entity.getWsStart())
+                    .end(entity.getWsEnd())
+                    .build()
+            ;
+        }
+
+        return result;
     }
 
     public WeekdaysScheduleEntity findByThrowId(long wsId) {

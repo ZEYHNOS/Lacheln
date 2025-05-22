@@ -44,7 +44,7 @@ public class PaymentBusiness {
         UsersEntity user = userService.findByIdWithThrow(userId);
         PayManagementEntity payManagement = paymentConvertor.toEntity(request, user);
 
-        PayManagementEntity savedPayManagement = paymentService.save(payManagement);
+        PayManagementEntity savedPayManagement = paymentService.save(payManagement, request.getCartIdList());
 
         return paymentConvertor.toResponse(savedPayManagement);
     }

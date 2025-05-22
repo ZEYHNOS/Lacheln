@@ -2,12 +2,14 @@ package aba3.lucid.user.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.status_code.PaymentErrorCode;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.Optional;
 
 @Slf4j
@@ -46,5 +48,20 @@ public class UserService {
     // 요청된 유저 ID를 기반으로 유저 DROP진행
     public void deleteById(String userId) {
         usersRepository.deleteById(userId);
+    }
+
+    // 유저 마일리지 차감하기
+    public void deductMileage(UsersEntity user, BigInteger usedMileage) {
+        if (user.getUserMileage().compareTo(usedMileage) < 0) {
+            throw new ApiException(PaymentErrorCode.BAD_REQUEST, "보유하신 마일리지가 부족합니다.");
+        }
+
+        user.setMileage(user.getUserMileage().subtract(usedMileage));
+        usersRepository.save(user);
+    }
+
+    // 마일리지 추가하기
+    public void addMileage(UsersEntity user, BigInteger mileage) {
+
     }
 }

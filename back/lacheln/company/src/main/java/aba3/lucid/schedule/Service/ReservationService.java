@@ -1,10 +1,8 @@
 package aba3.lucid.schedule.Service;
 
 import aba3.lucid.common.enums.Weekdays;
-import aba3.lucid.domain.schedule.dto.BusinessHourResponse;
 import aba3.lucid.domain.schedule.entity.RegularHolidayEntity;
 import aba3.lucid.domain.schedule.entity.TemporaryHolidayEntity;
-import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ public class ReservationService {
 
     private final RegularHolidayService regularHolidayService; // 정기 휴일 service
     private final TemporaryHolidayService temporaryHolidayService; // 임시 휴일 service
-    private final WeekdaysScheduleService weekdaysScheduleService; // 요일별 일정 service 월~일 시간
 
     // 해당 월 휴일 리스트
     public List<LocalDate> getHolidayList(Long companyId) {
@@ -35,22 +32,6 @@ public class ReservationService {
         holidaySet.addAll(getRegularHolidayList(companyId));
 
         return holidaySet.stream().toList();
-    }
-
-    // [일,월,화,수,목,금,토] 영업 시간 리스트
-    public BusinessHourResponse[] getBusinessHour(Long companyId) {
-        BusinessHourResponse[] result = new BusinessHourResponse[7];
-
-        List<WeekdaysScheduleEntity> weekdaysScheduleEntityList = weekdaysScheduleService.findAllByCompanyId(companyId);
-        for (WeekdaysScheduleEntity entity : weekdaysScheduleEntityList) {
-            result[entity.getWsWeekdays().getValue()-1] = BusinessHourResponse.builder()
-                    .start(entity.getWsStart())
-                    .end(entity.getWsEnd())
-                    .build()
-                    ;
-        }
-
-        return result;
     }
 
 

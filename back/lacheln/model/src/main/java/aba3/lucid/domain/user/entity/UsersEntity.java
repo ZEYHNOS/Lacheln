@@ -168,4 +168,12 @@ public class UsersEntity {
     public static String createWithUUIDv1() {
         return Generators.timeBasedGenerator().generate().toString();
     }
+
+    public void setMileage(BigInteger mileage) {
+        if (mileage == null) {
+            return;
+        }
+
+        this.userMileage = mileage;
+    }
 }

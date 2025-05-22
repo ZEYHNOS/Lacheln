@@ -8,6 +8,7 @@ import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.schedule.convertor.WeekdaysScheduleConvertor;
+import aba3.lucid.domain.schedule.dto.BusinessHourResponse;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleResponse;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
@@ -117,4 +118,8 @@ public class WeekdaysScheduleBusiness {
         return weekdaysScheduleConvertor.toResponseList(updated);
     }
 
+    // 영업시간
+    public BusinessHourResponse[] getBusinessHourArray(Long companyId) {
+        return weekdaysScheduleService.getBusinessHour(companyId);
+    }
 }

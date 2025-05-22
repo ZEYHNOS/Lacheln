@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -54,5 +55,5 @@ public class CartDetailEntity {
     private BigInteger optionPrice; // 해당 옵션 가격
 
     @Column(name = "op_tasktime", nullable = false)
-    private int optionTaskTime; // 옵션 작업 추가 시간
+    private LocalTime optionTaskTime; // 옵션 작업 추가 시간
 }

@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -30,6 +31,9 @@ public class PayDetailRequest {
 
     // 일정 날짜
     private LocalDateTime scheduleDate;
+
+    // 작업 시간
+    private LocalTime taskTime;
 
     // 해당 상품 옵션 리스트
     private List<PayDetailOptionRequest> payDetailOptionEntityList;

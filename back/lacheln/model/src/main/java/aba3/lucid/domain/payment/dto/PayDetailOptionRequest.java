@@ -3,6 +3,7 @@ package aba3.lucid.domain.payment.dto;
 import lombok.*;
 
 import java.math.BigInteger;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -19,6 +20,9 @@ public class PayDetailOptionRequest {
 
     // 수량
     private int quantity;
+
+    // 옵션 추가 작업 시간
+    private LocalTime taskTime;
 
     // 가격(1개)
     private BigInteger payOpPlusCost;

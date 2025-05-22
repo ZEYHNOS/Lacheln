@@ -15,6 +15,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigInteger;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -40,8 +41,7 @@ public class ProductRequest implements ProductRequestIfs {
     private BinaryChoice rec;
 
     // 소요 시간
-    @Min(value = 30, message = "최소 작업시간 30분입니다.")
-    private int taskTime;
+    private LocalTime taskTime;
 
     // 설명
     private List<DescriptionRequest> descriptionList;

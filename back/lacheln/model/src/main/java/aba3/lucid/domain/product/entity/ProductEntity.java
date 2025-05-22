@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +61,7 @@ public abstract class ProductEntity {
 
     // 상품 소요 시간
     @Column(name = "pd_tasktime", nullable = false)
-    private int pdTaskTime;
+    private LocalTime pdTaskTime;
 
     // 상품 설명(블로그처럼 이미지, 동영상을 업체가 자유롭게 저장)
     @JsonIgnore
@@ -193,8 +194,8 @@ public abstract class ProductEntity {
     }
 
     // 소요 시간 변경
-    public void setTaskTime(int time) {
-        if (time <= 0) {
+    public void setTaskTime(LocalTime time) {
+        if (time == null) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "소요 시간 값이 0 혹은 음수 입니다.");
         }
 

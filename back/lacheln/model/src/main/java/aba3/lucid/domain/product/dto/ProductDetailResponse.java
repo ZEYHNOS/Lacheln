@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigInteger;
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -32,7 +33,7 @@ public class ProductDetailResponse {
     private BinaryChoice rec;
 
     // 소요 시간
-    private int taskTime;
+    private LocalTime taskTime;
 
     // 설명
     private List<DescriptionResponse> descriptionList;

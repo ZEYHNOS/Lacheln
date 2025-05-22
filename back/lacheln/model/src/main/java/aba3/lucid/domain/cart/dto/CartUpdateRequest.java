@@ -8,6 +8,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Getter
-public class CartAddRequest {
-    private CartRequest cartRequests;
+public class CartUpdateRequest {
+    private CartRequest cartRequest;
 }

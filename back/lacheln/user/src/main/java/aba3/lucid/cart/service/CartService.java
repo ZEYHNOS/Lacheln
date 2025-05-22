@@ -19,12 +19,13 @@ public class CartService {
     public List<CartEntity> getCartByUserIdWithThrow(String userId) {
         return cartRepository.findAllByUsers_UserId(userId);
     }
-
-    // 장바구니 추가
+    
+    // 장바구니 추가 및 갱신
     public CartEntity addCart(CartEntity cart)    {
         return cartRepository.save(cart);
     }
 
+    // ID로 카트 모두 조회
     public List<CartEntity> findAllById(List<Long> cartId) {
         return cartRepository.findAllById(cartId);
     }
@@ -32,9 +33,7 @@ public class CartService {
     // 장바구니 목록 n개 제거
     @Transactional
     public void removeCart(List<Long> cartIds) {
-        for(Long id : cartIds) {
-            cartRepository.deleteByCartId(id);
-        }
+        cartRepository.deleteAllById(cartIds);
     }
 
     // 장바구니 목록 전부 제거

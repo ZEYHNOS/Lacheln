@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -15,5 +16,5 @@ public class CartDetailResponse {
     private String optionName;
     private String optionDetailName;
     private BigInteger detailPrice;
-    private int detailTaskTime;
+    private LocalTime detailTaskTime;
 }

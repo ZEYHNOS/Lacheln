@@ -3,9 +3,7 @@ package aba3.lucid.cart.controller;
 import aba3.lucid.cart.business.CartBusiness;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
-import aba3.lucid.domain.cart.dto.CartAddRequest;
-import aba3.lucid.domain.cart.dto.CartDeleteRequest;
-import aba3.lucid.domain.cart.dto.CartResponse;
+import aba3.lucid.domain.cart.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,23 +31,24 @@ public class CartController {
         return cartBusiness.getCartList(user.getUserId());
     }
 
-//    // 장바구니 업데이트
-//    @PutMapping("/update")
-//    @Operation(summary = "사용자 장바구니 업데이트", description = "해당하는 소비자 장바구니의 상품을 갱신합니다.")
-//    public API<CartUpdateResponse> updateCart(
-//            @AuthenticationPrincipal CustomUserDetails user
-//    )   {
-//        return cartBusiness.get
-//    }
+    // 장바구니 업데이트
+    @PutMapping("/update")
+    @Operation(summary = "사용자 장바구니 업데이트", description = "해당하는 소비자 장바구니의 상품을 갱신합니다.")
+    public API<CartUpdateResponse> updateCart(
+            @RequestBody CartUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails user
+    )   {
+        return cartBusiness.cartUpdate(user.getUserId(), request);
+    }
 
     // 장바구니 담기
     @PostMapping("/add")
     @Operation(summary = "사용자 장바구니 추가", description = "해당하는 소비자의 장바구니에 상품을 추가합니다.")
-    public API<String> addCart(
-            @RequestBody List<CartAddRequest> cartAddRequest,
+    public API<CartAddResponse> addCart(
+            @RequestBody CartAddRequest request,
             @AuthenticationPrincipal CustomUserDetails user
     )    {
-        return cartBusiness.addCart(user.getUserId(), cartAddRequest);
+        return cartBusiness.addCart(user.getUserId(), request);
     }
 
     // 장바구니 제거

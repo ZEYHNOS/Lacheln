@@ -14,5 +14,6 @@ public class CartAddRequest {
     private String pdName;
     private BigInteger pdPrice;
     private int pdTaskTime;
+    private String pdImageUrl;
     private List<CartDetailAddRequest> pdDetails;
 }

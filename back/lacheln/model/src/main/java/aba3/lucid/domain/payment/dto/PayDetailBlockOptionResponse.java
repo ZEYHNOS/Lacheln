@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigInteger;
+import java.time.LocalTime;
 
 @Getter
 @Builder
@@ -15,5 +16,5 @@ public class PayDetailBlockOptionResponse {
     private String payOpDtName;
     private int payDtQuantity;
     private BigInteger payOpPlusCost;
-    private Integer payOpTaskTime;
+    private LocalTime payOpTaskTime;
 }

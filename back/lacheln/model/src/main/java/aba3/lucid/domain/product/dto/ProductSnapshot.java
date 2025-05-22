@@ -5,6 +5,7 @@ import aba3.lucid.domain.product.dto.option.OptionSnapshot;
 import lombok.*;
 
 import java.math.BigInteger;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -17,10 +18,8 @@ public class ProductSnapshot {
     private Long id;
     private String name;
     private BigInteger price;
-    private int taskTime;
+    private LocalTime taskTime;
     private List<OptionSnapshot> optionSnapshotList;
-
-
 
     public ProductSnapshot(CartEntity cart) {
         this.id = cart.getProductId();

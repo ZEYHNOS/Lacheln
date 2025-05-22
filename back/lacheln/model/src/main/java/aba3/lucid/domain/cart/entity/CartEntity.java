@@ -8,6 +8,7 @@
 
     import java.math.BigInteger;
     import java.time.LocalDateTime;
+    import java.time.LocalTime;
     import java.util.List;
 
     @Entity
@@ -33,6 +34,9 @@
         @Column(name = "cp_id", nullable = false)
         private Long cpId; // 업체 ID
 
+        @Column(name = "pd_image_url", nullable = false)
+        private String pdImageUrl;
+
         @Column(name = "pd_name", nullable = false)
         private String productName; // 상품 이름
 
@@ -46,7 +50,7 @@
         private BigInteger price; // 가격
 
         @Column(name = "task_time", nullable = false)
-        private int taskTime; // 작업 시간
+        private LocalTime taskTime; // 작업 시간
 
         @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
         private List<CartDetailEntity> cartDetails;

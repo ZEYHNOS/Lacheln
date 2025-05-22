@@ -45,6 +45,7 @@ public class CartBusiness {
                         .cartQuantity(cartRequest.getCartQuantity())
                         .price(cartRequest.getPdPrice())
                         .taskTime(cartRequest.getPdTaskTime())
+                        .pdImageUrl(cartRequest.getPdImageUrl())
                         .build();
                 for(CartDetailAddRequest cartDetailRequest : cartRequest.getPdDetails())    {
                     CartDetailEntity cartDetailEntity = CartDetailEntity

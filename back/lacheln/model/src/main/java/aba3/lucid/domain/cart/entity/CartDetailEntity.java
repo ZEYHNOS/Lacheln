@@ -30,7 +30,7 @@ public class CartDetailEntity {
     @Id
     @Column(name = "cart_dt_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long cartDtId;
+    private Long cartDtId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private CartEntity cart; //장바구니ID

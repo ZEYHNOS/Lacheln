@@ -21,6 +21,8 @@ public class CartConvertor {
                         .cpId(cart.getCpId())
                         .price(cart.getPrice())
                         .productName(cart.getProductName())
+                        .pdImageUrl(cart.getPdImageUrl())
+                        .startTime(cart.getCartDate())
                         .taskTime(cart.getTaskTime())
                         .build())
                 .toList();

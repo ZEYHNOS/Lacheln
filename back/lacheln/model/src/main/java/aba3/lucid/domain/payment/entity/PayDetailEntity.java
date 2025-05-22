@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -57,7 +58,7 @@ public class PayDetailEntity {
 
     // 소요 시간(분)
     @Column(name = "task_time", nullable = false)
-    private Integer taskTime;
+    private LocalTime taskTime;
 
     @JsonIgnore
     @OneToMany(mappedBy = "payDetail", cascade = CascadeType.ALL, orphanRemoval = true)

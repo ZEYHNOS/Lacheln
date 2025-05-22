@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.time.LocalTime;
 
 @Getter
 @Entity
@@ -43,5 +44,5 @@ public class PayDetailOptionEntity {
     
     // 옵션 소요 시간
     @Column(name = "pay_op_task_time", nullable = false)
-    private Integer payOpTaskTime;
+    private LocalTime payOpTaskTime;
 }

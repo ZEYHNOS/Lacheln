@@ -1,7 +1,19 @@
 package aba3.lucid.review.service;
 
-import aba3.lucid.domain.review.dto.*;
-import aba3.lucid.review.business.ReviewBusiness;
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.payment.entity.PayDetailEntity;
+import aba3.lucid.domain.payment.repository.PayDetailRepository;
+import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.repository.ProductRepository;
+import aba3.lucid.domain.review.convertor.ReviewConvertor;
+import aba3.lucid.domain.review.dto.ReviewCreateRequest;
+import aba3.lucid.domain.review.entity.ReviewEntity;
+import aba3.lucid.domain.review.entity.ReviewImageEntity;
+import aba3.lucid.domain.review.repository.ReviewImageRepository;
+import aba3.lucid.domain.review.repository.ReviewRepository;
+import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,101 +21,70 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * 리뷰 서비스 계층
- * - 트랜잭션 관리 및 비즈니스 호출을 담당
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
 
-    private final ReviewBusiness reviewBusiness;
+    private final ReviewRepository reviewRepository;
+    private final ReviewImageRepository reviewImageRepository;
+    private final PayDetailRepository payDetailRepository;
+    private final ProductRepository productRepository;
+    private final UsersRepository usersRepository;
 
     /**
-     * 리뷰 작성 서비스
-     * @param userId 현재 로그인한 사용자 ID (UUID)
-     * @param request 리뷰 작성 요청 DTO
+     * 리뷰 저장 처리 (트랜잭션 포함)
+     * - 결제 상세 정보 검증 및 상품 정보 연계
+     * - 작성자 유효성 검증
+     * - 리뷰 + 이미지 저장
      */
     @Transactional
-    public void createReview(String userId, ReviewCreateRequest request) {
-        reviewBusiness.writeReview(userId, request);
-    }
+    public void saveReviewWithImages(String userId, ReviewCreateRequest request) {
 
-    @Transactional(readOnly = true)
-    public List<ReviewResponse> getReviewsByProductId(Long productId) {
-        /*
-         * [중간 계층 역할]
-         * - Controller에서 받은 요청을 ReviewBusiness로 전달
-         * - 트랜잭션은 읽기 전용으로 설정 (@Transactional(readOnly = true))
-         */
-        return reviewBusiness.getReviewsByProductId(productId);
-    }
+        // 1. 결제 상세 정보 조회
+        PayDetailEntity payDetail = payDetailRepository.findById(Long.valueOf(request.getPayId()))
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 결제 상세 정보를 찾을 수 없습니다."));
 
-    @Transactional
-    public void updateReview(String userId, Long reviewId, ReviewUpdateRequest request) {
-        /*
-         * [서비스 계층 역할]
-         * - 컨트롤러로부터 받은 수정 요청을 비즈니스 계층으로 전달
-         * - 트랜잭션은 @Transactional로 감싸 수정이 반영되도록 처리
-         */
-        reviewBusiness.updateReview(userId, reviewId, request);
-    }
+        // 2. 사용자 정보 조회
+        UsersEntity user = usersRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "사용자 정보를 찾을 수 없습니다."));
 
-    /**
-     * 리뷰 삭제 서비스
-     * - 비즈니스 계층에 위임
-     *
-     * @param userId 현재 로그인한 사용자 UUID
-     * @param reviewId 삭제할 리뷰 ID
-     */
-    @Transactional
-    public void deleteReview(String userId, Long reviewId) {
-        reviewBusiness.deleteReview(userId, reviewId);
-    }
+        // 3. 본인 결제 여부 확인
+        if (!payDetail.getPayManagement().getUser().getUserId().equals(userId)) {
+            throw new ApiException(ErrorCode.FORBIDDEN, "본인의 결제 건에 대해서만 리뷰를 작성할 수 있습니다.");
+        }
 
-    /**
-     * 리뷰 답글 작성 서비스
-     *
-     * - 해당 상품의 판매자(CompanyEntity)만 작성 가능
-     * - 하나의 리뷰에 대해 한 업체당 하나의 답글만 작성 가능
-     * - Controller로부터 전달받은 요청을 비즈니스 계층에 위임
-     *
-     * @param companyId 현재 로그인한 판매자의 ID
-     * @param request 답글 작성 요청 DTO (리뷰 ID, 답글 내용 포함)
-     */
-    @Transactional
-    public void createReviewComment(Long companyId, ReviewCommentCreateRequest request) {
-        reviewBusiness.writeReviewComment(companyId, request);
+        // 4. 상품 정보 조회 및 연계
+        ProductEntity product = productRepository.findById(payDetail.getPdId())
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "상품 정보를 찾을 수 없습니다."));
+
+        // 5. Convertor를 통한 ReviewEntity 생성
+        ReviewEntity review = ReviewConvertor.toReviewEntity(payDetail, user, request);
+        review.setProduct(product); // 상품 직접 연계
+
+        // 6. 리뷰 저장
+        reviewRepository.save(review);
+
+        // 7. 이미지 저장 (선택 사항)
+        if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
+            List<ReviewImageEntity> imageEntities = ReviewConvertor.toReviewImageEntities(review, request.getImageUrls());
+            reviewImageRepository.saveAll(imageEntities);
+        }
     }
 
     /**
-     * 리뷰 답글 수정 서비스
-     *
-     * - 답글을 작성한 판매자 본인만 수정 가능
-     * - 삭제된 답글은 수정할 수 없음
-     * - Controller로부터 전달받은 요청을 비즈니스 계층에 위임
-     *
-     * @param companyId 현재 로그인한 판매자의 ID
-     * @param request 답글 수정 요청 DTO (답글 ID, 수정할 내용 포함)
+     * 리뷰 삭제 처리 (Soft Delete)
+     * - 작성자 본인만 삭제 가능
      */
     @Transactional
-    public void updateReviewComment(Long companyId, ReviewCommentUpdateRequest request) {
-        reviewBusiness.updateReviewComment(companyId, request);
-    }
+    public void softDeleteReview(String userId, Long reviewId) {
+        ReviewEntity review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 리뷰를 찾을 수 없습니다."));
 
-    /**
-     * 리뷰 답글 삭제 서비스
-     *
-     * - 작성자(판매자) 본인만 삭제할 수 있음
-     * - 실제로 데이터를 삭제하는 것이 아니라 논리 삭제 처리
-     * - 비즈니스 계층으로 삭제 요청을 위임함
-     *
-     * @param companyId 현재 로그인한 판매자 ID
-     * @param commentId 삭제할 답글 ID
-     */
-    @Transactional
-    public void deleteReviewComment(Long companyId, Long commentId) {
-        reviewBusiness.deleteReviewComment(companyId, commentId);
+        if (!review.getUser().getUserId().equals(userId)) {
+            throw new ApiException(ErrorCode.FORBIDDEN, "본인의 리뷰만 삭제할 수 있습니다.");
+        }
+
+        review.markAsDeleted();
     }
 }

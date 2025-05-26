@@ -1,7 +1,6 @@
 import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
 import apiClient from "../../../../lib/apiClient";
-// import productDummy from "./productDummy"; // 더미 데이터 import
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 

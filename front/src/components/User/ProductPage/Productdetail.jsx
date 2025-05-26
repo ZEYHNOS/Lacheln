@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { COLOR_MAP } from "../../../constants/colorMap.js";
-import dummyProduct from "../../Company/Management/Product/productDummy.js";
 import AddWrite from '../../Tool/WriteForm/AddWrite.jsx';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // LocalTime을 'X시간 Y분'으로 변환하는 함수
 function formatLocalTime(timeStr) {
+    if (typeof timeStr !== "string") return "";
     const [hours, minutes] = timeStr.split(':').map(Number);
     if (hours > 0 && minutes > 0) return `${hours}시간 ${minutes}분`;
     if (hours > 0) return `${hours}시간`;

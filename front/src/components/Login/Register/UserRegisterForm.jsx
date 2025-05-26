@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import apiClient from "../../../lib/apiClient";
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default function UserRegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
   const [phone, setPhone] = useState("");
   const [authCode, setAuthCode] = useState("");
   const [birthDate, setBirthDate] = useState("");
@@ -30,7 +34,7 @@ export default function UserRegisterForm() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const adsNotification = location.state?.adsNotification || "N";
+  const adsNotification = "Y";
 
   useEffect(() => {
     validateForm();
@@ -88,88 +92,56 @@ export default function UserRegisterForm() {
     }
     if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,20}$/.test(password)) newErrors.password = "사용할 수 없는 비밀번호입니다.";
     if (password !== confirmPassword) newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
-    if (!/^\d{10,11}$/.test(phone)) newErrors.phone = "전화번호 형식이 맞지 않습니다.";
-    if (!isVerified) newErrors.authCode = "인증을 완료해주세요.";
+    if (!/^\d{10,11}$/.test(mainContact.replace(/-/g, ""))) newErrors.phone = "전화번호 형식이 맞지 않습니다.";
+    if (!isVerifiedPhone) newErrors.authCode = "인증을 완료해주세요.";
     if (!/^\d{8}$/.test(birthDate)) newErrors.birthDate = "생년월일 형식이 맞지 않습니다.";
     if (!gender) newErrors.gender = "성별을 선택해주세요.";
     setErrors(newErrors);
     setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
-  // // ✅ 이메일 인증번호 전송 요청
-  // const handleSendEmailCode = async () => {
-  //   try {
-  //     const res = await fetch(`${baseUrl}/email/send`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email }),
-  //     });
-  //     const data = await res.json();
-  //     if (res.ok) {
-  //       setEmailAuthMessage(data.message);
-  //     } else {
-  //       setEmailAuthMessage(data.message);
-  //     }
-  //   } catch (err) {
-  //     console.error("이메일 전송 실패:", err);
-  //     setEmailAuthMessage("이메일 전송 중 오류 발생");
-  //   }
-  // };
-
-  // // ✅ 이메일 인증 확인
-  // const handleVerifyEmailCode = async () => {
-  //   try {
-  //     const res = await fetch(`${baseUrl}/email/verify`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email, code: emailAuthCode }),
-  //     });
-  //     const data = await res.json();
-  //     if (res.ok) {
-  //       setIsEmailVerified(true);
-  //       setEmailAuthMessage(data.message);
-  //     } else {
-  //       setEmailAuthMessage(data.message);
-  //     }
-  //   } catch (err) {
-  //     console.error("이메일 인증 실패:", err);
-  //     setEmailAuthMessage("이메일 인증 중 오류 발생");
-  //   }
-  // };
-
-  // 더미 이메일 인증
+  // ✅ 이메일 인증번호 전송 요청
   const handleSendEmailCode = async () => {
     try {
-      if (email === "thswlgns0820@naver.com") {
-        setEmailAuthMessage("인증코드가 이메일로 전송되었습니다.");
+      const res = await fetch(`${baseUrl}/email/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEmailAuthMessage(data.message);
         setIsEmailSent(true);
-  
-        // ✅ 이전 타이머 클리어하고 새 타이머 시작
         clearTimeout(emailTimerRef.current);
         setEmailTimer(300); // 5분
-  
-        return;
+      } else {
+        setEmailAuthMessage(data.message);
       }
-  
-      // 실제 API 호출도 여기에 추가 가능
     } catch (err) {
       console.error("이메일 전송 실패:", err);
       setEmailAuthMessage("이메일 전송 중 오류 발생");
     }
   };
+
+  // ✅ 이메일 인증 확인
   const handleVerifyEmailCode = async () => {
     try {
-      if (email === "thswlgns0820@naver.com" && emailAuthCode === "000000") {
+      const res = await fetch(`${baseUrl}/email/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code: emailAuthCode }),
+      });
+      const data = await res.json();
+      if (res.ok) {
         setIsEmailVerified(true);
-        setEmailAuthMessage("이메일 인증이 완료되었습니다.");
+        setEmailAuthMessage(data.message);
         setErrors(prev => {
           const { email, ...rest } = prev;
           return rest;
         });
-        return;
+      } else {
+        setEmailAuthMessage(data.message);
       }
-  
-      setEmailAuthMessage("인증코드가 일치하지 않습니다.");
     } catch (err) {
       console.error("이메일 인증 실패:", err);
       setEmailAuthMessage("이메일 인증 중 오류 발생");
@@ -215,9 +187,40 @@ export default function UserRegisterForm() {
     }
   };
 
-  const handleRegister = () => {
-    if (isFormValid) {
+  // 생년월일 yyyyMMdd → yyyy-MM-dd 변환 함수
+  const formatBirthDate = (str) => {
+    if (!/^\d{8}$/.test(str)) return str;
+    return `${str.slice(0,4)}-${str.slice(4,6)}-${str.slice(6,8)}`;
+  };
+
+  const handleRegister = async () => {
+    if (!isFormValid) {
+      alert("모든 필수 항목을 올바르게 입력해주세요.");
+      return;
+    }
+
+    // 백엔드로 보낼 데이터 구성
+    const requestData = {
+      email,
+      password,
+      name,
+      nickName: nickname,
+      phone: mainContact.replace(/-/g, ""),
+      birthDate: formatBirthDate(birthDate),
+      gender: gender === "남자" ? "M" : gender === "여자" ? "F" : gender,
+      adsNotification,
+    };
+
+    try {
+      await apiClient.post("/user/signup", requestData);
+      alert("회원가입이 성공적으로 완료되었습니다!");
       navigate("/register/success");
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(`회원가입 실패: ${error.response.data.message}`);
+      } else {
+        alert("서버와의 통신 중 문제가 발생했습니다.");
+      }
     }
   };
 
@@ -321,6 +324,18 @@ export default function UserRegisterForm() {
               {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
           ))}
+
+          {/* 닉네임 입력 필드 */}
+          <div>
+            <label className="text-sm text-[#845EC2]">닉네임</label>
+            <input
+              type="text"
+              value={nickname}
+              onChange={e => setNickname(e.target.value)}
+              className="w-full p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1 focus:outline-none focus:ring-2 focus:ring-[#845EC2]"
+              placeholder="닉네임 입력"
+            />
+          </div>
 
           {/* 전화번호 버튼  */}
           <div>
@@ -440,42 +455,3 @@ export default function UserRegisterForm() {
     </div>
   );
 }
-
-// const handleRegister = async () => {
-//   if (!isFormValid) {
-//     alert("모든 필수 항목을 올바르게 입력해주세요.");
-//     return;
-//   }
-
-  // // 백엔드로 보낼 데이터 구성
-  // const requestData = {
-  //   email,
-  //   password,
-  //   name,
-  //   phone,
-  //   birthDate,
-  //   gender,
-  //   adsNotification,
-  // };
-
-//   try {
-//     const response = await fetch(`${baseUrl}/user/signup`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json"
-//       },
-//       body: JSON.stringify(requestData)
-//     });
-
-//     if (response.ok) {
-//       alert("회원가입이 성공적으로 완료되었습니다!");
-//       navigate("/register/success"); // 성공 시 이동
-//     } else {
-//       const errorData = await response.json();
-//       alert(`회원가입 실패: ${errorData.message}`);
-//     }
-//   } catch (error) {
-//     console.error("회원가입 중 오류 발생:", error);
-//     alert("서버와의 통신 중 문제가 발생했습니다.");
-//   }
-// };

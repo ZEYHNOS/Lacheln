@@ -69,9 +69,9 @@ function ViewPackage() {
     // 상태 텍스트 및 색상 설정
     const getStatusInfo = (status) => {
         switch (status) {
-            case 'PUBLIC':
+            case 'ACTIVE':
                 return { text: '판매중', bgColor: 'bg-green-100', textColor: 'text-green-700' };
-            case 'PRIVATE':
+            case 'INACTIVE':
                 return { text: '판매 시작전', bgColor: 'bg-yellow-100', textColor: 'text-yellow-700' };
             default:
                 return { text: status, bgColor: 'bg-gray-100', textColor: 'text-gray-700' };
@@ -88,7 +88,7 @@ function ViewPackage() {
                     <span className={`inline-block px-3 py-1 ${statusInfo.bgColor} ${statusInfo.textColor} font-semibold rounded-full text-sm`}>
                         {statusInfo.text}
                     </span>
-                    {status === 'PRIVATE' && (
+                    {status === 'INACTIVE' && (
                         <button
                             onClick={() => {
                                 if (window.confirm('패키지를 판매 시작하시겠습니까?')) {
@@ -110,7 +110,7 @@ function ViewPackage() {
                     )}
                 </div>
                 <div className="flex gap-3">
-                    {status !== 'PUBLIC' && (
+                    {status !== 'ACTIVE' && status !== 'REMOVE' && (
                         <button
                             onClick={() => navigate(`/company/collaboration/package/edit/${id}`)}
                             className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"

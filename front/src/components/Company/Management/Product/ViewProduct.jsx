@@ -258,17 +258,19 @@ function ViewProduct() {
                             <label className="w-24">가격</label>
                             <input value={`${price.toLocaleString()}원`} disabled className="flex-grow border p-2 rounded bg-white text-black" />
                         </div>
-                        <div className="flex items-center">
-                            <label className="w-24">색상</label>
-                            <select value={color} disabled className="flex-grow border p-2 rounded bg-white text-black appearance-none">
-                                {Object.entries(COLOR_MAP).map(([eng, kor]) => (
-                                    <option key={eng} value={eng}>
-                                        {kor}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="ml-2 w-24 h-10 rounded" style={{ backgroundColor: color, border: '1px solid #ccc' }} />
-                        </div>
+                        {isDress && (
+                            <div className="flex items-center">
+                                <label className="w-24">색상</label>
+                                <select value={color} disabled className="flex-grow border p-2 rounded bg-white text-black appearance-none">
+                                    {Object.entries(COLOR_MAP).map(([eng, kor]) => (
+                                        <option key={eng} value={eng}>
+                                            {kor}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="ml-2 w-24 h-10 rounded" style={{ backgroundColor: color, border: '1px solid #ccc' }} />
+                            </div>
+                        )}
                         <div className="flex items-center">
                             <label className="w-24">대여시간</label>
                             <select value={taskTime} disabled className="border p-2 rounded flex-grow bg-white text-black appearance-none">

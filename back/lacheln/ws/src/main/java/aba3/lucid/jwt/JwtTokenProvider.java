@@ -75,7 +75,6 @@ public class JwtTokenProvider {
 
     public String getUserId(String token)   {
         String userEmail = getUserEmail(token);
-        log.info("userEmail : {}", userEmail);
         return customUserDetailsService.getUserIdByEmail(userEmail);
     }
 
@@ -121,8 +120,6 @@ public class JwtTokenProvider {
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token);  // 유효한 토큰이면 예외가 발생하지 않음
             Date expiration = claimsJws.getBody().getExpiration();
-            log.info("expiration : {}", expiration.toString());
-            log.info("expired? : {}", expiration.after(new Date()));
             return expiration.after(new Date());
         } catch (ExpiredJwtException e) {
             log.warn("JWT 토큰 만료: {}", e.getMessage());

@@ -97,7 +97,7 @@ public class UsersEntity {
     @Column(name = "user_mileage", nullable = false, columnDefinition = "BIGINT")
     private BigInteger userMileage; //마일리지
 
-    @Column(name = "user_role", nullable = false, columnDefinition = "CHAR(4)")
+    @Column(name = "user_role", nullable = false, columnDefinition = "CHAR(5)")
     private String userRole; //유저 권한
 
     // 비밀번호 변경

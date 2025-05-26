@@ -31,8 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         CompanyEntity companyEntity;
         Optional<UsersEntity> user = usersRepository.findByUserEmail(userEmail);
         Optional<CompanyEntity> company = companyRepository.findByCpEmail(userEmail);
-
-        log.info("userEmail : {}", userEmail);
+        
         // 유저 정보가 있을 시 로직
         if(user.isPresent()) {
             usersEntity = user.get();
@@ -66,7 +65,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public String getUserIdByEmail(String email)   {
-        log.info("getUserIdByEmail() -> email : {}", email);
         Optional<UsersEntity> usersEntity = usersRepository.findByUserEmail(email);
         String userId = null;
         if(usersEntity.isPresent()) {
@@ -77,7 +75,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 userId = company.get().getCpEmail();
             }
         }
-        log.info("userId : {}", userId);
         return userId;
     }
 }

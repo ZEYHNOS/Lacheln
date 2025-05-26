@@ -1,7 +1,5 @@
     package aba3.lucid.domain.cart.entity;
 
-
-    import aba3.lucid.domain.product.entity.ProductEntity;
     import aba3.lucid.domain.user.entity.UsersEntity;
     import jakarta.persistence.*;
     import lombok.*;
@@ -22,7 +20,7 @@
         @Id
         @Column(name = "cart_id")
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private long cartId; // 장바구니 ID
+        private Long cartId; // 장바구니 ID
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user_id")
@@ -34,6 +32,12 @@
         @Column(name = "cp_id", nullable = false)
         private Long cpId; // 업체 ID
 
+        @Column(name = "pack_id")
+        private Long packId; // 패키지 ID(Null가능)
+
+        @Column(name = "pack_name")
+        private String packName;
+
         @Column(name = "pd_image_url", nullable = false)
         private String pdImageUrl;
 
@@ -44,7 +48,7 @@
         private LocalDateTime cartDate; //일정 날짜
 
         @Column(name = "cart_quantity")
-        private int cartQuantity; //구매 수량
+        private Integer cartQuantity; //구매 수량
 
         @Column(name = "pd_price", nullable = false)
         private BigInteger price; // 가격

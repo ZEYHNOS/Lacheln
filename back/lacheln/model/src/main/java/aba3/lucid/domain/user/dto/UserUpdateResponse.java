@@ -7,5 +7,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserUpdateResponse {
-    private UsersEntity user;
+    private UserDto user;
 }

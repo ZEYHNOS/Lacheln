@@ -3,7 +3,6 @@ package aba3.lucid.user.business;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
-import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.user.convertor.UserConvertor;
@@ -38,7 +37,7 @@ public class UserBusiness {
         // 정보 추출 및 Response로 변환
         UsersEntity convertedUser = userConvertor.convertUserSignupToUserEntity(userSignupRequest);
         UsersEntity savedUser = userService.signUp(convertedUser);
-        UsersEntity dtoUser = userConvertor.convertEntityToObject(savedUser);
+        UserDto dtoUser = userConvertor.convertEntityToDto(savedUser);
 
         UserSignupResponse userSignupResponse = UserSignupResponse.builder()
                 .data(dtoUser)
@@ -65,7 +64,7 @@ public class UserBusiness {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         loadUser.updateUser(userUpdateRequest, bCryptPasswordEncoder);
         userService.saveByUser(loadUser);
-        UsersEntity dtoUser = userConvertor.convertEntityToObject(loadUser);
+        UserDto dtoUser = userConvertor.convertEntityToDto(loadUser);
         UserUpdateResponse data = UserUpdateResponse.builder()
                 .user(dtoUser)
                 .build();
@@ -123,7 +122,7 @@ public class UserBusiness {
     public API<String> getUserSocial(String userId)  {
         UsersEntity user = userService.findByIdWithThrow(userId);
         if(user != null)    {
-            return API.OK(user.getUserSocial().getSocialCode(), "소비자 타입");
+            return API.OK(user.getUserSocial().getSocialCode(), "소셜 정보를 확인하세요.");
         } else {
             throw new ApiException(ErrorCode.BAD_REQUEST, "잘못된 요청입니다.");
         }

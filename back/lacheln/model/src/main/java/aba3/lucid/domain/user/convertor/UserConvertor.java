@@ -1,7 +1,7 @@
 package aba3.lucid.domain.user.convertor;
 
-import aba3.lucid.common.password.CustomPasswordEncoder;
 import aba3.lucid.domain.user.dto.UserCheckResponse;
+import aba3.lucid.domain.user.dto.UserDto;
 import aba3.lucid.domain.user.dto.UserSignupRequest;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.enums.*;
@@ -45,29 +45,19 @@ public class UserConvertor {
                 .build();
     }
 
-    public UsersEntity convertEntityToObject(UsersEntity user) {
-        return UsersEntity.builder()
+    public UserDto convertEntityToDto(UsersEntity user) {
+        return UserDto.builder()
                 .userId(user.getUserId())
-                .userCountry(user.getUserCountry())
-                .userLanguage(user.getUserLanguage())
-                .userCurrency(user.getUserCurrency())
-                .userEmail(user.getUserEmail())
-                .userPassword(passwordEncoder.encode(user.getUserPassword()))
-                .userName(user.getUserName())
-                .userNickName(user.getUserNickName())
-                .userSocial(user.getUserSocial())
-                .userPhone(user.getUserPhone())
-                .userProfile(user.getUserProfile())
-                .userTier(user.getUserTier())
-                .userAdsNotification(user.getUserAdsNotification())
-                .userAccountStatus(user.getUserAccountStatus())
-                .userJoinDate(user.getUserJoinDate())
-                .userModifyDate(LocalDate.now())
-                .userAccessTime(user.getUserAccessTime())
-                .userBirthday(user.getUserBirthday())
-                .userGender(user.getUserGender())
-                .userMileage(user.getUserMileage())
-                .userRole(user.getUserRole())
+                .country(user.getUserCountry())
+                .name(user.getUserName())
+                .email(user.getUserEmail())
+                .phone(user.getUserPhone())
+                .tier(user.getUserTier())
+                .nickname(user.getUserNickName())
+                .notification(user.getUserAdsNotification())
+                .gender(user.getUserGender())
+                .currency(user.getUserCurrency())
+                .language(user.getUserLanguage())
                 .build();
     }
 

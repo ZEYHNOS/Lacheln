@@ -341,7 +341,7 @@ function AddPackage() {
                                             </div>
                                         )}
                                         
-                                        <p className="mt-4 text-sm text-gray-600">패키지에 등록된 상품은 변경할 수 없습니다. 변경이 필요한 경우 관리자에게 문의하세요.</p>
+                                        <p className="mt-4 text-sm text-gray-600">패키지에 등록된 상품은 변경할 수 없습니다.</p>
                                     </>
                                 )}
                             </div>
@@ -387,10 +387,14 @@ function AddPackage() {
                                                 {myProductList.length > 0 ? (
                                                     myProductList.map(product => (
                                                         <div
-                                                            key={product.id}
-                                                            className={`p-3 flex items-center hover:bg-purple-50 cursor-pointer ${selectedProductId === product.id ? 'bg-purple-100' : ''}`}
+                                                            key={product.id || product.productId || product._id}
+                                                            className={`p-3 flex items-center hover:bg-purple-50 cursor-pointer ${selectedProductId === (product.id || product.productId || product._id) ? 'bg-purple-100' : ''}`}
                                                             onClick={() => {
-                                                                setSelectedProductId(product.id);
+                                                                console.log('클릭됨! product:', product);
+                                                                console.log('product.id:', product.id);
+                                                                console.log('product.productId:', product.productId);
+                                                                console.log('product._id:', product._id);
+                                                                setSelectedProductId(product.id || product.productId || product._id);
                                                                 setIsDropdownOpen(false);
                                                             }}
                                                         >

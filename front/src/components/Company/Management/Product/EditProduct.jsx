@@ -26,7 +26,7 @@ function EditProduct() {
     const [price, setPrice] = useState("");
     const [color, setColor] = useState("white");
     const [rec, setRec] = useState(false);
-    const [task_time, settask_time] = useState("60");
+    const [task_time, settask_time] = useState("02:00:00");
     const [indoor, setIndoor] = useState(false);
     const [outdoor, setOutdoor] = useState(false);
     const [existingImages, setExistingImages] = useState([]);
@@ -111,7 +111,7 @@ function EditProduct() {
                 setPrice(data.price);
                 setColor(data.color);
                 setRec(data.rec === "Y");
-                settask_time(String(data.taskTime));
+                settask_time(data.taskTime);
                 setIndoor(data.inAvailable === "Y");
                 setOutdoor(data.outAvailable === "Y");
                 setExistingImages(data.productImageUrl.map(img => ({
@@ -249,7 +249,7 @@ function EditProduct() {
             price: parseInt(price || 0),
             color,
             rec: rec ? "Y" : "N",
-            task_time: parseInt(task_time),
+            task_time: task_time,
             in_available: indoor ? "Y" : "N",
             out_available: outdoor ? "Y" : "N",
             image_url_list,
@@ -503,12 +503,12 @@ function EditProduct() {
                                 <label className="w-24">대여시간</label>
                                 <select value={task_time} onChange={(e) => settask_time(e.target.value)}
                                     className="border p-2 rounded flex-grow bg-white text-black">
-                                    <option value="30">30분 대여</option>
-                                    <option value="60">1시간 대여</option>
-                                    <option value="90">1시간 30분 대여</option>
-                                    <option value="120">2시간 대여</option>
-                                    <option value="150">2시간 30분 대여</option>
-                                    <option value="180">3시간 대여</option>
+                                    <option value="00:30:00">30분 대여</option>
+                                    <option value="01:00:00">1시간 대여</option>
+                                    <option value="01:30:00">1시간 30분 대여</option>
+                                    <option value="02:00:00">2시간 대여</option>
+                                    <option value="02:30:00">2시간 30분 대여</option>
+                                    <option value="03:00:00">3시간 대여</option>
                                 </select>
                             </div>
 

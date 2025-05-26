@@ -15,7 +15,7 @@ function AddProduct() {
     const [name, setName] = useState("");
     const [color, setColor] = useState("WHITE");
     const [price, setPrice] = useState("");
-    const [taskTime, settaskTime] = useState(120);
+    const [taskTime, settaskTime] = useState("02:00:00");
     const [indoor, setIndoor] = useState(true);
     const [outdoor, setOutdoor] = useState(false);
     const [images, setImages] = useState([]);
@@ -187,7 +187,7 @@ function AddProduct() {
             name,
             price: parseInt(price || 0),
             rec: rec ? "Y" : "N",
-            taskTime: parseInt(taskTime),
+            taskTime: taskTime,
             imageUrlList: imageUrls,
             hashTagList: [],
             descriptionList: processedDescriptionList,
@@ -493,12 +493,12 @@ function AddProduct() {
                                 <label className="w-24">대여시간</label>
                                 <select value={taskTime} onChange={(e) => settaskTime(e.target.value)}
                                     className="border p-2 rounded flex-grow bg-white text-black">
-                                    <option value="30">30분 대여</option>
-                                    <option value="60">1시간 대여</option>
-                                    <option value="90">1시간 30분 대여</option>
-                                    <option value="120">2시간 대여</option>
-                                    <option value="150">2시간 30분 대여</option>
-                                    <option value="180">3시간 대여</option>
+                                    <option value="00:30:00">30분 대여</option>
+                                    <option value="01:00:00">1시간 대여</option>
+                                    <option value="01:30:00">1시간 30분 대여</option>
+                                    <option value="02:00:00">2시간 대여</option>
+                                    <option value="02:30:00">2시간 30분 대여</option>
+                                    <option value="03:00:00">3시간 대여</option>
                                 </select>
                             </div>
 

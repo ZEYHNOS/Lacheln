@@ -274,12 +274,12 @@ function ViewProduct() {
                         <div className="flex items-center">
                             <label className="w-24">대여시간</label>
                             <select value={taskTime} disabled className="border p-2 rounded flex-grow bg-white text-black appearance-none">
-                                <option value="30">30분 대여</option>
-                                <option value="60">1시간 대여</option>
-                                <option value="90">1시간 30분 대여</option>
-                                <option value="120">2시간 대여</option>
-                                <option value="150">2시간 30분 대여</option>
-                                <option value="180">3시간 대여</option>
+                                <option value="00:30:00">30분 대여</option>
+                                <option value="01:00:00">1시간 대여</option>
+                                <option value="01:30:00">1시간 30분 대여</option>
+                                <option value="02:00:00">2시간 대여</option>
+                                <option value="02:30:00">2시간 30분 대여</option>
+                                <option value="03:00:00">3시간 대여</option>
                             </select>
                         </div>
                     </div>

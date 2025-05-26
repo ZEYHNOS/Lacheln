@@ -7,13 +7,12 @@ import AddWrite from '../../Tool/WriteForm/AddWrite.jsx';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-// 분을 'X시간 Y분'으로 변환하는 함수
-function formatTime(minutes) {
-    const hour = Math.floor(minutes / 60);
-    const min = minutes % 60;
-    if (hour > 0 && min > 0) return `${hour}시간 ${min}분`;
-    if (hour > 0) return `${hour}시간`;
-    return `${min}분`;
+// LocalTime을 'X시간 Y분'으로 변환하는 함수
+function formatLocalTime(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    if (hours > 0 && minutes > 0) return `${hours}시간 ${minutes}분`;
+    if (hours > 0) return `${hours}시간`;
+    return `${minutes}분`;
 }
 
 // 선택한 옵션들의 plus_cost 합산 함수
@@ -179,7 +178,9 @@ const ProductDetail = () => {
                         {product.taskTime && (
                             <div className="mb-4">
                                 <label className="block font-medium text-gray-700 mb-1">작업시간</label>
-                                <div className="px-3 py-2 border rounded bg-white text-black">{formatTime(product.taskTime)}</div>
+                                <div className="px-3 py-2 border rounded bg-white text-black">
+                                    {formatLocalTime(product.taskTime)} 대여
+                                </div>
                             </div>
                         )}
 

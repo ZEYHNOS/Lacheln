@@ -33,6 +33,7 @@ import Brand from "./components/User/BrandPage/Brand.jsx"
 import Product from "./components/User/ProductPage/Product.jsx"
 import Productdetail from "./components/User/ProductPage/Productdetail.jsx"
 import Package from "./components/User/PackagePage/Package.jsx"
+import PackageDetail from "./components/User/PackagePage/Packagedetail.jsx"
 import Event from "./components/User/EventPage/Event.jsx"
 import BoardPage from "./components/User/CommunityPage/BoardPage.jsx"
 import CreatePost from "./components/User/CommunityPage/CreatePost.jsx"
@@ -108,9 +109,10 @@ function App() {
                 <Route path="/brand" element={<Layout><Brand /></Layout>} />
                 {/* 상품 페이지 */}
                 <Route path="/product" element={<Layout><Product /></Layout>} />
-                <Route path="/product/:productid" element={<Layout><Productdetail /></Layout>} />
+                <Route path="/product/:category/:productid" element={<Layout><Productdetail /></Layout>} />
                 {/* 패키지 페이지 */}
                 <Route path="/package" element={<Layout><Package /></Layout>} />
+                <Route path="/package/:id" element={<Layout><PackageDetail /></Layout>} />
                 {/* 이벤트 페이지 */}
                 <Route path="/event" element={<Layout><Event /></Layout>} />
                 {/* 커뮤니티 페이지 */}

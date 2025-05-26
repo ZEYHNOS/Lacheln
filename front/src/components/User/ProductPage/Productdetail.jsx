@@ -1,30 +1,71 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { COLOR_MAP } from "../../../constants/colorMap.js";
 import dummyProduct from "../../Company/Management/Product/productDummy.js";
+import AddWrite from '../../Tool/WriteForm/AddWrite.jsx';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
+// 분을 'X시간 Y분'으로 변환하는 함수
+function formatTime(minutes) {
+    const hour = Math.floor(minutes / 60);
+    const min = minutes % 60;
+    if (hour > 0 && min > 0) return `${hour}시간 ${min}분`;
+    if (hour > 0) return `${hour}시간`;
+    return `${min}분`;
+}
+
+// 선택한 옵션들의 plus_cost 합산 함수
+function getTotalOptionPrice(product, selectedOptions) {
+    if (!product) return 0;
+    let total = 0;
+    // optionList와 option_list 모두 대응
+    const optionArr = product.optionList || product.option_list || [];
+    optionArr.forEach(opt => {
+        const selected = selectedOptions[opt.name];
+        if (selected) {
+            const found = (opt.option_dt_list || opt.optionDtList || []).find(dt => dt.op_dt_name === selected || dt.opDtName === selected);
+            if (found) total += found.plus_cost || found.plusCost || 0;
+        }
+    });
+    // sizeList
+    if (product.sizeList && selectedOptions['size']) {
+        const found = product.sizeList.find(sz => sz.size === selectedOptions['size']);
+        if (found) total += found.plus_cost || found.plusCost || 0;
+    }
+    return total;
+}
+
 const ProductDetail = () => {
     const { category, productid } = useParams();
-
-    // 더미파일의 itemid를 인식 
-    const [product, setProduct] = useState(() =>
-        dummyProduct.find((item) => item.id === productid)
-    );
-    // 백엔드서버에서 받아오면 
-    // const [product, setProduct] = useState(null);
+    const [product, setProduct] = useState(null);
     const navigate = useNavigate();
 
     const [selectedOptions, setSelectedOptions] = useState({});
-    const [mainImageIndex, setMainImageIndex] = useState(0); //대표이미지가 1번
-    const [selectedTab, setSelectedTab] = useState('detail'); //상품상세정보가 기본값
+    const [mainImageIndex, setMainImageIndex] = useState(0); 
+    const [selectedTab, setSelectedTab] = useState('detail'); 
 
+    const writeRef = useRef();
 
     useEffect(() => {
         axios.get(`${baseUrl}/product/${category}/${productid}`)
-            .then((res) => setProduct(res.data))
+            .then((res) => {
+                console.log('백엔드 원본 응답:', res.data);
+                const data = res.data.data;
+                setProduct({
+                    ...data,
+                    name: data.name,
+                    id: data.id,
+                    price: data.price,
+                    descriptionList: data.descriptionList,
+                    optionList: data.optionList,
+                    sizeList: data.sizeList,
+                    color: data.color,
+                    image_url_list: data.productImageUrl ? data.productImageUrl.map(img => baseUrl + img.url.replace(/\\/g, '/')) : [],
+                    // 기타 필요한 필드
+                });
+            })
             .catch((err) => {
                 console.error("상품 불러오기 실패", err);
                 alert("상품 정보를 불러올 수 없습니다.");
@@ -41,10 +82,19 @@ const ProductDetail = () => {
         return () => clearInterval(timer);
     }, [product]);
 
+    // descriptionList가 바뀔 때마다 AddWrite에 세팅
+    useEffect(() => {
+        if (selectedTab === 'detail' && writeRef.current && product?.descriptionList) {
+            writeRef.current.setContentFromJsonArray?.(product.descriptionList);
+        }
+    }, [selectedTab, product?.descriptionList]);
+
     // 옵션 중복선택 방지
     const handleOptionChange = (groupName, value) => {
-        const group = product.option_list.find((opt) => opt.name === groupName);
-        const isOverlap = group.overlap === "Y";
+        // option_list와 optionList 모두 대응
+        const group = (product.option_list || product.optionList || []).find((opt) => opt.name === groupName);
+        // size 옵션은 group이 없을 수 있음
+        const isOverlap = group ? group.overlap === "Y" : false;
 
         if (!isOverlap && selectedOptions[groupName]) {
             alert("이 옵션은 중복 선택이 불가능합니다.");
@@ -106,37 +156,78 @@ const ProductDetail = () => {
                         </p>
 
                         {/* 색상 */}
-                        <div className="flex items-center mb-4">
-                            <label className="w-24 font-medium text-gray-700">색상</label>
-                            <select
-                                value={product.color}
-                                disabled
-                                className="flex-grow border p-2 rounded bg-white text-black appearance-none"
-                            >  
-                                {/* 색상 옵션 번역 */}
-                                {Object.entries(COLOR_MAP).map(([eng, kor]) => (
-                                    <option key={eng} value={eng}>{kor}</option>
-                                ))}
-                            </select>
-                            <div
-                                className="ml-2 w-20 h-10 rounded border border-gray-400"
-                                style={{ backgroundColor: product.color }}
-                            />
-                        </div>
+                        {category === 'dress' && (
+                            <div className="flex items-center mb-4">
+                                <label className="w-24 font-medium text-gray-700">색상</label>
+                                <select
+                                    value={product.color}
+                                    disabled
+                                    className="flex-grow border p-2 rounded bg-white text-black appearance-none"
+                                >  
+                                    {Object.entries(COLOR_MAP).map(([eng, kor]) => (
+                                        <option key={eng} value={eng}>{kor}</option>
+                                    ))}
+                                </select>
+                                <div
+                                    className="ml-2 w-20 h-10 rounded border border-gray-400"
+                                    style={{ backgroundColor: product.color }}
+                                />
+                            </div>
+                        )}
+
+                        {/* 작업시간 표시 */}
+                        {product.taskTime && (
+                            <div className="mb-4">
+                                <label className="block font-medium text-gray-700 mb-1">작업시간</label>
+                                <div className="px-3 py-2 border rounded bg-white text-black">{formatTime(product.taskTime)}</div>
+                            </div>
+                        )}
 
                         {/* 옵션 창창 */}
                         <div className="space-y-4">
-                            {(product.option_list || []).map((opt, i) => (
-                                <div key={i}>
-                                    <div className="flex items-center justify-between">
-                                        <label className="block font-medium text-gray-700 mb-1">{opt.name}</label>
-                                        {opt.essential === 'Y' && !selectedOptions[opt.name] && (
-                                            <span className="text-red-500 text-sm ml-2">필수 선택</span>
+                            {(product.option_list || []).map((opt, i) => {
+                                const selected = selectedOptions[opt.name];
+                                const found = (opt.option_dt_list || []).find(dt => dt.op_dt_name === selected);
+                                return (
+                                    <div key={i}>
+                                        <div className="flex items-center justify-between">
+                                            <label className="block font-medium text-gray-700 mb-1">{opt.name}</label>
+                                            {opt.essential === 'Y' && !selectedOptions[opt.name] && (
+                                                <span className="text-red-500 text-sm ml-2">필수 선택</span>
+                                            )}
+                                        </div>
+                                        <select
+                                            className="w-full border bg-white text-black px-3 py-2 rounded mt-1"
+                                            onChange={(e) => handleOptionChange(opt.name, e.target.value)}
+                                            value={selectedOptions[opt.name] || ""}
+                                        >
+                                            <option value="">옵션 선택</option>
+                                            {(opt.option_dt_list || []).map((item, idx) => (
+                                                <option key={idx} value={item.op_dt_name}>
+                                                    {item.op_dt_name} (₩{item.plus_cost.toLocaleString()})
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {selected && found && (
+                                            <div className="text-sm text-purple-700 mt-1">
+                                                선택: {selected} {found.plus_cost ? `(+₩${found.plus_cost.toLocaleString()})` : ""}
+                                            </div>
                                         )}
                                     </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* 옵션 선택 (optionList) */}
+                        {product.optionList && product.optionList.length > 0 && product.optionList.map((opt, i) => {
+                            const selected = selectedOptions[opt.name];
+                            const found = (opt.option_dt_list || []).find(dt => dt.op_dt_name === selected);
+                            return (
+                                <div key={i} className="mb-4">
+                                    <label className="block font-medium text-gray-700 mb-1">{opt.name}</label>
                                     <select
                                         className="w-full border bg-white text-black px-3 py-2 rounded mt-1"
-                                        onChange={(e) => handleOptionChange(opt.name, e.target.value)}
+                                        onChange={e => handleOptionChange(opt.name, e.target.value)}
                                         value={selectedOptions[opt.name] || ""}
                                     >
                                         <option value="">옵션 선택</option>
@@ -146,9 +237,33 @@ const ProductDetail = () => {
                                             </option>
                                         ))}
                                     </select>
+                                    {selected && found && (
+                                        <div className="text-sm text-purple-700 mt-1">
+                                            선택: {selected} {found.plus_cost ? `(+₩${found.plus_cost.toLocaleString()})` : ""}
+                                        </div>
+                                    )}
                                 </div>
-                            ))}
-                        </div>
+                            );
+                        })}
+
+                        {/* 사이즈 옵션 추가 */}
+                        {product.sizeList && product.sizeList.length > 0 && (
+                            <div className="mb-4">
+                                <label className="block font-medium text-gray-700 mb-1">사이즈</label>
+                                <select
+                                    className="w-full border bg-white text-black px-3 py-2 rounded mt-1"
+                                    onChange={e => handleOptionChange('size', e.target.value)}
+                                    value={selectedOptions['size'] || ""}
+                                >
+                                    <option value="">사이즈 선택</option>
+                                    {product.sizeList.map((item, idx) => (
+                                        <option key={idx} value={item.size}>
+                                            {item.size} (재고: {item.stock}, +₩{item.plus_cost})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
 
                         {/* 선택된 옵션 확인하기 */}
                         {Object.keys(selectedOptions).length > 0 && (
@@ -173,6 +288,9 @@ const ProductDetail = () => {
 
                     {/* 장바구니, 찜, 채팅문의 버튼 */}
                     <div className="mt-6 flex flex-col gap-3">
+                        <div className="mb-2 text-right font-bold text-lg text-purple-700">
+                            총 결제금액: ₩ {((product.price || 0) + getTotalOptionPrice(product, selectedOptions)).toLocaleString()}
+                        </div>
                         <div className="flex gap-2">
                             <button className="w-full flex justify-center items-center gap-2 bg-purple-500 text-white font-semibold py-3 rounded shadow">
                                 <span>🛒</span> 장바구니 담기
@@ -206,10 +324,7 @@ const ProductDetail = () => {
                 {/* 내용 영역 */}
                 <div className="bg-gray-50 p-4 rounded shadow">
                     {selectedTab === 'detail' ? (
-                        <div
-                        className="text-sm text-gray-700 leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: product.description }}
-                        ></div>
+                        <AddWrite ref={writeRef} readOnly />
                     ) : (
                         <div className="text-sm text-gray-700 leading-relaxed">
                         {(product.reviews && product.reviews.length > 0) ? (

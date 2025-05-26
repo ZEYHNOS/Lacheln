@@ -121,7 +121,7 @@ function Collaboration() {
             {/* 탭 내용 */}
             {currentTab === 'product' ? (
                 <div className="grid grid-cols-5 gap-4">
-                    {packages.filter(item => item.status === 'PUBLIC' || item.status === 'PRIVATE').map((item, i) => {
+                    {packages.filter(item => item.status === 'ACTIVE' || item.status === 'INACTIVE').map((item, i) => {
                         const { originalPrice, discountedPrice } = calculateDiscountedPrice(item);
                         return (
                             <div
@@ -159,15 +159,15 @@ function Collaboration() {
                 </div>
             ) : currentTab === 'company' ? (
                 myCategory && (() => {
-                    // PUBLIC/PRIVATE 패키지에 포함된 모든 업체 추출
-                    const publicOrPrivateCompanies = packages
-                        .filter(pkg => pkg.status === 'PUBLIC' || pkg.status === 'PRIVATE')
+                    // ACTIVE/INACTIVE 패키지에 포함된 모든 업체 추출
+                    const activeOrInactiveCompanies = packages
+                        .filter(pkg => pkg.status === 'ACTIVE' || pkg.status === 'INACTIVE')
                         .flatMap(pkg => [pkg.admin, pkg.cp1, pkg.cp2])
                         .filter(Boolean);
 
                     // 카테고리별 중복 제거 함수
                     const getUniqueCompaniesByCategory = (category) => {
-                        const filtered = publicOrPrivateCompanies.filter(company => company.category === category);
+                        const filtered = activeOrInactiveCompanies.filter(company => company.category === category);
                         return filtered.filter((company, idx, arr) => arr.findIndex(c => c.id === company.id) === idx);
                     };
 

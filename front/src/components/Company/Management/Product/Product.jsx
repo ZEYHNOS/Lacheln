@@ -36,7 +36,6 @@ function Product() {
     }, []);
 
     // ✅ 탭 필터링 로직    
-    // productDummy -> productList
     const filteredItems = productList.filter((item) => {
         if (selected === "전체보기") return true;
         if (selected === "개별상품") return item.status !== "PACKAGE";
@@ -95,9 +94,9 @@ function Product() {
                         <tbody>
                             {currentItems.map((product) => (
                                 <tr
-                                    key={product.id}
+                                    key={product.productId}
                                     className="text-center cursor-pointer hover:bg-gray-100 transition-colors duration-200"
-                                    onClick={() => navigate(`/company/product/${product.id}`)}
+                                    onClick={() => navigate(`/company/product/${product.productId}`)}
                                 >
                                     <td className="border border-gray-300 p-2">
                                     <img 
@@ -107,13 +106,8 @@ function Product() {
                                         onError={e => e.currentTarget.src = '/default/images/product.png'}
                                     />
                                     </td>
-                                    <td className="border border-gray-300 p-2">{product.name}</td>
-                                    <td className="border border-gray-300 p-2">
-                                        {product.status === "ACTIVE" ? "판매중" : 
-                                            product.status === "INACTIVE" ? "판매 대기중" : 
-                                            product.status === "PACKAGE" ? "패키지상품 판매중" : 
-                                            product.status}
-                                    </td>
+                                    <td className="border border-gray-300 p-2">{product.productName}</td>
+                                    <td className="border border-gray-300 p-2">{product.status ? (product.status === "ACTIVE" ? "판매중" : product.status === "INACTIVE" ? "판매 대기중" : product.status === "PACKAGE" ? "패키지상품 판매중" : product.status) : "-"}</td>
                                     <td className="border border-gray-300 p-2">{product.price.toLocaleString()}￦</td>
                                 </tr>
                             ))}

@@ -128,7 +128,7 @@ public class PackageEntity {
 
     // 패키지명 변경
     private void updatePackageName(String name) {
-        Validator.assertStringValid(name, 5,  30);
+//        Validator.assertStringValid(name, 5,  30);
 
         this.packName = name;
     }

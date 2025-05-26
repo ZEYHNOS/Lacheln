@@ -30,7 +30,7 @@ public class WeekdaysScheduleEntity {
 
     // 월요일~일요일
     @Enumerated(EnumType.STRING)
-    @Column(name = "ws_weekdays", columnDefinition = "CHAR(3)", nullable = false)
+    @Column(name = "ws_weekdays", columnDefinition = "CHAR(10)", nullable = false)
     private Weekdays wsWeekdays;
 
     // 시작 시간

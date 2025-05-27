@@ -18,7 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @RequiredArgsConstructor
 public class UserBusiness {
 
-
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserConvertor userConvertor;
     private final UserService userService;
 
@@ -60,8 +60,7 @@ public class UserBusiness {
             throw new ApiException(ErrorCode.BAD_REQUEST, "소셜계정은 비밀번호 변경이 불가합니다.");
         }
         
-        // 암호화 모듈 로드 및 암호화된 비밀번호와 함께 유저 정보 업데이트 
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        // 암호화 모듈 로드 및 암호화된 비밀번호와 함께 유저 정보 업데이트
         loadUser.updateUser(userUpdateRequest, bCryptPasswordEncoder);
         UsersEntity saved = userService.saveByUser(loadUser);
         UserDto dtoUser = userConvertor.convertEntityToDto(saved);
@@ -110,7 +109,6 @@ public class UserBusiness {
         }
         
         // 암호화 모듈 로드 및 모듈을 이용한 암호일치 여부 확인
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         if(bCryptPasswordEncoder.matches(password, user.getUserPassword())) {
             return API.OK("인증에 성공하였습니다!");
         } else {

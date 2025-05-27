@@ -107,17 +107,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
             }
 
             // CustomAuthenticationToken 생성 후 인증 시도 후 성공 시 ContextHolder에 세션 정보 저장
-            Authentication authResult = authenticationManager.authenticate(authRequest);
-
-            if(authResult.isAuthenticated()) {
-                CustomAuthenticationToken result = (CustomAuthenticationToken) authResult;
-                log.info("Authentication UserId : {}", result.getUserId());
-                log.info("Authentication CompanyId : {}", result.getCompanyId());
-                log.info("Authentication LoginType : {}", result.getLoginType());
-                log.info("Authentication Name : {}", result.getName());
-                log.info("Authentication Successful, {}", authResult.isAuthenticated());
-            }
-            return authResult;
+            return authenticationManager.authenticate(authRequest);
         } catch (IOException e) {
             throw new AuthenticationServiceException("Failed to parse JSON request body", e);
         }

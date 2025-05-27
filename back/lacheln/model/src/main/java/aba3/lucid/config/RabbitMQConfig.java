@@ -2,6 +2,13 @@ package aba3.lucid.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+
+
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +16,46 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 @Configuration
 public class RabbitMQConfig {
+
+    @Bean
+    public Jackson2JsonMessageConverter jsonConvertor() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory cf,
+                                         @Qualifier("jsonConvertor")      Jackson2JsonMessageConverter conv
+                                         ) {
+        RabbitTemplate tpl = new RabbitTemplate(cf);
+        tpl.setMessageConverter(conv);
+        return tpl;
+    }
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory cf,
+            @Qualifier("jsonConvertor") Jackson2JsonMessageConverter conv
+    ) {
+        SimpleRabbitListenerContainerFactory f = new SimpleRabbitListenerContainerFactory();
+        f.setConnectionFactory(cf);
+        f.setMessageConverter(conv);
+        f.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        return f;
+    }
+
+    @Bean
+    public Queue reviewCommentQueue() {
+        return new Queue("review.comment.queue");
+    }
+
+    @Bean
+    public TopicExchange reviewCommentExchange() {
+        return new TopicExchange("review.comment.exchange");
+    }
+
+    @Bean
+    public Binding reviewCommentBinding(Queue reviewCommentQueue, TopicExchange reviewCommentExchange) {
+        return BindingBuilder.bind(reviewCommentQueue).to(reviewCommentExchange).with("review.comment.#");
+    }
 
     @Bean
     public Queue toCompanyQueue()   {

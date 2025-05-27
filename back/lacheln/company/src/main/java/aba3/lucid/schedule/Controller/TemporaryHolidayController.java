@@ -3,11 +3,13 @@ package aba3.lucid.schedule.Controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.schedule.dto.TemporaryHolidayRequest;
 import aba3.lucid.domain.schedule.dto.TemporaryHolidayResponse;
 import aba3.lucid.schedule.Business.TemporaryHolidayBusiness;
 import aba3.lucid.schedule.Service.TemporaryHolidayService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,20 +22,20 @@ public class TemporaryHolidayController {
 
     @PostMapping("/temporary")
     public API<TemporaryHolidayResponse> createTemporaryHoliday(
-            @PathVariable Long cpId,
+            @AuthenticationPrincipal CustomUserDetails company,
             @RequestBody TemporaryHolidayRequest request
     ) {
-        TemporaryHolidayResponse response = temporaryHolidayBusiness.createHoliday(request, AuthUtil.getCompanyId());
+        TemporaryHolidayResponse response = temporaryHolidayBusiness.createHoliday(request,company.getCompanyId());
         return API.OK(response);
     }
 
-    @PutMapping("/update/temporary")
+    @PutMapping("/update/temporary/{thId}")
     public API<TemporaryHolidayResponse> updateTemporaryHoliday(
-            @PathVariable Long cpId,
+            @AuthenticationPrincipal CustomUserDetails company,
             @PathVariable Long thId,
             @RequestBody TemporaryHolidayRequest request
     ) {
-        TemporaryHolidayResponse response = temporaryHolidayBusiness.updateTemporaryHoliday(request, thId, AuthUtil.getCompanyId());
+        TemporaryHolidayResponse response = temporaryHolidayBusiness.updateTemporaryHoliday(request, thId,company.getCompanyId());
         return API.OK(response);
     }
 }

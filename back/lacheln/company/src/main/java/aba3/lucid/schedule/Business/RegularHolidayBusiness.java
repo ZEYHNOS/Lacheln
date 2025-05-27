@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Component
 public class RegularHolidayBusiness {
-    private final RegularHolidayRepository regularHolidayRepository;
     private final RegularHolidayConvertor regularHolidayConvertor;
-    private final CompanyRepository companyRepository;
     private final CompanyService companyService;
     private final RegularHolidayService regularHolidayService;
 

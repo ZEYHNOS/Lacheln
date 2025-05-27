@@ -5,10 +5,12 @@ import aba3.lucid.adjustment.Business.AdjustmentBusiness;
 import aba3.lucid.adjustment.Service.AdjustmentService;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.company.dto.AdjustmentRequest;
 import aba3.lucid.domain.company.dto.AdjustmentResponse;
 import aba3.lucid.domain.company.repository.AdjustmentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,22 +24,22 @@ public class AdjustmentController {
 
     @PostMapping("/create")
     public API<AdjustmentResponse> createAdjustment(
-            @PathVariable Long companyId,
+            @AuthenticationPrincipal CustomUserDetails company,
             @RequestBody AdjustmentRequest request
    ){
-       AdjustmentResponse response =adjustmentBusiness.createAdjustmentEntity(request, AuthUtil.getCompanyId());
-       return API.OK();
+       AdjustmentResponse response =adjustmentBusiness.createAdjustmentEntity(request, company.getCompanyId());
+       return API.OK(response);
 
    }
 
    @PutMapping("/update")
     public API<AdjustmentResponse> updateAdjustment(
-           @PathVariable Long companyId,
+           @AuthenticationPrincipal CustomUserDetails company,
            @RequestBody AdjustmentRequest request
 
    ) {
-        AdjustmentResponse response = adjustmentBusiness.updateAdjustment(request, AuthUtil.getCompanyId());
-        return API.OK();
+        AdjustmentResponse response = adjustmentBusiness.updateAdjustment(request, company.getCompanyId());
+        return API.OK(response);
    }
 
 

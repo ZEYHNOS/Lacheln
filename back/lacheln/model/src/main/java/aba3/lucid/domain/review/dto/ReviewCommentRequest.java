@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewCommentRequest {
 
-    private ReviewEntity reviewId;
+    private Long reviewId;
 
-    private CompanyEntity cpId;
+    private Long cpId;
 
     private String content;
 

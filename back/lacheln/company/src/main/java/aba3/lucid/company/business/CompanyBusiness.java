@@ -42,20 +42,6 @@ public class CompanyBusiness {
     private final ApplicationContext applicationContext;
     private final CompanySetConvertor companySetConvertor;
 
-//    public CompanyBusiness(CompanyService companyService,
-//                           CompanyRepository companyRepository,
-//                           CompanyConvertor companyConvertor,
-//                           ApplicationContext applicationContext,
-//                           CompanySetConvertor companySetConvertor, CompanyUpdateConvertor companyUpdateConvertor)
-//    {
-//
-//        this.companyService = companyService;
-//        this.companyRepository = companyRepository;
-//        this.companyConvertor = companyConvertor;
-//        this.applicationContext = applicationContext;
-//        this.companySetConvertor = companySetConvertor;
-//        this.companyUpdateConvertor = companyUpdateConvertor;
-//    }
 
     //passwordEncoder.encode(rawPassword)를 호출하여 비밀번호를 암호화합니다.
 
@@ -70,8 +56,6 @@ public class CompanyBusiness {
 
         validateDuplicateCompany(request.getEmail());
 
-//        CompanyEntity savedCompanyEntity = companyConvertor.toEntity(request, hashedPassword);
-//        CompanyEntity savedCompanyEntitySaved = companyRepository.save(savedCompanyEntity);
         CompanyEntity companyEntity = companyConvertor.toEntity(request);
 
         companyEntity.setCpRepName("임시대표");
@@ -85,8 +69,7 @@ public class CompanyBusiness {
         return companyConvertor.toResponse(savedEntity);
     }
     public CompanyProfileSetResponse updateCompanyProfile(Long companyId, CompanyProfileSetRequest request) {
-        CompanyEntity entity = companyRepository.findById(companyId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "회사 정보를 찾을 수 없습니다."));
+        CompanyEntity entity = findByIdWithThrow(companyId);
 
         entity.setCpRepName(request.getRepName());
         entity.setCpMainContact(request.getMainContact());
@@ -114,29 +97,15 @@ public class CompanyBusiness {
 
 
 
-    //삭제 과정에서 문제가 발생하면 롤백할 수 있도록 하기 위함- transactional 쓰는 이유
-    @Transactional
-    public void deleteCompany(Long cpId) {
-        CompanyEntity company = companyRepository.findById(cpId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
 
-        companyService.deleteCompany(company);
-    }
-
-
-    public API<CompanyUpdateResponse> updateCompany(CompanyUpdateRequest companyUpdateRequest, long companyId) {
+    public API<CompanyUpdateResponse> updateCompany(CompanyUpdateRequest companyUpdateRequest, Long companyId) {
         if(companyUpdateRequest == null) {
             throw new ApiException(ErrorCode.NOT_FOUND, "요청에 대한 정보가 없ㅅ습니다");
         }
         CompanyEntity loadCompany = companyService.findByIdWithThrow(AuthUtil.getCompanyId());
-//        CompanyEntity loadCompany = companyService.findByIdWithThrow(companyId);
-//        if(!loadCompany.getUserSocial().getSocialCode().equals("L") && companyUpdateRequest.getPassword() != null)   {
-//            return API.ERROR(ErrorCode.BAD_REQUEST, "소셜계정은 비밀번호 변경이 불가합니다.");
-//        }
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         loadCompany.updateCompany(companyUpdateRequest,bCryptPasswordEncoder);
         companyService.saveByCompany(loadCompany);
-        CompanyUpdateResponse dtoCom = companyUpdateConvertor.toResponse(loadCompany);
         CompanyUpdateResponse data = CompanyUpdateResponse.builder()
                 .address(loadCompany.getCpAddress())
                 .build();
@@ -160,14 +129,6 @@ public class CompanyBusiness {
         return companyService.getCategory(companyId);
     }
 
-
-//    public List<CompanyRequest> searchCompany(CompanyRequest companyRequest, String email) {
-//        List<CompanyEntity> companyEntityList = companyRepository.findAll();
-//        List<CompanyRequest> companyRequestList = new ArrayList<>();
-//        for(CompanyEntity companyEntity : companyEntityList) {
-//            companyRequestList.add(
-//        }
-//    }
 
 
 

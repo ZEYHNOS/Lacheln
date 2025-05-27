@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @Data
 @Getter
 public class ReviewCommentResponse {
-    private long commentId;
-    private long cpId;
-    private long reviewId;
+    private Long commentId;
+    private Long cpId;
+    private Long reviewId;
     private String content;
     private LocalDate createdAt;
     private ReviewCommentStatus status;

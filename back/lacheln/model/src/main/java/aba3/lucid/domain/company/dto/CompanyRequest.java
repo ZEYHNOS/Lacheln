@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CompanyRequest implements CompanyRequestIfs{
+public class CompanyRequest {
 
     //@NotEmpty 는 null 과 "" 둘 다 허용하지 않게 하기 때문메 not empty 썼음.
     @Email(message = "이메일 형식 아닙니다")
@@ -32,9 +32,6 @@ public class CompanyRequest implements CompanyRequestIfs{
 
     @NotBlank
     private String name;
-
-    @NotBlank
-    private String role;
 
 
     private String postalCode;

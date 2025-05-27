@@ -39,7 +39,6 @@ public class CompanyServiceTest {
 //                .repName("Ganbarov")
 //                .mainContact("00105447795")
                 .address("Daegu City")
-                .role("COMPANY")
                 .bnRegNo("123-45-67890")
                 .mos("2019-서울강남-01234")
 //                .profile("default_profile.jpg")
@@ -54,27 +53,10 @@ public class CompanyServiceTest {
         CompanyEntity savedCompany = companyRepository.findById(savedId).orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND,"업체가 없습니다"));
         assertEquals(companyRequest.getName(), savedCompany.getCpName());
         assertEquals(companyRequest.getEmail(), savedCompany.getCpEmail());
-        assertEquals(companyRequest.getRole(), savedCompany.getCpRole());
         assertEquals(companyRequest.getBnRegNo(), savedCompany.getCpBnRegNo());
         assertEquals(companyRequest.getMos(), savedCompany.getCpMos());
-//        assertEquals(companyRequest.getStatus(), savedCompany.getCpStatus());
-//        assertEquals(companyRequest.getProfile(), savedCompany.getCpProfile());
-//        assertEquals(companyRequest.getExplain(), savedCompany.getCpExplain());
-//        assertEquals(companyRequest.getCategory(), savedCompany.getCpCategory());
         assertEquals(companyRequest.getContact(), savedCompany.getCpContact());
 //        assertEquals(companyRequest.getFax(), savedCompany.getCpFax());
     }
 
-//    @Test
-//    @Rollback
-//    public void loginCompany() throws Exception {
-//        CompanyLoginRequest companyLoginRequest = CompanyLoginRequest.builder()
-//                .cpEmail("Ceri@gmail.com")
-//                .cpPassword("84u4848hf")
-//                .build();
-//    Long savedId = companyBusiness.login(companyLoginRequest).getCpId();
-//    CompanyEntity savedCompany = companyRepository.findById(savedId).orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "업체가 없습니다"));
-//    assertEquals(companyLoginRequest.getCpEmail(),savedCompany.getCpEmail());
-//    assertEquals(companyLoginRequest.getCpPassword(),savedCompany.getCpPassword());
-//    }
 }

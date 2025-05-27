@@ -24,8 +24,6 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ReviewCommentBusiness {
-    private final PayManagementRepository payRepository;
-    private final PayDetailRepository payDetailRepository;
     private final ReviewCommentConvertor reviewCommentConvertor;
     private final ReviewCommentRepository reviewCommentRepository;
     private final ReviewCommentService reviewCommentService;
@@ -68,12 +66,12 @@ public class ReviewCommentBusiness {
 
     }
 
-    public void deleteReviewComment(long reviewCommentId) {
+    public void deleteReviewComment(Long reviewCommentId) {
         ReviewCommentEntity reviewComment = reviewCommentRepository.findById(reviewCommentId).orElse(null);
         reviewCommentService.deleteComment(reviewComment);
     }
 
-    public ReviewCommentResponse getReviewComment(long reviewCommentId) {
+    public ReviewCommentResponse getReviewComment(Long reviewCommentId) {
         Optional<ReviewCommentEntity> commentOpt = reviewCommentRepository.findById(reviewCommentId);
         if(commentOpt.isPresent()) {
             ReviewCommentEntity reviewComment = commentOpt.get();

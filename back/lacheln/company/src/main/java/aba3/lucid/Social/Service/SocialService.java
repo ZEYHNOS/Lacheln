@@ -3,6 +3,7 @@ package aba3.lucid.Social.Service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.convertor.SnsConvertor;
 import aba3.lucid.domain.company.dto.SnsRequest;
 import aba3.lucid.domain.company.dto.SnsResponse;
@@ -23,20 +24,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class SocialService {
     private final SocialRepository socialRepository;
     private final SnsConvertor snsConvertor;
-    private final CompanyRepository companyRepository;
+    private final CompanyService companyService;
 
 
     public SnsResponse createSocial(SnsRequest request, Long cpId) {
-        CompanyEntity company = companyRepository.findById(cpId).orElseThrow(
-                () -> new ApiException(ErrorCode.NOT_FOUND, "업체를 찾을 수 없습니다" +cpId)
-        );
+        CompanyEntity company = companyService.findByIdWithThrow(cpId);
         SNS SnsName = (request.getName() != null) ? (request.getName()): SNS.INSTAGRAM;
         String url = (request.getUrl() != null) ? (request.getUrl()): "www.instagram.com";
 
         SnsRequest defaultRequest = new SnsRequest(SnsName, url);
         SocialEntity entity = snsConvertor.toEntity(defaultRequest,company);
         SocialEntity savedEntity = socialRepository.save(entity);
-        return snsConvertor.toResponse(entity);
+        return snsConvertor.toResponse(savedEntity);
     }
 
     @Transactional

@@ -41,17 +41,18 @@ public class ReportBusiness {
 
     private final CompanyRepository companyRepository;
     private final UsersRepository usersRepository;
-    private final ReportRepository reportRepository;
     private final ReportService reportService;
     private final ReportConvertor reportConvertor;
     private final ImageService imageService;
     private final CompanyService companyService;
 
 
-    //업체 유저를 신고하기
+    //업체 -->> 유저를 신고하기
     public ReportResponse reportUserByCompany(ReportRequest req, CustomUserDetails company) {
         Validator.throwIfNull(req);
         String userId = req.getUserId();
+
+        log.info("cpId : {}", userId);
         //신고(회사) 조회
         CompanyEntity reporter = companyService.findByIdWithThrow(company.getCompanyId());
 
@@ -59,13 +60,6 @@ public class ReportBusiness {
         UsersEntity reported = usersRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
 
-        //제한 카테고리 검사
-        if(req.getReportCategory() == ReportCategory.RESTRICTED) {
-            throw  new ApiException(ErrorCode.RESTRICTED_CONTENT);
-        }
-
-        //자기 자신을 신고할 수 없다
-        reportService.validateSelfReport(company.getUserId(),userId);
 
         ReportEntity entity = reportConvertor.toReportEntity(
                 req, reporter, reported
@@ -75,7 +69,7 @@ public class ReportBusiness {
         return reportConvertor.toReportResponse(savedEntity);
     }
 
-    //유저가 업체를 신고하기
+    //유저가 ->>> 업체를 신고하기
     public ReportResponse reportCompanyByUser(ReportRequest req, CustomUserDetails user) {
         Validator.throwIfNull(req);
         Long cpId = req.getCpId();
@@ -89,14 +83,6 @@ public class ReportBusiness {
         CompanyEntity reported = companyRepository.findById(cpId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
 
-        //자기 자신을 신고할 수 없다
-        reportService.validateSelfReport(String.valueOf(cpId),user.getUserId());
-
-
-        //제한 카테고리 검사
-        if(req.getReportCategory() == ReportCategory.RESTRICTED) {
-            throw  new ApiException(ErrorCode.RESTRICTED_CONTENT);
-        }
 
         //entity 조립
         ReportEntity entity = reportConvertor.toReportEntity(
@@ -111,7 +97,6 @@ public class ReportBusiness {
     List<MultipartFile> images)
             throws IOException {
 
-//        Validator.throwIfNull(req);
         Validator.throwIfInvalidId(reportId);
         Validator.throwIfInvalidId(cpId);
         if(images == null || images.isEmpty()) {

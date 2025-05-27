@@ -34,8 +34,8 @@ public class WeekdaysScheduleConvertor {
                         WeekdaysScheduleEntity.builder()
                                 .company(company)
                                 .wsWeekdays(dto.getWeekday())
-                                .wsStart(dto.getStart().toLocalTime())
-                                .wsEnd(dto.getEnd().toLocalTime())
+                                .wsStart(dto.getStart())
+                                .wsEnd(dto.getEnd())
                                 .build()
                 )
                 .collect(Collectors.toList());
@@ -53,8 +53,8 @@ public class WeekdaysScheduleConvertor {
     //한 DTO ->>> 한 Entity 매필 명화해짐
     public void updateEntity (WeekdaysScheduleRequest.DayScheduleDto dto, WeekdaysScheduleEntity entity) {
         entity.setWsWeekdays(dto.getWeekday());
-        entity.setWsStart(dto.getStart().toLocalTime());
-        entity.setWsEnd(dto.getEnd().toLocalTime());
+        entity.setWsStart(dto.getStart());
+        entity.setWsEnd(dto.getEnd());
 
     }
 

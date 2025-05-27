@@ -79,8 +79,8 @@ public class WeekdaysScheduleBusiness {
                     }
                     return WeekdaysScheduleRequest.DayScheduleDto.builder()
                             .weekday(day)
-                            .start(start)
-                            .end(end)
+                            .start(start.toLocalTime())
+                            .end(end.toLocalTime())
                             .build();
                 })
                 .collect(Collectors.toList());

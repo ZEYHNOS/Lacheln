@@ -19,26 +19,22 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewCommentController {
 
     private final ReviewCommentBusiness reviewCommentBusiness;
-    private final ReviewCommentService reviewCommentService;
 
     @GetMapping("/search/{reviewCommentId}")
     public API<ReviewCommentResponse> searchReviewComment(
-            @AuthenticationPrincipal CustomUserDetails company,
-            @PathVariable long reviewCommentId,
-            @RequestBody ReviewCommentRequest reviewCommentRequest
+            @PathVariable Long reviewCommentId
     ) {
         ReviewCommentResponse response = reviewCommentBusiness.getReviewComment(reviewCommentId);
         return API.OK(response);
     }
 
     @DeleteMapping("/delete/{reviewCommentId}")
-    public API<ReviewCommentResponse> deleteReviewComment(
+    public API<Void> deleteReviewComment(
             @AuthenticationPrincipal CustomUserDetails company,
-            @PathVariable long reviewCommentId,
-            @RequestBody ReviewCommentRequest reviewCommentRequest
+            @PathVariable Long reviewCommentId
     ) {
-        ReviewCommentResponse response = reviewCommentBusiness.getReviewComment(reviewCommentId);
-        return API.OK(response);
+       reviewCommentBusiness.deleteReviewComment(reviewCommentId);
+       return API.OK();
     }
 
 

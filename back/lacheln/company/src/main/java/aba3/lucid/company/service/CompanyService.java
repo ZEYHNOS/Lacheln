@@ -20,9 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CompanyService {
     private final CompanyRepository companyRepository;
-    private final CompanyConvertor companyConvertor;
 
-    public CompanyEntity findByIdAndMatchCategoryWithThrow(long companyId, CompanyCategory companyCategory) {
+    public CompanyEntity findByIdAndMatchCategoryWithThrow(Long companyId, CompanyCategory companyCategory) {
         CompanyEntity companyEntity = findByIdWithThrow(companyId);
 
         // 카테고리가 같지 않을 때
@@ -35,12 +34,6 @@ public class CompanyService {
 
         return companyEntity;
     }
-
-    public CompanyEntity findByIdWithThrow(long companyId) {
-        return companyRepository.findById(companyId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
-    }
-
 
 
 
@@ -56,23 +49,10 @@ public class CompanyService {
     }
 
 
-    //메소드에 전달된 existingCompany와 request가 null인지 확인하고
-    //만약 둘 중 하나라도 null이면, ApiException을 발생시켜 잘못된 파라미터임을 알립니다. 이는 안정성을 위해 필수이다
-//    public CompanyEntity updateCompany(CompanyEntity existingCompany, CompanyUpdateRequest request, BCryptPasswordEncoder passwordEncoder) {
-//        existingCompany.updateCompanyRequest(request,passwordEncoder);
-//        return companyRepository.save(existingCompany);
-//
-//    }
+
 
     public CompanyEntity saveByCompany(CompanyEntity companyEntity) {
         return companyRepository.save(companyEntity);
-    }
-    public void deleteCompany(CompanyEntity company) {
-        companyRepository.delete(company);
-    }
-
-    public void deleteCompanyById(Long companyId) {
-        companyRepository.deleteById(companyId);
     }
 
     // 업체 카테고리 가지고 오기

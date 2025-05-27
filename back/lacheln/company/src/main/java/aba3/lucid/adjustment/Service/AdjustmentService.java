@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AdjustmentService {
 
-    private final CompanyRepository companyRepository;
     private final AdjustmentConvertor adjustmentConvertor;
     private final AdjustmentRepository adjustmentRepository;
 

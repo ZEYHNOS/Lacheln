@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewCommentEventDto {
-    private long reviewId;
-    private long cpId;
+    private Long reviewId;
+    private Long cpId;
     private String payId;
 }

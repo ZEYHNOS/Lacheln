@@ -29,7 +29,6 @@ public class CompanyResponse implements Serializable {
 
     private String address;
 
-    private String role;
 
     private String postalCode;
 

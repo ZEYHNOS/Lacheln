@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CompanyController {
     private final CompanyBusiness companyBusiness;
-
 
 
     @PostMapping("/signup")
@@ -37,11 +37,11 @@ public class CompanyController {
 
     @PostMapping("/{companyId}/profile")
     public API<CompanyProfileSetResponse> setCompanyProfile(
-            @PathVariable Long companyId,
+            @AuthenticationPrincipal CustomUserDetails company,
             @RequestBody CompanyProfileSetRequest request
 
     ) {
-          CompanyProfileSetResponse response = companyBusiness.updateCompanyProfile(companyId,request);
+          CompanyProfileSetResponse response = companyBusiness.updateCompanyProfile(company.getCompanyId(),request);
           log.debug("Update CompanyProfileSetResponse: {}", response);
           return API.OK(response);
 
@@ -49,10 +49,11 @@ public class CompanyController {
 
     @PutMapping("/update/{companyId}")
     public API<CompanyUpdateResponse> updateCompany (
+            @AuthenticationPrincipal CustomUserDetails company,
             @RequestBody CompanyUpdateRequest companyUpdateRequest
 
     ){
-        return companyBusiness.updateCompany(companyUpdateRequest, AuthUtil.getCompanyId());
+        return companyBusiness.updateCompany(companyUpdateRequest, company.getCompanyId());
     }
 
     @GetMapping("/search/{email}")
@@ -63,16 +64,6 @@ public class CompanyController {
         return API.OK(companyResponse);
     }
 
-    @DeleteMapping("/delete/{companyId}")
-    public API<CompanyResponse> deleteCompany (
-
-            @PathVariable long companyId,
-            @Valid
-            @RequestBody CompanyRequest companyRequest
-    ){
-        companyBusiness.deleteCompany(companyId);
-        return API.OK("업체가 삭제되었습니다");
-    }
 
     @GetMapping("/category")
     @Operation(summary = "해당 업체의 카테고리")

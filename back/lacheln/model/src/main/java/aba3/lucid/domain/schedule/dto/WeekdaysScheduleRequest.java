@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Setter
@@ -23,8 +24,8 @@ public class WeekdaysScheduleRequest {
     @Builder
     public static class DayScheduleDto {
         private Weekdays weekday;
-        private LocalDateTime start;
-        private LocalDateTime end;
+        private LocalTime start;
+        private LocalTime  end;
     }
 
 

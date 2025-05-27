@@ -2,8 +2,6 @@ package aba3.lucid.schedule.Business;
 
 
 import aba3.lucid.common.annotation.Business;
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -16,7 +14,6 @@ import aba3.lucid.domain.schedule.repository.TemporaryHolidayRepository;
 import aba3.lucid.schedule.Service.TemporaryHolidayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Business
@@ -25,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class TemporaryHolidayBusiness {
     private final TemporaryHolidayConvertor temporaryHolidayConvertor;
     private final TemporaryHolidayService temporaryHolidayService;
-    private final CompanyRepository companyRepository;
-    private final TemporaryHolidayRepository temporaryHolidayRepository;
     private final CompanyService companyService;
 
     public TemporaryHolidayResponse createHoliday(TemporaryHolidayRequest request, Long cpId) {

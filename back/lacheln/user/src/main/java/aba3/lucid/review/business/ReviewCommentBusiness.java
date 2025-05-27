@@ -1,13 +1,11 @@
 package aba3.lucid.review.business;
 
 
-import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
-import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.payment.repository.PayDetailRepository;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
 import aba3.lucid.domain.review.convertor.ReviewCommentConvertor;
@@ -67,7 +65,6 @@ public class ReviewCommentBusiness {
         );
         ReviewCommentEntity savedEntity = reviewCommentService.addComment(entity);
         return reviewCommentConvertor.toResponse(savedEntity);
-
 
     }
 

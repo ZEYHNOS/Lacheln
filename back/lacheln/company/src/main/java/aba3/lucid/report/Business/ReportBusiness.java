@@ -165,32 +165,6 @@ public class ReportBusiness {
 
 
 
-
-
-
-//
-//    public List<String> reportCompanyImagesUpload(ReportImageRequest request,Long cpId, List<MultipartFile> images) throws IOException {
-//        Validator.throwIfInvalidId(cpId);
-//        Validator.throwIfNull(request);
-//        if(images.isEmpty()) {
-//            throw new ApiException(ErrorCode.NULL_POINT);
-//        }
-//        CompanyEntity company = companyService.findByIdWithThrow(cpId);
-//        return imageService.imagesUpload(company,images, ImageType.REPORT);
-//    }
-
-
-
-//    public List<String> reportUserImagesUpload(ReportImageRequest request,String userId, List<MultipartFile> images) throws IOException {
-//        Validator.throwIfNull(request);
-//        Validator.throwIfInvalidId(userId);
-//        if(images.isEmpty()) {
-//            throw new ApiException(ErrorCode.NULL_POINT);
-//        }
-//        UsersEntity user = usersRepository.findById(userId).orElseThrow(()-> new ApiException(ErrorCode.NOT_FOUND));
-//        return imageService.imagesUpload(user,images, ImageType.REPORT);
-//    }
-
 }
 
 

@@ -16,7 +16,7 @@ public class CartService {
     private final CartRepository cartRepository;
 
     // 유저 아이디로 장바구니 조회
-    public List<CartEntity> getCartByUserIdWithThrow(String userId) {
+    public List<CartEntity> getCartByUserId(String userId) {
         return cartRepository.findAllByUsers_UserId(userId);
     }
     

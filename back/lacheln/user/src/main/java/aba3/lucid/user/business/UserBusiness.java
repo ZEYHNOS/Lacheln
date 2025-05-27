@@ -63,8 +63,8 @@ public class UserBusiness {
         // 암호화 모듈 로드 및 암호화된 비밀번호와 함께 유저 정보 업데이트 
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         loadUser.updateUser(userUpdateRequest, bCryptPasswordEncoder);
-        userService.saveByUser(loadUser);
-        UserDto dtoUser = userConvertor.convertEntityToDto(loadUser);
+        UsersEntity saved = userService.saveByUser(loadUser);
+        UserDto dtoUser = userConvertor.convertEntityToDto(saved);
         UserUpdateResponse data = UserUpdateResponse.builder()
                 .user(dtoUser)
                 .build();

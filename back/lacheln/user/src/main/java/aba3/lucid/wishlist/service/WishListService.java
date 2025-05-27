@@ -25,8 +25,6 @@ import java.util.List;
 public class WishListService {
 
     private final WishListRepository wishListRepository;
-    private final UserService userService;
-    private final ObjectMapper objectMapper;
 
     // 유저 ID를 통해 찜 목록 추출
     public List<WishListEntity> findByUserId(String userId)   {

@@ -29,7 +29,7 @@ public class CartBusiness {
 
     // 장바구니 리스트 검색
     public API<List<CartResponse>> getCartList(String userId)    {
-        List<CartEntity> cart = cartService.getCartByUserIdWithThrow(userId);
+        List<CartEntity> cart = cartService.getCartByUserId(userId);
         return API.OK(cartConvertor.convertToResponses(cart));
     }
 
@@ -39,8 +39,11 @@ public class CartBusiness {
         CartEntity cart = null;
         List<CartDetailEntity> cartDetails = new ArrayList<>();
 
-        if(user != null && request != null) {
+        // 요청 null확인
+        if(request != null) {
             cart = cartConvertor.convertToEntity(user, request.getCartRequest());
+
+            // 위에 만들어진 cart에 옵션 넣기
             for(CartDetailRequest details : request.getCartRequest().getPdDetails())   {
                 cartDetails.add(cartConvertor.convertToEntity(cart, details));
             }
@@ -60,23 +63,26 @@ public class CartBusiness {
     public API<CartAddResponse> addCart(String userId, CartAddRequest cartAddRequest)    {
         UsersEntity user = userService.findByIdWithThrow(userId);
         List<CartDetailEntity> cartDetail = new ArrayList<>();
-        CartEntity cart = null;
 
-        if(cartAddRequest != null && user != null) {
-            cart = cartConvertor.convertToEntity(user, cartAddRequest.getCartRequests());
-            for(CartDetailRequest cartDetailRequest : cartAddRequest.getCartRequests().getPdDetails())    {
-                cartDetail.add(cartConvertor.convertToEntity(cart, cartDetailRequest));
-            }
-            if(!cartDetail.isEmpty()) {
-                cart.addCartDetail(cartDetail);
-            }
-            cart = cartService.addCart(cart);
-        } else {
+        // request가 있는지 확인
+        if(cartAddRequest == null) {
             throw new ApiException(ErrorCode.GONE,"해당하는 유저가 없거나, 요청된 값이 없습니다.");
         }
+        
+        // 카트 생성
+        CartEntity cart = cartConvertor.convertToEntity(user, cartAddRequest.getCartRequests());
+
+        // 카트옵션에 옵션넣기
+        for(CartDetailRequest cartDetailRequest : cartAddRequest.getCartRequests().getPdDetails())    {
+            cartDetail.add(cartConvertor.convertToEntity(cart, cartDetailRequest));
+        }
+        cart.addCartDetail(cartDetail);
+
+        // 저장한 카트 불러오기
+        CartEntity addedCart = cartService.addCart(cart);
 
         CartAddResponse response = CartAddResponse.builder()
-                .addedCart(cartConvertor.convertToDto(cart, cartDetail))
+                .addedCart(cartConvertor.convertToDto(addedCart, cartDetail))
                 .build();
 
         return API.OK(response, "장바구니에 담기 성공..");

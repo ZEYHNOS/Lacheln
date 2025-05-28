@@ -49,6 +49,7 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
     protected DressResponse createResponse(DressEntity entity) {
         return DressResponse.builder()
                 .id(entity.getPdId())
+                .cpId(entity.getCompany().getCpId())
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
                 .color(entity.getDressColor())

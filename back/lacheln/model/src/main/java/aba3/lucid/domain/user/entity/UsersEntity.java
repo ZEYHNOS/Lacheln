@@ -176,4 +176,8 @@ public class UsersEntity {
 
         this.userMileage = mileage;
     }
+
+    public void addMileage(BigInteger payTotalPrice) {
+        this.userMileage = this.userMileage.add(payTotalPrice.divide(new BigInteger("10")));
+    }
 }

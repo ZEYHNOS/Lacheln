@@ -1,5 +1,7 @@
 package aba3.lucid.domain.payment.dto;
 
+import aba3.lucid.domain.cart.dto.CartPaymentRequest;
+import aba3.lucid.domain.cart.dto.CartRequest;
 import aba3.lucid.domain.product.dto.ProductCouponVerifyDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +25,7 @@ public class PaymentVerifyRequest {
     // 사용할려고 하는 마일리지 금액
     private BigInteger mileage;
 
-    // 장바구니 ID 리스트
-    private List<Long> cardIdList;
+    // 장바구니 리스트
+    private List<CartPaymentRequest> cardRequestList;
 
 }

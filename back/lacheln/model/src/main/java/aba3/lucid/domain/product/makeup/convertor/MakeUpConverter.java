@@ -38,6 +38,7 @@ public class MakeUpConverter extends ProductAbstractConverter<MakeupEntity, Make
     protected MakeUpResponse createResponse(MakeupEntity entity) {
         return MakeUpResponse.builder()
                 .id(entity.getPdId())
+                .cpId(entity.getCompany().getCpId())
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
                 .status(entity.getPdStatus())

@@ -4,6 +4,7 @@ import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.PaymentErrorCode;
+import aba3.lucid.domain.cart.dto.CartPaymentRequest;
 import aba3.lucid.domain.cart.entity.CartEntity;
 import aba3.lucid.domain.coupon.dto.CouponVerifyRequest;
 import aba3.lucid.domain.coupon.dto.CouponVerifyResponse;
@@ -64,6 +65,10 @@ public class PaymentService {
         // 업체 캘린더에 데이터 넣기
         rabbitTemplate.convertAndSend("캘린더 용 데이터 만들어서 보내기");
 
+        // 마일리지 추가하기
+        UsersEntity user = entity.getUser();
+        user.addMileage(entity.getPayTotalPrice());
+
         return payManagementRepository.save(entity);
     }
 
@@ -95,10 +100,14 @@ public class PaymentService {
 
     // 결제 전 검증 및 총 금액 반환
     public BigInteger verificationAndGetTotalAmount(PaymentVerifyRequest request, String userId) {
-        // TODO 일정 확인하기
+        // 예약이 가능한지
+//        payDetailService.checkReservation(request.getCardRequestList());
 
         // 카트 Entity List
-        List<CartEntity> cartEntityList = cartService.findAllById(request.getCardIdList());
+        List<Long> cartIdList = request.getCardRequestList().stream()
+                .map(CartPaymentRequest::getCartId)
+                .toList();
+        List<CartEntity> cartEntityList = cartService.findAllById(cartIdList);
 
         // 업체마다 그룹을 만들고 업체 별 결제해야 하는 금액 더하기
         Map<Long, BigInteger> groupByCompanyAmountMap = initGroupByCompanyAmount(cartEntityList);

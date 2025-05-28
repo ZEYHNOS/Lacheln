@@ -25,16 +25,16 @@ public class WeekdaysScheduleService {
     private final WeekdaysScheduleConvertor weekdaysScheduleConvertor;
 
     @Transactional
-    public List<WeekdaysScheduleEntity> createWeekdaysSchedule(List<WeekdaysScheduleEntity> entities) {
-        return weekdaysScheduleRepository.saveAll(entities);
+    public WeekdaysScheduleEntity createWeekdaysSchedule(WeekdaysScheduleEntity entity) {
+        return weekdaysScheduleRepository.save(entity);
     }
 
     @Transactional
-    public List<WeekdaysScheduleEntity> updateWeekdaysSchedule(Long wsId, WeekdaysScheduleRequest.DayScheduleDto dtoList) {
+    public WeekdaysScheduleEntity updateWeekdaysSchedule(Long wsId,  WeekdaysScheduleRequest request) {
         WeekdaysScheduleEntity entity = weekdaysScheduleRepository.findById(wsId).orElseThrow(()
                 -> new ApiException(ErrorCode.NOT_FOUND));
-        weekdaysScheduleConvertor.updateEntity(dtoList, entity);
-        return Collections.singletonList(weekdaysScheduleRepository.save(entity));
+       weekdaysScheduleConvertor.updateEntity(request, entity);
+       return weekdaysScheduleRepository.save(entity);
 
     }
 

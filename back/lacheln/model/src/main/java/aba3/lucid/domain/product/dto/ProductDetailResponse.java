@@ -20,6 +20,8 @@ public class ProductDetailResponse {
     // 상품 아이디(웹에서 정렬을 위해 사용
     private Long id;
 
+    private Long cpId;
+
     // 상품 이름
     private String name;
 

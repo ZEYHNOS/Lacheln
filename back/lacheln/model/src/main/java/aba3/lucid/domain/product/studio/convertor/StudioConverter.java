@@ -39,6 +39,7 @@ public class StudioConverter extends ProductAbstractConverter<StudioEntity, Stud
     protected StudioResponse createResponse(StudioEntity entity) {
         return StudioResponse.builder()
                 .id(entity.getPdId())
+                .cpId(entity.getCompany().getCpId())
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
                 .status(entity.getPdStatus())

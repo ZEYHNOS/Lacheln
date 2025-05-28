@@ -20,26 +20,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WeekdaysScheduleConvertor {
 
-    public List<WeekdaysScheduleResponse> toResponseList(List<WeekdaysScheduleEntity> list) {
-        return list.stream()
-                .map(this::toResponse)
-                .toList()
-                ;
+
+    public WeekdaysScheduleEntity toEntity(WeekdaysScheduleRequest request, CompanyEntity company) {
+       WeekdaysScheduleEntity weekdaysSchedule = WeekdaysScheduleEntity.builder()
+               .company(company)
+               .wsWeekdays(request.getWeekday())
+               .wsEnd(request.getEnd())
+               .wsStart(request.getStart())
+               .build();
+       return weekdaysSchedule;
     }
 
-    public List<WeekdaysScheduleEntity> toEntity(WeekdaysScheduleRequest request,CompanyEntity company) {
 
-        return request.getScheduleList().stream()
-                .map(dto ->
-                        WeekdaysScheduleEntity.builder()
-                                .company(company)
-                                .wsWeekdays(dto.getWeekday())
-                                .wsStart(dto.getStart())
-                                .wsEnd(dto.getEnd())
-                                .build()
-                )
-                .collect(Collectors.toList());
-    }
+
 
 
     public WeekdaysScheduleResponse toResponse(WeekdaysScheduleEntity entity) {
@@ -50,11 +43,12 @@ public class WeekdaysScheduleConvertor {
                 .end(entity.getWsEnd())
                 .build();
     }
+
     //한 DTO ->>> 한 Entity 매필 명화해짐
-    public void updateEntity (WeekdaysScheduleRequest.DayScheduleDto dto, WeekdaysScheduleEntity entity) {
-        entity.setWsWeekdays(dto.getWeekday());
-        entity.setWsStart(dto.getStart());
-        entity.setWsEnd(dto.getEnd());
+    public void updateEntity (WeekdaysScheduleRequest request, WeekdaysScheduleEntity entity) {
+        entity.setWsWeekdays(request.getWeekday());
+        entity.setWsStart(request.getStart());
+        entity.setWsEnd(request.getEnd());
 
     }
 

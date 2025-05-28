@@ -47,7 +47,7 @@ public class RegularHolidayBusiness {
         Validator.throwIfInvalidId(cpId, regHolidayId);
         //업체가 존재하는지 확인
         companyService.findByIdWithThrow(cpId);
-        RegularHolidayEntity regularHolidayEntity = regularHolidayService.findByThrowId(regHolidayId);
+        regularHolidayService.findByThrowId(regHolidayId);
         RegularHolidayEntity updatedEntity = regularHolidayService.updateRegularHoliday(request, regHolidayId);
         return regularHolidayConvertor.toResponse(updatedEntity);
 

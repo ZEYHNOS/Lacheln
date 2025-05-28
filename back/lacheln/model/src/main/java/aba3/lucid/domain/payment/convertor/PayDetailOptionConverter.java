@@ -49,11 +49,6 @@ public class PayDetailOptionConverter {
 
     public PayDetailBlockOptionResponse toBlockResponse(PayDetailOptionEntity entity) {
         return PayDetailBlockOptionResponse.builder()
-                .payDetailOptionId(entity.getPayDetailOptionId())
-                .payOpName(entity.getPayOpName())
-                .payOpDtName(entity.getPayOpDtName())
-                .payDtQuantity(entity.getPayDtQuantity())
-                .payOpPlusCost(entity.getPayOpPlusCost())
                 .payOpTaskTime(entity.getPayOpTaskTime())
                 .build();
     }

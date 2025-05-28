@@ -10,7 +10,7 @@ import java.time.LocalTime;
 @Builder
 public class CartDetailRequest {
     private Long opId;
-    private int cartDtQuantity;
+    private Integer cartDtQuantity;
     private Long opDtId;
     private String opName;
     private String opDtName;

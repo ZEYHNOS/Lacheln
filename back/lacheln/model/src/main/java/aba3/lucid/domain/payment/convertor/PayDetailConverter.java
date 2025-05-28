@@ -25,7 +25,7 @@ public class PayDetailConverter {
                 .productName(request.getProductName())
                 .payCost(request.getPayCost())
                 .payDcPrice(request.getPayDcPrice())
-                .scheduleDate(request.getScheduleDate())
+                .startDatetime(request.getScheduleDate())
                 .build()
                 ;
 
@@ -60,14 +60,8 @@ public class PayDetailConverter {
 
     public PayDetailBlockResponse toBlockResponse(PayDetailEntity entity) {
         return PayDetailBlockResponse.builder()
-                .payDetailId(entity.getPayDetailId())
-                .cpId(entity.getCpId())
                 .pdId(entity.getPdId())
-                .couponId(entity.getCouponId())
-                .productName(entity.getProductName())
-                .payCost(entity.getPayCost())
-                .payDcPrice(entity.getPayDcPrice())
-                .startTime(entity.getScheduleDate())
+                .startTime(entity.getStartDatetime())
                 .taskTime(entity.getTaskTime())
                 .options(payDetailOptionConverter.toBlockResponseList(entity.getPayDetailOptionEntityList()))
                 .build();

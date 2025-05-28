@@ -53,8 +53,12 @@ public class PayDetailEntity {
     private BigInteger payDcPrice;
 
     // 작업 시작 시간
-    @Column(name = "schedule_date", nullable = false)
-    private LocalDateTime scheduleDate;
+    @Column(name = "start_datetime", nullable = false)
+    private LocalDateTime startDatetime;
+    
+    // 작업 종료 시간
+    @Column(name = "end_datetime", nullable = false)
+    private LocalDateTime endDatetime;
 
     // 소요 시간(분)
     @Column(name = "task_time", nullable = false)

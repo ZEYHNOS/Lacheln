@@ -16,9 +16,22 @@ public interface PayDetailRepository extends JpaRepository<PayDetailEntity, Long
 
     List<PayDetailEntity> findAllByCpId(Long cpId);
 
-    @Query("SELECT p FROM PayDetailEntity p WHERE p.scheduleDate >= :start AND p.scheduleDate < :end")
+    @Query("SELECT d " +
+           "FROM PayDetailEntity d " +
+           "JOIN d.payManagement m " +
+           "WHERE d.pdId = :pdId " +
+           "AND d.startDatetime >= :start AND d.startDatetime < :end " +
+           "AND m.payStatus = 'PAID'")
     List<PayDetailEntity> findByPdIdAndDateTime(
             @Param("pdId") Long pdId,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
+
+    @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END " +
+            "FROM PayDetailEntity d " +
+            "JOIN d.payManagement m " +
+            "WHERE d.pdId = :pdId " +
+            "AND NOT (d.endDatetime < :start OR d.startDatetime > :end) " +
+            "AND m.payStatus = 'PAID'")
+    boolean existsByPdIdAndDateTimes(Long pdId, LocalDateTime start, LocalDateTime end);
 }

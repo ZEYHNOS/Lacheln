@@ -34,15 +34,14 @@ public class CartBusiness {
     }
 
     // 장바구니 업데이트
-    public API<CartUpdateResponse> cartUpdate(String userId, CartUpdateRequest request)    {
-        UsersEntity user = userService.findByIdWithThrow(userId);
-        CartEntity cart = null;
+    public API<CartUpdateResponse> cartUpdate(CartUpdateRequest request)    {
+        CartEntity cart = cartService.findByIdWithThrow(request.getCartId());
+        cart.updateCart(request);
+        cart.getCartDetails().clear();
         List<CartDetailEntity> cartDetails = new ArrayList<>();
 
         // 요청 null확인
         if(request != null) {
-            cart = cartConvertor.convertToEntity(user, request.getCartRequest());
-
             // 위에 만들어진 cart에 옵션 넣기
             for(CartDetailRequest details : request.getCartRequest().getPdDetails())   {
                 cartDetails.add(cartConvertor.convertToEntity(cart, details));

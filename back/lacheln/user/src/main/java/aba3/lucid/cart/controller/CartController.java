@@ -35,10 +35,9 @@ public class CartController {
     @PutMapping("/update")
     @Operation(summary = "사용자 장바구니 업데이트", description = "해당하는 소비자 장바구니의 상품을 갱신합니다.")
     public API<CartUpdateResponse> updateCart(
-            @RequestBody CartUpdateRequest request,
-            @AuthenticationPrincipal CustomUserDetails user
+            @RequestBody CartUpdateRequest request
     )   {
-        return cartBusiness.cartUpdate(user.getUserId(), request);
+        return cartBusiness.cartUpdate(request);
     }
 
     // 장바구니 담기
@@ -60,7 +59,7 @@ public class CartController {
         return cartBusiness.deleteCart(cartDeleteRequest);
     }
 
-    // 결제완료시 장바구니에서 제거
+    // 장바구니 비우기
     @DeleteMapping("/pay/success")
     @Operation(summary = "사용자 장바구니 결제 완료시 상품 제거", description = "장바구니에 있는 상품들을 결제완료했을때 장바구니를 비웁니다.")
     public API<String> paySuccess(

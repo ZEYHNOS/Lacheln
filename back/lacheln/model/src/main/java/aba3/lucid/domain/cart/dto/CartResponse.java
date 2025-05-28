@@ -13,9 +13,9 @@ import java.util.List;
 public class CartResponse {
     private Long cpId;
     private Long cartId;
-    private Long productId;
+    private Long pdId;
     private int cartQuantity;
-    private String productName;
+    private String pdName;
     private BigInteger price;
     private String pdImageUrl;
     private LocalDateTime startTime;

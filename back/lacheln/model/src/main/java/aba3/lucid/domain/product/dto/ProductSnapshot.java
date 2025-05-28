@@ -22,8 +22,8 @@ public class ProductSnapshot {
     private List<OptionSnapshot> optionSnapshotList;
 
     public ProductSnapshot(CartEntity cart) {
-        this.id = cart.getProductId();
-        this.name = cart.getProductName();
+        this.id = cart.getPdId();
+        this.name = cart.getPdName();
         this.taskTime = cart.getTaskTime();
         this.price = cart.getPrice();
         this.optionSnapshotList = cart.getCartDetails().stream()

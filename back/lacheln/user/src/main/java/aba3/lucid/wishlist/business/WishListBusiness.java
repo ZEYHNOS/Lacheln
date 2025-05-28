@@ -24,7 +24,7 @@ public class WishListBusiness {
     // 유저 ID로 가져온 찜목록을 상품 ID만 List에 ADD
     public List<Long> findByUser(String userId) {
         return wishListService.findByUserId(userId).stream()
-                .map(WishListEntity::getProductId)
+                .map(WishListEntity::getPdId)
                 .toList()
                 ;
     }
@@ -36,7 +36,7 @@ public class WishListBusiness {
             WishListEntity wishList = WishListEntity
                     .builder()
                     .users(user)
-                    .productId(id)
+                    .pdId(id)
                     .build();
             wishListService.addWishList(wishList);
         }

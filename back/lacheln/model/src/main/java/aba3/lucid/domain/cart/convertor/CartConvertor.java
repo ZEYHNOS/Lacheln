@@ -21,11 +21,11 @@ public class CartConvertor {
                 .pdImageUrl(request.getPdImageUrl())
                 .cartQuantity(request.getCartQuantity())
                 .price(request.getPdPrice())
-                .cartDate(request.getCartDate())
+                .startDatetime(request.getStartDateTime())
                 .cpId(request.getPdId())
-                .productId(request.getPdId())
+                .pdId(request.getPdId())
                 .taskTime(request.getPdTaskTime())
-                .productName(request.getPdName())
+                .pdName(request.getPdName())
                 .build();
     }
 
@@ -45,15 +45,15 @@ public class CartConvertor {
     public CartResponse convertToDto(CartEntity cart, List<CartDetailEntity> request)   {
         List<CartDetailResponse> response = convertToDto(request);
         return CartResponse.builder()
-                .startTime(cart.getCartDate())
+                .startTime(cart.getStartDatetime())
                 .cartQuantity(cart.getCartQuantity())
                 .price(cart.getPrice())
                 .cpId(cart.getCpId())
                 .pdImageUrl(cart.getPdImageUrl())
-                .productName(cart.getProductName())
+                .pdName(cart.getPdName())
                 .cartId(cart.getCartId())
                 .taskTime(cart.getTaskTime())
-                .productId(cart.getProductId())
+                .pdId(cart.getPdId())
                 .cartDetails(response)
                 .build();
     }
@@ -78,12 +78,12 @@ public class CartConvertor {
                         .cartId(cart.getCartId())
                         .cartQuantity(cart.getCartQuantity())
                         .cartDetails(convertToResponseDetails(cart.getCartDetails()))
-                        .productId(cart.getProductId())
+                        .pdId(cart.getPdId())
                         .cpId(cart.getCpId())
                         .price(cart.getPrice())
-                        .productName(cart.getProductName())
+                        .pdName(cart.getPdName())
                         .pdImageUrl(cart.getPdImageUrl())
-                        .startTime(cart.getCartDate())
+                        .startTime(cart.getStartDatetime())
                         .taskTime(cart.getTaskTime())
                         .build())
                 .toList();

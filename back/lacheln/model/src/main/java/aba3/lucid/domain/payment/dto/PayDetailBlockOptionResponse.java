@@ -11,10 +11,5 @@ import java.time.LocalTime;
 @Builder
 @AllArgsConstructor
 public class PayDetailBlockOptionResponse {
-    private long payDetailOptionId;
-    private String payOpName;
-    private String payOpDtName;
-    private int payDtQuantity;
-    private BigInteger payOpPlusCost;
     private LocalTime payOpTaskTime;
 }

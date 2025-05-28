@@ -12,8 +12,8 @@ import java.util.List;
 @Builder
 public class CartRequest {
     private Long pdId;
-    private LocalDateTime cartDate;
-    private int cartQuantity;
+    private LocalDateTime startDateTime;
+    private Integer cartQuantity;
     private String pdName;
     private BigInteger pdPrice;
     private LocalTime pdTaskTime;

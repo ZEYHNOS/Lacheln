@@ -39,6 +39,6 @@ public class WishListService {
     // 찜 목록에서 제거
     @Transactional
     public void deleteWishList(UsersEntity user, Long productId) {
-        wishListRepository.deleteByProductIdAndUsers(productId, user);
+        wishListRepository.deleteByPdIdAndUsers(productId, user);
     }
 }

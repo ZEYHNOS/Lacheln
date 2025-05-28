@@ -9,5 +9,6 @@ import java.util.List;
 
 @Getter
 public class CartUpdateRequest {
+    private Long cartId;
     private CartRequest cartRequest;
 }

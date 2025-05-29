@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class CalendarRequest implements CalendarRequestIfs {
+public class CalendarRequest {
     @NotBlank
     private long cpId;
 
@@ -21,6 +21,6 @@ public class CalendarRequest implements CalendarRequestIfs {
 
 
     @NotBlank(message = "EventDetail 필수 입력값입니다")
-    private List<CalendarDetailRequest> details;
+    private CalendarDetailRequest details;
 
 }

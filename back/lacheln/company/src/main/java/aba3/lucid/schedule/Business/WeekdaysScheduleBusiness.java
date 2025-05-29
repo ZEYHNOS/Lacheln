@@ -2,7 +2,6 @@ package aba3.lucid.schedule.Business;
 
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.auth.CustomUserDetails;
-import aba3.lucid.common.enums.Weekdays;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -14,10 +13,6 @@ import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
 import aba3.lucid.schedule.Service.WeekdaysScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Business

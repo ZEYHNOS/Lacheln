@@ -2,7 +2,6 @@ package aba3.lucid.report.Business;
 
 
 import aba3.lucid.common.annotation.Business;
-import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.image.ImageType;
@@ -12,14 +11,11 @@ import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.inquiry.convertor.ReportConvertor;
-import aba3.lucid.domain.inquiry.dto.ReportImageRequest;
 import aba3.lucid.domain.inquiry.dto.ReportImageResponse;
 import aba3.lucid.domain.inquiry.dto.ReportRequest;
 import aba3.lucid.domain.inquiry.dto.ReportResponse;
 import aba3.lucid.domain.inquiry.entity.ReportEntity;
 import aba3.lucid.domain.inquiry.entity.ReportImageEntity;
-import aba3.lucid.domain.inquiry.enums.ReportCategory;
-import aba3.lucid.domain.inquiry.repository.ReportRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.image.service.ImageService;

@@ -24,10 +24,10 @@ public class CalendarDetailRequest {
     private  String content;
 
     @NotBlank(message = "시작 시간이 필수 입력값입니다")
-    LocalDateTime startTime;
+    private LocalDateTime startTime;
 
     @NotBlank(message = "마감 시간이 필수 입력값입나다")
-    LocalDateTime endTime;
+    private LocalDateTime endTime;
 
     @Builder.Default
     private Color color = Color.BLUE;

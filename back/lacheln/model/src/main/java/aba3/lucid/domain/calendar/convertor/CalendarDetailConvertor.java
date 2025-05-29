@@ -17,20 +17,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CalendarDetailConvertor {
 
-    public List<CalendarDetailResponse> toResponseList(List<CalendarDetailEntity> entityList) {
-        return entityList.stream()
-                .map(this::toResponse)
-                .toList()
-                ;
-    }
 
-    public CalendarDetailEntity toEntity(CalendarDetailRequest request, CalendarEntity calendar){;
+
+    public CalendarDetailEntity toEntity(CalendarDetailRequest request, CalendarEntity calendar){
 
         return CalendarDetailEntity.builder()
                 .calDtTitle(request.getTitle())
                 .calDtContent(request.getContent())
-                .calDtStart(LocalDateTime.of(2025, 04, 17, 0, 0, 0))
-                .calDtEnd(LocalDateTime.of(2025, 04, 17, 0, 0, 0))
+                .calDtStart(request.getStartTime())
+                .calDtEnd(request.getEndTime())
                 .calDtColor(request.getColor())
                 .calDtMemo(request.getMemo())
                 .calendar(calendar)
@@ -41,8 +36,8 @@ public class CalendarDetailConvertor {
         return CalendarDetailResponse.builder()
                 .title(entity.getCalDtTitle())
                 .content(entity.getCalDtContent())
-                .startTime(LocalDateTime.from(entity.getCalDtStart()))
-                .endTime(LocalDateTime.from(entity.getCalDtEnd()))
+                .startTime(entity.getCalDtStart())
+                .endTime(entity.getCalDtEnd())
                 .color(entity.getCalDtColor())
                 .manager(entity.getCalDtManager())
                 .memo(entity.getCalDtMemo())

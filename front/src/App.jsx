@@ -36,10 +36,6 @@ import Productdetail from "./components/User/ProductPage/Productdetail.jsx"
 import Package from "./components/User/PackagePage/Package.jsx"
 import PackageDetail from "./components/User/PackagePage/Packagedetail.jsx"
 import Event from "./components/User/EventPage/Event.jsx"
-import BoardPage from "./components/User/CommunityPage/BoardPage.jsx"
-import CreatePost from "./components/User/CommunityPage/CreatePost.jsx"
-import UpdatePost from "./components/User/CommunityPage/UpdatePost.jsx"
-import PostDetail from "./components/User/CommunityPage/PostDetail.jsx";
 import Support from "./components/User/SupportPage/Support.jsx"
 import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
 
@@ -115,11 +111,6 @@ function App() {
                 <Route path="/package/:id" element={<Layout><PackageDetail /></Layout>} />
                 {/* 이벤트 페이지 */}
                 <Route path="/event" element={<Layout><Event /></Layout>} />
-                {/* 커뮤니티 페이지 */}
-                <Route path="/community" element={<Layout><BoardPage /></Layout>} />
-                <Route path="/create" element={<Layout><CreatePost /></Layout>} />
-                <Route path="/update" element={<Layout><UpdatePost /></Layout>} />
-                <Route path="/post/:id" element={<Layout><PostDetail /></Layout>} />
                 {/* 고객지원 */}
                 <Route path="/support" element={<Layout><Support /></Layout>} />
                 {/* 회사관련 네비게이션 */}

@@ -59,7 +59,7 @@ function Product() {
                         {["전체보기", "개별상품", "패키지상품"].map((category) => (
                             <button
                                 key={category}
-                                className={`px-4 py-2 rounded-md transition-colors duration-200 bg-transparent 
+                                className={`category-btn px-4 py-2 rounded-md transition-colors duration-200 bg-transparent 
                                     ${selected === category ? "text-[#845EC2] font-bold border border-[#845EC2]" : "text-[#B39CD0]"}
                                     focus:ring-0 focus:outline-none`}
                                 onClick={() => {

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import "./App.css";
 import Header from "./components/Tool/Header";
 import Footer from "./components/Tool/Footer";
 import LoginPage from "./components/Login/LoginPage";
@@ -41,7 +42,6 @@ import UpdatePost from "./components/User/CommunityPage/UpdatePost.jsx"
 import PostDetail from "./components/User/CommunityPage/PostDetail.jsx";
 import Support from "./components/User/SupportPage/Support.jsx"
 import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
-
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
 function CompanyLayout({ children }) {

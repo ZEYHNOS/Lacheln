@@ -2,7 +2,9 @@ package aba3.lucid.payment.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.cart.dto.CartAddProductRequest;
 import aba3.lucid.domain.cart.dto.CartDetailRequest;
+import aba3.lucid.domain.cart.dto.CartOptionDetail;
 import aba3.lucid.domain.cart.dto.CartRequest;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.repository.PayDetailRepository;
@@ -29,19 +31,19 @@ public class PayDetailService {
     }
 
     // 시간대로 예약 여부 조회
-    public void checkReservation(List<CartRequest> requests)    {
+    public void checkReservation(List<CartAddProductRequest> requests)    {
 
         // 카트 요청 리스트에서 CartRequest에 있는 TaskTime 더하기
-        for (CartRequest request : requests) {
+        for (CartAddProductRequest request : requests) {
             Long pdId = request.getPdId();
-            LocalTime taskTime = request.getPdTaskTime();
+            LocalTime taskTime = request.getTaskTime();
             LocalDateTime start = request.getStartDateTime();
             LocalDateTime end = start
                     .plusHours(taskTime.getHour())
                     .plusMinutes(taskTime.getMinute());
             // 하나의 CartRequest에 있는 CartDetailRequest의 TaskTime 더하기
-            for(CartDetailRequest detailRequest : request.getPdDetails())   {
-                LocalTime dtTaskTime = detailRequest.getOpTaskTime();
+            for(CartOptionDetail detailRequest : request.getOptionDetails())   {
+                LocalTime dtTaskTime = detailRequest.getOptionTaskTime();
                 end = end
                         .plusHours(dtTaskTime.getHour())
                         .plusMinutes(dtTaskTime.getMinute());

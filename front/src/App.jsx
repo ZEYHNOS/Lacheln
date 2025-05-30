@@ -30,6 +30,7 @@ import AddProduct from "./components/Company/Management/Product/AddProduct.jsx";
 import ViewProduct from "./components/Company/Management/Product/ViewProduct.jsx";
 import EditProduct from "./components/Company/Management/Product/EditProduct.jsx";
 import MainPage from "./components/User/Mainpage/MainPage.jsx"
+import Cart from "./components/User/UserPage/Cart.jsx"
 import Brand from "./components/User/BrandPage/Brand.jsx"
 import Product from "./components/User/ProductPage/Product.jsx"
 import Productdetail from "./components/User/ProductPage/Productdetail.jsx"
@@ -101,6 +102,8 @@ function App() {
                 <Route path="/register/company/form" element={<Layout><CompanyRegisterForm /></Layout>} />
                 {/* 회원가입 성공 */}
                 <Route path="/register/success" element={<Layout><RegistrationSuccess /></Layout>} />
+                {/* 유저 페이지 */}
+                <Route path="/cart" element={<Layout><Cart /></Layout>} />
                 {/* 브랜드 페이지 */}
                 <Route path="/brand" element={<Layout><Brand /></Layout>} />
                 {/* 상품 페이지 */}

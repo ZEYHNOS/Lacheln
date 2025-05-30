@@ -13,7 +13,6 @@ const apiClient = axios.create({
         if (data instanceof FormData) return data; 
         
         const snakeCaseData = humps.decamelizeKeys(data);
-        console.log("🔄 전송 전 변환된 데이터 (snake_case):", snakeCaseData); 
         return JSON.stringify(snakeCaseData);
     }],
     transformResponse: [(data) => {

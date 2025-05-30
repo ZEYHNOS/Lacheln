@@ -7,6 +7,9 @@ export default function ScheduleModal({ productId, cpId, onSelect }) {
     const [selectedDate, setSelectedDate] = useState(null);
     const [calendarValue, setCalendarValue] = useState(null); // 달력에서 보여줄 날짜
 
+    // 모달 사이즈 통일용 스타일
+    const modalStyle = { minWidth: 400, maxWidth: 600, padding: 0 };
+
     // 1단계: 날짜 선택
     const handleDateSelect = (date) => {
         setSelectedDate(date);
@@ -15,30 +18,34 @@ export default function ScheduleModal({ productId, cpId, onSelect }) {
     };
 
     // 2단계: 시간 선택
-    const handleTimeSelect = ({ date, time }) => {
-        onSelect({ date, time });
-        // 모달 닫기 등 추가 동작 가능
+    const handleSelect = ({ date, time }) => {
+        const localDateTime = `${date}T${time}:00`;
+        onSelect({ localDateTime });
     };
 
     return (
-        <div>
-            {step === 1 && (
-                <SelectDate
-                    onDateSelect={handleDateSelect}
-                    cpId={cpId}
-                    value={calendarValue}
-                    setValue={setCalendarValue}
-                />
-            )}
-            {step === 2 && selectedDate && (
-                <SelectTime
-                    productId={productId}
-                    cpId={cpId}
-                    date={selectedDate}
-                    onSelect={handleTimeSelect}
-                    onBack={() => setStep(1)}
-                />
-            )}
+        <div className="flex flex-col items-center justify-center">
+            <div className="bg-white rounded-2xl shadow-lg" style={modalStyle}>
+                {step === 1 && (
+                    <SelectDate
+                        onDateSelect={handleDateSelect}
+                        cpId={cpId}
+                        value={calendarValue}
+                        setValue={setCalendarValue}
+                        modalStyle={modalStyle}
+                    />
+                )}
+                {step === 2 && selectedDate && (
+                    <SelectTime
+                        productId={productId}
+                        cpId={cpId}
+                        date={selectedDate}
+                        onSelect={handleSelect}
+                        onBack={() => setStep(1)}
+                        modalStyle={modalStyle}
+                    />
+                )}
+            </div>
         </div>
     );
 }

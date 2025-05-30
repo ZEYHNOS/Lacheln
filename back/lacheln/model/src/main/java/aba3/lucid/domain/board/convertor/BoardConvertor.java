@@ -1,11 +1,11 @@
 package aba3.lucid.domain.board.convertor;
 
+import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.board.dto.BoardRequest;
 import aba3.lucid.domain.board.dto.BoardResponse;
 import aba3.lucid.domain.board.entity.BoardEntity;
-import org.springframework.stereotype.Component;
 
-@Component
+@Converter
 public class BoardConvertor {
 
     // DTO -> Entity 변환

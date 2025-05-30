@@ -15,7 +15,7 @@ public class PostImageEntity {
     @Id
     @Column(name = "post_image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postImageId; //게시글 이미지 PK
+    private Long postImageId; //게시글 이미지 PK
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)

@@ -1,9 +1,9 @@
-package aba3.lucid.user.controller;
+package aba3.lucid.board.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.domain.board.dto.BoardRequest;
 import aba3.lucid.domain.board.dto.BoardResponse;
-import aba3.lucid.user.business.BoardBusiness;
+import aba3.lucid.board.business.BoardBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,7 +52,7 @@ public class BoardController {
             }
     )
     public API<BoardResponse> getBoardById(
-            @PathVariable @Min(1) long boardId
+            @PathVariable @Min(1) Long boardId
     ) {
         return API.OK(boardBusiness.getBoardById(boardId));
     }
@@ -98,7 +98,7 @@ public class BoardController {
                     @ApiResponse(responseCode = "404", description = "해당 게시판이 존재하지 않습니다")
             }
     )
-    public API<String> deleteBoard(@PathVariable long boardId) {
+    public API<String> deleteBoard(@PathVariable Long boardId) {
         boardBusiness.deleteBoard(boardId);
         return API.OK("게시판이 삭제되었습니다: " + boardId);
     }
@@ -119,7 +119,7 @@ public class BoardController {
             }
     )
     public API<BoardResponse> updateBoard(
-            @PathVariable long boardId,
+            @PathVariable Long boardId,
             @Valid @RequestBody BoardRequest boardRequest
     ) {
         return API.OK(boardBusiness.updateBoard(boardId, boardRequest));

@@ -1,4 +1,4 @@
-package aba3.lucid.user.service;
+package aba3.lucid.board.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;

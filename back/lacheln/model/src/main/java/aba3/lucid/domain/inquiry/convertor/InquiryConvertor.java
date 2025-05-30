@@ -1,5 +1,6 @@
 package aba3.lucid.domain.inquiry.convertor;
 
+import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.inquiry.dto.InquiryCreateRequest;
 import aba3.lucid.domain.inquiry.dto.InquiryResponse;
 import aba3.lucid.domain.inquiry.entity.InquiryEntity;
@@ -7,7 +8,6 @@ import aba3.lucid.domain.inquiry.entity.InquiryImageEntity;
 import aba3.lucid.domain.inquiry.enums.InquiryStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  * - Entity 생성
  * - 응답용 DTO로 변환
  */
+@Converter
 public class InquiryConvertor {
 
     /**

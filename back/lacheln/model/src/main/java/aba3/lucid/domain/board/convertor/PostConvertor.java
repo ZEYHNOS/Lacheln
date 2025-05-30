@@ -1,15 +1,17 @@
 package aba3.lucid.domain.board.convertor;
 
-import aba3.lucid.domain.board.dto.*;
+import aba3.lucid.common.annotation.Converter;
+import aba3.lucid.domain.board.dto.PostDetailResponse;
+import aba3.lucid.domain.board.dto.PostListResponse;
+import aba3.lucid.domain.board.dto.PostRequest;
 import aba3.lucid.domain.board.entity.BoardEntity;
 import aba3.lucid.domain.board.entity.PostEntity;
 import aba3.lucid.domain.board.enums.PostStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+@Converter
 public class PostConvertor {
 
     /**

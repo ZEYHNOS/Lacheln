@@ -1,4 +1,3 @@
-// ✅ 리팩토링된 PostBusiness.java (Business 계층 - 흐름 제어 & 검증 담당)
 package aba3.lucid.board.business;
 
 import aba3.lucid.common.annotation.Business;
@@ -10,6 +9,7 @@ import aba3.lucid.domain.board.dto.*;
 import aba3.lucid.domain.board.entity.BoardEntity;
 import aba3.lucid.domain.board.entity.PostEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.domain.user.enums.TierEnum;
 import aba3.lucid.board.service.PostService;
 import aba3.lucid.user.service.UserService;
 import aba3.lucid.domain.board.repository.BoardRepository;
@@ -32,33 +32,25 @@ public class PostBusiness {
     private final BoardRepository boardRepository;
     private final PostConvertor postConvertor;
 
-    /**
-     * 게시글 생성 처리
-     */
+    // 게시글 생성
     public PostDetailResponse createPost(PostRequest request) {
-        // 유저 인증 정보 가져오기
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
 
-        // 게시판 존재 여부 확인
         BoardEntity board = boardRepository.findById(request.getBoardId())
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시판이 존재하지 않습니다."));
 
-        // 전체/인기 게시판에는 작성 불가
         if (board.getBoardName().equals("전체") || board.getBoardName().equals("인기")) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "전체/인기 게시판에는 글을 작성할 수 없습니다.");
         }
 
-        // Convertor로 Entity 변환 후 저장
         PostEntity entity = postConvertor.toEntity(request, board, user);
         PostEntity saved = postService.savePost(entity);
 
         return postConvertor.toDetailResponse(saved);
     }
 
-    /**
-     * 게시글 단건 상세 조회 + 조회수 증가
-     */
+    // 게시글 상세 조회 + 조회수 증가
     public PostDetailResponse getPostById(Long postId) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
@@ -72,9 +64,7 @@ public class PostBusiness {
         return postConvertor.toDetailResponse(post, likeCount, viewCount);
     }
 
-    /**
-     * 게시글 수정 처리
-     */
+    // 게시글 수정
     public PostDetailResponse updatePost(PostUpdateRequest request) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
@@ -93,9 +83,7 @@ public class PostBusiness {
         return postConvertor.toDetailResponse(updated, likeCount, viewCount);
     }
 
-    /**
-     * 게시글 삭제 처리
-     */
+    // 게시글 삭제
     public void deletePost(Long postId) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
@@ -112,9 +100,7 @@ public class PostBusiness {
         postService.deletePost(post);
     }
 
-    /**
-     * 게시글 추천 처리
-     */
+    // 게시글 추천
     public void likePost(Long postId) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
@@ -122,9 +108,7 @@ public class PostBusiness {
         postService.likePost(post, user);
     }
 
-    /**
-     * 특정 게시판 페이징 조회
-     */
+    // 특정 게시판 글 목록 페이징
     public PagedResponse<PostListResponse> getPostPageByBoardId(Long boardId, int page, int size) {
         BoardEntity board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시판이 존재하지 않습니다."));
@@ -135,9 +119,7 @@ public class PostBusiness {
         return toPagedResponse(result);
     }
 
-    /**
-     * 전체 게시판 페이징 조회 (자유/질문/리뷰)
-     */
+    // 전체 게시판(자유/질문/리뷰) 글 목록 페이징
     public PagedResponse<PostListResponse> getAllCategoryPostPage(int page, int size) {
         List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("postCreate").descending());
@@ -146,9 +128,7 @@ public class PostBusiness {
         return toPagedResponse(result);
     }
 
-    /**
-     * 인기 게시판 조회 (추천 수 15 이상)
-     */
+    // 인기 게시판(추천수 15 이상) 글 목록 페이징
     public PagedResponse<PostListResponse> getPopularPostPage(int page, int size) {
         List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -157,9 +137,7 @@ public class PostBusiness {
         return toPagedResponse(result);
     }
 
-    /**
-     * 페이징 결과를 PagedResponse로 변환
-     */
+    // Page<PostEntity> → PagedResponse<PostListResponse> 변환
     private PagedResponse<PostListResponse> toPagedResponse(Page<PostEntity> result) {
         List<PostListResponse> content = result.getContent().stream()
                 .map(post -> {
@@ -179,10 +157,9 @@ public class PostBusiness {
         );
     }
 
-    /**
-     * 관리자 권한 확인 (임시)
-     */
+    // ✅ 관리자 권한 확인 (userTier 기반)
     private boolean isAdmin(String userId) {
-        return userId.equals("admin123"); // TODO: 추후 Role 기반 권한으로 대체 예정
+        UsersEntity user = userService.findByIdWithThrow(userId);
+        return user.getUserTier() == TierEnum.ADMIN;
     }
 }

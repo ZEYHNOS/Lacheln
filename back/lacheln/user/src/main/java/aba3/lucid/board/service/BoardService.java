@@ -1,4 +1,4 @@
-package aba3.lucid.user.service;
+package aba3.lucid.board.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
@@ -40,7 +40,7 @@ public class BoardService {
      * 특정 게시판 조회
      * @param boardId 조회할 게시판 ID
      */
-    public BoardResponse getBoardById(long boardId) {
+    public BoardResponse getBoardById(Long boardId) {
         BoardEntity board = findBoardByIdWithThrow(boardId);
         return boardConvertor.toResponse(board);
     }
@@ -66,7 +66,7 @@ public class BoardService {
      * @param boardId 삭제할 게시판 ID
      */
     @Transactional
-    public void deleteBoard(long boardId) {
+    public void deleteBoard(Long boardId) {
         BoardEntity board = findBoardByIdWithThrow(boardId);
 
         // 게시글이 있을 경우 예외 발생 또는 제거 처리
@@ -83,7 +83,7 @@ public class BoardService {
      * @param boardRequest 새로운 게시판 이름
      */
     @Transactional
-    public BoardResponse updateBoard(long boardId, BoardRequest boardRequest) {
+    public BoardResponse updateBoard(Long boardId, BoardRequest boardRequest) {
         BoardEntity board = findBoardByIdWithThrow(boardId);
 
         // 이름 중복 검사
@@ -104,7 +104,7 @@ public class BoardService {
      * @param boardId 찾을 게시판 ID
      * @return 존재하는 게시판 Entity
      */
-    private BoardEntity findBoardByIdWithThrow(long boardId) {
+    private BoardEntity findBoardByIdWithThrow(Long boardId) {
         return boardRepository.findById(boardId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "해당 게시판이 존재하지 않습니다: " + boardId));
     }

@@ -17,7 +17,7 @@ public class InquiryImageEntity {
     @Id
     @Column(name = "inquiry_image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long inquiryImageId;
+    private Long inquiryImageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private InquiryEntity inquiry;

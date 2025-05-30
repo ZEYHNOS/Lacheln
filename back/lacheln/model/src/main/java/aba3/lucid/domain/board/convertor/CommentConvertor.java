@@ -1,9 +1,9 @@
 package aba3.lucid.domain.board.convertor;
 
+import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.board.dto.CommentResponse;
 import aba3.lucid.domain.board.entity.CommentEntity;
 import aba3.lucid.domain.board.enums.CommentStatus;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * - 자식 댓글(children)을 위한 빈 리스트 초기화
  * - 삭제된 댓글의 경우 내용 가공 처리 ("삭제된 댓글입니다")
  */
-@Component
+@Converter
 public class CommentConvertor {
 
     /**

@@ -1,8 +1,8 @@
-package aba3.lucid.user.controller;
+package aba3.lucid.board.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.domain.board.dto.*;
-import aba3.lucid.user.business.PostBusiness;
+import aba3.lucid.board.business.PostBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,7 +53,7 @@ public class PostController {
             }
     )
     public API<PostDetailResponse> getPostById(
-            @PathVariable long postId,
+            @PathVariable Long postId,
             @RequestParam String userId // ← JWT 미구현 상태에서는 임시로 이렇게 받자!
     ) {
         PostDetailResponse res = postBusiness.getPostById(postId, userId);
@@ -125,7 +125,7 @@ public class PostController {
             }
     )
     public API<Void> deletePost(
-            @PathVariable long postId,
+            @PathVariable Long postId,
             @RequestParam String userId // JWT 구현 전까지 임시 사용
     ) {
         postBusiness.deletePost(postId, userId);

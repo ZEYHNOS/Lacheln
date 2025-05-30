@@ -18,7 +18,7 @@ public class PostLikeEntity {
     @Id
     @Column(name = "post_like_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postLikeId; // 좋아요 PK
+    private Long postLikeId; // 좋아요 PK
 
     @ManyToOne
     private PostEntity post; // 좋아요 누른 게시글 ID

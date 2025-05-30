@@ -1,4 +1,4 @@
-package aba3.lucid.user.business;
+package aba3.lucid.board.business;
 
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
@@ -7,7 +7,7 @@ import aba3.lucid.domain.board.entity.PostImageEntity;
 import aba3.lucid.domain.board.convertor.PostConvertor;
 import aba3.lucid.domain.board.dto.*;
 import aba3.lucid.domain.board.entity.PostEntity;
-import aba3.lucid.user.service.PostService;
+import aba3.lucid.board.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -51,7 +51,7 @@ public class PostBusiness {
      * - 3. 이미지 URL, 추천수, 조회수 조회
      * - 4. DTO 변환 및 반환
      */
-    public PostDetailResponse getPostById(long postId, String userId) {
+    public PostDetailResponse getPostById(Long postId, String userId) {
         postService.addPostView(postId, userId); // 조회수 저장
         PostEntity post = postService.getPostById(postId); // 게시글 조회
 
@@ -71,7 +71,7 @@ public class PostBusiness {
      * @param boardId 게시판 ID
      * @return 게시글 목록 (추천/조회수 포함)
      */
-    public List<PostListResponse> getPostListByBoardId(long boardId) {
+    public List<PostListResponse> getPostListByBoardId(Long boardId) {
         List<PostEntity> posts = postService.getPostListByBoardId(boardId);
 
         return posts.stream()
@@ -125,7 +125,7 @@ public class PostBusiness {
      * @param postId 게시글 ID
      * @param userId 요청자 ID
      */
-    public void deletePost(long postId, String userId) {
+    public void deletePost(Long postId, String userId) {
         PostEntity post = postService.getPostById(postId);
 
         boolean isWriter = post.getUsersEntity().getUserId().equals(userId);

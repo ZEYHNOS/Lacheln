@@ -18,7 +18,7 @@ public class PostViewEntity {
     @Id
     @Column(name = "post_view_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postViewId;
+    private Long postViewId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private PostEntity post;

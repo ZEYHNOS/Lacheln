@@ -27,7 +27,7 @@ const generateTimeSlots = (start, end, reserved) => {
     return slots;
 };
 
-export default function SelectTime({ productId, cpId, date, onSelect, onBack }) {
+export default function SelectTime({ productId, cpId, date, onSelect, onBack, modalStyle }) {
     const [workHours, setWorkHours] = useState(null); // {start: "10:00", end: "19:00"}
     const [reserved, setReserved] = useState([]); // [{start: "12:00", end: "14:00"}]
     const [slots, setSlots] = useState([]);
@@ -77,30 +77,27 @@ export default function SelectTime({ productId, cpId, date, onSelect, onBack }) 
 
     const handleTimeSelect = (time) => {
         setSelectedTime(time);
-        if (onSelect) {
-            onSelect({ date, time });
-        }
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6 text-black">
-            <div className="w-[600px] h-[800px] bg-white rounded-2xl shadow-lg p-12">
-                <div className="flex items-center justify-between mb-8">
-                    <span className="font-bold text-lg px-2 py-1">{date} 시간 선택</span>
+        <div className="flex flex-col items-center justify-center" style={modalStyle}>
+            <div>
+                <div className="flex items-center justify-between mb-4 px-6 pt-6">
+                    <span className="font-bold text-lg">{date} 시간 선택</span>
                     <button 
                         onClick={onBack} 
-                        className="back-btn text-sm text-gray-500 border border-gray-300 bg-white rounded px-4 py-2 transition-colors duration-150"
+                        className="back-btn text-sm text-gray-500 border border-gray-300 bg-white rounded px-3 py-1 transition-colors duration-150"
                     >&lt; 날짜 다시 선택</button>
                 </div>
-                <div>
-                    <div className="font-semibold mb-2">오전</div>
-                    <div className="grid grid-cols-4 gap-4 mb-4">
+                <div className="px-6 pb-6">
+                    <div className="font-semibold mb-1">오전</div>
+                    <div className="grid grid-cols-4 gap-2 mb-2">
                         {amSlots.length === 0 && <div className="col-span-4 text-gray-400">선택 가능한 시간이 없습니다</div>}
                         {amSlots.map((slot) => (
                             <button
                                 key={slot.time}
                                 disabled={slot.blocked}
-                                className={`time-slot-btn w-full h-12 rounded-xl font-bold border transition-colors duration-150 text-black
+                                className={`time-slot-btn w-full h-10 rounded-xl font-bold border transition-colors duration-150 text-black
                                     ${slot.blocked
                                         ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-100"
                                         : (selectedTime === slot.time
@@ -114,14 +111,14 @@ export default function SelectTime({ productId, cpId, date, onSelect, onBack }) 
                             </button>
                         ))}
                     </div>
-                    <div className="font-semibold mb-2">오후</div>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="font-semibold mb-1">오후</div>
+                    <div className="grid grid-cols-4 gap-2">
                         {pmSlots.length === 0 && <div className="col-span-4 text-gray-400">선택 가능한 시간이 없습니다</div>}
                         {pmSlots.map((slot) => (
                             <button
                                 key={slot.time}
                                 disabled={slot.blocked}
-                                className={`time-slot-btn w-full h-12 rounded-xl font-bold border transition-colors duration-150 text-black
+                                className={`time-slot-btn w-full h-10 rounded-xl font-bold border transition-colors duration-150 text-black
                                     ${slot.blocked
                                         ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-100"
                                         : (selectedTime === slot.time
@@ -135,6 +132,20 @@ export default function SelectTime({ productId, cpId, date, onSelect, onBack }) 
                             </button>
                         ))}
                     </div>
+                </div>
+                {/* 일정 선택하기 버튼 */}
+                <div className="flex justify-center px-6 pb-6">
+                    <button
+                        className={`px-4 py-2 rounded-lg font-bold text-white transition-colors duration-150 ${selectedTime ? 'bg-[#22c55e] hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
+                        disabled={!selectedTime}
+                        onClick={() => {
+                            if (!selectedTime) return;
+                            const localDateTime = `${date}T${selectedTime}:00`;
+                            onSelect && onSelect({ localDateTime });
+                        }}
+                    >
+                        일정 선택하기
+                    </button>
                 </div>
             </div>
             <style>{`

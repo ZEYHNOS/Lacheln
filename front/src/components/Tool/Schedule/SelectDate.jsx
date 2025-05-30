@@ -47,7 +47,7 @@ const isPast = (date) => {
     return date < today;
 };
 
-export default function SelectDate({ onDateSelect, cpId, value, setValue }) {
+export default function SelectDate({ onDateSelect, cpId, value, setValue, modalStyle }) {
     const [holidays, setHolidays] = useState([]);
 
     useEffect(() => {
@@ -94,7 +94,7 @@ export default function SelectDate({ onDateSelect, cpId, value, setValue }) {
             const today = new Date();
             const isToday = date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() === today.getDate();
             return (
-                <span className="calendar-date-text" style={{ color, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <span className="calendar-date-text" style={{ color, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 40 }}>
                     {date.getDate()}
                     {isToday && <span className="text-xs text-green-500 mt-1">오늘</span>}
                 </span>
@@ -109,60 +109,63 @@ export default function SelectDate({ onDateSelect, cpId, value, setValue }) {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6 text-black">
-            <div className="w-[600px] h-[800px] bg-white rounded-2xl shadow-lg p-12">
-                <h3 className="font-bold text-lg mb-10">날짜를 선택해 주세요</h3>
-                <div className="flex justify-center mt-8" style={{ height: "600px" }}>
-                    <Calendar
-                        onChange={(date) => {
-                            setValue(date);
-                            const y = date.getFullYear();
-                            const m = String(date.getMonth() + 1).padStart(2, "0");
-                            const d = String(date.getDate()).padStart(2, "0");
-                            onDateSelect(`${y}-${m}-${d}`);
-                        }}
-                        value={value}
-                        tileDisabled={tileDisabled}
-                        tileClassName={tileClassName}
-                        tileContent={tileContent}
-                        locale="ko-KR"
-                        className="!border-none !shadow-none w-[600px] h-full calendar-tall"
-                        style={{ width: "600px", height: "100%" }}
-                        navigationLabel={({ date }) => `${date.getFullYear()}년 ${date.getMonth() + 1}월`}
-                        prev2Label={null}
-                        next2Label={null}
-                        minDate={new Date()}
-                        minDetail="month"
-                        navigationAriaLabel="달력 네비게이션"
-                    />
-                </div>
-            </div>
+        <div className="flex flex-col items-center justify-center" style={modalStyle}>
+            <h3 className="font-bold text-lg mb-2">날짜를 선택해 주세요</h3>
+            <Calendar
+                onChange={(date) => {
+                    setValue(date);
+                    const y = date.getFullYear();
+                    const m = String(date.getMonth() + 1).padStart(2, "0");
+                    const d = String(date.getDate()).padStart(2, "0");
+                    onDateSelect(`${y}-${m}-${d}`);
+                }}
+                value={value}
+                tileDisabled={tileDisabled}
+                tileClassName={tileClassName}
+                tileContent={({ date, view, activeStartDate }) => {
+                    if (view === "month") {
+                        const d = date.toISOString().slice(0, 10);
+                        const day = date.getDay();
+                        let color = "#111";
+                        if (isPast(date)) color = "#d1d5db";
+                        else {
+                            const monthDay = `${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+                            const isHoliday = KOREAN_HOLIDAYS.includes(monthDay) || 
+                                holidays.includes(d) || 
+                                day === 0 || 
+                                isLunarHoliday(date);
+                            if (date.getMonth() !== activeStartDate.getMonth() || date.getFullYear() !== activeStartDate.getFullYear()) {
+                                color = "#d1d5db";
+                            } else if (isHoliday) {
+                                color = "#e11d48";
+                            } else if (day === 6) {
+                                color = "#2563eb";
+                            }
+                        }
+                        const today = new Date();
+                        const isToday = date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() === today.getDate();
+                        return (
+                            <span className="calendar-date-text" style={{ color, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 40 }}>
+                                {date.getDate()}
+                                {isToday && <span className="text-xs text-green-500 mt-1">오늘</span>}
+                            </span>
+                        );
+                    }
+                    return undefined;
+                }}
+                locale="ko-KR"
+                className="!border-none !shadow-none calendar-tall"
+                style={{ width: "100%" }}
+                navigationLabel={({ date }) => `${date.getFullYear()}년 ${date.getMonth() + 1}월`}
+                prev2Label={null}
+                next2Label={null}
+                minDate={new Date()}
+                minDetail="month"
+                navigationAriaLabel="달력 네비게이션"
+            />
             <style>{`
-                .calendar-default {
-                    color: #111 !important;
-                }
-                .calendar-blue {
-                    color: #2563eb !important;
-                }
-                .calendar-red {
-                    color: #e11d48 !important;
-                }
-                .react-calendar__month-view__days__day abbr {
-                    display: none;
-                }
-                .calendar-date-text {
-                    display: block;
-                    font-size: 1rem;
-                    font-weight: 500;
-                }
-                .react-calendar__tile--active {
-                    background: #22c55e !important;
-                    color: #fff !important;
-                    border-radius: 12px !important;
-                }
-                .react-calendar__tile--active .calendar-date-text {
-                    color: #fff !important;
-                }
+                .react-calendar__month-view__days__day abbr { display: none; }
+                .calendar-date-text { font-size: 1rem; font-weight: 500; height: 40px !important; justify-content: center; }
                 .react-calendar__month-view__days__day:not(:disabled):hover {
                     background: #22c55e !important;
                     color: #fff !important;
@@ -171,54 +174,7 @@ export default function SelectDate({ onDateSelect, cpId, value, setValue }) {
                 .react-calendar__month-view__days__day:not(:disabled):hover .calendar-date-text {
                     color: #fff !important;
                 }
-                /* 캘린더 셀 높이 넉넉하게 */
-                .calendar-tall .react-calendar__month-view__days__day {
-                    height: 80px !important;
-                    min-height: 80px !important;
-                    max-height: 80px !important;
-                    vertical-align: middle !important;
-                }
-                .calendar-tall .react-calendar__month-view__weekdays__weekday {
-                    height: 40px !important;
-                    min-height: 40px !important;
-                    max-height: 40px !important;
-                    vertical-align: middle !important;
-                }
-                /* 네비게이션, 요일, 평일 모두 검정 */
-                .react-calendar__navigation button,
-                .react-calendar__month-view__weekdays__weekday {
-                    color: #111 !important;
-                }
                 .react-calendar__navigation button:hover {
-                    background: #9333ea !important;
-                    color: #fff !important;
-                }
-                /* 년/월/10년 선택 뷰 3열 그리드 */
-                .react-calendar__year-view__months,
-                .react-calendar__decade-view__years,
-                .react-calendar__century-view__decades {
-                    display: grid !important;
-                    grid-template-columns: repeat(3, 1fr) !important;
-                    justify-items: center;
-                    gap: 32px !important;
-                }
-                /* 년/월 선택 뷰 셀 크게, 글씨 크게 */
-                .react-calendar__year-view__months__month,
-                .react-calendar__decade-view__years__year,
-                .react-calendar__century-view__decades__decade {
-                    font-size: 1.25rem !important;
-                    min-width: 120px !important;
-                    height: 64px !important;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border-radius: 12px;
-                    margin: 0 !important;
-                    text-align: center;
-                }
-                .react-calendar__year-view__months__month:hover,
-                .react-calendar__decade-view__years__year:hover,
-                .react-calendar__century-view__decades__decade:hover {
                     background: #9333ea !important;
                     color: #fff !important;
                 }

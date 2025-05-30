@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { COLOR_MAP } from "../../../constants/colorMap.js";
 import AddWrite from '../../Tool/WriteForm/AddWrite.jsx';
+import ScheduleSelect from '../../Tool/Schedule/ScheduleSelect.jsx';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -44,6 +45,7 @@ const ProductDetail = () => {
     const [selectedOptions, setSelectedOptions] = useState({});
     const [mainImageIndex, setMainImageIndex] = useState(0); 
     const [selectedTab, setSelectedTab] = useState('detail'); 
+    const [showSchedule, setShowSchedule] = useState(false);
 
     const writeRef = useRef();
 
@@ -293,7 +295,8 @@ const ProductDetail = () => {
                             총 결제금액: ₩ {((product.price || 0) + getTotalOptionPrice(product, selectedOptions)).toLocaleString()}
                         </div>
                         <div className="flex gap-2">
-                            <button className="w-full flex justify-center items-center gap-2 bg-purple-500 text-white font-semibold py-3 rounded shadow">
+                            <button className="w-full flex justify-center items-center gap-2 bg-purple-500 text-white font-semibold py-3 rounded shadow"
+                                onClick={() => setShowSchedule(true)}>
                                 <span>🛒</span> 장바구니 담기
                             </button>
                             <button className="w-12 h-12 border bg-white rounded flex items-center justify-center text-purple-500 text-xl">
@@ -341,6 +344,94 @@ const ProductDetail = () => {
                     )}
                 </div>
             </div>
+
+            {/* ScheduleSelect 모달 */}
+            {showSchedule && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                    <div className="bg-white rounded-lg shadow-lg p-8">
+                        <ScheduleSelect
+                            productId={product.id}
+                            cpId={product.companyId}
+                            onSelect={async ({ localDateTime }) => {
+                                try {
+                                    // cart 테이블용 데이터
+                                    const cartData = {
+                                        // user_id는 예시, 실제 로그인 정보에서 받아야 함
+                                        user_id: 'user_id',
+                                        pd_id: product.id,
+                                        cp_id: product.companyId,
+                                        cp_name: product.companyName,
+                                        pd_name: product.name,
+                                        pd_price: product.price,
+                                        pd_image_url: product.image_url_list?.[0] || '',
+                                        start_datetime: localDateTime,
+                                        cart_quantity: 1,
+                                        task_time: product.taskTime || null
+                                    };
+
+                                    // cart_detail 테이블용 데이터
+                                    const cartDetailData = [];
+                                    // 옵션 (optionList/option_list)
+                                    const optionArr = product.optionList || product.option_list || [];
+                                    optionArr.forEach(opt => {
+                                        const selected = selectedOptions[opt.name];
+                                        if (selected) {
+                                            const found = (opt.option_dt_list || opt.optionDtList || []).find(dt => dt.op_dt_name === selected || dt.opDtName === selected);
+                                            if (found) {
+                                                cartDetailData.push({
+                                                    pd_id: product.id,
+                                                    op_id: opt.id,
+                                                    op_dt_id: found.id,
+                                                    cart_dt_quantity: 1,
+                                                    op_name: opt.name,
+                                                    op_dt_name: found.op_dt_name || found.opDtName,
+                                                    op_price: found.plus_cost || found.plusCost || 0,
+                                                    op_tasktime: found.plus_time || found.plusTime || 0
+                                                });
+                                            }
+                                        }
+                                    });
+                                    // 사이즈 옵션
+                                    if (product.sizeList && selectedOptions['size']) {
+                                        const found = product.sizeList.find(sz => sz.size === selectedOptions['size']);
+                                        if (found) {
+                                            cartDetailData.push({
+                                                pd_id: product.id,
+                                                op_id: null,
+                                                op_dt_id: found.id,
+                                                cart_dt_quantity: 1,
+                                                op_name: '사이즈',
+                                                op_dt_name: found.size,
+                                                op_price: found.plus_cost || found.plusCost || 0,
+                                                op_tasktime: found.plus_time || found.plusTime || 0
+                                            });
+                                        }
+                                    }
+
+                                    console.log('장바구니 cartData:', cartData);
+                                    console.log('장바구니 cartDetailData:', cartDetailData);
+
+                                    // 백엔드에 cart, cart_detail을 함께 전송 (예시)
+                                    const response = await axios.post(`${baseUrl}/user/cart/add`, {
+                                        cart: cartData,
+                                        cart_detail: cartDetailData
+                                    });
+                                    if (response.data.success) {
+                                        alert('장바구니에 추가되었습니다.');
+                                        setShowSchedule(false);
+                                    } else {
+                                        alert('장바구니 추가에 실패했습니다.');
+                                    }
+                                } catch (error) {
+                                    console.error('장바구니 추가 중 오류 발생:', error);
+                                    alert('장바구니 추가 중 오류가 발생했습니다.');
+                                }
+                            }}
+                        />
+                        <button className="mt-4 w-full py-2 bg-gray-300 rounded" onClick={() => setShowSchedule(false)}>닫기</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

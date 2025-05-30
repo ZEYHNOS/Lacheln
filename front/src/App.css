@@ -96,4 +96,12 @@ select:hover {
   box-shadow: none !important;
   border-color: #845EC2 !important;
 }
+
+footer {
+  width: 100%;
+  background: #845EC2;
+}
+
+.main-content {
+}
   

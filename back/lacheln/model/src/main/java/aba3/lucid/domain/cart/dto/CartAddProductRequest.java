@@ -1,6 +1,5 @@
 package aba3.lucid.domain.cart.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigInteger;
@@ -9,16 +8,17 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Getter
-@Builder
-public class CartResponse {
+public class CartAddProductRequest {
     private Long cpId;
-    private Long cartId;
     private Long pdId;
-    private int cartQuantity;
+    private String cpName;
     private String pdName;
-    private BigInteger price;
     private String pdImageUrl;
-    private LocalDateTime startTime;
+    private BigInteger pdPrice;
+    private Integer pdQuantity;
+    private LocalDateTime startDateTime;
     private LocalTime taskTime;
-    private List<CartDetailResponse> cartDetails;
+    
+    // 옵션 리스트
+    private List<CartOptionDetail> optionDetails;
 }

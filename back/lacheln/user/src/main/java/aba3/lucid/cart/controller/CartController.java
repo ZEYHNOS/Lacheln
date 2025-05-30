@@ -25,29 +25,39 @@ public class CartController {
     // 장바구니 검색
     @GetMapping("/search")
     @Operation(summary = "사용자 장바구니 조회", description = "해당하는 소비자 장바구니의 상품을 조회합니다.")
-    public API<List<CartResponse>> searchCart(
+    public API<List<CartAllResponse>> searchCart(
             @AuthenticationPrincipal CustomUserDetails user
             )  {
         return cartBusiness.getCartList(user.getUserId());
     }
 
-    // 장바구니 업데이트
-    @PutMapping("/update")
-    @Operation(summary = "사용자 장바구니 업데이트", description = "해당하는 소비자 장바구니의 상품을 갱신합니다.")
-    public API<CartUpdateResponse> updateCart(
-            @RequestBody CartUpdateRequest request
-    )   {
-        return cartBusiness.cartUpdate(request);
-    }
+//    // 장바구니 업데이트
+//    @PutMapping("/update")
+//    @Operation(summary = "사용자 장바구니 업데이트", description = "해당하는 소비자 장바구니의 상품을 갱신합니다.")
+//    public API<CartUpdateResponse> updateCart(
+//            @RequestBody CartUpdateRequest request
+//    )   {
+//        return cartBusiness.cartUpdate(request);
+//    }
 
-    // 장바구니 담기
-    @PostMapping("/add")
-    @Operation(summary = "사용자 장바구니 추가", description = "해당하는 소비자의 장바구니에 상품을 추가합니다.")
-    public API<CartAddResponse> addCart(
-            @RequestBody CartAddRequest request,
+    // 장바구니 담기(상품)
+    @PostMapping("/add/product")
+    @Operation(summary = "사용자 장바구니에 상품 추가", description = "해당하는 소비자의 장바구니에 상품을 추가합니다.")
+    public API<CartProductResponse> addProduct(
+            @RequestBody CartAddProductRequest request,
             @AuthenticationPrincipal CustomUserDetails user
     )    {
-        return cartBusiness.addCart(user.getUserId(), request);
+        return cartBusiness.addProduct(user.getUserId(), request);
+    }
+
+    // 장바구니 담기(패키지)
+    @PostMapping("/add/package")
+    @Operation(summary = "사용자 장바구니에 패키지 추가", description = "해당하는 소비자의 장바구니에 패키지를 추가합니다.")
+    public API<CartPackageResponse> addPackage(
+            @RequestBody CartAddPackageRequest request,
+            @AuthenticationPrincipal CustomUserDetails user
+    )    {
+        return cartBusiness.addPackage(user.getUserId(), request);
     }
 
     // 장바구니 제거

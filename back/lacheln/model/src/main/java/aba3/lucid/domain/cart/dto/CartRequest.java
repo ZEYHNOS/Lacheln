@@ -9,14 +9,10 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Getter
-@Builder
 public class CartRequest {
-    private Long pdId;
-    private LocalDateTime startDateTime;
-    private Integer cartQuantity;
     private String pdName;
+    private Long pdId;
     private BigInteger pdPrice;
-    private LocalTime pdTaskTime;
     private String pdImageUrl;
-    private List<CartDetailRequest> pdDetails;
+    private List<CartOptionDetail> optionDetails;
 }

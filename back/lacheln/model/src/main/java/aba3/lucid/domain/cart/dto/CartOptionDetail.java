@@ -4,17 +4,16 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 @Getter
 @Builder
-public class CartDetailResponse {
-    private Long cartDtId;
-    private Integer quantity;
+public class CartOptionDetail {
+    private Long optionId;
+    private Long optionDetailId;
     private String optionName;
     private String optionDetailName;
-    private BigInteger detailPrice;
-    private LocalTime detailTaskTime;
+    private LocalTime optionTaskTime;
+    private BigInteger price;
+    private Integer quantity;
 }

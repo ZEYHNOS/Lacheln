@@ -28,9 +28,14 @@ public class CartService {
                 new ApiException(ErrorCode.NULL_POINT, "해당하는 장바구니가 존재하지 않습니다.")
         );
     }
+
+    // 장바구니에 패키지 추가
+    public List<CartEntity> addPackage(List<CartEntity> carts)    {
+        return cartRepository.saveAll(carts);
+    }
     
-    // 장바구니 추가 및 갱신
-    public CartEntity addCart(CartEntity cart)    {
+    // 장바구니에 상품 추가
+    public CartEntity addProduct(CartEntity cart)    {
         return cartRepository.save(cart);
     }
 

@@ -135,7 +135,7 @@ public class PaymentService {
 
         // 상품 아이디 리스트
         List<Long> productIdList = cartEntityList.stream()
-                .map(CartEntity::getProductId)
+                .map(CartEntity::getPdId)
                 .toList()
                 ;
 

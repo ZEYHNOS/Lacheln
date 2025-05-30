@@ -1,13 +1,18 @@
+// ✅ 리팩토링된 PostBusiness.java (Business 계층 - 흐름 제어 & 검증 담당)
 package aba3.lucid.board.business;
 
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.domain.board.entity.PostImageEntity;
 import aba3.lucid.domain.board.convertor.PostConvertor;
 import aba3.lucid.domain.board.dto.*;
+import aba3.lucid.domain.board.entity.BoardEntity;
 import aba3.lucid.domain.board.entity.PostEntity;
+import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.board.service.PostService;
+import aba3.lucid.user.service.UserService;
+import aba3.lucid.domain.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,233 +28,161 @@ import java.util.List;
 public class PostBusiness {
 
     private final PostService postService;
+    private final UserService userService;
+    private final BoardRepository boardRepository;
     private final PostConvertor postConvertor;
 
     /**
      * 게시글 생성 처리
-     * - 사용자, 게시판 검증 → 게시글 저장 → 응답 DTO 변환
-     *
-     * @param postRequest 게시글 작성 요청 DTO
-     * @param userId      작성자 ID
-     * @return 상세 응답 DTO
      */
-    public PostDetailResponse createPost(PostRequest postRequest, String userId) {
-        PostEntity post = postService.createPost(
-                userId,
-                postRequest.getPostTitle(),
-                postRequest.getPostContent(),
-                postRequest.getBoardId(),
-                postRequest.getImageUrls()
-        );
-        return postConvertor.toDetailResponse(post, postRequest.getImageUrls());
+    public PostDetailResponse createPost(PostRequest request) {
+        // 유저 인증 정보 가져오기
+        String userId = AuthUtil.getUserId();
+        UsersEntity user = userService.findByIdWithThrow(userId);
+
+        // 게시판 존재 여부 확인
+        BoardEntity board = boardRepository.findById(request.getBoardId())
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시판이 존재하지 않습니다."));
+
+        // 전체/인기 게시판에는 작성 불가
+        if (board.getBoardName().equals("전체") || board.getBoardName().equals("인기")) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "전체/인기 게시판에는 글을 작성할 수 없습니다.");
+        }
+
+        // Convertor로 Entity 변환 후 저장
+        PostEntity entity = postConvertor.toEntity(request, board, user);
+        PostEntity saved = postService.savePost(entity);
+
+        return postConvertor.toDetailResponse(saved);
     }
 
     /**
      * 게시글 단건 상세 조회 + 조회수 증가
-     * - 1. 조회수 증가 (PostViewEntity 저장)
-     * - 2. 게시글 조회 (삭제 여부 확인 포함)
-     * - 3. 이미지 URL, 추천수, 조회수 조회
-     * - 4. DTO 변환 및 반환
      */
-    public PostDetailResponse getPostById(Long postId, String userId) {
-        postService.addPostView(postId, userId); // 조회수 저장
-        PostEntity post = postService.getPostById(postId); // 게시글 조회
+    public PostDetailResponse getPostById(Long postId) {
+        String userId = AuthUtil.getUserId();
+        UsersEntity user = userService.findByIdWithThrow(userId);
 
-        List<String> imageUrls = post.getPostImageList().stream()
-                .map(PostImageEntity::getPostImageUrl)
-                .toList();
+        PostEntity post = postService.getPostById(postId);
+        postService.addPostView(post, user);
 
         int likeCount = (int) postService.getLikeCount(postId);
         int viewCount = (int) postService.getViewCount(postId);
 
-        return postConvertor.toDetailResponse(post, imageUrls, likeCount, viewCount);
-    }
-
-    /**
-     * 특정 게시판의 전체 게시글 목록 조회 (비페이징)
-     *
-     * @param boardId 게시판 ID
-     * @return 게시글 목록 (추천/조회수 포함)
-     */
-    public List<PostListResponse> getPostListByBoardId(Long boardId) {
-        List<PostEntity> posts = postService.getPostListByBoardId(boardId);
-
-        return posts.stream()
-                .map(post -> {
-                    int likeCount = (int) postService.getLikeCount(post.getPostId());
-                    int viewCount = (int) postService.getViewCount(post.getPostId());
-                    return postConvertor.toListResponse(post, likeCount, viewCount);
-                })
-                .toList();
-    }
-
-    /**
-     * 자유/질문/리뷰 게시판 전체 목록 조회 (비페이징)
-     * - 전체 게시판은 자유/질문/리뷰를 통합한 개념
-     */
-    public List<PostListResponse> getAllCategoryPosts() {
-        List<PostEntity> posts = postService.getAllCategoryPosts();
-
-        return posts.stream()
-                .map(post -> {
-                    int likeCount = (int) postService.getLikeCount(post.getPostId());
-                    int viewCount = (int) postService.getViewCount(post.getPostId());
-                    return postConvertor.toListResponse(post, likeCount, viewCount);
-                })
-                .toList();
+        return postConvertor.toDetailResponse(post, likeCount, viewCount);
     }
 
     /**
      * 게시글 수정 처리
-     * - 제목, 내용, 이미지 수정 포함
-     * - 작성자 본인 확인
-     *
-     * @param request 수정 요청 DTO
-     * @param userId  요청자 ID
-     * @return 수정된 게시글 상세 응답
      */
-    public PostDetailResponse updatePost(PostUpdateRequest request, String userId) {
-        PostEntity updated = postService.updatePost(request, userId);
+    public PostDetailResponse updatePost(PostUpdateRequest request) {
+        String userId = AuthUtil.getUserId();
+        UsersEntity user = userService.findByIdWithThrow(userId);
 
-        List<String> imageUrls = updated.getPostImageList().stream()
-                .map(PostImageEntity::getPostImageUrl)
-                .toList();
+        PostEntity post = postService.getPostById(request.getPostId());
 
-        return postConvertor.toDetailResponse(updated, imageUrls);
+        if (!post.getUsersEntity().getUserId().equals(userId)) {
+            throw new ApiException(ErrorCode.FORBIDDEN, "게시글 수정 권한이 없습니다.");
+        }
+
+        PostEntity updated = postService.updatePost(post, request);
+
+        int likeCount = (int) postService.getLikeCount(post.getPostId());
+        int viewCount = (int) postService.getViewCount(post.getPostId());
+
+        return postConvertor.toDetailResponse(updated, likeCount, viewCount);
     }
 
     /**
-     * 게시글 삭제 요청 처리
-     * - 작성자 또는 관리자만 가능
-     *
-     * @param postId 게시글 ID
-     * @param userId 요청자 ID
+     * 게시글 삭제 처리
      */
-    public void deletePost(Long postId, String userId) {
+    public void deletePost(Long postId) {
+        String userId = AuthUtil.getUserId();
+        UsersEntity user = userService.findByIdWithThrow(userId);
+
         PostEntity post = postService.getPostById(postId);
 
         boolean isWriter = post.getUsersEntity().getUserId().equals(userId);
-        boolean isAdmin = isAdmin(userId); // 추후 등급 기반으로 대체 예정
+        boolean isAdmin = isAdmin(userId);
 
         if (!isWriter && !isAdmin) {
             throw new ApiException(ErrorCode.FORBIDDEN, "게시글 삭제 권한이 없습니다.");
         }
 
-        postService.deletePost(postId, userId);
-    }
-
-    /**
-     * 전체 게시판(자유/질문/리뷰) 페이징 조회
-     * - 정렬 기준: postCreate DESC (최신순)
-     * - 추천 수 / 조회 수 포함하여 PostListResponse로 반환
-     *
-     * @param page 페이지 번호 (1부터 시작)
-     * @param size 페이지당 게시글 수
-     * @return 페이징 응답 DTO
-     */
-    public PagedResponse<PostListResponse> getAllCategoryPostPage(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("postCreate").descending()); // PageRequest는 0부터 시작
-        Page<PostEntity> result = postService.getAllCategoryPostPage(pageable);
-
-        List<PostListResponse> content = result.getContent().stream()
-                .map(post -> {
-                    int likeCount = (int) postService.getLikeCount(post.getPostId());
-                    int viewCount = (int) postService.getViewCount(post.getPostId());
-                    return postConvertor.toListResponse(post, likeCount, viewCount);
-                }).toList();
-
-        return new PagedResponse<>(
-                content,
-                result.getNumber() + 1,
-                result.getSize(),
-                result.getTotalElements(),
-                result.getTotalPages(),
-                result.hasNext(),
-                result.hasPrevious()
-        );
-    }
-
-    /**
-     * 특정 게시판의 페이징된 게시글 목록 조회
-     * - 정렬 기준: postCreate DESC (최신순)
-     *
-     * @param boardId 게시판 ID
-     * @param page 페이지 번호 (1부터 시작)
-     * @param size 한 페이지 게시글 수
-     * @return 페이징 응답 DTO
-     */
-    public PagedResponse<PostListResponse> getPostPageByBoardId(Long boardId, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("postCreate").descending());
-        Page<PostEntity> result = postService.getPostPageByBoardId(boardId, pageable);
-
-        List<PostListResponse> content = result.getContent().stream()
-                .map(post -> {
-                    int likeCount = (int) postService.getLikeCount(post.getPostId());
-                    int viewCount = (int) postService.getViewCount(post.getPostId());
-                    return postConvertor.toListResponse(post, likeCount, viewCount);
-                }).toList();
-
-        return new PagedResponse<>(
-                content,
-                result.getNumber() + 1,
-                result.getSize(),
-                result.getTotalElements(),
-                result.getTotalPages(),
-                result.hasNext(),
-                result.hasPrevious()
-        );
-    }
-
-    /**
-     * 인기 게시판 페이징 조회
-     * - 조건: 추천 수 15 이상
-     * - 정렬 기준: popularRegisteredAt DESC (인기 등록 시점 기준 최신순)
-     *
-     * @param page 페이지 번호 (1부터 시작)
-     * @param size 페이지 크기
-     * @return 인기 게시글 페이징 응답
-     */
-    public PagedResponse<PostListResponse> getPopularPostPage(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<PostEntity> result = postService.getPopularPostPage(pageable); // 내부에서 추천 수 15 이상 조건 포함
-
-        List<PostListResponse> content = result.getContent().stream()
-                .map(post -> {
-                    int likeCount = (int) postService.getLikeCount(post.getPostId());
-                    int viewCount = (int) postService.getViewCount(post.getPostId());
-                    return postConvertor.toListResponse(post, likeCount, viewCount);
-                }).toList();
-
-        return new PagedResponse<>(
-                content,
-                result.getNumber() + 1,
-                result.getSize(),
-                result.getTotalElements(),
-                result.getTotalPages(),
-                result.hasNext(),
-                result.hasPrevious()
-        );
+        postService.deletePost(post);
     }
 
     /**
      * 게시글 추천 처리
-     * - 중복 추천 방지 포함
-     *
-     * @param postId 추천할 게시글 ID
-     * @param userId 추천자 ID
      */
-    public void likePost(Long postId, String userId) {
-        postService.likePost(postId, userId);
+    public void likePost(Long postId) {
+        String userId = AuthUtil.getUserId();
+        UsersEntity user = userService.findByIdWithThrow(userId);
+        PostEntity post = postService.getPostById(postId);
+        postService.likePost(post, user);
     }
 
     /**
-     * 관리자 여부 확인 (임시 구현)
-     * - 추후 회원 등급/Role 기반 권한 시스템으로 대체 예정
-     *
-     * @param userId 사용자 ID
-     * @return 관리자 여부
+     * 특정 게시판 페이징 조회
+     */
+    public PagedResponse<PostListResponse> getPostPageByBoardId(Long boardId, int page, int size) {
+        BoardEntity board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시판이 존재하지 않습니다."));
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("postCreate").descending());
+        Page<PostEntity> result = postService.getPostPageByBoardId(board, pageable);
+
+        return toPagedResponse(result);
+    }
+
+    /**
+     * 전체 게시판 페이징 조회 (자유/질문/리뷰)
+     */
+    public PagedResponse<PostListResponse> getAllCategoryPostPage(int page, int size) {
+        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("postCreate").descending());
+        Page<PostEntity> result = postService.getAllCategoryPostPage(boardNames, pageable);
+
+        return toPagedResponse(result);
+    }
+
+    /**
+     * 인기 게시판 조회 (추천 수 15 이상)
+     */
+    public PagedResponse<PostListResponse> getPopularPostPage(int page, int size) {
+        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<PostEntity> result = postService.getPopularPostPage(boardNames, pageable);
+
+        return toPagedResponse(result);
+    }
+
+    /**
+     * 페이징 결과를 PagedResponse로 변환
+     */
+    private PagedResponse<PostListResponse> toPagedResponse(Page<PostEntity> result) {
+        List<PostListResponse> content = result.getContent().stream()
+                .map(post -> {
+                    int likeCount = (int) postService.getLikeCount(post.getPostId());
+                    int viewCount = (int) postService.getViewCount(post.getPostId());
+                    return postConvertor.toListResponse(post, likeCount, viewCount);
+                }).toList();
+
+        return new PagedResponse<>(
+                content,
+                result.getNumber() + 1,
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages(),
+                result.hasNext(),
+                result.hasPrevious()
+        );
+    }
+
+    /**
+     * 관리자 권한 확인 (임시)
      */
     private boolean isAdmin(String userId) {
-        return userId.equals("admin123"); // TODO: 나중에 Role enum으로 교체 예정
+        return userId.equals("admin123"); // TODO: 추후 Role 기반 권한으로 대체 예정
     }
 }

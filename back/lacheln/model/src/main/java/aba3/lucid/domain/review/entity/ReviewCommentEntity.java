@@ -2,8 +2,7 @@ package aba3.lucid.domain.review.entity;
 
 
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.payment.entity.PayManagementEntity;
-import aba3.lucid.domain.product.enums.ReviewCommentStatus;
+import aba3.lucid.domain.product.enums.CommentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Entity
@@ -37,10 +34,6 @@ public class ReviewCommentEntity {
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;
 
-    // 결제관리
-    @OneToOne
-    @JoinColumn(name = "pay_id")
-    private PayManagementEntity payManagement;
 
     // 내용
     @Column(name = "rvc_content", columnDefinition = "char(255)", nullable = false)
@@ -53,7 +46,7 @@ public class ReviewCommentEntity {
     // 상태
     @Enumerated(EnumType.STRING)
     @Column(name = "rvc_status", columnDefinition = "char(20)", nullable = false)
-    private ReviewCommentStatus rvcStatus; // 답글  표시 숨기기 삭제
+    private CommentStatus rvcStatus; // 답글  표시 숨기기 삭제
 
     public void updateContent(String newContent) {
         this.rvcContent = newContent;
@@ -68,6 +61,6 @@ public class ReviewCommentEntity {
      * - 추후 1개월 후 배치 또는 스케줄러를 통해 실제 삭제 가능
      */
     public void markAsDeleted() {
-        this.rvcStatus = ReviewCommentStatus.DELETED;
+        this.rvcStatus = CommentStatus.DELETED;
     }
 }

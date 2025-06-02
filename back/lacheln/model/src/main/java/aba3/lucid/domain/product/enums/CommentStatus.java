@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ReviewCommentStatus {
+public enum CommentStatus {
     VISIBLE("표시"),
     HIDDEN("숨기기"),
     DELETED("삭제"),

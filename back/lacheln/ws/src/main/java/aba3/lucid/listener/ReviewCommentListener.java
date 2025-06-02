@@ -3,9 +3,7 @@ package aba3.lucid.listener;
 
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
-import aba3.lucid.domain.payment.entity.PayManagementEntity;
-import aba3.lucid.domain.payment.repository.PayManagementRepository;
-import aba3.lucid.domain.product.enums.ReviewCommentStatus;
+import aba3.lucid.domain.product.enums.CommentStatus;
 import aba3.lucid.domain.review.dto.ReviewCommentEventDto;
 import aba3.lucid.domain.review.entity.ReviewCommentEntity;
 import aba3.lucid.domain.review.entity.ReviewEntity;
@@ -28,7 +26,6 @@ public class ReviewCommentListener {
     private final ReviewCommentRepository reviewCommentRepository;
     private final ReviewRepository reviewRepository;
     private final CompanyRepository companyRepository;
-    private final PayManagementRepository payManagementRepository;
 
     @RabbitListener(queues = "review.comment.queue")
     public void receive(ReviewCommentEventDto eventDto, Message message, Channel channel) throws IOException {
@@ -36,14 +33,12 @@ public class ReviewCommentListener {
         try {
             ReviewEntity review = reviewRepository.findById(eventDto.getReviewId()).orElseThrow();
             CompanyEntity company = companyRepository.findById(eventDto.getCpId()).orElseThrow();
-            PayManagementEntity pay = payManagementRepository.findById(eventDto.getPayId()).orElseThrow(null);
             ReviewCommentEntity comment = ReviewCommentEntity.builder()
                     .review(review)
                     .company(company)
-                    .payManagement(pay)
                     .rvcContent("")
                     .rvcCreate(LocalDate.now())
-                    .rvcStatus(ReviewCommentStatus.REPLY_NEEDED)
+                    .rvcStatus(CommentStatus.REPLY_NEEDED)
                     .build();
             reviewCommentRepository.save(comment);
             channel.basicAck(deliveryTag, false);

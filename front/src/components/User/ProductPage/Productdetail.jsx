@@ -23,6 +23,13 @@ function arrayToLocalTime(timeArray) {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 }
 
+// 분(int)을 HH:mm 문자열로 변환하는 함수
+function minutesToLocalTime(minutes) {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
+
 // 선택한 옵션들의 plus_cost 합산 함수
 function getTotalOptionPrice(product, selectedOptions) {
     if (!product) return 0;
@@ -378,7 +385,7 @@ const ProductDetail = () => {
                                                     op_name: opt.name,
                                                     op_dt_name: found.op_dt_name || found.opDtName,
                                                     op_price: found.plus_cost || found.plusCost || 0,
-                                                    op_tasktime: found.plus_time || found.plusTime || 0
+                                                    op_tasktime: minutesToLocalTime(found.plus_time || found.plusTime || 0)
                                                 });
                                             }
                                         }
@@ -388,14 +395,14 @@ const ProductDetail = () => {
                                         const found = product.sizeList.find(sz => sz.size === selectedOptions['size']);
                                         if (found) {
                                             cartDetailData.push({
-                                                pd_id: product.id,
-                                                op_id: null,
-                                                op_dt_id: found.id,
+                                                pd_id: product.id ? product.id : null,
+                                                op_id: opt.id ? opt.id : null,
+                                                op_dt_id: found.id ? found.id : null,
                                                 cart_dt_quantity: 1,
                                                 op_name: '사이즈',
                                                 op_dt_name: found.size,
                                                 op_price: found.plus_cost || found.plusCost || 0,
-                                                op_tasktime: found.plus_time || found.plusTime || 0
+                                                op_tasktime: minutesToLocalTime(found.plus_time || found.plusTime || 0)
                                             });
                                         }
                                     }
@@ -413,7 +420,7 @@ const ProductDetail = () => {
                                         start_datetime: localDateTime,
                                         cart_quantity: 1,
                                         task_time: arrayToLocalTime(product.taskTime) || null,
-                                        cart_details: cartDetailData
+                                        option_details: cartDetailData
                                     };
 
                                     console.log('장바구니 cartData:', cartData);

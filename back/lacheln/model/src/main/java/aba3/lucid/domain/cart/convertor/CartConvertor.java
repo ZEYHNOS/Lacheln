@@ -76,6 +76,7 @@ public class CartConvertor {
     public CartDetailEntity convertToEntityByPd(CartEntity cart, CartOptionDetail request)   {
         return CartDetailEntity.builder()
                 .cart(cart)
+                .optionDetailId(request.getOpDtId())
                 .optionName(request.getOpName())
                 .optionDetailName(request.getOpDtName())
                 .optionPrice(request.getOpPrice())

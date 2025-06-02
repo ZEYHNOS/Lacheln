@@ -38,6 +38,10 @@ public class CartBusiness {
     public API<CartProductResponse> addProduct(String userId, CartAddProductRequest request)    {
         UsersEntity user = userService.findByIdWithThrow(userId);
 
+        log.info("요청된 시간 : {}", request.getStartDateTime());
+        log.info("현재 시간 : {}", LocalDateTime.now());
+        log.info("결과값 : {}", request.getStartDateTime().isBefore(LocalDateTime.now()));
+
         // request가 있는지 확인
         if(request == null) {
             throw new ApiException(ErrorCode.GONE, "요청된 값이 없습니다.");

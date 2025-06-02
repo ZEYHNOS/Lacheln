@@ -68,7 +68,7 @@ public class CartConvertor {
                 .cpId(request.getCpId())
                 .cpName(request.getCpName())
                 .taskTime(request.getTaskTime())
-                .cartQuantity(request.getPdQuantity())
+                .cartQuantity(request.getCartQuantity())
                 .build();
     }
 
@@ -171,7 +171,7 @@ public class CartConvertor {
                     .cpId(product.getCpId())
                     .pdName(product.getPdName())
                     .cpName(product.getCpName())
-                    .cartQuantity(product.getPdQuantity())
+                    .cartQuantity(product.getCartQuantity())
                     .build();
             for(CartOptionDetail optionDetail : product.getOptionDetails()) {
                 CartDetailEntity detail = CartDetailEntity.builder()

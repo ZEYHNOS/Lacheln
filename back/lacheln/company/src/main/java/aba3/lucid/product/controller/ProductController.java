@@ -57,8 +57,8 @@ public class ProductController {
             @RequestParam Long productId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-//        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, customUserDetails.getCompanyId(), productId);
-        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, 1L, productId);
+        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, customUserDetails.getCompanyId(), productId);
+//        ProductPackageInsertResponse response = productBusiness.packageRegister(packageId, 1L, productId);
 
         return API.OK(response);
     }
@@ -69,8 +69,8 @@ public class ProductController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam(required = false) ProductStatus status
     ) {
-//        List<ProductResponse> productResponseList = productBusiness.getValidProductList(customUserDetails.getCompanyId());
-        List<ProductResponse> productResponseList = productBusiness.getValidProductList(1L, status);
+        List<ProductResponse> productResponseList = productBusiness.getValidProductList(customUserDetails.getCompanyId(), status);
+//        List<ProductResponse> productResponseList = productBusiness.getValidProductList(1L, status);
 
         return API.OK(productResponseList);
     }
@@ -81,8 +81,8 @@ public class ProductController {
             @RequestPart List<MultipartFile> images,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) throws IOException {
-//        List<String> imageUrlList = productBusiness.productImagesUpload(user.getCompanyId(), images);
-        List<String> imageUrlList = productBusiness.productImagesUpload(1L, images);
+        List<String> imageUrlList = productBusiness.productImagesUpload(customUserDetails.getCompanyId(), images);
+//        List<String> imageUrlList = productBusiness.productImagesUpload(1L, images);
 
         return API.OK(imageUrlList);
     }
@@ -104,8 +104,8 @@ public class ProductController {
             @PathVariable Long productId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        productBusiness.uploadProduct(productId, user.getCompanyId);
-        ProductResponse response = productBusiness.uploadProduct(productId, 1L);
+        ProductResponse response = productBusiness.uploadProduct(productId, user.getCompanyId());
+//        ProductResponse response = productBusiness.uploadProduct(productId, 1L);
 
         return API.OK(response);
     }

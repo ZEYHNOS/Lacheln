@@ -17,12 +17,6 @@ export default function ScheduleModal({ productId, cpId, onSelect }) {
         setStep(2);
     };
 
-    // 2단계: 시간 선택
-    const handleSelect = ({ date, time }) => {
-        const localDateTime = `${date}T${time}:00`;
-        onSelect({ localDateTime });
-    };
-
     return (
         <div className="flex flex-col items-center justify-center">
             <div className="bg-white rounded-2xl shadow-lg" style={modalStyle}>
@@ -40,7 +34,7 @@ export default function ScheduleModal({ productId, cpId, onSelect }) {
                         productId={productId}
                         cpId={cpId}
                         date={selectedDate}
-                        onSelect={handleSelect}
+                        onSelect={onSelect}
                         onBack={() => setStep(1)}
                         modalStyle={modalStyle}
                     />

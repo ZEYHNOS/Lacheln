@@ -47,6 +47,14 @@ public class CartController {
             @RequestBody CartAddProductRequest request,
             @AuthenticationPrincipal CustomUserDetails user
     )    {
+        log.info("request: {}", request.getCpId());
+        log.info("request: {}", request.getCpName());
+        log.info("request: {}", request.getPdName());
+        log.info("request: {}", request.getPdId());
+        log.info("request: {}", request.getCartQuantity());
+        log.info("request: {}", request.getPdImageUrl());
+        log.info("request: {}", request.getPdPrice());
+
         return cartBusiness.addProduct(user.getUserId(), request);
     }
 

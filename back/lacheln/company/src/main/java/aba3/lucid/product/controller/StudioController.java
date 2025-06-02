@@ -29,8 +29,8 @@ public class StudioController {
             @RequestBody StudioRequest req,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-//        StudioResponse res = studioBusiness.registerProduct(customUserDetails.getCompanyId(), req);
-        StudioResponse res = studioBusiness.registerProduct(2L, req);
+        StudioResponse res = studioBusiness.registerProduct(customUserDetails.getCompanyId(), req);
+//        StudioResponse res = studioBusiness.registerProduct(2L, req);
         log.debug("Register StudioResponse : {}", res);
 
         return API.OK(res);
@@ -44,8 +44,8 @@ public class StudioController {
             @RequestBody StudioRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-//        StudioResponse response = studioBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
-        StudioResponse response = studioBusiness.updateProduct(2L, productId, request);
+        StudioResponse response = studioBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
+//        StudioResponse response = studioBusiness.updateProduct(2L, productId, request);
         log.debug("Update StudioResponse : {}", response);
 
         return API.OK(response);
@@ -58,8 +58,8 @@ public class StudioController {
             @PathVariable Long productId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-//        studioBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
-        studioBusiness.deleteProduct(2L, productId);
+        studioBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
+//        studioBusiness.deleteProduct(2L, productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 

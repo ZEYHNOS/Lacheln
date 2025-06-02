@@ -47,6 +47,7 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
 
     @Override
     protected DressResponse createResponse(DressEntity entity) {
+        System.out.println(entity.getPdTaskTime());
         return DressResponse.builder()
                 .id(entity.getPdId())
                 .cpId(entity.getCompany().getCpId())

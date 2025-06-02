@@ -31,8 +31,8 @@ public class DressController {
             ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
         log.info("DressRequest : {}", req);
-//        DressResponse res = dressBusiness.registerProduct(customUserDetails.getCompanyId(), req);
-        DressResponse res = dressBusiness.registerProduct(1L, req);
+        DressResponse res = dressBusiness.registerProduct(customUserDetails.getCompanyId(), req);
+//        DressResponse res = dressBusiness.registerProduct(1L, req);
         log.debug("Register DressResponse : {}", res);
 
         return API.OK(res);
@@ -48,8 +48,8 @@ public class DressController {
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-//        DressResponse response = dressBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
-        DressResponse response = dressBusiness.updateProduct(1L, productId, request);
+        DressResponse response = dressBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
+//        DressResponse response = dressBusiness.updateProduct(1L, productId, request);
         log.debug("Update DressResponse : {}", response);
 
         return API.OK(response);
@@ -64,8 +64,8 @@ public class DressController {
     ) {
         // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
-        dressBusiness.deleteProduct(1L, productId);
-//        dressBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
+//        dressBusiness.deleteProduct(1L, productId);
+        dressBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 
@@ -77,6 +77,7 @@ public class DressController {
     ) {
         DressResponse dressResponse = dressBusiness.getProductDetailInfo(productId);
 
+        log.info("Dress TaskTime : {}", dressResponse.getTaskTime());
         return API.OK(dressResponse);
     }
 }

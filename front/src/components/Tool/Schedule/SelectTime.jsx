@@ -33,31 +33,46 @@ export default function SelectTime({ productId, cpId, date, onSelect, onBack, mo
     const [slots, setSlots] = useState([]);
     const [selectedTime, setSelectedTime] = useState(null);
 
-    // 날짜 변경 시 업무시간/예약이력 불러오기
-    useEffect(() => {
-        if (!cpId || !productId || !date) return;
-        Promise.all([
-            apiClient.get(`/company/${cpId}/workhours`, { params: { date } }),
-            apiClient.get(`/product/${productId}/reserved`, { params: { date } }),
-        ])
-            .then(([workRes, reservedRes]) => {
-                setWorkHours(workRes.data);
-                setReserved(reservedRes.data || []);
-            })
-            .catch(() => {
-                setWorkHours(null);
-                setReserved([]);
-            });
-    }, [cpId, productId, date]);
-
     // 시간 슬롯 생성
     useEffect(() => {
-        if (workHours) {
+        if (workHours && workHours.start && workHours.end) {
             setSlots(generateTimeSlots(workHours.start, workHours.end, reserved));
         } else {
+            // 기본 업무시간 설정 (9:00 ~ 19:00)
             setSlots(generateTimeSlots("09:00", "19:00", reserved));
         }
     }, [workHours, reserved]);
+
+    // 날짜 변경 시 업무시간/예약이력 불러오기
+    useEffect(() => {
+        if (!cpId || !productId || !date) return;
+        
+        const fetchData = async () => {
+            try {
+                const [workRes, reservedRes] = await Promise.all([
+                    apiClient.get(`/company/${cpId}/workhours`, { params: { date } }),
+                    apiClient.get(`/product/${productId}/reserved`, { params: { date } })
+                        .catch(() => ({ data: [] }))
+                ]);
+
+                // workHours 데이터가 올바른 형식인지 확인
+                if (workRes.data && typeof workRes.data === 'object' && workRes.data.start && workRes.data.end) {
+                    setWorkHours(workRes.data);
+                } else {
+                    console.warn('업무시간 데이터가 올바르지 않습니다:', workRes.data);
+                    setWorkHours({ start: "09:00", end: "19:00" });
+                }
+                
+                setReserved(reservedRes.data || []);
+            } catch (error) {
+                console.error('시간 정보를 불러오는데 실패했습니다:', error);
+                setWorkHours({ start: "09:00", end: "19:00" });
+                setReserved([]);
+            }
+        };
+
+        fetchData();
+    }, [cpId, productId, date]);
 
     // 오전/오후 분리
     const splitSlotsByAmPm = (slots) => {
@@ -139,7 +154,10 @@ export default function SelectTime({ productId, cpId, date, onSelect, onBack, mo
                         className={`px-4 py-2 rounded-lg font-bold text-white transition-colors duration-150 ${selectedTime ? 'bg-[#22c55e] hover:bg-green-700' : 'bg-gray-300 cursor-not-allowed'}`}
                         disabled={!selectedTime}
                         onClick={() => {
-                            if (!selectedTime) return;
+                            if (!selectedTime || !date) {
+                                alert('날짜와 시간을 모두 선택해주세요.');
+                                return;
+                            }
                             const localDateTime = `${date}T${selectedTime}:00`;
                             onSelect && onSelect({ localDateTime });
                         }}

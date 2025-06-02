@@ -29,8 +29,8 @@ public class MakeupController {
             @RequestBody MakeupRequest req,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-//        MakeUpResponse res = makeupBusiness.registerProduct(customUserDetails.getCompanyId(), req);
-        MakeUpResponse res = makeupBusiness.registerProduct(3L, req);
+        MakeUpResponse res = makeupBusiness.registerProduct(customUserDetails.getCompanyId(), req);
+//        MakeUpResponse res = makeupBusiness.registerProduct(3L, req);
         log.debug("Register MakeupResponse : {}", res);
 
         return API.OK(res);
@@ -43,8 +43,8 @@ public class MakeupController {
             @RequestBody MakeupRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-//        MakeUpResponse response = makeupBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
-        MakeUpResponse response = makeupBusiness.updateProduct(3L, productId, request);
+        MakeUpResponse response = makeupBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
+//        MakeUpResponse response = makeupBusiness.updateProduct(3L, productId, request);
         log.debug("Update MakeupResponse : {}", response);
 
         return API.OK(response);

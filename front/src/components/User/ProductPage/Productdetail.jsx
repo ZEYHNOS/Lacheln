@@ -16,6 +16,13 @@ function formatLocalTime(timeStr) {
     return `${minutes}분`;
 }
 
+// 배열을 HH:mm 형식으로 변환하는 함수
+function arrayToLocalTime(timeArray) {
+    if (!Array.isArray(timeArray) || timeArray.length !== 2) return null;
+    const [hours, minutes] = timeArray;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
 // 선택한 옵션들의 plus_cost 합산 함수
 function getTotalOptionPrice(product, selectedOptions) {
     if (!product) return 0;
@@ -351,24 +358,9 @@ const ProductDetail = () => {
                     <div className="bg-white rounded-lg shadow-lg p-8">
                         <ScheduleSelect
                             productId={product.id}
-                            cpId={product.companyId}
+                            cpId={product.cpId}
                             onSelect={async ({ localDateTime }) => {
                                 try {
-                                    // cart 테이블용 데이터
-                                    const cartData = {
-                                        // user_id는 예시, 실제 로그인 정보에서 받아야 함
-                                        user_id: 'user_id',
-                                        pd_id: product.id,
-                                        cp_id: product.companyId,
-                                        cp_name: product.companyName,
-                                        pd_name: product.name,
-                                        pd_price: product.price,
-                                        pd_image_url: product.image_url_list?.[0] || '',
-                                        start_datetime: localDateTime,
-                                        cart_quantity: 1,
-                                        task_time: product.taskTime || null
-                                    };
-
                                     // cart_detail 테이블용 데이터
                                     const cartDetailData = [];
                                     // 옵션 (optionList/option_list)
@@ -408,14 +400,26 @@ const ProductDetail = () => {
                                         }
                                     }
 
-                                    console.log('장바구니 cartData:', cartData);
-                                    console.log('장바구니 cartDetailData:', cartDetailData);
+                                    // cart 테이블용 데이터
+                                    const cartData = {
+                                        // user_id는 예시, 실제 로그인 정보에서 받아야 함
+                                        user_id: 'user_id',
+                                        pd_id: product.id,
+                                        cp_id: product.cpId,
+                                        cp_name: product.companyName || '회사명',
+                                        pd_name: product.name,
+                                        pd_price: product.price,
+                                        pd_image_url: product.image_url_list?.[0] || '',
+                                        start_datetime: localDateTime,
+                                        cart_quantity: 1,
+                                        task_time: arrayToLocalTime(product.taskTime) || null,
+                                        cart_details: cartDetailData
+                                    };
 
-                                    // 백엔드에 cart, cart_detail을 함께 전송 (예시)
-                                    const response = await axios.post(`${baseUrl}/user/cart/add`, {
-                                        cart: cartData,
-                                        cart_detail: cartDetailData
-                                    });
+                                    console.log('장바구니 cartData:', cartData);
+
+                                    // cartData만 전송
+                                    const response = await axios.post(`${baseUrl}/user/cart/add/product`, cartData);
                                     if (response.data.success) {
                                         alert('장바구니에 추가되었습니다.');
                                         setShowSchedule(false);

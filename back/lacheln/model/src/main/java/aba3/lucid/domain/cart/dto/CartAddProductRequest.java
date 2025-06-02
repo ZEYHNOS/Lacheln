@@ -1,5 +1,6 @@
 package aba3.lucid.domain.cart.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -24,9 +25,9 @@ public class CartAddProductRequest {
     private String pdImageUrl;
     private BigInteger pdPrice;
     private Integer cartQuantity;
-    private LocalDateTime startDateTime;
     private LocalTime taskTime;
-    
+    private LocalDateTime startDatetime;
+
     // 옵션 리스트
     private List<CartOptionDetail> optionDetails;
 }

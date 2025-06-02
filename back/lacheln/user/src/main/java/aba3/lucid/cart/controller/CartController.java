@@ -54,6 +54,8 @@ public class CartController {
         log.info("request: {}", request.getCartQuantity());
         log.info("request: {}", request.getPdImageUrl());
         log.info("request: {}", request.getPdPrice());
+        log.info("request: {}", request.getStartDatetime());
+        log.info("request: {}", request.getTaskTime());
 
         return cartBusiness.addProduct(user.getUserId(), request);
     }

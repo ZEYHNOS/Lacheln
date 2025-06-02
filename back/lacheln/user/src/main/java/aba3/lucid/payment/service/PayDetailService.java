@@ -35,13 +35,13 @@ public class PayDetailService {
         for (CartAddProductRequest request : requests) {
             Long pdId = request.getPdId();
             LocalTime taskTime = request.getTaskTime();
-            LocalDateTime start = request.getStartDateTime();
+            LocalDateTime start = request.getStartDatetime();
             LocalDateTime end = start
                     .plusHours(taskTime.getHour())
                     .plusMinutes(taskTime.getMinute());
             // 하나의 CartRequest에 있는 CartDetailRequest의 TaskTime 더하기
             for(CartOptionDetail detailRequest : request.getOptionDetails())   {
-                LocalTime dtTaskTime = detailRequest.getOptionTaskTime();
+                LocalTime dtTaskTime = detailRequest.getOpTasktime();
                 end = end
                         .plusHours(dtTaskTime.getHour())
                         .plusMinutes(dtTaskTime.getMinute());

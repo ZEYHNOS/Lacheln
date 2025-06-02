@@ -2,20 +2,17 @@ package aba3.lucid.review.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
+import aba3.lucid.domain.review.dto.ReviewSearchRequest;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewResponse;
 import aba3.lucid.review.business.ReviewBusiness;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -34,6 +31,25 @@ public class ReviewController {
         ReviewResponse response = reviewBusiness.writeReview(request, user.getUserId());
 
         return API.OK(response);
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public API<String> deleteReview(
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        reviewBusiness.deleteReview(user.getUserId(), reviewId);
+        return API.OK("삭제 완료");
+    }
+
+    @GetMapping("/search")
+    public API<List<ReviewResponse>> reviewSearch(
+            ReviewSearchRequest request
+    ) {
+//        List<ReviewResponse> response = reviewBusiness.search(request);
+
+//        return API.OK(response);
+        return null;
     }
 
 }

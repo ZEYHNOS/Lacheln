@@ -56,12 +56,12 @@ public class ReservationService {
         for (RegularHolidayEntity holiday : regularHolidayEntityList) {
 
             // 월 조건이 지정되어 있고 현재 월이 아니면 skip
-            if (holiday.getRhHdMonth() != 0 && holiday.getRhHdMonth() != month) {
+            if (holiday.getRhHdMonth() != null && holiday.getRhHdMonth() != month) {
                 continue;
             }
 
             // 일 단위 지정
-            if (holiday.getRhHdDays() > 0) {
+            if (holiday.getRhHdDays() != null && holiday.getRhHdDays() > 0) {
                 try {
                     result.add(LocalDate.of(year, month, holiday.getRhHdDays()));
                 } catch (Exception e) {
@@ -69,8 +69,12 @@ public class ReservationService {
                 }
             }
 
+            // TODO 리팩토링
+            if (holiday.getRhHdWeekdays() != null && holiday.getRhHdWeek() == null) {
+                result.addAll(getDatesForWeekdayInMonth(year, month, holiday.getRhHdWeekdays()));
+            }
             // 요일 + 주차 지정
-            if (holiday.getRhHdWeekdays() != null && holiday.getRhHdWeek() != null) {
+            else if (holiday.getRhHdWeekdays() != null) {
                 List<LocalDate> weekdayDates = getDatesForWeekdayInMonth(year, month, holiday.getRhHdWeekdays());
 
                 switch (holiday.getRhHdWeek()) {

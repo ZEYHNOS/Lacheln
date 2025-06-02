@@ -35,4 +35,10 @@ public class ReviewBusiness {
         return reviewConvertor.toResponse(writeReview);
     }
 
+    public void deleteReview(String userId, Long reviewId) {
+        ReviewEntity review = reviewService.findByIdWithThrow(reviewId);
+
+        reviewService.delete(userId, review);
+
+    }
 }

@@ -16,7 +16,7 @@ public class UserScheduler {
     private final PayDetailService payDetailService;
     private final ReviewService reviewService;
 
-    @Scheduled(cron = "0 0 19 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 1 * * *", zone = "Asia/Seoul")
     public void createReview() {
         List<PayDetailEntity> payDetailEntityList = payDetailService.replyNeedUserList();
         reviewService.create(payDetailEntityList);

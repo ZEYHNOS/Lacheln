@@ -17,12 +17,11 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
 public class ReviewCreateRequest {
 
     @NotNull(message = "결제 ID는 필수입니다.")
-    private String payId;
+    private Long reviewId;
 
     @NotBlank(message = "리뷰 내용은 필수입니다.")
     private String rvContent;

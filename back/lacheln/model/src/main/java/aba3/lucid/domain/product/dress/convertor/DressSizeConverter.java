@@ -39,6 +39,7 @@ public class DressSizeConverter {
 
     public DressSizeDto toDto(DressSizeEntity entity) {
         return DressSizeDto.builder()
+                .sizeId(entity.getDressSizeId())
                 .size(entity.getSize())
                 .stock(entity.getDressSizeStock())
                 .plusCost(entity.getPlusCost())

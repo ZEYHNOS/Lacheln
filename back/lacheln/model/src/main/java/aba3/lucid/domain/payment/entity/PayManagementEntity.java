@@ -3,6 +3,7 @@ package aba3.lucid.domain.payment.entity;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -44,8 +45,9 @@ public class PayManagementEntity {
     private BigDecimal payDcPrice;
 
     // 상태
+    @Enumerated(EnumType.STRING)
     @Column(name = "pay_status", columnDefinition = "VARCHAR(20)", nullable = false)
-    private String payStatus;
+    private PaymentStatus payStatus;
 
     // 환불금액
     @Column(name = "pay_refund_price")
@@ -73,7 +75,7 @@ public class PayManagementEntity {
 
 
     public void refund() {
-        this.payStatus = "REFUND";
+        this.payStatus = PaymentStatus.REFUND;
         this.payRefundDate = LocalDateTime.now();
     }
 

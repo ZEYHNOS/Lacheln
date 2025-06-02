@@ -33,8 +33,7 @@ public class ReviewCommentEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;
-
-
+    
     // 내용
     @Column(name = "rvc_content", columnDefinition = "char(255)", nullable = false)
     private String rvcContent;  //답글 content

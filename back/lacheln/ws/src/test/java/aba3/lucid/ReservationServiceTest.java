@@ -30,7 +30,7 @@ public class ReservationServiceTest {
         regularHolidayService = mock(RegularHolidayService.class);
         temporaryHolidayService = mock(TemporaryHolidayService.class);
         weekdaysScheduleService = mock(WeekdaysScheduleService.class);
-        reservationService = new ReservationService(regularHolidayService, temporaryHolidayService, weekdaysScheduleService);
+        reservationService = new ReservationService(regularHolidayService, temporaryHolidayService);
     }
 
     @Test

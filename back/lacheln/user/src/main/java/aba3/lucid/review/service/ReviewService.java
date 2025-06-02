@@ -85,7 +85,10 @@ public class ReviewService {
 
     // 리뷰 삭제(리뷰 삭제하기)
     @Transactional
-    public void delete(ReviewEntity review) {
+    public void delete(String userId, ReviewEntity review) {
+        if (!review.getUser().getUserId().equals(userId)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
         reviewRepository.delete(review);
 
         // 답글 삭제 요청 보내기

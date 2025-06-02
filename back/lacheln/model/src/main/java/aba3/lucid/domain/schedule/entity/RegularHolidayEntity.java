@@ -38,10 +38,10 @@ public class RegularHolidayEntity {
 
     // 일 단위인지
     @Column(name = "rh_hd_days", columnDefinition = "INT")
-    private int rhHdDays;
+    private Integer rhHdDays;
 
     // 월 단위인지
     @Column(name = "rh_hd_month", columnDefinition = "INT")
-    private int rhHdMonth;
+    private Integer rhHdMonth;
 
 }

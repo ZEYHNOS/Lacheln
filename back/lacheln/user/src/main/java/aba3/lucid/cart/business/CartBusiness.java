@@ -38,17 +38,13 @@ public class CartBusiness {
     public API<CartProductResponse> addProduct(String userId, CartAddProductRequest request)    {
         UsersEntity user = userService.findByIdWithThrow(userId);
 
-        log.info("요청된 시간 : {}", request.getStartDateTime());
-        log.info("현재 시간 : {}", LocalDateTime.now());
-        log.info("결과값 : {}", request.getStartDateTime().isBefore(LocalDateTime.now()));
-
         // request가 있는지 확인
         if(request == null) {
             throw new ApiException(ErrorCode.GONE, "요청된 값이 없습니다.");
         }
 
         // 현재 시간 이전의 예약을 하는지 검증
-        if(request.getStartDateTime().isBefore(LocalDateTime.now())) {
+        if(request.getStartDatetime().isBefore(LocalDateTime.now())) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "과거 시간대의 예약을 진행 할 순 없습니다.");
         }
 
@@ -58,6 +54,12 @@ public class CartBusiness {
 
         // 카트옵션에 옵션넣기
         for (CartOptionDetail detail : request.getOptionDetails()) {
+            log.info(detail.getOpDtName());
+            log.info(detail.getOpName());
+            log.info("{}", detail.getOpId());
+            log.info("{}", detail.getCartDtQuantity());
+            log.info("{}", detail.getOpTasktime());
+            log.info("{}", detail.getOpPrice());
             cartDetail.add(cartConverter.convertToEntityByPd(cart, detail));
         }
         

@@ -58,6 +58,7 @@ public class OptionConverter {
         }
 
         return OptionDto.builder()
+                .opId(entity.getOpId())
                 .name(entity.getOpName())
                 .essential(entity.getOpEssential())
                 .overlap(entity.getOpOverlap())
@@ -93,6 +94,7 @@ public class OptionConverter {
         }
 
         return OptionDto.OptionDetailDto.builder()
+                .opDtId(entity.getOpDtId())
                 .opDtName(entity.getOpDtName())
                 .plusTime(entity.getOpDtPlusTime())
                 .plusCost(entity.getOpDtPlusCost())

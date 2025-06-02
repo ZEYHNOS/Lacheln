@@ -398,7 +398,7 @@ const ProductDetail = () => {
                                             cartDetailData.push({
                                                 pd_id: product.id ? product.id : null,
                                                 op_id: 0,
-                                                op_dt_id: found.size_id ? found.size_id : null,
+                                                op_dt_id: found.sizeId ? found.sizeId : null,
                                                 cart_dt_quantity: 1,
                                                 op_name: '사이즈',
                                                 op_dt_name: found.size,

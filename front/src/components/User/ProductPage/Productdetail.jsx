@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import apiClient from '../../../lib/apiClient';
 import { COLOR_MAP } from "../../../constants/colorMap.js";
 import AddWrite from '../../Tool/WriteForm/AddWrite.jsx';
 import ScheduleSelect from '../../Tool/Schedule/ScheduleSelect.jsx';
@@ -64,7 +65,7 @@ const ProductDetail = () => {
     const writeRef = useRef();
 
     useEffect(() => {
-        axios.get(`${baseUrl}/product/${category}/${productid}`)
+        apiClient.get(`/product/${category}/${productid}`)
             .then((res) => {
                 console.log('백엔드 원본 응답:', res.data);
                 const data = res.data.data;
@@ -378,9 +379,9 @@ const ProductDetail = () => {
                                             const found = (opt.option_dt_list || opt.optionDtList || []).find(dt => dt.op_dt_name === selected || dt.opDtName === selected);
                                             if (found) {
                                                 cartDetailData.push({
-                                                    pd_id: product.id,
-                                                    op_id: opt.id,
-                                                    op_dt_id: found.id,
+                                                    pd_id: product.id ? product.id : null,
+                                                    op_id: opt.op_id ? opt.op_id : null,
+                                                    op_dt_id: found.op_dt_id ? found.op_dt_id : null,
                                                     cart_dt_quantity: 1,
                                                     op_name: opt.name,
                                                     op_dt_name: found.op_dt_name || found.opDtName,
@@ -396,8 +397,8 @@ const ProductDetail = () => {
                                         if (found) {
                                             cartDetailData.push({
                                                 pd_id: product.id ? product.id : null,
-                                                op_id: opt.id ? opt.id : null,
-                                                op_dt_id: found.id ? found.id : null,
+                                                op_id: 0,
+                                                op_dt_id: found.size_id ? found.size_id : null,
                                                 cart_dt_quantity: 1,
                                                 op_name: '사이즈',
                                                 op_dt_name: found.size,
@@ -426,7 +427,7 @@ const ProductDetail = () => {
                                     console.log('장바구니 cartData:', cartData);
 
                                     // cartData만 전송
-                                    const response = await axios.post(`${baseUrl}/user/cart/add/product`, cartData);
+                                    const response = await apiClient.post('/user/cart/add/product', cartData);
                                     if (response.data.success) {
                                         alert('장바구니에 추가되었습니다.');
                                         setShowSchedule(false);

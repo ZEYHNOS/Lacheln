@@ -3,16 +3,13 @@ package aba3.lucid.payment.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.cart.dto.CartAddProductRequest;
-import aba3.lucid.domain.cart.dto.CartDetailRequest;
 import aba3.lucid.domain.cart.dto.CartOptionDetail;
-import aba3.lucid.domain.cart.dto.CartRequest;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.payment.repository.PayDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -59,7 +56,7 @@ public class PayDetailService {
 
     // 리뷰를 적어야 하는 유저 리스트
     public List<PayDetailEntity> replyNeedUserList() {
-        return payDetailRepository.findAllByStartDateTimeBetweenAndPayManagement_PayStatus(
+        return payDetailRepository.findAllByStartDatetimeBetweenAndPayManagement_PayStatus(
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now(),
                 PaymentStatus.PAID

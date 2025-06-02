@@ -1,5 +1,6 @@
 package aba3.lucid.domain.payment.dto;
 
+import aba3.lucid.domain.payment.enums.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class PayManagementResponse {
     private String payTool;
     private BigInteger payTotalPrice;
     private BigDecimal payDcPrice;
-    private String payStatus;
+    private PaymentStatus payStatus;
     private BigInteger payRefundPrice;
     private LocalDateTime payRefundDate;
     private BigInteger payMileage;

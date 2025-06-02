@@ -47,7 +47,7 @@ public class PaymentService {
     @Transactional
     public PayManagementEntity save(PayManagementEntity entity, List<Long> cartIdList) {
         // 만약 취소 되었다면 취소 메세지 보내기
-        if (entity.getPayStatus().equals(PaymentStatus.Cancel)) {
+        if (entity.getPayStatus().equals(PaymentStatus.CANCEL)) {
             throw new ApiException(PaymentErrorCode.CANCEL);
         }
 

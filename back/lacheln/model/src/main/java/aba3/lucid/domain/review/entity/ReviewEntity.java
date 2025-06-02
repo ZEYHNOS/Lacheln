@@ -1,6 +1,7 @@
 package aba3.lucid.domain.review.entity;
 
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
+import aba3.lucid.domain.product.enums.CommentStatus;
 import aba3.lucid.domain.product.enums.ReviewStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import jakarta.persistence.*;

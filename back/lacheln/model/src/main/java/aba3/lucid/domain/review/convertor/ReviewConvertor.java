@@ -4,6 +4,8 @@ import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.enums.CommentStatus;
+import aba3.lucid.domain.product.enums.ReviewStatus;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewResponse;
 import aba3.lucid.domain.review.entity.ReviewEntity;
@@ -35,13 +37,11 @@ public class ReviewConvertor {
             ReviewCreateRequest request
     ) {
         return ReviewEntity.builder()
-                .payManagement(payManagement)
                 .payDetailEntity(payDetail)
-                .product(product)
                 .user(user)
                 .rvContent(request.getRvContent())
                 .rvCreate(LocalDateTime.now())
-                .rvStatus("REGISTERED")
+                .rvStatus(ReviewStatus.REPLY_NEEDED)
                 .rvScore(request.getRvScore())
                 .imageList(null)
                 .build();

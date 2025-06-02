@@ -37,5 +37,5 @@ public interface PayDetailRepository extends JpaRepository<PayDetailEntity, Long
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 
-    List<PayDetailEntity> findAllByStartDateTimeBetweenAndPayManagement_PayStatus(LocalDateTime start, LocalDateTime end, PaymentStatus status);
+    List<PayDetailEntity> findAllByStartDatetimeBetweenAndPayManagement_PayStatus(LocalDateTime start, LocalDateTime end, PaymentStatus status);
 }

@@ -1,5 +1,6 @@
 package aba3.lucid.domain.payment.dto;
 
+import aba3.lucid.domain.payment.enums.PaymentStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ public class PaymentRequest {
     private BigDecimal payDcPrice;
 
     // 상태
-    private String payStatus;
+    private PaymentStatus payStatus;
 
     // 마일리지
     private BigInteger payMileage;

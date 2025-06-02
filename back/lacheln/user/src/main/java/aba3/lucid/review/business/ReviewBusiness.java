@@ -8,6 +8,7 @@ import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.review.convertor.ReviewConvertor;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
+import aba3.lucid.domain.review.dto.ReviewResponse;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.entity.ReviewImageEntity;
 import aba3.lucid.domain.review.repository.ReviewRepository;
@@ -24,6 +25,14 @@ import java.util.List;
 public class ReviewBusiness {
 
     private final ReviewService reviewService;
-    private final ReviewRepository reviewRepository;
+    private final ReviewConvertor reviewConvertor;
+
+    public ReviewResponse writeReview(ReviewCreateRequest request, String userId) {
+        ReviewEntity review = reviewService.findByIdWithThrow(request.getReviewId());
+
+        ReviewEntity writeReview = reviewService.writeReview(review ,request, userId);
+
+        return reviewConvertor.toResponse(writeReview);
+    }
 
 }

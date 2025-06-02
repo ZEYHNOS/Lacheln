@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -93,13 +94,13 @@ public class AuthService {
     }
 
     // 토큰 정보를 기반으로 유저 정보(ROLE)을 추출하여 소비자, 업체를 구분하여 알맞게 정보를 제거하는 로직
-    public void withdrawUsers(String accessToken) {
+    public void withdrawUsers(String accessToken, Authentication authentication) {
         String role = jwtTokenProvider.getUserRole(accessToken);
         if(role.equals("ROLE_USER"))    {
-            deleteUser(AuthUtil.getUserId());
+            deleteUser(authentication.getPrincipal().toString());
             log.info("유저정보 제거, {}");
         } else if(role.equals("ROLE_COMPANY"))  {
-            deleteCompany(AuthUtil.getCompanyId());
+            deleteCompany(Long.parseLong(authentication.getPrincipal().toString()));
             log.info("업체정보 제거, {}");
         }
     }

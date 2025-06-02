@@ -37,11 +37,6 @@ public class ReviewCommentEntity {
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;
 
-    // 결제관리
-    @OneToOne
-    @JoinColumn(name = "pay_id")
-    private PayManagementEntity payManagement;
-
     // 내용
     @Column(name = "rvc_content", columnDefinition = "char(255)", nullable = false)
     private String rvcContent;  //답글 content

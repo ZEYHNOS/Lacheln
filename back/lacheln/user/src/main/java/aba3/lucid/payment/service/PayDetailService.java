@@ -5,6 +5,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.cart.dto.CartDetailRequest;
 import aba3.lucid.domain.cart.dto.CartRequest;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
+import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.payment.repository.PayDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,5 +53,14 @@ public class PayDetailService {
                 throw new ApiException(ErrorCode.IT_ALREADY_EXISTS, "이미 있는 일정 입니다.");
             }
         }
+    }
+
+    // 리뷰를 적어야 하는 유저 리스트
+    public List<PayDetailEntity> replyNeedUserList() {
+        return payDetailRepository.findAllByStartDateTimeBetweenAndPayManagement_PayStatus(
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now(),
+                PaymentStatus.PAID
+        );
     }
 }

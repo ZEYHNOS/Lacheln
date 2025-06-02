@@ -1,13 +1,12 @@
 package aba3.lucid.domain.payment.repository;
 
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
-import aba3.lucid.domain.payment.entity.PayDetailOptionEntity;
+import aba3.lucid.domain.payment.enums.PaymentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,5 +32,10 @@ public interface PayDetailRepository extends JpaRepository<PayDetailEntity, Long
             "WHERE d.pdId = :pdId " +
             "AND NOT (d.endDatetime < :start OR d.startDatetime > :end) " +
             "AND m.payStatus = 'PAID'")
-    boolean existsByPdIdAndDateTimes(Long pdId, LocalDateTime start, LocalDateTime end);
+    boolean existsByPdIdAndDateTimes(
+            @Param("padId") Long pdId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end);
+
+    List<PayDetailEntity> findAllByStartDateTimeBetweenAndPayManagement_PayStatus(LocalDateTime start, LocalDateTime end, PaymentStatus status);
 }

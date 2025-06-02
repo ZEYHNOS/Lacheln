@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
 import Sidebar from "./Sidebar";
 import SearchBar from "./SearchBar";
@@ -6,21 +6,25 @@ import NationButton from "./Button/NationButton";
 import ProfileButton from "./Button/ProfileButton";
 import AlarmButton from "./Button/AlarmButton";
 import CartButton from "./Button/CartButton";
+import apiClient from "../../lib/apiClient";
 
 export default function Header() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeButton, setActiveButton] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        apiClient.get("/auth/me")
+            .then(res => setIsLoggedIn(!!res.data.data?.valid))
+            .catch(() => setIsLoggedIn(false));
+    }, []);
 
     // 사이드바 열고 닫는 함수
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-    // 버튼 상태 제어 함수
-    const handleMouseEnter = (buttonName) => {
-        setActiveButton(buttonName);
-    };
-
-    const handleMouseLeave = () => {
-        setActiveButton(null);
+    // 클릭 시 드롭다운 토글 함수
+    const handleButtonClick = (buttonName) => {
+        setActiveButton(prev => (prev === buttonName ? null : buttonName));
     };
 
     return (
@@ -37,20 +41,19 @@ export default function Header() {
                 <div className="flex items-center gap-1">
                     <NationButton
                         isActive={activeButton === "nation"}
-                        onMouseEnter={() => handleMouseEnter("nation")}
-                        onMouseLeave={handleMouseLeave}/>
+                        onClick={() => handleButtonClick("nation")}/>
                     <ProfileButton
                         isActive={activeButton === "profile"}
-                        onMouseEnter={() => handleMouseEnter("profile")}
-                        onMouseLeave={handleMouseLeave}/>
+                        onClick={() => handleButtonClick("profile")}
+                        isLoggedIn={isLoggedIn}/>
                     <AlarmButton
                         isActive={activeButton === "alarm"}
-                        onMouseEnter={() => handleMouseEnter("alarm")}
-                        onMouseLeave={handleMouseLeave}/>
+                        onClick={() => handleButtonClick("alarm")}
+                        isLoggedIn={isLoggedIn}/>
                     <CartButton
                         isActive={activeButton === "cart"}
-                        onMouseEnter={() => handleMouseEnter("cart")}
-                        onMouseLeave={handleMouseLeave}/>
+                        onClick={() => handleButtonClick("cart")}
+                        isLoggedIn={isLoggedIn}/>
                 </div>
             </div>
             {/* 두 번째 줄: 로고 , 검색창 */}

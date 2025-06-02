@@ -428,7 +428,7 @@ const ProductDetail = () => {
 
                                     // cartData만 전송
                                     const response = await apiClient.post('/user/cart/add/product', cartData);
-                                    if (response.data.success) {
+                                    if (response.data?.result?.resultCode === 200) {
                                         alert('장바구니에 추가되었습니다.');
                                         setShowSchedule(false);
                                     } else {

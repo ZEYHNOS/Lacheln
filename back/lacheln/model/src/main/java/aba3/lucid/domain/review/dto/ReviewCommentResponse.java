@@ -1,12 +1,10 @@
 package aba3.lucid.domain.review.dto;
 
 
-import aba3.lucid.domain.product.enums.ReviewCommentStatus;
-import aba3.lucid.domain.product.enums.ReviewStatus;
+import aba3.lucid.domain.product.enums.CommentStatus;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Builder
 @NoArgsConstructor
@@ -19,5 +17,5 @@ public class ReviewCommentResponse {
     private Long reviewId;
     private String content;
     private LocalDate createdAt;
-    private ReviewCommentStatus status;
+    private CommentStatus status;
 }

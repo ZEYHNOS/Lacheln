@@ -1,6 +1,8 @@
 package aba3.lucid.domain.schedule.dto;
 
 
+import aba3.lucid.common.enums.HolidayWeek;
+import aba3.lucid.common.enums.Weekdays;
 import lombok.*;
 
 
@@ -11,8 +13,8 @@ import lombok.*;
 public class RegularHolidayResponse {
     private long id;
     private long cpId;
-    private String weekdays;
-    private String week;
+    private Weekdays weekdays;
+    private HolidayWeek week;
     private int days;
     private int month;
 }

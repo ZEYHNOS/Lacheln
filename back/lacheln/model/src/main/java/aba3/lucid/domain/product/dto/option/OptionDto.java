@@ -23,6 +23,9 @@ import java.util.List;
 public class OptionDto {
 
     @NotBlank
+    private Long opId;
+
+    @NotBlank
     private String name;
 
     // 중복 여부
@@ -48,6 +51,10 @@ public class OptionDto {
     @ToString
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class OptionDetailDto {
+
+        // 옵션 상세 ID
+        @NotBlank
+        private Long opDtId;
 
         // 옵션 상세 이름
         @NotBlank

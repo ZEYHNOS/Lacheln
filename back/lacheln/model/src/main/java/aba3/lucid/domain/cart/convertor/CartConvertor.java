@@ -64,7 +64,7 @@ public class CartConvertor {
                 .pdName(request.getPdName())
                 .pdImageUrl(request.getPdImageUrl())
                 .price(request.getPdPrice())
-                .startDatetime(request.getStartDateTime())
+                .startDatetime(request.getStartDatetime())
                 .cpId(request.getCpId())
                 .cpName(request.getCpName())
                 .taskTime(request.getTaskTime())
@@ -76,12 +76,12 @@ public class CartConvertor {
     public CartDetailEntity convertToEntityByPd(CartEntity cart, CartOptionDetail request)   {
         return CartDetailEntity.builder()
                 .cart(cart)
-                .optionName(request.getOptionName())
-                .optionDetailName(request.getOptionDetailName())
-                .optionPrice(request.getPrice())
-                .cartDtQuantity(request.getQuantity())
-                .optionTaskTime(request.getOptionTaskTime())
-                .optionId(request.getOptionId())
+                .optionName(request.getOpName())
+                .optionDetailName(request.getOpDtName())
+                .optionPrice(request.getOpPrice())
+                .cartDtQuantity(request.getCartDtQuantity())
+                .optionTaskTime(request.getOpTasktime())
+                .optionId(request.getOpId())
                 .build();
     }
 
@@ -176,13 +176,13 @@ public class CartConvertor {
             for(CartOptionDetail optionDetail : product.getOptionDetails()) {
                 CartDetailEntity detail = CartDetailEntity.builder()
                         .cart(cart)
-                        .optionDetailId(optionDetail.getOptionDetailId())
-                        .optionDetailName(optionDetail.getOptionDetailName())
-                        .optionName(optionDetail.getOptionName())
-                        .optionId(optionDetail.getOptionId())
-                        .cartDtQuantity(optionDetail.getQuantity())
-                        .optionPrice(optionDetail.getPrice())
-                        .optionTaskTime(optionDetail.getOptionTaskTime())
+                        .optionDetailId(optionDetail.getOpDtId())
+                        .optionDetailName(optionDetail.getOpDtName())
+                        .optionName(optionDetail.getOpName())
+                        .optionId(optionDetail.getOpId())
+                        .cartDtQuantity(optionDetail.getCartDtQuantity())
+                        .optionPrice(optionDetail.getOpPrice())
+                        .optionTaskTime(optionDetail.getOpTasktime())
                         .build();
                 optionDetails.add(detail);
             }

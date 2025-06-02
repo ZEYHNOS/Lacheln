@@ -19,7 +19,6 @@ import java.math.BigInteger;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class DressSizeDto {
 
-    @NotBlank
     private Long sizeId;
 
     @NotNull

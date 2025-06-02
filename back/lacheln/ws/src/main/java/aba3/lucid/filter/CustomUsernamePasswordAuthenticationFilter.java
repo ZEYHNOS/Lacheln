@@ -125,6 +125,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         for (ResponseCookie cookie : cookies.values()) {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
+
         SecurityContextHolder.getContext().setAuthentication(authResult);
 
         // 요청 Origin 가져오기

@@ -1,7 +1,7 @@
 package aba3.lucid.controller;
 
 import aba3.lucid.common.api.API;
-import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.SuccessCode;
 import aba3.lucid.jwt.JwtTokenProvider;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class GateWayController {
+public class WebServerController {
 
     private final RestTemplate restTemplate;
     private final AuthService authService;
@@ -102,7 +102,10 @@ public class GateWayController {
     // 회원 탈퇴(소비자, 업체) 로직
     @DeleteMapping("/delaccount")
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴를 진행합니다.")
-    public API<String> delAccount(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
+    public API<String> delAccount(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication) throws IOException{
         // 로그아웃 로직과 매우 유사함
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
@@ -123,7 +126,7 @@ public class GateWayController {
         }
 
         // 해당 코드에서 알맞은 유저의 정보 DROP
-        authService.withdrawUsers(accessToken);
+        authService.withdrawUsers(accessToken, authentication);
         Map<String, ResponseCookie> tokens = authService.logout(jwtToken);
 
         if(tokens != null)  {
@@ -137,6 +140,33 @@ public class GateWayController {
 
         response.sendRedirect("http://localhost:3000");
         return API.OK(SuccessCode.DELETE_TOKEN);
+    }
+    
+    @GetMapping("/auth/me")
+    @Operation(summary = "사용자 세션 검증", description = "사용자 세션을 검증합니다.")
+    public API<Map<String, Boolean>> authMe(
+            @AuthenticationPrincipal CustomUserDetails contextUser,
+            HttpServletRequest requestUser
+            )    {
+        Cookie[] cookies = requestUser.getCookies();
+
+        if(cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("AccessToken".equals(cookie.getName())) {
+                    String token = cookie.getValue();
+                    boolean valid = jwtTokenProvider.isValid(token);
+                    if(valid)   {
+                        String tokenUser = jwtTokenProvider.getUserEmail(token);
+                        String sessionUser = contextUser.getEmail();
+                        if(tokenUser.equals(sessionUser))   {
+                            return API.OK(Map.of("valid", true), SuccessCode.SESSION_VALID);
+                        }
+                    }
+                }
+            }
+        }
+
+        return API.ERROR(Map.of("valid", false), ErrorCode.UNAUTHORIZED);
     }
 
     // 공통 HTTP 요청 전달 메서드 (RestTemplate 사용)

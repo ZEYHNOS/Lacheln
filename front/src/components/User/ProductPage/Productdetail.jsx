@@ -40,8 +40,8 @@ function getTotalOptionPrice(product, selectedOptions) {
     optionArr.forEach(opt => {
         const selected = selectedOptions[opt.name];
         if (selected) {
-            const found = (opt.option_dt_list || opt.optionDtList || []).find(dt => dt.op_dt_name === selected || dt.opDtName === selected);
-            if (found) total += found.plus_cost || found.plusCost || 0;
+            const found = (opt.optionDtList || opt.option_dt_list || []).find(dt => (dt.opDtName || dt.op_dt_name) === selected);
+            if (found) total += found.plusCost || found.plus_cost || 0;
         }
     });
     // sizeList
@@ -203,9 +203,10 @@ const ProductDetail = () => {
 
                         {/* 옵션 창창 */}
                         <div className="space-y-4">
-                            {(product.option_list || []).map((opt, i) => {
+                            {(product.optionList || product.option_list || []).map((opt, i) => {
+                                const optionDetails = opt.optionDtList || opt.option_dt_list || [];
                                 const selected = selectedOptions[opt.name];
-                                const found = (opt.option_dt_list || []).find(dt => dt.op_dt_name === selected);
+                                const found = optionDetails.find(dt => (dt.opDtName || dt.op_dt_name) === selected);
                                 return (
                                     <div key={i}>
                                         <div className="flex items-center justify-between">
@@ -220,49 +221,21 @@ const ProductDetail = () => {
                                             value={selectedOptions[opt.name] || ""}
                                         >
                                             <option value="">옵션 선택</option>
-                                            {(opt.option_dt_list || []).map((item, idx) => (
-                                                <option key={idx} value={item.op_dt_name}>
-                                                    {item.op_dt_name} (₩{item.plus_cost.toLocaleString()})
+                                            {optionDetails.map((item, idx) => (
+                                                <option key={idx} value={item.opDtName || item.op_dt_name}>
+                                                    {(item.opDtName || item.op_dt_name)} (₩{(item.plusCost || item.plus_cost || 0).toLocaleString()})
                                                 </option>
                                             ))}
                                         </select>
                                         {selected && found && (
                                             <div className="text-sm text-purple-700 mt-1">
-                                                선택: {selected} {found.plus_cost ? `(+₩${found.plus_cost.toLocaleString()})` : ""}
+                                                선택: {selected} {(found.plusCost || found.plus_cost) ? `(+₩${(found.plusCost || found.plus_cost).toLocaleString()})` : ""}
                                             </div>
                                         )}
                                     </div>
                                 );
                             })}
                         </div>
-
-                        {/* 옵션 선택 (optionList) */}
-                        {product.optionList && product.optionList.length > 0 && product.optionList.map((opt, i) => {
-                            const selected = selectedOptions[opt.name];
-                            const found = (opt.option_dt_list || []).find(dt => dt.op_dt_name === selected);
-                            return (
-                                <div key={i} className="mb-4">
-                                    <label className="block font-medium text-gray-700 mb-1">{opt.name}</label>
-                                    <select
-                                        className="w-full border bg-white text-black px-3 py-2 rounded mt-1"
-                                        onChange={e => handleOptionChange(opt.name, e.target.value)}
-                                        value={selectedOptions[opt.name] || ""}
-                                    >
-                                        <option value="">옵션 선택</option>
-                                        {(opt.option_dt_list || []).map((item, idx) => (
-                                            <option key={idx} value={item.op_dt_name}>
-                                                {item.op_dt_name} (₩{item.plus_cost.toLocaleString()})
-                                            </option>
-                                        ))}
-                                    </select>
-                                    {selected && found && (
-                                        <div className="text-sm text-purple-700 mt-1">
-                                            선택: {selected} {found.plus_cost ? `(+₩${found.plus_cost.toLocaleString()})` : ""}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
 
                         {/* 사이즈 옵션 추가 */}
                         {product.sizeList && product.sizeList.length > 0 && (
@@ -376,17 +349,17 @@ const ProductDetail = () => {
                                     optionArr.forEach(opt => {
                                         const selected = selectedOptions[opt.name];
                                         if (selected) {
-                                            const found = (opt.option_dt_list || opt.optionDtList || []).find(dt => dt.op_dt_name === selected || dt.opDtName === selected);
+                                            const found = (opt.optionDtList || opt.option_dt_list || []).find(dt => (dt.opDtName || dt.op_dt_name) === selected);
                                             if (found) {
                                                 cartDetailData.push({
-                                                    pd_id: product.id ? product.id : null,
-                                                    op_id: opt.op_id ? opt.op_id : null,
-                                                    op_dt_id: found.op_dt_id ? found.op_dt_id : null,
+                                                    pd_id: product.id ?? null,
+                                                    op_id: opt.opId ?? null,
+                                                    op_dt_id: found.opDtId ?? null,
                                                     cart_dt_quantity: 1,
                                                     op_name: opt.name,
-                                                    op_dt_name: found.op_dt_name || found.opDtName,
-                                                    op_price: found.plus_cost || found.plusCost || 0,
-                                                    op_tasktime: minutesToLocalTime(found.plus_time || found.plusTime || 0)
+                                                    op_dt_name: found.opDtName ?? '',
+                                                    op_price: found.plusCost ?? 0,
+                                                    op_tasktime: minutesToLocalTime(found.plusTime ?? 0)
                                                 });
                                             }
                                         }

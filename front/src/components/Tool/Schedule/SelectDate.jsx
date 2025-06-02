@@ -55,14 +55,27 @@ export default function SelectDate({ onDateSelect, cpId, value, setValue, modalS
         const month = value?.getMonth() + 1;
         if (!cpId) return;
         apiClient
-            .get("/holidays", { params: { year, month, companyId: cpId } })
-            .then((res) => setHolidays(res.data.holidays || []))
+            .get(`/company/holiday/${cpId}`)
+            .then((res) => {
+                // holidaysRaw: [[2025,6,19], ...]
+                const holidaysRaw = res.data.data || [];
+                const holidaysStr = holidaysRaw.map(arr =>
+                    Array.isArray(arr) && arr.length === 3
+                        ? `${arr[0]}-${String(arr[1]).padStart(2, '0')}-${String(arr[2]).padStart(2, '0')}`
+                        : arr
+                );
+                setHolidays(holidaysStr);
+            })
             .catch(() => setHolidays([]));
     }, [value, cpId]);
 
+    useEffect(() => {
+        console.log('holidays:', holidays);
+    }, [holidays]);
+    
     const tileDisabled = ({ date, view, activeStartDate }) => {
         if (view !== "month") return false;
-        const d = date.toISOString().slice(0, 10);
+        const d = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         const isNotThisMonth = date.getMonth() !== activeStartDate.getMonth() || date.getFullYear() !== activeStartDate.getFullYear();
         // 오늘 이전 날짜 비활성화
         if (isPast(date)) return true;
@@ -71,7 +84,7 @@ export default function SelectDate({ onDateSelect, cpId, value, setValue, modalS
 
     const tileContent = ({ date, view, activeStartDate }) => {
         if (view === "month") {
-            const d = date.toISOString().slice(0, 10);
+            const d = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             const day = date.getDay();
             let color = "#111";
             // 오늘 이전 날짜는 회색
@@ -84,6 +97,8 @@ export default function SelectDate({ onDateSelect, cpId, value, setValue, modalS
                                 day === 0 || 
                                 isLunarHoliday(date);
                 if (date.getMonth() !== activeStartDate.getMonth() || date.getFullYear() !== activeStartDate.getFullYear()) {
+                    color = "#d1d5db";
+                } else if (holidays.includes(d)) {
                     color = "#d1d5db";
                 } else if (isHoliday) {
                     color = "#e11d48";
@@ -122,37 +137,7 @@ export default function SelectDate({ onDateSelect, cpId, value, setValue, modalS
                 value={value}
                 tileDisabled={tileDisabled}
                 tileClassName={tileClassName}
-                tileContent={({ date, view, activeStartDate }) => {
-                    if (view === "month") {
-                        const d = date.toISOString().slice(0, 10);
-                        const day = date.getDay();
-                        let color = "#111";
-                        if (isPast(date)) color = "#d1d5db";
-                        else {
-                            const monthDay = `${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-                            const isHoliday = KOREAN_HOLIDAYS.includes(monthDay) || 
-                                holidays.includes(d) || 
-                                day === 0 || 
-                                isLunarHoliday(date);
-                            if (date.getMonth() !== activeStartDate.getMonth() || date.getFullYear() !== activeStartDate.getFullYear()) {
-                                color = "#d1d5db";
-                            } else if (isHoliday) {
-                                color = "#e11d48";
-                            } else if (day === 6) {
-                                color = "#2563eb";
-                            }
-                        }
-                        const today = new Date();
-                        const isToday = date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth() && date.getDate() === today.getDate();
-                        return (
-                            <span className="calendar-date-text" style={{ color, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 40 }}>
-                                {date.getDate()}
-                                {isToday && <span className="text-xs text-green-500 mt-1">오늘</span>}
-                            </span>
-                        );
-                    }
-                    return undefined;
-                }}
+                tileContent={tileContent}
                 locale="ko-KR"
                 className="!border-none !shadow-none calendar-tall"
                 style={{ width: "100%" }}

@@ -22,7 +22,6 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class OptionDto {
 
-    @NotBlank
     private Long opId;
 
     @NotBlank
@@ -53,7 +52,6 @@ public class OptionDto {
     public static class OptionDetailDto {
 
         // 옵션 상세 ID
-        @NotBlank
         private Long opDtId;
 
         // 옵션 상세 이름

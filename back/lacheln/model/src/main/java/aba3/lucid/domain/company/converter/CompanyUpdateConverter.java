@@ -16,6 +16,7 @@ public class CompanyUpdateConverter {
         return CompanyEntity.builder()
                 .cpPassword(updateRequest.getPassword())
                 .cpAddress(updateRequest.getAddress())
+                .cpProfile(updateRequest.getProfile())
                 .build();
     }
 
@@ -25,6 +26,7 @@ public class CompanyUpdateConverter {
         }
         return CompanyUpdateResponse.builder()
                 .address(companyEntity.getCpAddress())
+                .profile(companyEntity.getCpProfile())
                 .build();
     }
 }

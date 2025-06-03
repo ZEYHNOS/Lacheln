@@ -4,6 +4,7 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.image.ImageType;
 import aba3.lucid.common.status_code.CompanyCode;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
@@ -16,10 +17,13 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Optional;
 
 
@@ -32,11 +36,10 @@ public class CompanyBusiness {
     private final CompanyRepository companyRepository;
     private final CompanyConverter companyConverter;
     private final CompanyUpdateConverter companyUpdateConverter;
+    private final ImageService imageService;
 
     private String serviceKey;
 
-    //ApplicationContext를 생성자의 의존성 주입을 통해 받아오고 있습니다:
-    private final ApplicationContext applicationContext;
     private final CompanySetConverter companySetConverter;
 
 
@@ -65,13 +68,18 @@ public class CompanyBusiness {
         CompanyEntity savedEntity = companyRepository.save(companyEntity);
         return companyConverter.toResponse(savedEntity);
     }
-    public CompanyProfileSetResponse updateCompanyProfile(Long companyId, CompanyProfileSetRequest request) {
+
+    public CompanyProfileSetResponse setCompanyProfile(Long companyId,  CompanyProfileSetRequest request,MultipartFile profileImgFile) {
         CompanyEntity entity = findByIdWithThrow(companyId);
+
+        if(profileImgFile != null && !profileImgFile.isEmpty()) {
+            String profileImageUrl  = imageService.savedProfileImages(companyId,profileImgFile,ImageType.PROFILE);
+            entity.setCpProfile(profileImageUrl);
+        }
 
         entity.setCpRepName(request.getRepName());
         entity.setCpMainContact(request.getMainContact());
         entity.setCpStatus(request.getStatus());
-        entity.setCpProfile(request.getProfile());
         entity.setCpExplain(request.getExplain());
         entity.setCpCategory(request.getCategory());
         entity.setCpFax(request.getFax());
@@ -79,6 +87,7 @@ public class CompanyBusiness {
         CompanyEntity updated = companyRepository.save(entity);
         return companySetConverter.toResponse(updated);
     }
+
 
     private void validateDuplicateCompany(String email) {
         if(companyRepository.existsByCpEmail(email)) {
@@ -95,16 +104,27 @@ public class CompanyBusiness {
 
 
 
-    public API<CompanyUpdateResponse> updateCompany(CompanyUpdateRequest companyUpdateRequest, Long companyId) {
+    public API<CompanyUpdateResponse> updateCompany(CompanyUpdateRequest companyUpdateRequest, Long companyId,MultipartFile profileImgFile) {
+
         if(companyUpdateRequest == null) {
             throw new ApiException(ErrorCode.NOT_FOUND, "요청에 대한 정보가 없ㅅ습니다");
         }
         CompanyEntity loadCompany = companyService.findByIdWithThrow(AuthUtil.getCompanyId());
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String oldProfilePath = loadCompany.getCpProfile();
+        if(profileImgFile != null && !profileImgFile.isEmpty()) {
+            //기존 이미지를 있다면 파일 삭제
+            if(oldProfilePath != null && !oldProfilePath.isBlank()) {
+                imageService.deleteProfileImage(oldProfilePath);
+            }
+            String updatedProfileImageUrl = imageService.savedProfileImages(companyId,profileImgFile,ImageType.PROFILE);
+            loadCompany.setCpProfile(updatedProfileImageUrl);
+        }
         loadCompany.updateCompany(companyUpdateRequest,bCryptPasswordEncoder);
         companyService.saveByCompany(loadCompany);
         CompanyUpdateResponse data = CompanyUpdateResponse.builder()
                 .address(loadCompany.getCpAddress())
+                .profile(loadCompany.getCpProfile())
                 .build();
         return API.OK(data);
 

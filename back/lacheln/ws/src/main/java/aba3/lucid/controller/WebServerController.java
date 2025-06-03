@@ -4,6 +4,7 @@ import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.SuccessCode;
+import aba3.lucid.domain.user.enums.TierEnum;
 import aba3.lucid.jwt.JwtTokenProvider;
 import aba3.lucid.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -172,15 +173,19 @@ public class WebServerController {
                         String sessionUser = contextUser.getEmail();
                         String role = contextUser.getRole();
                         String name = "";
+                        TierEnum tier;
 
                         // 일치하면 true반환
                         if (getEmail.equals(sessionUser)) {
                             if(role.equals("USER")) {
                                 name = authService.getUserNickName(getEmail);
+                                tier = authService.getUserTier(getEmail);
                             } else  {
                                 name = authService.getCompanyName(getEmail);
+                                tier = null;
                             }
 
+                            map.put("tier", tier);
                             map.put("name", name);
                             map.put("valid", true);
                             map.put("role", role);

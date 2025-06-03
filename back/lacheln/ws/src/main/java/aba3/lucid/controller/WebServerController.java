@@ -62,9 +62,11 @@ public class WebServerController {
     }
     
     // JWT 기반은 필터에서 처리안함
-    @PostMapping("/logout")
+    @PostMapping("/userlogout")
     @Operation(summary = "로그아웃", description = "사용자 세션을 제거하고 로그아웃 로직을 수행합니다.")
     public API<String> routeToLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        log.info("logout method processing!");
+
         // 새로운 쿠키 생성
         Cookie[] cookies = request.getCookies();
         String jwtToken = null;
@@ -90,6 +92,7 @@ public class WebServerController {
             for (ResponseCookie cookie : tokens.values()) {
                 response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             }
+            log.info("Complete Set cookies : {}", tokens);
             if (authentication != null) {
                 new SecurityContextLogoutHandler().logout(request, response, authentication);
             }

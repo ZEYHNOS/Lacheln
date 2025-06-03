@@ -10,6 +10,10 @@ import java.math.BigInteger;
 @Builder
 public class PackageProductResponse {
 
+    private Long pdId;
+
+    private Long cpId;
+
     private String productName;
 
     private String companyName;

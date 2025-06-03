@@ -13,6 +13,6 @@ import lombok.experimental.SuperBuilder;
 @ToString
 public class BoardResponse {
 
-    private Long id;
+    private Long boardId;
     private String boardName;
 }

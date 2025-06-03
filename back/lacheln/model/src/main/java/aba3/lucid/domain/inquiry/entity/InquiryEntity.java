@@ -1,5 +1,6 @@
 package aba3.lucid.domain.inquiry.entity;
 
+import aba3.lucid.domain.inquiry.enums.InquiryCategory;
 import aba3.lucid.domain.inquiry.enums.InquiryStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,16 +32,12 @@ public class InquiryEntity {
     @Column(name = "inquiry_title", length = 100, nullable = false)
     private String inquiryTitle; //제목
 
-    // TODO 문의 카테고리 나중에 정해야 할 듯
-    @Column(name = "inquiry_category", columnDefinition = "CHAR(50)", nullable = false)
-    private String inquiryCategory; //카테고리
+    @Enumerated(EnumType.STRING)
+    @Column(name = "inquiry_category", columnDefinition = "CHAR(30)", nullable = false)
+    private InquiryCategory inquiryCategory;
 
     @Column(name = "inquiry_content", columnDefinition = "TEXT", nullable = false)
     private String inquiryContent; //내용
-
-    @Lob
-    @Column(name = "inquiry_file", columnDefinition = "LONGBLOB")
-    private byte[] inquiryFile; //파일
 
     @Enumerated(EnumType.STRING)
     @Column(name = "inquiry_status", columnDefinition = "CHAR(20)", nullable = false)
@@ -48,10 +45,6 @@ public class InquiryEntity {
 
     @Column(name = "inquiry_answer", length = 255)
     private String inquiryAnswer; //답변
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "inquiry", cascade = CascadeType.REMOVE)
-    private List<InquiryImageEntity> inquiryImageList;
 
     // 문의 작성일시를 저장하는 필드
     // - 사용자가 문의를 작성한 시간을 기록

@@ -37,6 +37,11 @@ public class PostBusiness {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
 
+        // ✅ 티어 제한 검사
+        if (user.getUserTier().ordinal() < TierEnum.SEMI_PRO.ordinal()) {
+            throw new ApiException(ErrorCode.FORBIDDEN, "세미프로 이상만 게시글을 작성할 수 있습니다.");
+        }
+
         BoardEntity board = boardRepository.findById(request.getBoardId())
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시판이 존재하지 않습니다."));
 
@@ -104,6 +109,12 @@ public class PostBusiness {
     public void likePost(Long postId) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
+
+        // ✅ 티어 체크: 세미프로 미만이면 추천 불가
+        if (user.getUserTier().ordinal() < TierEnum.SEMI_PRO.ordinal()) {
+            throw new ApiException(ErrorCode.FORBIDDEN, "세미프로 이상만 추천할 수 있습니다.");
+        }
+
         PostEntity post = postService.getPostById(postId);
         postService.likePost(post, user);
     }

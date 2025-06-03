@@ -1,15 +1,10 @@
 package aba3.lucid.domain.inquiry.dto;
 
+import aba3.lucid.domain.inquiry.enums.InquiryCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.List;
-
-/**
- * 문의 작성 요청 DTO
- * - 제목, 카테고리, 내용, 첨부 이미지 URL 리스트를 포함
- */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,11 +15,12 @@ public class InquiryCreateRequest {
     @NotBlank(message = "문의 제목은 필수입니다.")
     private String inquiryTitle;
 
-    @NotBlank(message = "문의 카테고리는 필수입니다.")
-    private String inquiryCategory;
+    @NotNull(message = "문의 카테고리는 필수입니다.")
+    private InquiryCategory inquiryCategory;
 
+    /**
+     * HTML 형식의 텍스트만 입력받습니다. 이미지 삽입은 별도 API 없이 직접 URL 삽입으로 처리합니다.
+     */
     @NotBlank(message = "문의 내용은 필수입니다.")
     private String inquiryContent;
-
-    private List<String> imageUrls; // 이미지 URL 리스트 (선택)
 }

@@ -3,9 +3,14 @@ package aba3.lucid.board.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.board.dto.PostUpdateRequest;
-import aba3.lucid.domain.board.entity.*;
-import aba3.lucid.domain.board.enums.PostStatus;
-import aba3.lucid.domain.board.repository.*;
+import aba3.lucid.domain.board.entity.BoardEntity;
+import aba3.lucid.domain.board.entity.PostEntity;
+import aba3.lucid.domain.board.entity.PostLikeEntity;
+import aba3.lucid.domain.board.entity.PostViewEntity;
+import aba3.lucid.domain.board.repository.BoardRepository;
+import aba3.lucid.domain.board.repository.PostLikeRepository;
+import aba3.lucid.domain.board.repository.PostRepository;
+import aba3.lucid.domain.board.repository.PostViewRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +29,6 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final BoardRepository boardRepository;
-    private final UsersRepository usersRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostViewRepository postViewRepository;
 

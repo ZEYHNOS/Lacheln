@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +43,7 @@ public class PostEntity {
     @Column(name = "post_create", nullable = false)
     private LocalDateTime postCreate; // 작성일 (최초 저장 시간)
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @Column(name = "post_update", nullable = false)
     private LocalDateTime postUpdate; // 수정일 (갱신 시간)
 
@@ -64,10 +65,6 @@ public class PostEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentEntity> commentList; // 게시글 댓글 연관관계
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostImageEntity> postImageList; // 게시글 이미지 연관관계
 
     // 게시글 수정 메서드 (제목, 내용, 수정일 변경)
     public void updatePost(String newTitle, String newContent, LocalDateTime updateTime) {

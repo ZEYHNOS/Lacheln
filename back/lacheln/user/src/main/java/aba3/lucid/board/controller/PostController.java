@@ -95,7 +95,7 @@ public class PostController {
             description = "게시글에 추천을 1회 등록합니다. 이미 추천했다면 에러 반환.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "추천 성공"),
-                    @ApiResponse(responseCode = "400", description = "이미 추천함")
+                    @ApiResponse(responseCode = "400", description = "이미 추천함"),
             }
     )
     public API<String> likePost(@PathVariable Long postId) {

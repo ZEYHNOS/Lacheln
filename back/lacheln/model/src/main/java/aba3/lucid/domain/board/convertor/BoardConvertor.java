@@ -17,6 +17,9 @@ public class BoardConvertor {
 
     // Entity -> DTO 변환
     public BoardResponse toResponse(BoardEntity entity) {
-        return new BoardResponse(entity.getBoardId(), entity.getBoardName());
+        return BoardResponse.builder()
+                .boardId(entity.getBoardId())
+                .boardName(entity.getBoardName())
+                .build();
     }
 }

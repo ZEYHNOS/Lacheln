@@ -5,6 +5,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.PaymentErrorCode;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

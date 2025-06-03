@@ -64,7 +64,7 @@ export default function UserRegisterPage() {
           <div className="border border-[#845EC2] p-3 rounded-md text-sm text-gray-700 h-32 overflow-y-scroll custom-scrollbar">
             <strong>제 1조 목적</strong>
             <p className="mt-1">
-              본 약관은 ‘사이트명’에서 제공하는 서비스의 이용조건과 운영에 관한
+              본 약관은 '사이트명'에서 제공하는 서비스의 이용조건과 운영에 관한
               제반사항을 규정함을 목적으로 합니다. 해당 내용은 길게 작성될 예정이며,
               이를 고려하여 스크롤 기능을 추가하였습니다.
             </p>
@@ -152,7 +152,7 @@ export default function UserRegisterPage() {
           <div className="border border-[#845EC2] p-3 rounded-md text-sm text-gray-700 h-40 overflow-y-scroll custom-scrollbar">
             <strong>1. 개인정보의 수집 및 이용 목적</strong>
             <p className="mt-1">
-              Lächeln(이하 ‘회사’)은 회원 가입 및 서비스 제공을 위해 다음과 같은 목적으로 개인정보를 수집 및 이용합니다.
+              Lächeln(이하 '회사')은 회원 가입 및 서비스 제공을 위해 다음과 같은 목적으로 개인정보를 수집 및 이용합니다.
             </p>
             <p className="mt-1">
               - 회원제 서비스 제공 및 관리 (본인 식별, 인증, 회원 유지, 계약이행, 고객관리)<br />

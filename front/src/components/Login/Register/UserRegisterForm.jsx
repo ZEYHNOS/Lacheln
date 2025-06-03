@@ -34,7 +34,7 @@ export default function UserRegisterForm() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const adsNotification = "Y";
+  const adsNotification = location.state?.adsNotification || "N";
 
   useEffect(() => {
     validateForm();

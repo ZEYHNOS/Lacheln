@@ -41,7 +41,7 @@ public class UsersEntity {
     @Column(name = "user_currency", columnDefinition = "CHAR(3)", nullable = false)
     private CurrencyEnum userCurrency; //화폐단위 ISO 4217
 
-    @Column(name = "user_email", length = 255, nullable = false)
+    @Column(name = "user_email", length = 255, nullable = false, unique = true)
     private String userEmail;
 
     @Column(name = "user_password", columnDefinition = "CHAR(255)")

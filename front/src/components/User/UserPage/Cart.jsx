@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import apiClient from "../../../lib/apiClient";
+import { toast } from "react-toastify";
 
 const userId = "user_id"; // 실제 로그인 정보에서 받아와야 함
 
@@ -74,17 +75,20 @@ export default function Cart() {
     // 삭제 함수 분리
     const handleDeleteCart = async () => {
         if (checked.length === 0) {
-            alert('삭제할 상품을 선택하세요.');
+            toast.warning('삭제할 상품을 선택하세요.');
             return;
         }
         if (!window.confirm('정말 삭제하시겠습니까?')) return;
         try {
-            await apiClient.delete('/user/cart/delete', { data: { cartIds: checked } });
-            setCartList(prev => prev.filter(item => !checked.includes(item.cartId)));
-            setChecked([]);
-            setAllChecked(false);
+            const response = await apiClient.delete('/user/cart/delete', { data: { cartIds: checked } });
+            if (response.data.result.resultCode === 200) {
+                toast.success('상품이 삭제되었습니다.');
+                setCartList(prev => prev.filter(item => !checked.includes(item.cartId)));
+                setChecked([]);
+                setAllChecked(false);
+            }
         } catch (e) {
-            alert('삭제 중 오류가 발생했습니다.');
+            toast.error('삭제 중 오류가 발생했습니다.');
         }
     };
 

@@ -47,27 +47,47 @@ const isPast = (date) => {
     return date < today;
 };
 
-export default function SelectDate({ onDateSelect, cpId, value, setValue, modalStyle }) {
+export default function SelectDate({ onDateSelect, cpId, cpIds, value, setValue, modalStyle }) {
     const [holidays, setHolidays] = useState([]);
 
     useEffect(() => {
-        const year = value?.getFullYear();
-        const month = value?.getMonth() + 1;
-        if (!cpId) return;
-        apiClient
-            .get(`/company/holiday/${cpId}`)
-            .then((res) => {
-                // holidaysRaw: [[2025,6,19], ...]
-                const holidaysRaw = res.data.data || [];
-                const holidaysStr = holidaysRaw.map(arr =>
-                    Array.isArray(arr) && arr.length === 3
-                        ? `${arr[0]}-${String(arr[1]).padStart(2, '0')}-${String(arr[2]).padStart(2, '0')}`
-                        : arr
+        // 여러 업체(cpIds) 처리
+        if (cpIds && Array.isArray(cpIds) && cpIds.length > 0) {
+            Promise.all(
+                cpIds.map(id =>
+                    apiClient.get(`/company/holiday/${id}`).then(res => res.data.data || [])
+                )
+            ).then(holidaysArr => {
+                // 날짜 문자열로 변환
+                const allHolidays = holidaysArr.map(list =>
+                    list.map(arr =>
+                        Array.isArray(arr) && arr.length === 3
+                            ? `${arr[0]}-${String(arr[1]).padStart(2, '0')}-${String(arr[2]).padStart(2, '0')}`
+                            : arr
+                    )
                 );
-                setHolidays(holidaysStr);
-            })
-            .catch(() => setHolidays([]));
-    }, [value, cpId]);
+                // 교집합: 모든 업체가 쉬는 날짜만 비활성화
+                const flat = allHolidays.flat();
+                // 쉬는 날짜가 하나라도 겹치면 비활성화
+                const disabledSet = new Set(flat);
+                setHolidays(Array.from(disabledSet));
+            });
+        } else if (cpId) {
+            // 단일 업체 처리
+            apiClient
+                .get(`/company/holiday/${cpId}`)
+                .then((res) => {
+                    const holidaysRaw = res.data.data || [];
+                    const holidaysStr = holidaysRaw.map(arr =>
+                        Array.isArray(arr) && arr.length === 3
+                            ? `${arr[0]}-${String(arr[1]).padStart(2, '0')}-${String(arr[2]).padStart(2, '0')}`
+                            : arr
+                    );
+                    setHolidays(holidaysStr);
+                })
+                .catch(() => setHolidays([]));
+        }
+    }, [value, cpId, cpIds]);
 
     useEffect(() => {
         console.log('holidays:', holidays);

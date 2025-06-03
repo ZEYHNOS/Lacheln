@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SelectDate from "./SelectDate";
 import SelectTime from "./SelectTime";
 
-export default function ScheduleModal({ productId, cpId, onSelect }) {
+export default function ScheduleModal({ productId, cpId, cpIds, onSelect }) {
     const [step, setStep] = useState(1);
     const [selectedDate, setSelectedDate] = useState(null);
     const [calendarValue, setCalendarValue] = useState(null); // 달력에서 보여줄 날짜
@@ -19,13 +19,16 @@ export default function ScheduleModal({ productId, cpId, onSelect }) {
         setStep(2);
     };
 
+    // cpId(단일) 또는 cpIds(배열) 중 하나만 하위로 넘김
+    const companyIds = cpIds && cpIds.length > 0 ? cpIds : (cpId ? [cpId] : []);
+
     return (
         <div className="flex flex-col items-center justify-center">
             <div className="bg-white rounded-2xl shadow-lg" style={modalStyle}>
                 {step === 1 && (
                     <SelectDate
                         onDateSelect={handleDateSelect}
-                        cpId={cpId}
+                        cpIds={companyIds}
                         value={calendarValue}
                         setValue={setCalendarValue}
                         modalStyle={modalStyle}
@@ -34,7 +37,7 @@ export default function ScheduleModal({ productId, cpId, onSelect }) {
                 {step === 2 && selectedDate && (
                     <SelectTime
                         productId={productId}
-                        cpId={cpId}
+                        cpId={companyIds[0]}
                         date={selectedDate}
                         dayOfWeek={dayOfWeek}
                         onSelect={onSelect}

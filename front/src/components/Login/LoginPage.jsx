@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import googleLogo from "../../image/SocialLogin/google-logo.png";
 import axios from "axios";
 import kakaoLogo from "../../image/SocialLogin/kakaotalk-logo.png";
@@ -46,32 +47,61 @@ export default function LoginPage() {
             );
             console.log(requestData);
 
-            alert("로그인이 성공적으로 완료되었습니다!");
+            // 로그인 성공 시 sessionStorage에 상태 저장
+            sessionStorage.setItem('localLoginSuccess', 'true');
+            sessionStorage.setItem('userType', userType); // 유저 타입도 저장
+            
+            // 유저 타입에 따라 다른 페이지로 이동
             navigate(userType === "USER" ? "/" : "/company");
         
         } catch (error) {
-            console.log(error);
+            console.error("로그인 에러 상세:", error);
         
-            // 에러가 axios에서 온 경우 응답 메시지를 분리해서 출력
             if (axios.isAxiosError(error)) {
                 if (error.response) {
-                    alert(`로그인 실패: ${error.response.data?.message || "알 수 없는 오류"}`);
+                    // 서버에서 반환한 에러 메시지가 있는 경우
+                    const errorMessage = error.response.data?.message || error.response.data?.error || "알 수 없는 오류";
+                    toast.error(`로그인 실패: ${errorMessage}`, {
+                        position: "top-center",
+                        autoClose: 1000,
+                    });
+                    console.error("서버 응답:", error.response.data);
+                } else if (error.request) {
+                    // 요청은 보냈지만 응답을 받지 못한 경우
+                    toast.error("서버로부터 응답이 없습니다. 서버가 실행 중인지 확인해주세요.", {
+                        position: "top-center",
+                        autoClose: 1000,
+                    });
+                    console.error("요청 정보:", error.request);
                 } else {
-                    alert("서버로부터 응답이 없습니다.");
+                    // 요청 설정 중 에러가 발생한 경우
+                    toast.error("요청을 보내는 중 오류가 발생했습니다.", {
+                        position: "top-center",
+                        autoClose: 1000,
+                    });
+                    console.error("에러 메시지:", error.message);
                 }
             } else {
-                alert("알 수 없는 에러가 발생했습니다.");
+                toast.error("알 수 없는 에러가 발생했습니다.", {
+                    position: "top-center",
+                    autoClose: 1000,
+                });
+                console.error("일반 에러:", error);
             }
         }
     };
     
     // 카카오 소셜 로그인 처리
     const OAuth2KakaoLogin = () => {
-        window.location.href = `${baseUrl}/oauth2/authorization/kakao`
+        // 소셜 로그인 시도 상태 저장
+        sessionStorage.setItem('socialLoginAttempt', 'true');
+        window.location.href = `${baseUrl}/oauth2/authorization/kakao`;
     }
     // 구글 소셜 로그인 처리
     const OAuth2GoogleLogin = () => {
-        window.location.href = `${baseUrl}/oauth2/authorization/google`
+        // 소셜 로그인 시도 상태 저장
+        sessionStorage.setItem('socialLoginAttempt', 'true');
+        window.location.href = `${baseUrl}/oauth2/authorization/google`;
     }
 
     return (

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import Sidebar from "./Sidebar";
 import SearchBar from "./SearchBar";
 import NationButton from "./Button/NationButton";
@@ -12,12 +14,28 @@ export default function Header() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeButton, setActiveButton] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
+        // /login에서 왔는지 확인
+        const isFromLogin = document.referrer.includes('/login');
+
         apiClient.get("/auth/me")
-            .then(res => setIsLoggedIn(!!res.data.data?.valid))
+            .then(res => {
+                const wasLoggedIn = isLoggedIn;
+                const isNowLoggedIn = !!res.data.data?.valid;
+                setIsLoggedIn(isNowLoggedIn);
+
+                // /login에서 왔고, 로그인된 상태라면 토스트 표시
+                if (isFromLogin && isNowLoggedIn) {
+                    toast.success("소셜 로그인이 완료되었습니다!", {
+                        position: "top-center",
+                        autoClose: 1000,
+                    });
+                }
+            })
             .catch(() => setIsLoggedIn(false));
-    }, []);
+    }, [location]);
 
     const handleLogout = () => {
         setIsLoggedIn(false);

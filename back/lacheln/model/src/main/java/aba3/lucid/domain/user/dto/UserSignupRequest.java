@@ -2,6 +2,8 @@ package aba3.lucid.domain.user.dto;
 
 import aba3.lucid.domain.user.enums.GenderEnum;
 import aba3.lucid.domain.user.enums.NotificationEnum;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.Converter;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserSignupRequest {
     // 이메일
     @Email(message = "이메일 형식이 아닙니다.")

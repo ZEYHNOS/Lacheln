@@ -18,10 +18,6 @@ function CompanyHeader() {
                         <img src={Notification} alt="Notification" className="w-10 h-10" />
                         <ChevronDown size={16} className="ml-1" />
                     </div>
-                    <div className="relative cursor-pointer flex items-center">
-                        <img src={Chatting} alt="Chatting" className="w-10 h-10" />
-                        <ChevronDown size={16} className="ml-1" />
-                    </div>
                 </div>
             </div>
         </header>

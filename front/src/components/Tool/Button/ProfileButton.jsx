@@ -1,16 +1,22 @@
 import { useRef } from "react";
 import { FaUser, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import apiClient from "../../../lib/apiClient";
 
-export default function ProfileButton({ isActive, onClick, isLoggedIn }) {
+export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout }) {
     const navigate = useNavigate();
 
     const handleLogin = () => {
         navigate("/login");
     };
 
-    const handleLogout = () => {
-        // 필요하다면 로그아웃 API 호출
+    const handleLogout = async () => {
+        try {
+            await apiClient.post("/logout");
+            onLogout();
+        } catch (error) {
+            console.error("로그아웃 중 오류 발생:", error);
+        }
     };
 
     return (
@@ -52,12 +58,11 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn }) {
                     {isLoggedIn && ( <>
                             <hr />
                             <ul className="text-black text-sm">
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">😊 내 정보</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">📦 내 주문</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">💰 내 리뷰</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">❤️ 구독내역</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🎟 내 쿠폰</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">💬 메시지</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">💳 결제</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">❤️ 구독</li>
                             </ul>
                         </>
                     )}

@@ -21,8 +21,7 @@ export default function CartButton({ isActive, onClick, isLoggedIn }) {
                     <p className="text-gray-500 text-center py-1 font-semibold">장바구니</p>
                     <hr />
                     <ul className="text-black text-sm">
-                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🛒 장바구니 보기</li>
-                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">💰 주문 결제</li>
+                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🛒 장바구니</li>
                         <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🔖 찜한 상품</li>
                     </ul>
                 </div>

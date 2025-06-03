@@ -46,6 +46,8 @@ public class ReviewService {
                             .rvStatus(ReviewStatus.REPLY_NEEDED)
                             .build())
                     ;
+
+                    rabbitTemplate.convertAndSend("", "", "");
                 }
         );
 

@@ -15,6 +15,5 @@ import java.util.List;
 public class PayDetailBlockResponse {
     private Long pdId;
     private LocalDateTime startTime;
-    private LocalTime taskTime;
-    private List<PayDetailBlockOptionResponse> options;
+    private LocalDateTime endTime;
 }

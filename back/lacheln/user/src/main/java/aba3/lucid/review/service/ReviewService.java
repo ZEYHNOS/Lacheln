@@ -8,7 +8,7 @@ import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.enums.ReviewStatus;
-import aba3.lucid.domain.review.convertor.ReviewImageConverter;
+import aba3.lucid.domain.review.converter.ReviewImageConverter;
 import aba3.lucid.domain.review.dto.ReviewCommentEventDto;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.entity.ReviewEntity;

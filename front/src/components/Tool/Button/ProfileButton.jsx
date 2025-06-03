@@ -12,8 +12,11 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
 
     const handleLogout = async () => {
         try {
-            await apiClient.post("/logout");
-            onLogout();
+            const response = await apiClient.post("/userlogout");
+            if (response.data.result.resultCode === 201) {
+                onLogout();
+                navigate("/");
+            }
         } catch (error) {
             console.error("로그아웃 중 오류 발생:", error);
         }

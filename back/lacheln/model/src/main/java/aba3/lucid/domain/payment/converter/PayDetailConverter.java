@@ -1,14 +1,14 @@
-package aba3.lucid.domain.payment.convertor;
+package aba3.lucid.domain.payment.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.payment.dto.PayDetailBlockResponse;
-import aba3.lucid.domain.payment.dto.PayDetailOptionResponse;
 import aba3.lucid.domain.payment.dto.PayDetailRequest;
 import aba3.lucid.domain.payment.dto.PayDetailResponse;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Converter
@@ -18,14 +18,23 @@ public class PayDetailConverter {
     private final PayDetailOptionConverter payDetailOptionConverter;
 
     public PayDetailEntity toEntity(PayDetailRequest request, PayManagementEntity payManagement) {
+        LocalDateTime endDateTime = request.getScheduleDate()
+                .plusHours(request.getTaskTime().getHour())
+                .plusMinutes(request.getTaskTime().getMinute())
+                ;
+
         PayDetailEntity entity = PayDetailEntity.builder()
                 .payManagement(payManagement)
                 .cpId(request.getCpId())
-                .couponId(request.getCouponBoxId())
+                .pdId(request.getPdId())
                 .productName(request.getProductName())
+                .imageUrl(request.getImageUrl())
+                .couponName(request.getCouponName())
                 .payCost(request.getPayCost())
                 .payDcPrice(request.getPayDcPrice())
                 .startDatetime(request.getScheduleDate())
+                .endDatetime(endDateTime)
+                .taskTime(request.getTaskTime())
                 .build()
                 ;
 
@@ -44,8 +53,8 @@ public class PayDetailConverter {
         return PayDetailResponse.builder()
                 .payDetailId(entity.getPayDetailId())
                 .cpId(entity.getCpId())
-                .couponId(entity.getCouponId())
-                .productName(entity.getProductName())
+                .couponName(entity.getCouponName())
+                .pdName(entity.getProductName())
                 .payCost(entity.getPayCost())
                 .payDcPrice(entity.getPayDcPrice())
                 .options(payDetailOptionConverter.toResponseList(entity.getPayDetailOptionEntityList()))

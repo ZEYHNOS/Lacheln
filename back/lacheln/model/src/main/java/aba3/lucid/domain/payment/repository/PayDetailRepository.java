@@ -2,6 +2,7 @@ package aba3.lucid.domain.payment.repository;
 
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
+import aba3.lucid.domain.user.entity.UsersEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -38,4 +39,6 @@ public interface PayDetailRepository extends JpaRepository<PayDetailEntity, Long
             @Param("end") LocalDateTime end);
 
     List<PayDetailEntity> findAllByStartDatetimeBetweenAndPayManagement_PayStatus(LocalDateTime start, LocalDateTime end, PaymentStatus status);
+
+    List<PayDetailEntity> findAllByPayManagement_User(UsersEntity user);
 }

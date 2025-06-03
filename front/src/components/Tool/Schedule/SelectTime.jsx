@@ -27,7 +27,7 @@ const generateTimeSlots = (start, end, reserved) => {
     return slots;
 };
 
-export default function SelectTime({ productId, cpId, date, onSelect, onBack, modalStyle }) {
+export default function SelectTime({ productId, cpId, date, dayOfWeek, onSelect, onBack, modalStyle }) {
     const [workHours, setWorkHours] = useState(null); // {start: "10:00", end: "19:00"}
     const [reserved, setReserved] = useState([]); // [{start: "12:00", end: "14:00"}]
     const [slots, setSlots] = useState([]);
@@ -50,29 +50,49 @@ export default function SelectTime({ productId, cpId, date, onSelect, onBack, mo
         const fetchData = async () => {
             try {
                 const [workRes, reservedRes] = await Promise.all([
-                    apiClient.get(`/company/${cpId}/workhours`, { params: { date } }),
-                    apiClient.get(`/product/${productId}/reserved`, { params: { date } })
+                    apiClient.get(`/api/company/business_hour/${cpId}`, { params: { date } }),
+                    apiClient.get(`/payment/block/${productId}`, { params: { date } })
                         .catch(() => ({ data: [] }))
                 ]);
 
-                // workHours 데이터가 올바른 형식인지 확인
-                if (workRes.data && typeof workRes.data === 'object' && workRes.data.start && workRes.data.end) {
-                    setWorkHours(workRes.data);
+                // 전달받은 요일(0: 월요일 ~ 6: 일요일)로 업무시간 찾기
+                if (workRes.data?.data && Array.isArray(workRes.data.data)) {
+                    const workHoursData = workRes.data.data[dayOfWeek];
+                    if (workHoursData) {
+                        const startHour = String(workHoursData.start[0]).padStart(2, '0');
+                        const startMin = String(workHoursData.start[1]).padStart(2, '0');
+                        const endHour = String(workHoursData.end[0]).padStart(2, '0');
+                        const endMin = String(workHoursData.end[1]).padStart(2, '0');
+                        
+                        setWorkHours({
+                            start: `${startHour}:${startMin}`,
+                            end: `${endHour}:${endMin}`
+                        });
+                    } else {
+                        console.warn('해당 요일의 업무시간이 없습니다:', dayOfWeek);
+                        setWorkHours({ start: "11:00", end: "21:00" });
+                    }
                 } else {
                     console.warn('업무시간 데이터가 올바르지 않습니다:', workRes.data);
-                    setWorkHours({ start: "09:00", end: "19:00" });
+                    setWorkHours({ start: "11:00", end: "21:00" });
                 }
                 
-                setReserved(reservedRes.data || []);
+                // 예약된 시간 데이터 변환
+                const blockedTimes = (reservedRes.data || []).map(item => ({
+                    start: item.startTime.split('T')[1].substring(0, 5),
+                    end: new Date(new Date(item.startTime).getTime() + item.taskTime.toMinutes() * 60000)
+                        .toTimeString().substring(0, 5)
+                }));
+                setReserved(blockedTimes);
             } catch (error) {
                 console.error('시간 정보를 불러오는데 실패했습니다:', error);
-                setWorkHours({ start: "09:00", end: "19:00" });
+                setWorkHours({ start: "11:00", end: "21:00" });
                 setReserved([]);
             }
         };
 
         fetchData();
-    }, [cpId, productId, date]);
+    }, [cpId, productId, date, dayOfWeek]);
 
     // 오전/오후 분리
     const splitSlotsByAmPm = (slots) => {

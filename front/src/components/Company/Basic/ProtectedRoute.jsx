@@ -11,7 +11,7 @@ export default function CompanyProtectedRoute({ children }) {
         const checkCompanyAuth = async () => {
             try {
                 const response = await apiClient.get('/auth/me');
-                setIsCompany(response.data.data?.role === 'company');
+                setIsCompany(response.data.data?.role === 'COMPANY');
             } catch (error) {
                 setIsCompany(false);
             } finally {

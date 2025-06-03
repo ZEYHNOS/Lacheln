@@ -98,8 +98,6 @@ public class WebServerController {
             }
         }
 
-        // Redirect 진행
-        response.sendRedirect("http://localhost:3000");
         return API.OK(SuccessCode.DELETE_TOKEN);
     }
 

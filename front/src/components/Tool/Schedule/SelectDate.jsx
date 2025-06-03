@@ -132,7 +132,9 @@ export default function SelectDate({ onDateSelect, cpId, value, setValue, modalS
                     const y = date.getFullYear();
                     const m = String(date.getMonth() + 1).padStart(2, "0");
                     const d = String(date.getDate()).padStart(2, "0");
-                    onDateSelect(`${y}-${m}-${d}`);
+                    // 요일을 0(월)~6(일) 형식으로 변환
+                    const dayOfWeek = (date.getDay() + 6) % 7; // 0(일)~6(토)를 0(월)~6(일)로 변환
+                    onDateSelect(`${y}-${m}-${d}`, dayOfWeek);
                 }}
                 value={value}
                 tileDisabled={tileDisabled}

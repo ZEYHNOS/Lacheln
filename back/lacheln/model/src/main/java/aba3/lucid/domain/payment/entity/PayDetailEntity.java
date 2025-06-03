@@ -36,13 +36,17 @@ public class PayDetailEntity {
     @Column(name = "pd_id")
     private Long pdId;
 
-    // 쿠폰
-    @Column(name = "coupon_id")
-    private Long couponId;
-
     // 상품 이름
     @Column(name = "pay_pd_name", nullable = false, columnDefinition = "VARCHAR(100)")
     private String productName;
+
+    // 상품 이미지 Url
+    @Column(name = "pay_image_url", nullable = false)
+    private String imageUrl;
+
+    // 쿠폰
+    @Column(name = "coupon_name", nullable = false)
+    private String couponName;
 
     // 가격
     @Column(name = "pay_cost", nullable = false)

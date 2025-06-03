@@ -7,6 +7,7 @@ import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.domain.user.enums.TierEnum;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.jwt.JwtTokenProvider;
 import aba3.lucid.user.service.UserService;
@@ -135,6 +136,12 @@ public class AuthService {
         UsersEntity user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new ApiException(ErrorCode.GONE, "해당하는 유저가 없습니다."));
         return user.getUserNickName();
+    }
+
+    public TierEnum getUserTier(String userEmail)   {
+        UsersEntity user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new ApiException(ErrorCode.GONE, "해당하는 유저가 없습니다."));
+        return user.getUserTier();
     }
 
     public String getCompanyName(String cpEmail) {

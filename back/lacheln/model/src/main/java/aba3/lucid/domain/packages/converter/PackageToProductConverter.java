@@ -65,6 +65,8 @@ public class PackageToProductConverter {
                 ? "/default/product.png" : packageToProduct.getProduct().getImageList().get(0).getPdImageUrl();
 
         return PackageProductResponse.builder()
+                .cpId(packageToProduct.getProduct().getCompany().getCpId())
+                .pdId(packageToProduct.getProduct().getPdId())
                 .companyName(packageToProduct.getProduct().getCompany().getCpName())
                 .productName(packageToProduct.getProduct().getPdName())
                 .price(packageToProduct.getProduct().getPdPrice())

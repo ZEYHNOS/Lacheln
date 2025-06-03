@@ -5,10 +5,12 @@ import aba3.lucid.domain.payment.dto.PayDetailBlockResponse;
 import aba3.lucid.domain.payment.dto.PayDetailRequest;
 import aba3.lucid.domain.payment.dto.PayDetailResponse;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
+import aba3.lucid.domain.payment.entity.PayDetailOptionEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Converter
@@ -76,8 +78,7 @@ public class PayDetailConverter {
         return PayDetailBlockResponse.builder()
                 .pdId(entity.getPdId())
                 .startTime(entity.getStartDatetime())
-                .taskTime(entity.getTaskTime())
-                .options(payDetailOptionConverter.toBlockResponseList(entity.getPayDetailOptionEntityList()))
+                .endTime(entity.getEndDatetime())
                 .build();
     }
 

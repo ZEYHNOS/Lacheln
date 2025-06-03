@@ -52,9 +52,25 @@ public class RabbitMQConfig {
         return new TopicExchange("review.comment.exchange");
     }
 
+
     @Bean
     public Binding reviewCommentBinding(Queue reviewCommentQueue, TopicExchange reviewCommentExchange) {
         return BindingBuilder.bind(reviewCommentQueue).to(reviewCommentExchange).with("review.comment.#");
+    }
+
+    @Bean
+    public Queue commentDeleteQueue() {
+        return new Queue("comment.delete.queue");
+    }
+
+    @Bean
+    public TopicExchange commentDeleteExchange() {
+        return new TopicExchange("comment.delete.exchange");
+    }
+
+    @Bean
+    public Binding commentDeleteBinding(Queue commentDeleteQueue, TopicExchange commentDeleteExchange) {
+        return BindingBuilder.bind(commentDeleteQueue).to(commentDeleteExchange).with("comment.delete.#");
     }
 
     @Bean

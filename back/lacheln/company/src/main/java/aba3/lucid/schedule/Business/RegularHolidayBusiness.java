@@ -2,29 +2,22 @@ package aba3.lucid.schedule.Business;
 
 
 import aba3.lucid.common.annotation.Business;
-import aba3.lucid.common.enums.HolidayWeek;
-import aba3.lucid.common.enums.Weekdays;
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.company.repository.CompanyRepository;
-import aba3.lucid.domain.schedule.convertor.RegularHolidayConvertor;
+import aba3.lucid.domain.schedule.converter.RegularHolidayConverter;
 import aba3.lucid.domain.schedule.dto.RegularHolidayRequest;
 import aba3.lucid.domain.schedule.dto.RegularHolidayResponse;
 import aba3.lucid.domain.schedule.entity.RegularHolidayEntity;
-import aba3.lucid.domain.schedule.repository.RegularHolidayRepository;
 import aba3.lucid.schedule.Service.RegularHolidayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Business
 @RequiredArgsConstructor
 @Component
 public class RegularHolidayBusiness {
-    private final RegularHolidayConvertor regularHolidayConvertor;
+    private final RegularHolidayConverter regularHolidayConverter;
     private final CompanyService companyService;
     private final RegularHolidayService regularHolidayService;
 
@@ -34,10 +27,10 @@ public class RegularHolidayBusiness {
         Validator.throwIfNull(cpId);
         CompanyEntity company = companyService.findByIdWithThrow(cpId);
         //새로운 entity 만들고 해당 업체에 맞줘기
-        RegularHolidayEntity entity = regularHolidayConvertor.toEntity(request, cpId);
+        RegularHolidayEntity entity = regularHolidayConverter.toEntity(request, cpId);
         entity.setCompany(company);
         RegularHolidayEntity savedEntity = regularHolidayService.createRegularHoliday(entity);
-        return regularHolidayConvertor.toResponse(savedEntity);
+        return regularHolidayConverter.toResponse(savedEntity);
 
     }
 
@@ -49,7 +42,7 @@ public class RegularHolidayBusiness {
         companyService.findByIdWithThrow(cpId);
         regularHolidayService.findByThrowId(regHolidayId);
         RegularHolidayEntity updatedEntity = regularHolidayService.updateRegularHoliday(request, regHolidayId);
-        return regularHolidayConvertor.toResponse(updatedEntity);
+        return regularHolidayConverter.toResponse(updatedEntity);
 
     }
 

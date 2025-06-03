@@ -1,9 +1,8 @@
-package aba3.lucid.domain.inquiry.convertor;
+package aba3.lucid.domain.inquiry.converter;
 
 
 
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.inquiry.dto.ReportImageRequest;
 import aba3.lucid.domain.inquiry.dto.ReportImageResponse;
 import aba3.lucid.domain.inquiry.dto.ReportRequest;
 import aba3.lucid.domain.inquiry.dto.ReportResponse;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class ReportConvertor {
+public class ReportConverter {
     public ReportEntity toReportEntity(ReportRequest request, CompanyEntity company, UsersEntity user) {
         //ReportEntity 본체 생성
       ReportEntity report = ReportEntity.builder()

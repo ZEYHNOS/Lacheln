@@ -1,4 +1,4 @@
-package aba3.lucid.domain.company.convertor;
+package aba3.lucid.domain.company.converter;
 
 
 import aba3.lucid.domain.company.dto.CompanyRequest;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CompanyConvertor {
+public class CompanyConverter {
 
     private final BCryptPasswordEncoder passwordEncoder;
 

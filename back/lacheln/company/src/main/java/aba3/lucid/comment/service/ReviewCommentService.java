@@ -1,4 +1,4 @@
-package aba3.lucid.review.service;
+package aba3.lucid.comment.service;
 
 
 import aba3.lucid.domain.review.entity.ReviewCommentEntity;

@@ -134,10 +134,10 @@ public class PaymentService {
                 ;
 
         // 상품 아이디 리스트
-        List<Long> productIdList = cartEntityList.stream()
-                .map(CartEntity::getProductId)
-                .toList()
-                ;
+//        List<Long> productIdList = cartEntityList.stream()
+//                .map(CartEntity::getProductId)
+//                .toList()
+//                ;
 
 
         // 메세지 생성 전 설정하기
@@ -150,7 +150,7 @@ public class PaymentService {
         CouponVerifyRequest requestMessage = CouponVerifyRequest.builder()
                 .userId(userId)
                 .couponBoxIdList(request.getCouponBoxIdList())
-                .productIdList(productIdList)
+//                .productIdList(productIdList)
                 .amount(groupByCompanyAmount)
                 .build()
                 ;

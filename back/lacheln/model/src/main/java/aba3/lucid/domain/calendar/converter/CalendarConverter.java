@@ -1,26 +1,24 @@
-package aba3.lucid.domain.calendar.convertor;
+package aba3.lucid.domain.calendar.converter;
 
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.calendar.dto.CalendarDetailResponse;
 import aba3.lucid.domain.calendar.dto.CalendarRequest;
 import aba3.lucid.domain.calendar.dto.CalendarResponse;
-import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Converter
 @AllArgsConstructor
-public class CalendarConvertor {
+public class CalendarConverter {
 
-    private final CalendarDetailConvertor calendarDetailConvertor;
+    private final CalendarDetailConverter converter;
 
 
     public CalendarEntity toEntity(CalendarRequest request, CompanyEntity company) {
@@ -38,7 +36,7 @@ public class CalendarConvertor {
         List<CalendarDetailResponse> detailResponses = entity.getCalendarDetailEntity() == null ?
                 new ArrayList<>():
                 entity.getCalendarDetailEntity().stream()
-                        .map(calendarDetailConvertor::toResponse)
+                        .map(converter::toResponse)
                         .collect(Collectors.toList());
 
         return CalendarResponse.builder()

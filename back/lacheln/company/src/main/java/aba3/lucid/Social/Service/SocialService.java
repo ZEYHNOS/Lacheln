@@ -4,13 +4,12 @@ package aba3.lucid.Social.Service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.company.service.CompanyService;
-import aba3.lucid.domain.company.convertor.SnsConvertor;
+import aba3.lucid.domain.company.converter.SnsConverter;
 import aba3.lucid.domain.company.dto.SnsRequest;
 import aba3.lucid.domain.company.dto.SnsResponse;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.entity.SocialEntity;
 import aba3.lucid.domain.company.enums.SNS;
-import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.company.repository.SocialRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SocialService {
     private final SocialRepository socialRepository;
-    private final SnsConvertor snsConvertor;
+    private final SnsConverter snsConverter;
     private final CompanyService companyService;
 
 
@@ -33,9 +32,9 @@ public class SocialService {
         String url = (request.getUrl() != null) ? (request.getUrl()): "www.instagram.com";
 
         SnsRequest defaultRequest = new SnsRequest(SnsName, url);
-        SocialEntity entity = snsConvertor.toEntity(defaultRequest,company);
+        SocialEntity entity = snsConverter.toEntity(defaultRequest,company);
         SocialEntity savedEntity = socialRepository.save(entity);
-        return snsConvertor.toResponse(savedEntity);
+        return snsConverter.toResponse(savedEntity);
     }
 
     @Transactional
@@ -46,7 +45,7 @@ public class SocialService {
         socialEntity.setSnsName(request.getName());
         socialEntity.setSnsUrl(request.getUrl());
         SocialEntity updatedEntity = socialRepository.save(socialEntity);
-        return snsConvertor.toResponse(updatedEntity);
+        return snsConverter.toResponse(updatedEntity);
     }
 
 }

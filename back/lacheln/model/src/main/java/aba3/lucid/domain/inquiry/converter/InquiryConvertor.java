@@ -1,4 +1,4 @@
-package aba3.lucid.domain.inquiry.convertor;
+package aba3.lucid.domain.inquiry.converter;
 
 import aba3.lucid.domain.inquiry.dto.InquiryCreateRequest;
 import aba3.lucid.domain.inquiry.dto.InquiryResponse;
@@ -7,7 +7,6 @@ import aba3.lucid.domain.inquiry.entity.InquiryImageEntity;
 import aba3.lucid.domain.inquiry.enums.InquiryStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 

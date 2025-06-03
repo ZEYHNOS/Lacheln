@@ -1,24 +1,16 @@
-package aba3.lucid.domain.schedule.convertor;
+package aba3.lucid.domain.schedule.converter;
 
 
 import aba3.lucid.common.annotation.Converter;
-import aba3.lucid.common.enums.Weekdays;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleResponse;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Converter
 @RequiredArgsConstructor
-public class WeekdaysScheduleConvertor {
+public class WeekdaysScheduleConverter {
 
 
     public WeekdaysScheduleEntity toEntity(WeekdaysScheduleRequest request, CompanyEntity company) {

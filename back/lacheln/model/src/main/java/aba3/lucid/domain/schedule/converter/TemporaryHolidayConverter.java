@@ -1,4 +1,4 @@
-package aba3.lucid.domain.schedule.convertor;
+package aba3.lucid.domain.schedule.converter;
 
 
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
-public class TemporaryHolidayConvertor {
+public class TemporaryHolidayConverter {
 
     public TemporaryHolidayEntity toEntity(TemporaryHolidayRequest request, CompanyEntity company) {
         if(request == null){

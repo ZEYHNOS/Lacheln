@@ -4,11 +4,11 @@ import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.review.dto.ReviewResponse;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import lombok.RequiredArgsConstructor;
-import aba3.lucid.domain.review.convertor.ReviewImageConverter;
+import aba3.lucid.domain.review.converter.ReviewImageConverter;
 
 @Converter
 @RequiredArgsConstructor
-public class ReviewConvertor {
+public class ReviewConverter {
 
     private final ReviewImageConverter reviewImageConverter;
 

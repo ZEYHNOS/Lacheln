@@ -53,7 +53,7 @@ public class PayManagementEntity {
     @Column(name = "pay_refund_price")
     private BigInteger payRefundPrice;
 
-    // 환불 금액
+    // 환불 날짜
     @Column(name = "pay_refund_date")
     private LocalDateTime payRefundDate;
 

@@ -16,15 +16,25 @@ import java.util.List;
 public class PayManagementResponse {
 
     private String payId;
+
     private String userId;
+
     private String payTool;
+
     private BigInteger payTotalPrice;
+
     private BigDecimal payDcPrice;
+
     private PaymentStatus payStatus;
+
     private BigInteger payRefundPrice;
+
     private LocalDateTime payRefundDate;
+
     private BigInteger payMileage;
+
     private String payImpUid;
+
     private LocalDateTime paidAt;
 
     private List<PayDetailResponse> payDetails;

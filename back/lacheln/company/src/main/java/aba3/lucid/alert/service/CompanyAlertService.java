@@ -30,6 +30,8 @@ public class CompanyAlertService {
         companyAlertRepository.save(entity);
     }
 
+
+
     // 알림 읽음
     @Transactional
     public void readAlert(List<CompanyAlertEntity> entityList) {

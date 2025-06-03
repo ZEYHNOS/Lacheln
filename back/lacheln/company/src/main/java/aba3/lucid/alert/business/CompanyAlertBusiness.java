@@ -47,17 +47,13 @@ public class CompanyAlertBusiness {
 
 
     // 알림 삭제하기
-    public void deleteAlert(Long alertId) {
-        Validator.throwIfInvalidId(alertId);
-
-        companyAlertService.deleteById(alertId);
+    public void deleteAlert(List<Long> alertId) {
+        companyAlertService.deleteByIdList(alertId);
     }
 
     // 알림 읽음
-    public void readAlert(Long alertId) {
-        Validator.throwIfInvalidId(alertId);
-
-        CompanyAlertEntity entity = companyAlertService.findByIdWithThrow(alertId);
+    public void readAlert(List<Long> alertId) {
+        List<CompanyAlertEntity> entity = companyAlertService.findAllById(alertId);
         companyAlertService.readAlert(entity);
     }
 

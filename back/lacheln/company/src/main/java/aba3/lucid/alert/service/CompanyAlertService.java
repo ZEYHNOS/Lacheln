@@ -1,5 +1,6 @@
 package aba3.lucid.alert.service;
 
+import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.alert.dto.CompanyAlertDto;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,21 +31,22 @@ public class CompanyAlertService {
     }
 
     // 알림 읽음
-    public void readAlert(CompanyAlertEntity entity) {
-        entity.readAlert();
-
-        companyAlertRepository.save(entity);
+    @Transactional
+    public void readAlert(List<CompanyAlertEntity> entityList) {
+        entityList.forEach(CompanyAlertEntity::readAlert);
+        companyAlertRepository.saveAll(entityList);
     }
 
     // 알림 삭제(id)
-    public void deleteById(Long cpAlertId) {
-        companyAlertRepository.deleteById(cpAlertId);
+    @Transactional
+    public void deleteByIdList(List<Long> cpAlertId) {
+        companyAlertRepository.deleteAllById(cpAlertId);
     }
 
 
     // 알림 리스트
     public List<CompanyAlertEntity> getAlertList(Long companyId) {
-        return companyAlertRepository.findAllByCompany_CpId(companyId);
+        return companyAlertRepository.findAllByCompany_CpIdAndCpAlertRead(companyId, BinaryChoice.N);
     }
 
 
@@ -51,6 +54,10 @@ public class CompanyAlertService {
     public CompanyAlertEntity findByIdWithThrow(Long cpAlertId) {
         return companyAlertRepository.findById(cpAlertId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+    }
+
+    public List<CompanyAlertEntity> findAllById(List<Long> cpAlertId) {
+        return companyAlertRepository.findAllById(cpAlertId);
     }
 
     // 업체를 구독한 사용자에게 알림 보내기

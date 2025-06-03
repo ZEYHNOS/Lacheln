@@ -27,40 +27,29 @@ public class CommentController {
      *
      * - 일반 댓글: parentCmtId 없이 요청
      * - 대댓글: parentCmtId 포함 요청
-     * - 사용자 인증 정보는 JWT에서 추출
-     *
-     * @param request 댓글 작성 요청 (postId, content 등)
-     * @return 작성된 댓글 정보 응답
+     * - 세미프로 이상만 작성 가능
      */
     @PostMapping("")
     @Operation(
             summary = "댓글/답글 작성",
-            description = "게시글에 댓글 또는 답글을 작성합니다.",
+            description = "세미프로 등급 이상만 댓글 또는 답글을 작성할 수 있습니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "작성 성공"),
                     @ApiResponse(responseCode = "400", description = "차수 초과 또는 유효성 검증 실패"),
+                    @ApiResponse(responseCode = "403", description = "세미프로 미만 등급"),
                     @ApiResponse(responseCode = "404", description = "게시글 또는 부모 댓글, 사용자 정보 없음")
             }
     )
-    public API<CommentResponse> createComment(
-            @Valid @RequestBody CommentRequest request
-    ) {
-        // JWT에서 인증된 사용자 ID 추출
+    public API<CommentResponse> createComment(@Valid @RequestBody CommentRequest request) {
         String userId = AuthUtil.getUserId();
-
-        // 비즈니스 로직 호출 및 응답 반환
         CommentResponse response = commentBusiness.createComment(request, userId);
         return API.OK(response);
     }
 
     /**
-     * 댓글/답글 목록 조회 API (계층 구조로 응답)
+     * 댓글/답글 목록 조회 API
      *
-     * - parentCmtId가 null인 댓글은 최상위 댓글
-     * - 나머지는 해당 댓글의 자식으로 포함
-     *
-     * @param postId 댓글을 조회할 게시글 ID
-     * @return 계층 구조로 구성된 댓글 리스트
+     * - 계층 구조로 구성된 댓글 반환
      */
     @GetMapping("/list")
     @Operation(
@@ -71,43 +60,30 @@ public class CommentController {
                     @ApiResponse(responseCode = "404", description = "게시글이 존재하지 않음")
             }
     )
-    public API<List<CommentResponse>> getCommentList(
-            @RequestParam Long postId
-    ) {
-        // 현재 인증된 사용자 ID 추출
+    public API<List<CommentResponse>> getCommentList(@RequestParam Long postId) {
         String userId = AuthUtil.getUserId();
-
-        // 비즈니스 로직 호출
         List<CommentResponse> comments = commentBusiness.getComments(postId, userId);
         return API.OK(comments);
     }
 
     /**
-     * 댓글 또는 대댓글 삭제 API (Soft Delete)
+     * 댓글 또는 대댓글 삭제 API
      *
-     * - 댓글 작성자 본인 또는 운영자만 삭제 가능
-     * - 실제 삭제가 아닌 상태만 DELETED로 변경
-     *
-     * @param cmtId 삭제할 댓글 ID
-     * @return 삭제 결과 메시지
+     * - 댓글 작성자 또는 ADMIN만 삭제 가능
+     * - 삭제 시 자식 댓글까지 함께 삭제
      */
     @DeleteMapping("/{cmtId}")
     @Operation(
             summary = "댓글/답글 삭제",
-            description = "댓글 또는 대댓글을 삭제합니다. (Soft Delete 방식)",
+            description = "댓글 또는 대댓글을 삭제합니다. 작성자 또는 관리자만 가능하며, 자식 댓글도 함께 삭제됩니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "삭제 성공"),
                     @ApiResponse(responseCode = "403", description = "삭제 권한 없음"),
                     @ApiResponse(responseCode = "404", description = "댓글 또는 사용자 정보 없음")
             }
     )
-    public API<String> deleteComment(
-            @PathVariable Long cmtId
-    ) {
-        // 현재 인증된 사용자 ID 추출
+    public API<String> deleteComment(@PathVariable Long cmtId) {
         String userId = AuthUtil.getUserId();
-
-        // 삭제 비즈니스 로직 호출
         commentBusiness.deleteComment(cmtId, userId);
         return API.OK("댓글이 삭제되었습니다.");
     }

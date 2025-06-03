@@ -73,6 +73,10 @@ public class PayDetailEntity {
     @Column(name = "category", nullable = false)
     private CompanyCategory category;
 
+    // 담당자
+    @Column(name = "manager")
+    private String manager;
+
     @JsonIgnore
     @OneToMany(mappedBy = "payDetail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PayDetailOptionEntity> payDetailOptionEntityList;

@@ -4,12 +4,14 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.PaymentErrorCode;
 import aba3.lucid.common.validate.Validator;
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.payment.converter.PayDetailConverter;
 import aba3.lucid.domain.payment.converter.PaymentConvertor;
 import aba3.lucid.domain.payment.dto.*;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayDetailOptionEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
+import aba3.lucid.domain.product.enums.DressSize;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.payment.service.PayDetailService;
 import aba3.lucid.payment.service.PaymentService;
@@ -22,7 +24,10 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Business
@@ -98,13 +103,44 @@ public class PaymentBusiness {
     }
     
     // 상품 ID 및 날짜로 리스트 가지고 오기
-    public List<PayDetailBlockResponse> getPaymentPdIdAndDate(Long cpId, LocalDate date) {
-        Validator.throwIfNull(cpId, date);
+    public List<PayDetailBlockResponse> getPaymentPdIdAndDate(Long pdId, LocalDate date) {
+        Validator.throwIfNull(pdId, date);
 
         LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.plusDays(1).atStartOfDay();
+        LocalDateTime end = start.plusDays(1);
 
-        List<PayDetailEntity> payManagementEntityList = payDetailService.getPayDetailList(cpId, start, end);
+        List<PayDetailEntity> payManagementEntityList = payDetailService.getPayDetailList(pdId, start, end);
+        List<PayDetailBlockResponse> responses = new ArrayList<>();
+        Map<Long, PayDetailBlockResponse.DressDetail> map = new HashMap<>();
+
+        for(PayDetailEntity entity : payManagementEntityList) {
+            if(entity.getCategory() == CompanyCategory.D)   {
+                for(PayDetailOptionEntity option : entity.getPayDetailOptionEntityList())   {
+                    map.put(option.getPayDetailOptionId(), PayDetailBlockResponse.DressDetail.builder()
+                            .dressQuantity(option.getPayDtQuantity())
+                            .startTime(entity.getStartDatetime())
+                            .endTime(entity.getEndDatetime())
+                            .dressSize(option.getDressSize())
+                            .build());
+                }
+                responses.add(PayDetailBlockResponse.builder()
+                        .dressQuantity(map)
+                        .build());
+            } else if(entity.getCategory() == CompanyCategory.M)    {
+                responses.add(PayDetailBlockResponse.builder()
+                        .pdId(entity.getPdId())
+                        .startTime(entity.getStartDatetime())
+                        .endTime(entity.getEndDatetime())
+                        .managerName(entity.getManager())
+                        .build());
+            } else {
+                responses.add(PayDetailBlockResponse.builder()
+                        .pdId(entity.getPdId())
+                        .startTime(entity.getStartDatetime())
+                        .endTime(entity.getEndDatetime())
+                        .build());
+            }
+        }
 
         return payDetailConverter.toBlockResponseList(payManagementEntityList);
     }

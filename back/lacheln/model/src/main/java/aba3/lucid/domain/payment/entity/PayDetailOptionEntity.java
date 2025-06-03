@@ -1,5 +1,6 @@
 package aba3.lucid.domain.payment.entity;
 
+import aba3.lucid.domain.product.enums.DressSize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,10 @@ public class PayDetailOptionEntity {
     // 옵션 상세 이름
     @Column(name = "pay_op_dt_name", columnDefinition = "VARCHAR(50)", nullable = false)
     private String payOpDtName;
+
+    // 드레스 사이즈
+    @Column(name = "dress_size", columnDefinition = "CHAR(3)")
+    private DressSize dressSize;
 
     // 수량
     @Column(name = "pay_dt_quantity", nullable = false)

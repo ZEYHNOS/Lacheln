@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +30,69 @@ public class ImageService {
     private final ImageConfig imageConfig;
 
     private final ProductImageRepository productImageRepository;
+
+    public String savedProfileImages(Long companyId, MultipartFile image, ImageType type)  throws ApiException {
+        if(image == null || image.isEmpty()) {
+            throw  new IllegalArgumentException("이미지 파일이 비어있습니다");
+        }
+        // OS마다 호환되는 디렉토리 생성
+        String companyDir =  imageConfig.getDir() + File.separator
+                + companyId + File.separator
+                + type.getType();
+        File fileDir = new File(companyDir);
+        if(!fileDir.exists()) {
+            fileDir.mkdirs();
+        }
+
+        String originalFilename = image.getOriginalFilename();
+        if(originalFilename == null) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "이미지 이름이 존재하지 않습니다.");
+
+        }
+
+        // 확장자 분리 (예: .jpg, .png)
+        String ext = "";
+        int idx = originalFilename.lastIndexOf(".");
+        if (idx > -1) {
+            ext = originalFilename.substring(idx);
+        }
+        // 이름 중복 방지
+        String uuid = UUID.randomUUID().toString();
+        String savedName = uuid + ext;
+
+        //파일 저장
+        // 파일 저장 경로 생성
+        Path savePath = Paths.get(companyDir, savedName);
+        try {
+            image.transferTo(savePath.toFile());
+        } catch (IOException e) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, e.getMessage());
+        }
+
+        // DB에 저장할 상대경로 리턴 (ex: /companyName/type/uuid.jpg)
+        String relativePath = File.separator + companyId
+                + File.separator + type.getType()
+                + File.separator + savedName;
+
+        // 만약 URL로 반환하고 싶으면 환경에 맞게 조합 필요
+
+        return relativePath.replace("\\", "/");
+
+
+    }
+
+    //프로필 이미지 삭제
+    public void deleteProfileImage(String imagePath) {
+        if(imagePath == null || imagePath.isEmpty())
+            return;
+        //만약 imagePath가 상대경로라면, 실제 저장경로로 변환 필요
+        String baseDir = imageConfig.getDir();
+        String absPath = baseDir + imagePath; //경로 조합
+        File file = new File(absPath.replace("/", File.separator));
+        if(file.exists()) {
+            file.delete();
+        }
+    }
 
 
     // 파일 업로드
@@ -108,6 +173,7 @@ public class ImageService {
         return filePathList;
     }
 
+
     public void deleteProductImageByImageIdList(List<Long> productImageIdList, Long companyId) {
         // 이미지 Id 리스트가 없으면 return
         if (productImageIdList == null || productImageIdList.isEmpty()) {
@@ -161,4 +227,6 @@ public class ImageService {
         // 3. DB에서 이미지 메타데이터 삭제
         productImageRepository.deleteByProduct_PdId(productId);
     }
+
+
 }

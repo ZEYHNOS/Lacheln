@@ -22,12 +22,11 @@ public class ReviewCommentEntity {
     // 답글 ID
     @Id
     @Column(name = "rv_comment_id", nullable = false)
-    private long rvCommentId;
+    private Long rvCommentId;
 
     // 리뷰
-    @OneToOne
     @JoinColumn(name = "review_id")
-    private ReviewEntity review;
+    private Long reviewId;
 
     // 업체
     @ManyToOne(fetch = FetchType.LAZY)

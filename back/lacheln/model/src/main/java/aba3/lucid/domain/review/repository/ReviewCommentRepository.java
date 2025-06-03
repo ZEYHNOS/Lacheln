@@ -16,5 +16,5 @@ public interface ReviewCommentRepository extends JpaRepository<ReviewCommentEnti
      * @param company 답글 작성자 (판매자)
      * @return true: 이미 작성함, false: 작성 가능
      */
-    boolean existsByReviewAndCompany(ReviewEntity review, CompanyEntity company);
+    boolean existsByReviewIdAndCompany(Long reviewId, CompanyEntity company);
 }

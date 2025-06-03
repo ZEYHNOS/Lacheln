@@ -19,7 +19,7 @@ public class WeekdaysScheduleController {
 
     private final WeekdaysScheduleBusiness weekdaysScheduleBusiness;
 
-    @PostMapping("/weekdays-schedule")
+    @PostMapping("/weekdays_schedule")
     public API<WeekdaysScheduleResponse>createSchedule(
            @AuthenticationPrincipal CustomUserDetails company,
             @RequestBody WeekdaysScheduleRequest request
@@ -29,7 +29,7 @@ public class WeekdaysScheduleController {
     }
 
 
-    @PutMapping("/update/weekdays-schedule")
+    @PutMapping("/update/weekdays_schedule")
     public API<WeekdaysScheduleResponse>updateSchedule(
               @RequestParam Long wsId,
               @RequestBody WeekdaysScheduleRequest request

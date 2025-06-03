@@ -5,7 +5,7 @@ import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.schedule.convertor.WeekdaysScheduleConvertor;
+import aba3.lucid.domain.schedule.converter.WeekdaysScheduleConverter;
 import aba3.lucid.domain.schedule.dto.BusinessHourResponse;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleResponse;
@@ -22,16 +22,16 @@ public class WeekdaysScheduleBusiness {
 
     private final WeekdaysScheduleService weekdaysScheduleService;
     private final CompanyService companyService;
-    private final WeekdaysScheduleConvertor weekdaysScheduleConvertor;
+    private final WeekdaysScheduleConverter weekdaysScheduleConverter;
 
     public WeekdaysScheduleResponse createSchedule(WeekdaysScheduleRequest request, CustomUserDetails customUserDetails) {
         Validator.throwIfNull(request);
         Long cpId = customUserDetails.getCompanyId();
         CompanyEntity company = companyService.findByIdWithThrow(cpId);
-        WeekdaysScheduleEntity entity = weekdaysScheduleConvertor.toEntity(request,company);
+        WeekdaysScheduleEntity entity = weekdaysScheduleConverter.toEntity(request,company);
         entity.setCompany(company);
         WeekdaysScheduleEntity savedEntity = weekdaysScheduleService.createWeekdaysSchedule(entity);
-        return weekdaysScheduleConvertor.toResponse(savedEntity);
+        return weekdaysScheduleConverter.toResponse(savedEntity);
 
     }
 
@@ -40,7 +40,7 @@ public class WeekdaysScheduleBusiness {
         Validator.throwIfInvalidId(wsId);
         weekdaysScheduleService.findByThrowId(wsId);
         WeekdaysScheduleEntity updateEntity = weekdaysScheduleService.updateWeekdaysSchedule(wsId, request);
-        return weekdaysScheduleConvertor.toResponse(updateEntity);
+        return weekdaysScheduleConverter.toResponse(updateEntity);
 
     }
 

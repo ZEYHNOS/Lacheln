@@ -1,4 +1,4 @@
-package aba3.lucid.review.business;
+package aba3.lucid.comment.business;
 
 
 import aba3.lucid.common.exception.ApiException;
@@ -6,15 +6,13 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
-import aba3.lucid.domain.payment.repository.PayDetailRepository;
-import aba3.lucid.domain.payment.repository.PayManagementRepository;
-import aba3.lucid.domain.review.convertor.ReviewCommentConvertor;
+import aba3.lucid.domain.review.converter.ReviewCommentConverter;
 import aba3.lucid.domain.review.dto.ReviewCommentRequest;
 import aba3.lucid.domain.review.dto.ReviewCommentResponse;
 import aba3.lucid.domain.review.entity.ReviewCommentEntity;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.repository.ReviewCommentRepository;
-import aba3.lucid.review.service.ReviewCommentService;
+import aba3.lucid.comment.service.ReviewCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +22,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ReviewCommentBusiness {
-    private final ReviewCommentConvertor reviewCommentConvertor;
+    private final ReviewCommentConverter reviewCommentConverter;
     private final ReviewCommentRepository reviewCommentRepository;
     private final ReviewCommentService reviewCommentService;
 
@@ -58,11 +56,11 @@ public class ReviewCommentBusiness {
 
         validateCanReply(review,company);
 
-        ReviewCommentEntity entity = reviewCommentConvertor.toEntity(
+        ReviewCommentEntity entity = reviewCommentConverter.toEntity(
                company, review, request
         );
         ReviewCommentEntity savedEntity = reviewCommentService.addComment(entity);
-        return reviewCommentConvertor.toResponse(savedEntity);
+        return reviewCommentConverter.toResponse(savedEntity);
 
     }
 
@@ -75,7 +73,7 @@ public class ReviewCommentBusiness {
         Optional<ReviewCommentEntity> commentOpt = reviewCommentRepository.findById(reviewCommentId);
         if(commentOpt.isPresent()) {
             ReviewCommentEntity reviewComment = commentOpt.get();
-            return reviewCommentConvertor.toResponse(reviewComment);
+            return reviewCommentConverter.toResponse(reviewComment);
         }else {
             throw  new ApiException(ErrorCode.NOT_FOUND, " 답글을 찾을 수 없습니다");
         }

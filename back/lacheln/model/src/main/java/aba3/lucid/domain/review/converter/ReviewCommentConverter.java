@@ -1,7 +1,6 @@
-package aba3.lucid.domain.review.convertor;
+package aba3.lucid.domain.review.converter;
 
 
-import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.review.dto.ReviewCommentRequest;
 import aba3.lucid.domain.review.dto.ReviewCommentResponse;
@@ -15,7 +14,7 @@ import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
-public class ReviewCommentConvertor {
+public class ReviewCommentConverter {
 
     public ReviewCommentEntity toEntity(CompanyEntity company, ReviewEntity reviewId, ReviewCommentRequest request){
 
@@ -24,7 +23,7 @@ public class ReviewCommentConvertor {
                 .rvcStatus(request.getStatus())
                 .rvcCreate(LocalDate.now())
                 .company(company)
-                .review(reviewId)
+                .reviewId(request.getReviewId())
                 .build();
 
         return comment;
@@ -37,7 +36,7 @@ public class ReviewCommentConvertor {
                 .content(entity.getRvcContent())
                 .status(entity.getRvcStatus())
                 .cpId(entity.getCompany().getCpId())
-                .reviewId(entity.getReview().getReviewId())
+                .reviewId(entity.getReviewId())
                 .createdAt(entity.getRvcCreate())
                 .build();
     }

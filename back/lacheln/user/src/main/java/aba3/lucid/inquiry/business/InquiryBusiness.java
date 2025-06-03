@@ -1,7 +1,7 @@
 package aba3.lucid.inquiry.business;
 
 import aba3.lucid.common.annotation.Business;
-import aba3.lucid.domain.inquiry.convertor.InquiryConvertor;
+import aba3.lucid.domain.inquiry.converter.InquiryConvertor;
 import aba3.lucid.domain.inquiry.dto.InquiryCreateRequest;
 import aba3.lucid.domain.inquiry.dto.InquiryResponse;
 import aba3.lucid.domain.inquiry.entity.InquiryEntity;

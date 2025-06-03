@@ -1,21 +1,15 @@
-package aba3.lucid.domain.calendar.convertor;
+package aba3.lucid.domain.calendar.converter;
 
 import aba3.lucid.common.annotation.Converter;
-import aba3.lucid.common.enums.Color;
 import aba3.lucid.domain.calendar.dto.CalendarDetailRequest;
 import aba3.lucid.domain.calendar.dto.CalendarDetailResponse;
 import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
-
 @Converter
 @RequiredArgsConstructor
-public class CalendarDetailConvertor {
+public class CalendarDetailConverter {
 
 
 

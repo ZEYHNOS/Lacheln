@@ -1,15 +1,12 @@
-package aba3.lucid.domain.company.convertor;
+package aba3.lucid.domain.company.converter;
 
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.dto.CompanyProfileSetRequest;
 import aba3.lucid.domain.company.dto.CompanyProfileSetResponse;
-import aba3.lucid.domain.company.dto.CompanyResponse;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CompanySetConvertor {
+public class CompanySetConverter {
 
     public CompanyEntity toEntity(CompanyProfileSetRequest setRequest) {
         if(setRequest == null) {

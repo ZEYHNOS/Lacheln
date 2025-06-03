@@ -1,4 +1,4 @@
-package aba3.lucid.domain.inquiry.convertor;
+package aba3.lucid.domain.inquiry.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.inquiry.dto.InquiryCreateRequest;

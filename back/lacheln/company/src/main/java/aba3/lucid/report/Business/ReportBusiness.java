@@ -10,7 +10,7 @@ import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
-import aba3.lucid.domain.inquiry.convertor.ReportConvertor;
+import aba3.lucid.domain.inquiry.converter.ReportConverter;
 import aba3.lucid.domain.inquiry.dto.ReportImageResponse;
 import aba3.lucid.domain.inquiry.dto.ReportRequest;
 import aba3.lucid.domain.inquiry.dto.ReportResponse;
@@ -38,7 +38,7 @@ public class ReportBusiness {
     private final CompanyRepository companyRepository;
     private final UsersRepository usersRepository;
     private final ReportService reportService;
-    private final ReportConvertor reportConvertor;
+    private final ReportConverter reportConverter;
     private final ImageService imageService;
     private final CompanyService companyService;
 
@@ -57,12 +57,12 @@ public class ReportBusiness {
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
 
 
-        ReportEntity entity = reportConvertor.toReportEntity(
+        ReportEntity entity = reportConverter.toReportEntity(
                 req, reporter, reported
         );
 
         ReportEntity savedEntity = reportService.submitReport(entity);
-        return reportConvertor.toReportResponse(savedEntity);
+        return reportConverter.toReportResponse(savedEntity);
     }
 
     //유저가 ->>> 업체를 신고하기
@@ -81,11 +81,11 @@ public class ReportBusiness {
 
 
         //entity 조립
-        ReportEntity entity = reportConvertor.toReportEntity(
+        ReportEntity entity = reportConverter.toReportEntity(
                 req, reported, reporter
         );
         ReportEntity savedEntity = reportService.submitReport(entity);
-        return reportConvertor.toReportResponse(savedEntity);
+        return reportConverter.toReportResponse(savedEntity);
     }
 
 
@@ -105,10 +105,10 @@ public class ReportBusiness {
         List<String> urls = imageService.imagesUpload(
                 company, images, ImageType.REPORT
         );
-        List<ReportImageEntity> entities = reportConvertor.toImageEntities(urls, report);
+        List<ReportImageEntity> entities = reportConverter.toImageEntities(urls, report);
         List<ReportImageEntity> saved = reportService.saveImages(entities);
         return saved.stream()
-                .map(reportConvertor :: toImageResponse)
+                .map(reportConverter:: toImageResponse)
                 .collect(Collectors.toList());
 
     }
@@ -134,12 +134,12 @@ public class ReportBusiness {
         );
 
         // --- URL → Entity, 연관관계 설정 & 저장 ---
-        List<ReportImageEntity> entities = reportConvertor.toImageEntities(urls, report);
+        List<ReportImageEntity> entities = reportConverter.toImageEntities(urls, report);
         List<ReportImageEntity> saved   = reportService.saveImages(entities);
 
         // --- DTO 반환 ---
         return saved.stream()
-                .map(reportConvertor::toImageResponse)
+                .map(reportConverter::toImageResponse)
                 .collect(Collectors.toList());
 
     }

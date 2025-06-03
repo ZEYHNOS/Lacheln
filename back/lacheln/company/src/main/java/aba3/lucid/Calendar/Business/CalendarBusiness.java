@@ -4,8 +4,8 @@ package aba3.lucid.Calendar.Business;
 import aba3.lucid.Calendar.Service.CalendarService;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.company.service.CompanyService;
-import aba3.lucid.domain.calendar.convertor.CalendarConvertor;
-import aba3.lucid.domain.calendar.convertor.CalendarDetailConvertor;
+import aba3.lucid.domain.calendar.converter.CalendarConverter;
+import aba3.lucid.domain.calendar.converter.CalendarDetailConverter;
 import aba3.lucid.domain.calendar.dto.*;
 import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
@@ -21,20 +21,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CalendarBusiness {
     private final CalendarService calendarService;
-    private final CalendarConvertor calendarConvertor;
+    private final CalendarConverter calendarConverter;
     private final CompanyService companyService;
-    private final CalendarDetailConvertor calendarDetailConvertor;
+    private final CalendarDetailConverter calendarDetailConverter;
 
     public CalendarResponse createCalendar(CalendarRequest request, Long cpId) {
         CompanyEntity company = companyService.findByIdWithThrow( cpId);
 
 
         //  CalendarEntity 생성 (Convertor 사용)
-        CalendarEntity calendarEntity = calendarConvertor.toEntity(request, company);
+        CalendarEntity calendarEntity = calendarConverter.toEntity(request, company);
 
         //CalendarEntity 생성 및 연결
         List<CalendarDetailEntity> details = new ArrayList<>();
-        CalendarDetailEntity detailEntity = calendarDetailConvertor.toEntity(request.getDetails(),calendarEntity);
+        CalendarDetailEntity detailEntity = calendarDetailConverter.toEntity(request.getDetails(),calendarEntity);
         detailEntity.setCalendar(calendarEntity);
         details.add(detailEntity);
 
@@ -42,7 +42,7 @@ public class CalendarBusiness {
 
         CalendarEntity savedEntity  = calendarService.createCalendar(calendarEntity);
 
-        return calendarConvertor.toResponse(savedEntity);
+        return calendarConverter.toResponse(savedEntity);
 
     }
 
@@ -60,13 +60,13 @@ public class CalendarBusiness {
         details.clear();
 
         //새 상세 엔티티로 변환 및 추가
-        CalendarDetailEntity newDetail = calendarDetailConvertor.toEntity(request.getDetails(),calendar);
+        CalendarDetailEntity newDetail = calendarDetailConverter.toEntity(request.getDetails(),calendar);
         newDetail.setCalendar(calendar);
         details.add(newDetail);
 
         //저장
         CalendarEntity updated = calendarService.updateCalendar(calendar);
-        return calendarConvertor.toResponse(updated);
+        return calendarConverter.toResponse(updated);
     }
 
 

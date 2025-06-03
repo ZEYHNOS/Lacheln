@@ -3,11 +3,10 @@ package aba3.lucid.schedule.Service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.domain.schedule.convertor.RegularHolidayConvertor;
+import aba3.lucid.domain.schedule.converter.RegularHolidayConverter;
 import aba3.lucid.domain.schedule.dto.RegularHolidayRequest;
 import aba3.lucid.domain.schedule.entity.RegularHolidayEntity;
 import aba3.lucid.domain.schedule.repository.RegularHolidayRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ public class RegularHolidayService {
 
 
     private final RegularHolidayRepository regularHolidayRepository;
-    private final RegularHolidayConvertor regularHolidayConvertor;
+    private final RegularHolidayConverter regularHolidayConverter;
 
     @Transactional
     public RegularHolidayEntity createRegularHoliday(RegularHolidayEntity regularHolidayEntity) {
@@ -37,7 +36,7 @@ public class RegularHolidayService {
                 orElseThrow(()
                 -> new ApiException(ErrorCode.NOT_FOUND));
         //들오는 요청을 해당 entity에 매핑한다
-        regularHolidayConvertor.updateEntity(regularHolidayEntity, request);
+        regularHolidayConverter.updateEntity(regularHolidayEntity, request);
         return regularHolidayRepository.save(regularHolidayEntity);
     }
 

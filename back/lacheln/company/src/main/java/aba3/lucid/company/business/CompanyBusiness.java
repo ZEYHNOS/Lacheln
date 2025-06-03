@@ -8,20 +8,17 @@ import aba3.lucid.common.status_code.CompanyCode;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
-import aba3.lucid.domain.company.convertor.CompanyConvertor;
-import aba3.lucid.domain.company.convertor.CompanySetConvertor;
-import aba3.lucid.domain.company.convertor.CompanyUpdateConvertor;
+import aba3.lucid.domain.company.converter.CompanyConverter;
+import aba3.lucid.domain.company.converter.CompanySetConverter;
+import aba3.lucid.domain.company.converter.CompanyUpdateConverter;
 import aba3.lucid.domain.company.dto.*;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.domain.company.repository.CompanyRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Optional;
 
@@ -33,14 +30,14 @@ import java.util.Optional;
 public class CompanyBusiness {
     private final CompanyService companyService;
     private final CompanyRepository companyRepository;
-    private final CompanyConvertor companyConvertor;
-    private final CompanyUpdateConvertor companyUpdateConvertor;
+    private final CompanyConverter companyConverter;
+    private final CompanyUpdateConverter companyUpdateConverter;
 
     private String serviceKey;
 
     //ApplicationContext를 생성자의 의존성 주입을 통해 받아오고 있습니다:
     private final ApplicationContext applicationContext;
-    private final CompanySetConvertor companySetConvertor;
+    private final CompanySetConverter companySetConverter;
 
 
     //passwordEncoder.encode(rawPassword)를 호출하여 비밀번호를 암호화합니다.
@@ -56,7 +53,7 @@ public class CompanyBusiness {
 
         validateDuplicateCompany(request.getEmail());
 
-        CompanyEntity companyEntity = companyConvertor.toEntity(request);
+        CompanyEntity companyEntity = companyConverter.toEntity(request);
 
         companyEntity.setCpRepName("임시대표");
         companyEntity.setCpMainContact("01000000000");
@@ -66,7 +63,7 @@ public class CompanyBusiness {
 
 
         CompanyEntity savedEntity = companyRepository.save(companyEntity);
-        return companyConvertor.toResponse(savedEntity);
+        return companyConverter.toResponse(savedEntity);
     }
     public CompanyProfileSetResponse updateCompanyProfile(Long companyId, CompanyProfileSetRequest request) {
         CompanyEntity entity = findByIdWithThrow(companyId);
@@ -80,7 +77,7 @@ public class CompanyBusiness {
         entity.setCpFax(request.getFax());
 
         CompanyEntity updated = companyRepository.save(entity);
-        return companySetConvertor.toResponse(updated);
+        return companySetConverter.toResponse(updated);
     }
 
     private void validateDuplicateCompany(String email) {
@@ -117,7 +114,7 @@ public class CompanyBusiness {
         Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(email);
         if(companyOpt.isPresent()) {
             CompanyEntity company = companyOpt.get();
-            return companyConvertor.toResponse(company);
+            return companyConverter.toResponse(company);
         }else {
             throw new ApiException(ErrorCode.NOT_FOUND, "회사를 찾을 수 앖습니다");
         }

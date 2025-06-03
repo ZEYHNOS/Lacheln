@@ -134,6 +134,7 @@ public class PaymentService {
                 ;
 
         // 상품 아이디 리스트
+
         List<Long> productIdList = cartEntityList.stream()
                 .map(CartEntity::getPdId)
                 .toList()
@@ -150,7 +151,7 @@ public class PaymentService {
         CouponVerifyRequest requestMessage = CouponVerifyRequest.builder()
                 .userId(userId)
                 .couponBoxIdList(request.getCouponBoxIdList())
-                .productIdList(productIdList)
+//                .productIdList(productIdList)
                 .amount(groupByCompanyAmount)
                 .build()
                 ;

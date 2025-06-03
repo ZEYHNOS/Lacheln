@@ -1,4 +1,4 @@
-package aba3.lucid.domain.company.convertor;
+package aba3.lucid.domain.company.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.alert.dto.CompanyAlertDto;

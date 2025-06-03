@@ -2,13 +2,9 @@ package aba3.lucid.company.service;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.domain.company.convertor.CompanyConvertor;
-import aba3.lucid.domain.company.dto.CompanyRequest;
-import aba3.lucid.domain.company.dto.CompanyUpdateRequest;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.repository.CompanyRepository;
-import aba3.lucid.domain.inquiry.entity.ReportEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

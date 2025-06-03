@@ -1,4 +1,4 @@
-package aba3.lucid.domain.schedule.convertor;
+package aba3.lucid.domain.schedule.converter;
 
 
 import aba3.lucid.domain.schedule.dto.RegularHolidayRequest;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RegularHolidayConvertor {
+public class RegularHolidayConverter {
 
     public RegularHolidayEntity toEntity(RegularHolidayRequest request,  Long cpId) {
 

@@ -1,4 +1,4 @@
-package aba3.lucid.domain.review.convertor;
+package aba3.lucid.domain.review.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;

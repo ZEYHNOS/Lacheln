@@ -1,4 +1,4 @@
-package aba3.lucid.domain.company.convertor;
+package aba3.lucid.domain.company.converter;
 
 
 import aba3.lucid.domain.company.dto.CompanyUpdateRequest;
@@ -7,7 +7,7 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CompanyUpdateConvertor {
+public class CompanyUpdateConverter {
 
     public CompanyEntity toEntity(CompanyUpdateRequest updateRequest) {
         if(updateRequest == null) {

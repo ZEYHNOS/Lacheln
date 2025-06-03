@@ -4,7 +4,7 @@ package aba3.lucid.schedule.Service;
 import aba3.lucid.common.enums.Weekdays;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.domain.schedule.convertor.WeekdaysScheduleConvertor;
+import aba3.lucid.domain.schedule.converter.WeekdaysScheduleConverter;
 import aba3.lucid.domain.schedule.dto.BusinessHourResponse;
 import aba3.lucid.domain.schedule.dto.WeekdaysScheduleRequest;
 import aba3.lucid.domain.schedule.entity.WeekdaysScheduleEntity;
@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -22,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WeekdaysScheduleService {
     private final WeekdaysScheduleRepository weekdaysScheduleRepository;
-    private final WeekdaysScheduleConvertor weekdaysScheduleConvertor;
+    private final WeekdaysScheduleConverter weekdaysScheduleConverter;
 
     @Transactional
     public WeekdaysScheduleEntity createWeekdaysSchedule(WeekdaysScheduleEntity entity) {
@@ -33,7 +32,7 @@ public class WeekdaysScheduleService {
     public WeekdaysScheduleEntity updateWeekdaysSchedule(Long wsId,  WeekdaysScheduleRequest request) {
         WeekdaysScheduleEntity entity = weekdaysScheduleRepository.findById(wsId).orElseThrow(()
                 -> new ApiException(ErrorCode.NOT_FOUND));
-       weekdaysScheduleConvertor.updateEntity(request, entity);
+       weekdaysScheduleConverter.updateEntity(request, entity);
        return weekdaysScheduleRepository.save(entity);
 
     }

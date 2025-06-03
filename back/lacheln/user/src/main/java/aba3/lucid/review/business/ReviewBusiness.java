@@ -6,7 +6,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
-import aba3.lucid.domain.review.convertor.ReviewConvertor;
+import aba3.lucid.domain.review.converter.ReviewConvertor;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewResponse;
 import aba3.lucid.domain.review.entity.ReviewEntity;

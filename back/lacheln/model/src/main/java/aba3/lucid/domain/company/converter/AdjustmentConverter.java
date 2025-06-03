@@ -1,20 +1,17 @@
-package aba3.lucid.domain.company.convertor;
+package aba3.lucid.domain.company.converter;
 
 
-import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.company.dto.AdjustmentRequest;
 import aba3.lucid.domain.company.dto.AdjustmentResponse;
 import aba3.lucid.domain.company.entity.AdjustmentEntity;
-import aba3.lucid.domain.company.entity.CompanyEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
-public class AdjustmentConvertor {
+public class AdjustmentConverter {
     public AdjustmentEntity toEntity (AdjustmentRequest request, Long cpId) {
         if(request == null) return null;{
 

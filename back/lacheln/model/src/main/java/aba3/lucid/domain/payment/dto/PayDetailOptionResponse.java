@@ -10,9 +10,15 @@ import java.math.BigInteger;
 @Builder
 @AllArgsConstructor
 public class PayDetailOptionResponse {
+
     private Long payDetailOptionId;
+
     private String payOpName;
+
     private String payOpDtName;
+
     private int payDtQuantity;
+
     private BigInteger payOpPlusCost;
+
 }

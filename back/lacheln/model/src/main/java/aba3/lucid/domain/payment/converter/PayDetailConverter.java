@@ -52,11 +52,16 @@ public class PayDetailConverter {
     public PayDetailResponse toResponse(PayDetailEntity entity) {
         return PayDetailResponse.builder()
                 .payDetailId(entity.getPayDetailId())
+                .userId(entity.getPayManagement().getUser().getUserId())
+                .userName(entity.getPayManagement().getUser().getUserName())
                 .cpId(entity.getCpId())
                 .couponName(entity.getCouponName())
                 .pdName(entity.getProductName())
-                .payCost(entity.getPayCost())
-                .payDcPrice(entity.getPayDcPrice())
+                .payCost(entity.getPayCost().subtract(entity.getPayDcPrice()))
+                .status(entity.getPayManagement().getPayStatus())
+                .paidAt(entity.getPayManagement().getPaidAt())
+                .refundPrice(entity.getPayManagement().getPayRefundPrice())
+                .scheduleAt(entity.getStartDatetime())
                 .options(payDetailOptionConverter.toResponseList(entity.getPayDetailOptionEntityList()))
                 .build();
     }

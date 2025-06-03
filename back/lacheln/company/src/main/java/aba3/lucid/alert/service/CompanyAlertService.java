@@ -28,6 +28,8 @@ public class CompanyAlertService {
         companyAlertRepository.save(entity);
     }
 
+
+
     // 알림 읽음
     public void readAlert(CompanyAlertEntity entity) {
         entity.readAlert();

@@ -1,5 +1,7 @@
 package aba3.lucid.listener;
 
+import aba3.lucid.alert.service.CompanyAlertService;
+import aba3.lucid.domain.alert.entity.CompanyAlertEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.product.enums.CommentStatus;
@@ -28,6 +30,7 @@ public class ReviewCommentListener {
     private final ReviewRepository reviewRepository;
     private final CompanyRepository companyRepository;
     private final ReviewCommentBusiness reviewCommentBusiness;
+    private final CompanyAlertService companyAlertService;
 
     @RabbitListener(queues = "review.comment.queue")
     public void receive(ReviewCommentEventDto eventDto, Message message, Channel channel) throws IOException {
@@ -39,15 +42,29 @@ public class ReviewCommentListener {
                     .reviewId(eventDto.getReviewId())
                     .company(company)
                     .rvcContent("")
-                    .rvcCreate(LocalDate.now())
+                    .rvcCreate(null)
                     .rvcStatus(CommentStatus.REPLY_NEEDED)
                     .build();
             reviewCommentRepository.save(comment);
+
+            //알림 엔티티 생성
+            CompanyAlertEntity alertEntity = CompanyAlertEntity.builder()
+                    .company(company)
+                    .cpAlertTitle("새로운 리뷰 댓글이 등록되었습니다.")
+                    .cpAlertContent("리뷰에 새로운 댓글이 등록되었습니다. 확인해주세요.")
+                    .build();
+            sendCompanyAlert(alertEntity);
+
             channel.basicAck(deliveryTag, false);
         }catch (Exception e) {
             log.error("review_comment 오류 {}", e.getMessage(), e);
             channel.basicNack(deliveryTag,false, true);
+
         }
+    }
+
+    public void sendCompanyAlert(CompanyAlertEntity alertEntity) {
+        companyAlertService.alertRegister(alertEntity);
     }
 
     @RabbitListener(queues = "comment.delete.queue")

@@ -21,8 +21,7 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
                     <hr />
                     <ul className="text-black text-sm">
                         <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">📩 메시지</li>
-                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🔔 주문 업데이트</li>
-                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">⚠ 보안 알림</li>
+                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🔔 알림내역</li>
                     </ul>
                 </div>
             )}

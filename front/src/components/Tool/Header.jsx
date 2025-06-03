@@ -19,6 +19,10 @@ export default function Header() {
             .catch(() => setIsLoggedIn(false));
     }, []);
 
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+    };
+
     // 사이드바 열고 닫는 함수
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -45,7 +49,8 @@ export default function Header() {
                     <ProfileButton
                         isActive={activeButton === "profile"}
                         onClick={() => handleButtonClick("profile")}
-                        isLoggedIn={isLoggedIn}/>
+                        isLoggedIn={isLoggedIn}
+                        onLogout={handleLogout}/>
                     <AlarmButton
                         isActive={activeButton === "alarm"}
                         onClick={() => handleButtonClick("alarm")}

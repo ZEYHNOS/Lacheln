@@ -39,6 +39,7 @@ import PackageDetail from "./components/User/PackagePage/Packagedetail.jsx"
 import Event from "./components/User/EventPage/Event.jsx"
 import Support from "./components/User/SupportPage/Support.jsx"
 import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
+import CompanyProtectedRoute from "./components/Company/Basic/ProtectedRoute.jsx";
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
 function CompanyLayout({ children }) {
@@ -124,33 +125,101 @@ function App() {
 
                 {/* /company 페이지 그룹화 및 Nested Routes 적용 */}
                 {/* 회사 메인페이지 */}
-                <Route path="/company" element={<CompanyLayout><MainCompany /></CompanyLayout>} />
+                <Route path="/company" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><MainCompany /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
                 {/* 가게 정보 페이지(정보수정, 통계) */}
-                <Route path="/company/modifyinfo" element={<CompanyLayout><ModifyInfo /></CompanyLayout>} />
-                <Route path="/company/statistics" element={<CompanyLayout><Statistics /></CompanyLayout>} />
+                <Route path="/company/modifyinfo" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><ModifyInfo /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/statistics" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Statistics /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
                 {/* 관리페이지(상품, 주문, 리뷰) */}
-                <Route path="/company/product" element={<CompanyLayout><ProductManagement /></CompanyLayout>} />
-                <Route path="/company/product/add" element={<CompanyLayout><AddProduct/></CompanyLayout>} />
-                <Route path="/company/product/:id" element={<CompanyLayout><ViewProduct /></CompanyLayout>} /> {/* 동적 라우팅 */}
-                <Route path="/company/product/edit/:id" element={<CompanyLayout><EditProduct /></CompanyLayout>} />{/* 동적 라우팅 */}
-                <Route path="/company/order" element={<CompanyLayout><OrderManagement /></CompanyLayout>} />
-                <Route path="/company/review" element={<CompanyLayout><ReviewManagement /></CompanyLayout>} />
+                <Route path="/company/product" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><ProductManagement /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/product/add" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><AddProduct/></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/product/:id" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><ViewProduct /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/product/edit/:id" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><EditProduct /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/order" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><OrderManagement /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/review" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><ReviewManagement /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
                 {/* 업무페이지(협업, 메신저, 알림, 일정) */}
-                <Route path="/company/collaboration" element={<CompanyLayout><Collaboration /></CompanyLayout>} />
-                <Route path="/company/collaboration/setproduct" element={<CompanyLayout><Setproduct /></CompanyLayout>} />
-                <Route path="/company/collaboration/setproduct/:id" element={<CompanyLayout><Setproduct /></CompanyLayout>} />
-                <Route path="/company/collaboration/setpackage/:id" element={<CompanyLayout><Setpackage /></CompanyLayout>} />
-                <Route path="/company/collaboration/package/:id" element={<CompanyLayout><ViewPackage /></CompanyLayout>} />
-                <Route path="/company/collaboration/package/edit/:packageId" element={<CompanyLayout><EditPackage /></CompanyLayout>} />
-                <Route path="/company/messenger" element={<CompanyLayout><Messenger /></CompanyLayout>} />
-                <Route path="/company/notification" element={<CompanyLayout><Notification /></CompanyLayout>} />
-                <Route path="/company/schedule" element={<CompanyLayout><Schedule /></CompanyLayout>} />
+                <Route path="/company/collaboration" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Collaboration /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/collaboration/setproduct" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Setproduct /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/collaboration/setproduct/:id" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Setproduct /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/collaboration/setpackage/:id" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Setpackage /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/collaboration/package/:id" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><ViewPackage /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/collaboration/package/edit/:packageId" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><EditPackage /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/messenger" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Messenger /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/notification" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Notification /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                <Route path="/company/schedule" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Schedule /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
                 <Route path="/report" element={<ReportPage />} />
                 <Route path="/report/:id" element={<ReportPage />} />
-                {/* … your existing routes … */}
-                <Route path="/report" element={<ReportPage />} />
-                {/* or if you want to accept params */}
-                <Route path="/report/:id" element={<ReportPage />} />
             </Routes>
         </Router>
     );

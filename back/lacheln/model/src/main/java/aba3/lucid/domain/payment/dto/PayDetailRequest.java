@@ -1,5 +1,7 @@
 package aba3.lucid.domain.payment.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.math.BigInteger;
@@ -12,16 +14,22 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PayDetailRequest {
-
-    // 사용자의 쿠폰 Id
-    private Long couponBoxId;
+    // 쿠폰 이름
+    private String couponName;
 
     // 해당 상품의 업체 id
     private Long cpId;
 
+    // 상품 ID
+    private Long pdId;
+
     // 상품 이름
     private String productName;
+
+    // 상품 이미지
+    private String imageUrl;
 
     // 상품 가격
     private BigInteger payCost;

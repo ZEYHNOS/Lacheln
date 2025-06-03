@@ -1,8 +1,7 @@
-package aba3.lucid.domain.payment.convertor;
+package aba3.lucid.domain.payment.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.payment.dto.PayDetailBlockOptionResponse;
-import aba3.lucid.domain.payment.dto.PayDetailBlockResponse;
 import aba3.lucid.domain.payment.dto.PayDetailOptionRequest;
 import aba3.lucid.domain.payment.dto.PayDetailOptionResponse;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;

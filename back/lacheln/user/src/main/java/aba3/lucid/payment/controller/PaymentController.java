@@ -47,19 +47,17 @@ public class PaymentController {
             @RequestBody PaymentVerifyRequest request,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, user.getUserId());
-        BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, "");
+        BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, user.getUserId());
 
         return API.OK(totalAmount);
     }
 
     @GetMapping("/user/list")
     @Operation(summary = "사용자의 결제 내역")
-    public API<List<PayManagementResponse>> getUserPaymentList(
+    public API<List<PayDetailResponse>> getUserPaymentList(
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(user.getUserId());
-        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getUserPaymentList("");
+        List<PayDetailResponse> payManagementResponseList = paymentBusiness.getPaymentList(user.getUserId());
 
         return API.OK(payManagementResponseList);
     }
@@ -69,8 +67,7 @@ public class PaymentController {
     public API<List<PayDetailResponse>> getCompanyPaymentList(
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        List<PayManagementResponse> payManagementResponseList = paymentBusiness.getPaymentList(user.getCompanyId());
-        List<PayDetailResponse> payManagementResponseList = paymentBusiness.getPaymentList(1L);
+        List<PayDetailResponse> payManagementResponseList = paymentBusiness.getPaymentList(user.getCompanyId());
         return API.OK(payManagementResponseList);
     }
 
@@ -79,7 +76,7 @@ public class PaymentController {
     public API<List<PayDetailBlockResponse>> getBlockDateTimeList(
             @RequestParam Long pdId,
             @RequestParam LocalDate date
-            )   {
+    )   {
         List<PayDetailBlockResponse> payManagementResponseList = paymentBusiness.getPaymentPdIdAndDate(pdId, date);
         return API.OK(payManagementResponseList);
     }

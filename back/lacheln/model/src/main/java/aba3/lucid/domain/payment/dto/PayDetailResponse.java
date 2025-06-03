@@ -13,8 +13,8 @@ import java.util.List;
 public class PayDetailResponse {
     private Long payDetailId;
     private Long cpId;
-    private Long couponId;
-    private String productName;
+    private String couponName;
+    private String pdName;
     private BigInteger payCost;
     private BigInteger payDcPrice;
     private List<PayDetailOptionResponse> options;

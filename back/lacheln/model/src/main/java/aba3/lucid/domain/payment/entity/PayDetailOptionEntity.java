@@ -20,7 +20,7 @@ public class PayDetailOptionEntity {
     @Id
     @Column(name = "pay_detail_option_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long payDetailOptionId;
+    private Long payDetailOptionId;
 
     @JoinColumn(name = "pay_detail_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)

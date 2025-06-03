@@ -4,8 +4,8 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.PaymentErrorCode;
 import aba3.lucid.common.validate.Validator;
-import aba3.lucid.domain.payment.convertor.PayDetailConverter;
-import aba3.lucid.domain.payment.convertor.PaymentConvertor;
+import aba3.lucid.domain.payment.converter.PayDetailConverter;
+import aba3.lucid.domain.payment.converter.PaymentConvertor;
 import aba3.lucid.domain.payment.dto.*;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
@@ -16,7 +16,6 @@ import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.security.core.parameters.P;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -84,6 +83,16 @@ public class PaymentBusiness {
         List<PayDetailEntity> payManagementEntityList = payDetailService.getPayDetailList(companyId);
 
         return payDetailConverter.toResponseList(payManagementEntityList);
+    }
+
+    // 유저 결제 내역 리스트 가지고 오기
+    public List<PayDetailResponse> getPaymentList(String userId) {
+
+        UsersEntity user = userService.findByIdWithThrow(userId);
+
+        List<PayDetailEntity> payDetailEntityList = payDetailService.getPayDetailList(user);
+
+        return payDetailConverter.toResponseList(payDetailEntityList);
     }
     
     // 상품 ID 및 날짜로 리스트 가지고 오기

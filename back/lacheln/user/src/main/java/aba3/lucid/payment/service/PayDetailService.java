@@ -7,6 +7,7 @@ import aba3.lucid.domain.cart.dto.CartOptionDetail;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.payment.repository.PayDetailRepository;
+import aba3.lucid.domain.user.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,10 @@ public class PayDetailService {
 
     public List<PayDetailEntity> getPayDetailList(Long companyId) {
         return payDetailRepository.findAllByCpId(companyId);
+    }
+
+    public List<PayDetailEntity> getPayDetailList(UsersEntity user) {
+        return payDetailRepository.findAllByPayManagement_User(user);
     }
 
     public List<PayDetailEntity> getPayDetailList(Long pdId, LocalDateTime start, LocalDateTime end)    {
@@ -40,7 +45,7 @@ public class PayDetailService {
                     .plusHours(taskTime.getHour())
                     .plusMinutes(taskTime.getMinute());
             // 하나의 CartRequest에 있는 CartDetailRequest의 TaskTime 더하기
-            for(CartOptionDetail detailRequest : request.getOptionDetails())   {
+            for (CartOptionDetail detailRequest : request.getOptionDetails())   {
                 LocalTime dtTaskTime = detailRequest.getOpTasktime();
                 end = end
                         .plusHours(dtTaskTime.getHour())

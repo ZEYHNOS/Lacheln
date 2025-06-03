@@ -168,21 +168,30 @@ public class WebServerController {
                     boolean valid = jwtTokenProvider.isValid(token);
                     if (valid) {
                         // 검증된 토큰으로 이메일 추출 및 컨텍스트에 있는 이메일 비교해서 사용자가 일치한지 검증
-                        String tokenUser = jwtTokenProvider.getUserEmail(token);
+                        String getEmail = jwtTokenProvider.getUserEmail(token);
                         String sessionUser = contextUser.getEmail();
                         String role = contextUser.getRole();
-
-                        map.put("valid", true);
-                        map.put("role", role);
+                        String name = "";
 
                         // 일치하면 true반환
-                        if (tokenUser.equals(sessionUser)) {
+                        if (getEmail.equals(sessionUser)) {
+                            if(role.equals("USER")) {
+                                name = authService.getUserNickName(getEmail);
+                            } else  {
+                                name = authService.getCompanyName(getEmail);
+                            }
+
+                            map.put("name", name);
+                            map.put("valid", true);
+                            map.put("role", role);
+
                             return API.OK(map, SuccessCode.SESSION_VALID);
                         }
                     }
                 }
             }
         }
+        map.put("name", null);
         map.put("valid", false);
         map.put("role", "ANONYMOUS");
         // 그 외의 경우 UNAUTHORIZED 반환

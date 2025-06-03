@@ -1,5 +1,6 @@
 package aba3.lucid.domain.payment.dto;
 
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +50,9 @@ public class PayDetailResponse {
 
     // 환불 금액
     private BigInteger refundPrice;
+
+    // 카테고리
+    private CompanyCategory category;
 
     // 옵션
     private List<PayDetailOptionResponse> options;

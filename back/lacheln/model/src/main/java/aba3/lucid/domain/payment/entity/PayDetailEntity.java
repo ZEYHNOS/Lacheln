@@ -2,6 +2,7 @@ package aba3.lucid.domain.payment.entity;
 
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -67,6 +68,10 @@ public class PayDetailEntity {
     // 소요 시간(분)
     @Column(name = "task_time", nullable = false)
     private LocalTime taskTime;
+
+    // 카테고리
+    @Column(name = "category", nullable = false)
+    private CompanyCategory category;
 
     @JsonIgnore
     @OneToMany(mappedBy = "payDetail", cascade = CascadeType.ALL, orphanRemoval = true)

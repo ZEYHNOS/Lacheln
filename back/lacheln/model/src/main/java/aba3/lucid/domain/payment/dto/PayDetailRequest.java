@@ -1,5 +1,6 @@
 package aba3.lucid.domain.payment.dto;
 
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -42,6 +43,9 @@ public class PayDetailRequest {
 
     // 작업 시간
     private LocalTime taskTime;
+
+    // 카테고리
+    private CompanyCategory category;
 
     // 해당 상품 옵션 리스트
     private List<PayDetailOptionRequest> payDetailOptionEntityList;

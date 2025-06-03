@@ -2,6 +2,7 @@ package aba3.lucid.domain.payment.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.payment.dto.PayDetailBlockResponse;
+import aba3.lucid.domain.payment.dto.PayDetailOptionRequest;
 import aba3.lucid.domain.payment.dto.PayDetailRequest;
 import aba3.lucid.domain.payment.dto.PayDetailResponse;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
@@ -25,6 +26,11 @@ public class PayDetailConverter {
                 .plusMinutes(request.getTaskTime().getMinute())
                 ;
 
+        for(PayDetailOptionRequest optionRequest : request.getPayDetailOptionEntityList()) {
+            endDateTime = endDateTime.plusHours(optionRequest.getTaskTime().getHour());
+            endDateTime = endDateTime.plusMinutes(optionRequest.getTaskTime().getMinute());
+        }
+
         PayDetailEntity entity = PayDetailEntity.builder()
                 .payManagement(payManagement)
                 .cpId(request.getCpId())
@@ -37,6 +43,7 @@ public class PayDetailConverter {
                 .startDatetime(request.getScheduleDate())
                 .endDatetime(endDateTime)
                 .taskTime(request.getTaskTime())
+                .category(request.getCategory())
                 .build()
                 ;
 
@@ -64,6 +71,7 @@ public class PayDetailConverter {
                 .paidAt(entity.getPayManagement().getPaidAt())
                 .refundPrice(entity.getPayManagement().getPayRefundPrice())
                 .scheduleAt(entity.getStartDatetime())
+                .category(entity.getCategory())
                 .options(payDetailOptionConverter.toResponseList(entity.getPayDetailOptionEntityList()))
                 .build();
     }

@@ -104,4 +104,13 @@ footer {
 
 .main-content {
 }
+
+/* react-toastify 토스트 커스텀: 성공(초록) → 보라색 */
+.Toastify__toast--success {
+  background: #845EC2 !important;
+  color: #fff !important;
+}
+.Toastify__progress-bar--success {
+  background: #B39CD0 !important;
+}
   

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import apiClient from '../../../lib/apiClient';
 import { COLOR_MAP } from "../../../constants/colorMap.js";
 import AddWrite from '../../Tool/WriteForm/AddWrite.jsx';
 import ScheduleSelect from '../../Tool/Schedule/ScheduleSelect.jsx';
+import { toast } from 'react-toastify';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -129,6 +129,23 @@ const ProductDetail = () => {
             delete newOptions[groupName];
             return newOptions;
         });
+    };
+
+    // 필수 옵션이 모두 선택됐는지 확인하는 함수
+    const isAllEssentialSelected = () => {
+        // 옵션 그룹 필수 체크
+        const optionEssentials = (product.optionList || product.option_list || []).filter(opt => opt.essential === 'Y');
+        const optionOk = optionEssentials.every(opt => selectedOptions[opt.name]);
+        // 사이즈 필수 체크
+        let sizeOk = true;
+        if (product.sizeList && product.sizeList.length > 0) {
+            // sizeList에 essential: 'Y'가 하나라도 있으면 필수
+            const sizeEssential = product.sizeList.some(sz => sz.essential === 'Y');
+            if (sizeEssential) {
+                sizeOk = !!selectedOptions['size'];
+            }
+        }
+        return optionOk && sizeOk;
     };
 
     if (!product) {
@@ -283,14 +300,20 @@ const ProductDetail = () => {
                             총 결제금액: ₩ {((product.price || 0) + getTotalOptionPrice(product, selectedOptions)).toLocaleString()}
                         </div>
                         <div className="flex gap-2">
-                            <button className="w-full flex justify-center items-center gap-2 bg-purple-500 text-white font-semibold py-3 rounded shadow"
-                                onClick={() => setShowSchedule(true)}>
+                            <button
+                                className="w-full flex justify-center items-center gap-2 bg-purple-500 text-white font-semibold py-3 rounded shadow disabled:bg-gray-300 disabled:text-gray-400"
+                                onClick={() => setShowSchedule(true)}
+                                disabled={!isAllEssentialSelected()}
+                            >
                                 <span>🛒</span> 장바구니 담기
                             </button>
                             <button className="w-12 h-12 border bg-white rounded flex items-center justify-center text-purple-500 text-xl">
                                 ❤️
                             </button>
                         </div>
+                        {!isAllEssentialSelected() && (
+                            <div className="text-red-500 text-sm mt-2">필수 옵션을 모두 선택해주세요.</div>
+                        )}
                         <button className="bg-pink-400 text-white font-semibold py-3 rounded">1:1 채팅하기</button>
                     </div>
                 </div>
@@ -402,14 +425,14 @@ const ProductDetail = () => {
                                     // cartData만 전송
                                     const response = await apiClient.post('/user/cart/add/product', cartData);
                                     if (response.data?.result?.resultCode === 200) {
-                                        alert('장바구니에 추가되었습니다.');
+                                        toast.success('장바구니에 추가되었습니다.');
                                         setShowSchedule(false);
                                     } else {
-                                        alert('장바구니 추가에 실패했습니다.');
+                                        toast.error('장바구니 추가에 실패했습니다.');
                                     }
                                 } catch (error) {
                                     console.error('장바구니 추가 중 오류 발생:', error);
-                                    alert('장바구니 추가 중 오류가 발생했습니다.');
+                                    toast.error('장바구니 추가 중 오류가 발생했습니다.');
                                 }
                             }}
                         />

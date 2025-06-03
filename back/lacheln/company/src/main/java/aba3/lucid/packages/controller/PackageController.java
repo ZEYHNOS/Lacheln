@@ -32,9 +32,7 @@ public class PackageController {
             PackageRegisterRequest request,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        PackageResponse response = packageBusiness.packageRegister(request, user.getCompanyId());
-        log.info("Package Register Request : {}", request);
-        PackageResponse response = packageBusiness.packageRegister(request, 1L);
+        PackageResponse response = packageBusiness.packageRegister(request, user.getCompanyId());
 
         return API.OK(response);
     }
@@ -50,9 +48,7 @@ public class PackageController {
             @PathVariable Long packageId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        PackageResponse response = packageBusiness.packageUpdate(request, user.getCompanyId(), packageId);
-        PackageResponse response = packageBusiness.packageUpdate(request, 1L, packageId);
-
+        PackageResponse response = packageBusiness.packageUpdate(request, user.getCompanyId(), packageId);
         return API.OK("");
     }
 
@@ -64,9 +60,7 @@ public class PackageController {
             @PathVariable Long packageId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        PackageResponse response = packageBusiness.packageUpload(packageId, user.getCompanyId());
-        PackageResponse response = packageBusiness.packageUpload(packageId, 1L);
-
+        PackageResponse response = packageBusiness.packageUpload(packageId, user.getCompanyId());
         return API.OK(response);
     }
 
@@ -75,9 +69,7 @@ public class PackageController {
     public API<List<PackageResponse>> getPackageList(
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(user.getCompanyId());
-        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(1L);
-
+        List<PackageResponse> packageResponseList = packageBusiness.getPackageList(user.getCompanyId());
         return API.OK(packageResponseList);
     }
 
@@ -98,8 +90,7 @@ public class PackageController {
             @RequestParam Long productId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-//        packageBusiness.deletePackageProduct(user.getCompanyId(), packageId, productId);
-        packageBusiness.deletePackageProduct(1L, packageId, productId);
+        packageBusiness.deletePackageProduct(user.getCompanyId(), packageId, productId);
 
         return API.OK("상품이 삭제되었습니다.");
     }

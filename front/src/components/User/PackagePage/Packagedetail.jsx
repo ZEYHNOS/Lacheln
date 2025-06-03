@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import apiClient from "../../../lib/apiClient";
+import ScheduleSelect from '../../Tool/Schedule/ScheduleSelect.jsx';
+import { toast } from 'react-toastify';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,6 +11,7 @@ function Packagedetail() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showSchedule, setShowSchedule] = useState(false);
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -39,6 +42,49 @@ function Packagedetail() {
   const hasDiscount = discountRate > 0;
   const discountedPrice = hasDiscount ? Math.floor(totalPrice * (1 - discountRate / 100)) : totalPrice;
   const benefit = totalPrice - discountedPrice;
+
+  // 업체 ID 배열 추출
+  const cpIds = (data.productInfoList || [])
+    .map(p => p.companyId || p.cpId)
+    .filter(Boolean);
+
+  // 패키지 장바구니 추가 함수
+  const handlePackageCartAdd = async ({ localDateTime }) => {
+    try {
+      const packData = {
+        packId: data.packageId || data.id,
+        packName: data.name,
+        discountPrice: data.discountrate || data.discountRate || 0,
+        packImageUrl: data.imageUrl ? baseUrl + data.imageUrl.replace(/\\/g, '/') : '',
+        taskTime: { hour: 0, minute: 0, second: 0, nano: 0 }, // 필요시 계산
+        startTime: localDateTime,
+        cartAddProductRequest: (data.productInfoList || []).map(p => ({
+          cp_id: p.companyId || p.cpId || 0,
+          pd_id: p.productId || p.pdId || 0,
+          cp_name: p.companyName,
+          pd_name: p.productName,
+          pd_image_url: p.imageUrl ? baseUrl + p.imageUrl.replace(/\\/g, '/') : '',
+          pd_price: p.price,
+          cart_quantity: 1,
+          task_time: { hour: 0, minute: 0, second: 0, nano: 0 }, // 필요시 계산
+          start_datetime: localDateTime,
+          option_details: [] // 옵션이 있다면 여기에 추가
+        }))
+      };
+
+      console.log('패키지 장바구니 추가 요청 데이터:', packData);
+      
+      const response = await apiClient.post('/user/cart/add/package', packData);
+      if (response.data?.result?.resultCode === 200) {
+        toast.success('패키지가 장바구니에 추가되었습니다.');
+        setShowSchedule(false);
+      } else {
+        toast.error('패키지 장바구니 추가에 실패했습니다.');
+      }
+    } catch (e) {
+      toast.error('패키지 장바구니 추가 중 오류가 발생했습니다.');
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-6 mt-8 mb-16">
@@ -93,9 +139,25 @@ function Packagedetail() {
       </div>
 
       <div className="flex gap-4 mt-8">
-        <button className="flex-1 py-3 rounded bg-[#B39CD0] text-white font-bold text-lg hover:bg-[#845EC2] transition">장바구니</button>
+        <button className="flex-1 py-3 rounded bg-[#B39CD0] text-white font-bold text-lg hover:bg-[#845EC2] transition" onClick={() => setShowSchedule(true)}>장바구니</button>
         <button className="flex-1 py-3 rounded bg-[#B39CD0] text-white font-bold text-lg hover:bg-[#845EC2] transition" onClick={() => navigate(-1)}>목록으로</button>
       </div>
+
+      {/* 일정 선택 모달 */}
+      {showSchedule && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg" style={{ padding: 0 }}>
+            <div className="p-8 text-black">
+              <ScheduleSelect
+                cpIds={cpIds}
+                productId={data.id}
+                onSelect={handlePackageCartAdd}
+              />
+              <button className="mt-4 w-full py-2 bg-gray-300 rounded" onClick={() => setShowSchedule(false)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,8 +1,12 @@
 package aba3.lucid.service;
 
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.jwt.JwtTokenProvider;
 import aba3.lucid.user.service.UserService;
@@ -11,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -124,5 +129,17 @@ public class AuthService {
         } else {
             throw new RuntimeException("Invalid or expired refresh token");
         }
+    }
+
+    public String getUserNickName(String userEmail) {
+        UsersEntity user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new ApiException(ErrorCode.GONE, "해당하는 유저가 없습니다."));
+        return user.getUserNickName();
+    }
+
+    public String getCompanyName(String cpEmail) {
+        CompanyEntity cp = companyRepository.findByCpEmail(cpEmail)
+                .orElseThrow(() -> new ApiException(ErrorCode.GONE, "해당하는 업체가 존재하지 않습니다."));
+        return cp.getCpName();
     }
 }

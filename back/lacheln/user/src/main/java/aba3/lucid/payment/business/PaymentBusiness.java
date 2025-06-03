@@ -8,6 +8,7 @@ import aba3.lucid.domain.payment.converter.PayDetailConverter;
 import aba3.lucid.domain.payment.converter.PaymentConvertor;
 import aba3.lucid.domain.payment.dto.*;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
+import aba3.lucid.domain.payment.entity.PayDetailOptionEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.payment.service.PayDetailService;
@@ -20,6 +21,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j

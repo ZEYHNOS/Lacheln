@@ -70,6 +70,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         }
 
         response.sendRedirect("http://localhost:3000");
+
     }
 
     // 정보 저장하는 로직

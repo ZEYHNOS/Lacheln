@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -59,9 +60,9 @@ public class WebServerController {
         }
         return routeRequest("http://localhost:5051", request);
     }
-
-    //TODO LogoutFilter로 로직 처리해야댐 로그아웃 로직
-    @GetMapping("/userlogout")
+    
+    // JWT 기반은 필터에서 처리안함
+    @PostMapping("/logout")
     @Operation(summary = "로그아웃", description = "사용자 세션을 제거하고 로그아웃 로직을 수행합니다.")
     public API<String> routeToLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         // 새로운 쿠키 생성
@@ -141,32 +142,50 @@ public class WebServerController {
         response.sendRedirect("http://localhost:3000");
         return API.OK(SuccessCode.DELETE_TOKEN);
     }
-    
+
+    // 세션 검증 메서드
     @GetMapping("/auth/me")
     @Operation(summary = "사용자 세션 검증", description = "사용자 세션을 검증합니다.")
-    public API<Map<String, Boolean>> authMe(
+    public API<Map<String, Object>> authMe(
             @AuthenticationPrincipal CustomUserDetails contextUser,
             HttpServletRequest requestUser
             )    {
+        
+        // 요청의 쿠키 받아오기
         Cookie[] cookies = requestUser.getCookies();
 
+        // 담을 정보
+        Map<String, Object> map = new HashMap<>();
+
+        // 쿠키가 있을경우
         if(cookies != null) {
+            // AccessToken 이라는 이름을 가진 쿠키찾기
             for (Cookie cookie : cookies) {
                 if ("AccessToken".equals(cookie.getName())) {
+                    // 토큰값 가져와서 검증하기
                     String token = cookie.getValue();
                     boolean valid = jwtTokenProvider.isValid(token);
-                    if(valid)   {
+                    if (valid) {
+                        // 검증된 토큰으로 이메일 추출 및 컨텍스트에 있는 이메일 비교해서 사용자가 일치한지 검증
                         String tokenUser = jwtTokenProvider.getUserEmail(token);
                         String sessionUser = contextUser.getEmail();
-                        if(tokenUser.equals(sessionUser))   {
-                            return API.OK(Map.of("valid", true), SuccessCode.SESSION_VALID);
+                        String role = contextUser.getRole();
+
+                        map.put("valid", true);
+                        map.put("role", role);
+
+                        // 일치하면 true반환
+                        if (tokenUser.equals(sessionUser)) {
+                            return API.OK(map, SuccessCode.SESSION_VALID);
                         }
                     }
                 }
             }
         }
-
-        return API.ERROR(Map.of("valid", false), ErrorCode.UNAUTHORIZED);
+        map.put("valid", false);
+        map.put("role", "ANONYMOUS");
+        // 그 외의 경우 UNAUTHORIZED 반환
+        return API.ERROR(map, ErrorCode.UNAUTHORIZED);
     }
 
     // 공통 HTTP 요청 전달 메서드 (RestTemplate 사용)

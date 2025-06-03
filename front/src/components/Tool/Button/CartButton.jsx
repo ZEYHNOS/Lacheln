@@ -1,6 +1,15 @@
 import { FaShoppingCart, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function CartButton({ isActive, onClick, isLoggedIn }) {
+    const navigate = useNavigate();
+
+    const handleCartClick = () => {
+        if (isLoggedIn) {
+            navigate("/cart");
+        }
+    };
+
     return (
         <div className="relative">
             {/* 버튼 */}
@@ -21,7 +30,7 @@ export default function CartButton({ isActive, onClick, isLoggedIn }) {
                     <p className="text-gray-500 text-center py-1 font-semibold">장바구니</p>
                     <hr />
                     <ul className="text-black text-sm">
-                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🛒 장바구니</li>
+                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleCartClick}>🛒 장바구니</li>
                         <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🔖 찜한 상품</li>
                     </ul>
                 </div>

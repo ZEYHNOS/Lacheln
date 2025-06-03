@@ -539,8 +539,10 @@ function AddProduct() {
                                     <label className="flex items-center space-x-1">
                                         <input
                                         type="checkbox"
-                                        checked={option.isRequired}
+                                        checked={categoryCode === "D" && option.title === "사이즈" ? true : option.isRequired}
+                                        disabled={categoryCode === "D" && option.title === "사이즈"}
                                         onChange={(e) => {
+                                            if (categoryCode === "D" && option.title === "사이즈") return;
                                             const newOptions = [...options];
                                             newOptions[optIdx].isRequired = e.target.checked;
                                             setOptions(newOptions);

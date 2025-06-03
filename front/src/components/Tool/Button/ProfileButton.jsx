@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { FaUser, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import apiClient from "../../../lib/apiClient";
 
 export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout }) {
@@ -14,11 +15,19 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
         try {
             const response = await apiClient.post("/userlogout");
             if (response.data.result.resultCode === 201) {
+                toast.success("로그아웃 되었습니다. 안전하게 로그아웃 되었습니다.", {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
                 onLogout();
                 navigate("/");
             }
         } catch (error) {
             console.error("로그아웃 중 오류 발생:", error);
+            toast.error("로그아웃 중 오류가 발생했습니다. 다시 시도해주세요.", {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 

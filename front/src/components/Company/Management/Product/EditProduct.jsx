@@ -573,7 +573,7 @@ function EditProduct() {
 
                             {/* 옵션 목록 전체 렌더링 */}
                             {options.map((option, optIdx) => {
-                                const isDressSize = categoryCode?.toUpperCase() === "D" && option.title.trim().toLowerCase() === "사이즈";
+                                const isDressSizeOption = categoryCode === "D" && option.title.trim().toLowerCase() === "사이즈";
 
                                 return (
                                 <div key={optIdx} className="border rounded p-4 mt-4 bg-white">
@@ -609,8 +609,10 @@ function EditProduct() {
                                             <label className="flex items-center space-x-1">
                                                 <input
                                                     type="checkbox"
-                                                    checked={option.isRequired}
+                                                    checked={isDressSizeOption ? true : option.isRequired}
+                                                    disabled={isDressSizeOption}
                                                     onChange={(e) => {
+                                                        if (isDressSizeOption) return;
                                                         const newOptions = [...options];
                                                         newOptions[optIdx].isRequired = e.target.checked;
                                                         setOptions(newOptions);
@@ -637,7 +639,7 @@ function EditProduct() {
                                                 className="border p-2 rounded bg-white text-black"
                                             />
 
-                                            {isDressSize ? (
+                                            {isDressSizeOption ? (
                                                 <input
                                                     type="number"
                                                     placeholder="재고"
@@ -694,8 +696,8 @@ function EditProduct() {
                                             const newOptions = [...options];
                                             newOptions[optIdx].details.push({
                                                 name: "",
-                                                stock: isDressSize ? 0 : undefined,
-                                                extraTime: isDressSize ? undefined : 0,
+                                                stock: isDressSizeOption ? 0 : undefined,
+                                                extraTime: isDressSizeOption ? undefined : 0,
                                                 extraPrice: 0,
                                             });
                                             setOptions(newOptions);

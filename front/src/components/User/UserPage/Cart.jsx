@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import apiClient from "../../../lib/apiClient";
 
 const userId = "user_id"; // 실제 로그인 정보에서 받아와야 함
 
@@ -11,11 +11,11 @@ export default function Cart() {
 
     useEffect(() => {
         setLoading(true);
-        axios.get(`/user/cart/search/${userId}`)
+        apiClient.get(`/user/cart/search`)
             .then(res => {
-                const list = res.data.cartList || [];
+                const list = res.data.data || [];
                 setCartList(list);
-                setChecked(list.map(item => item.cart_id));
+                setChecked(list.map(item => item.cartId));
                 setAllChecked(true);
             })
             .catch(() => {
@@ -29,7 +29,7 @@ export default function Cart() {
         if (allChecked) {
             setChecked([]);
         } else {
-            setChecked(cartList.map(item => item.cart_id));
+            setChecked(cartList.map(item => item.cartId));
         }
         setAllChecked(!allChecked);
     };
@@ -43,28 +43,77 @@ export default function Cart() {
 
     // 금액 계산
     const totalProductPrice = cartList
-        .filter(item => checked.includes(item.cart_id))
-        .reduce((sum, item) => sum + (item.pd_price || 0), 0);
+        .filter(item => checked.includes(item.cartId))
+        .reduce((sum, item) => sum + (item.price || 0), 0);
 
-    // 옵션 추가금, 할인금액 등은 실제 cart_detail 데이터에 맞게 추가 구현 필요
-    const totalExtraPrice = 0;
-    const totalDiscount = 0;
+    const totalExtraPrice = cartList
+        .filter(item => checked.includes(item.cartId))
+        .reduce((sum, item) => {
+            if (!item.cartDetails) return sum;
+            return sum + item.cartDetails.reduce((dSum, d) => dSum + (d.detailPrice || 0), 0);
+        }, 0);
+
+    const totalDiscount = cartList
+        .filter(item => checked.includes(item.cartId))
+        .reduce((sum, item) => sum + (item.discountPrice || 0), 0);
+
     const finalPrice = totalProductPrice + totalExtraPrice - totalDiscount;
+
+    // 시간 포맷 변환 함수
+    const formatDateTime = (arr) => {
+        if (!Array.isArray(arr) || arr.length < 5) return '';
+        const [y, m, d, h, min] = arr;
+        return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')} ${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+    };
+    const formatTaskTime = (arr) => {
+        if (!Array.isArray(arr) || arr.length < 2) return '';
+        const [h, m] = arr;
+        return `${h > 0 ? h + '시간 ' : ''}${m > 0 ? m + '분' : ''}`.trim();
+    };
+
+    // 삭제 함수 분리
+    const handleDeleteCart = async () => {
+        if (checked.length === 0) {
+            alert('삭제할 상품을 선택하세요.');
+            return;
+        }
+        if (!window.confirm('정말 삭제하시겠습니까?')) return;
+        try {
+            await apiClient.delete('/user/cart/delete', { data: { cartIds: checked } });
+            setCartList(prev => prev.filter(item => !checked.includes(item.cartId)));
+            setChecked([]);
+            setAllChecked(false);
+        } catch (e) {
+            alert('삭제 중 오류가 발생했습니다.');
+        }
+    };
 
     return (
         <div className="flex flex-col min-h-screen text-black" style={{ background: 'white' }}>
             <div className="flex-1 max-w-4xl mx-auto p-6 w-full">
                 {/* 상단 헤더 */}
                 <div className="flex items-center border-b pb-2 mb-4">
+                    <span className="w-2/3 text-center font-bold">상품정보</span>
+                    <span className="w-1/3 text-right font-bold">상품금액</span>
+                </div>
+
+                {/* 일괄선택 & 삭제버튼  */}
+                <div className="flex items-center border-b pb-2 mb-4">
                     <input
                         type="checkbox"
                         checked={allChecked}
                         onChange={handleAllCheck}
-                        className="mr-2"
+                        className="mr-2 accent-[#845EC2] w-5 h-5"
+                        style={{ accentColor: '#845EC2' }}
                     />
-                    <span className="font-bold text-lg flex-1">일괄선택</span>
-                    <span className="w-2/3 text-center font-bold">상품정보</span>
-                    <span className="w-1/3 text-right font-bold">상품금액</span>
+                    <span className="font-bold flex-1">일괄선택</span>
+                    <button
+                        className="ml-2 px-4 py-1 border border-red-500 bg-red-50 text-red-500 rounded hover:bg-red-600 hover:text-white hover:border-red-600 shadow transition-colors"
+                        style={{ minWidth: 64, minHeight: 36 }}
+                        onClick={handleDeleteCart}
+                    >
+                        삭제
+                    </button>
                 </div>
 
                 {/* 상품 리스트 or 비었을 때 메시지 */}
@@ -74,31 +123,34 @@ export default function Cart() {
                     <div className="text-center py-20 text-gray-500">장바구니가 비었습니다.</div>
                 ) : (
                     cartList.map(item => (
-                        <div key={item.cart_id} className="flex items-center border-b py-4">
+                        <div key={item.cartId} className="flex items-center border-b py-4">
                             <input
                                 type="checkbox"
-                                checked={checked.includes(item.cart_id)}
-                                onChange={() => handleCheck(item.cart_id)}
-                                className="mr-2"
+                                checked={checked.includes(item.cartId)}
+                                onChange={() => handleCheck(item.cartId)}
+                                className="mr-2 accent-[#845EC2] w-5 h-5"
+                                style={{ accentColor: '#845EC2' }}
                             />
                             <img
-                                src={item.pd_image_url}
-                                alt={item.pd_name}
+                                src={item.pdImageUrl}
+                                alt={item.pdName}
                                 className="w-24 h-24 object-cover rounded mr-4"
                             />
                             <div className="flex-1">
-                                <div className="font-semibold text-black">[{item.category}] {item.pd_name}</div>
-                                {/* 옵션/설명/상세(cart_detail) 등 추가 영역 */}
-                                <div className="text-sm text-gray-500">{item.description}</div>
-                                {/* 옵션 상세(cart_detail) 정보가 있으면 아래에 map으로 표시 */}
-                                {/* {item.cart_detail && item.cart_detail.map(detail => (
-                                    <div key={detail.cart_dt_id} className="text-xs text-gray-600 ml-2">
-                                        {detail.op_name}: {detail.op_dt_name} (+{detail.op_price}원)
+                                <div className="font-semibold text-black">[{item.cpName}] {item.pdName}</div>
+                                {/* 예약 시간, 소요 시간 */}
+                                <div className="text-xs text-gray-500 mb-1">
+                                    예약일시: {formatDateTime(item.startTime)} / 소요시간: {formatTaskTime(item.taskTime)}
+                                </div>
+                                {/* 옵션/설명/상세(cartDetails) 등 추가 영역 */}
+                                {item.cartDetails && item.cartDetails.map(detail => (
+                                    <div key={detail.cartDtId} className="text-xs text-gray-600 ml-2">
+                                        {detail.optionName}: {detail.optionDetailName} {detail.detailPrice > 0 ? `(+${detail.detailPrice.toLocaleString()}원)` : ''} {formatTaskTime(detail.detailTaskTime)}
                                     </div>
-                                ))} */}
+                                ))}
                             </div>
                             <div className="w-1/3 text-right font-bold text-lg text-black">
-                                {item.pd_price?.toLocaleString()}원
+                                {item.price?.toLocaleString()}원
                             </div>
                         </div>
                     ))
@@ -111,7 +163,7 @@ export default function Cart() {
                         <div className="text-black">{totalProductPrice.toLocaleString()}원</div>
                     </div>
                     <div>
-                        <div className="text-gray-500 text-sm">총 추가금액</div>
+                        <div className="text-gray-500 text-sm">옵션 추가금액</div>
                         <div className="text-black">{totalExtraPrice.toLocaleString()}원</div>
                     </div>
                     <div>

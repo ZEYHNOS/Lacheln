@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import Header from "./components/Tool/Header";
 import Footer from "./components/Tool/Footer";
@@ -89,6 +91,7 @@ function Layout({ children }) {
 function App() {
     return (
         <Router>
+            <ToastContainer />
             <Routes>
                 {/* /user 페이지 그룹화 */}
                 {/* 메인 페이지 */}

@@ -20,6 +20,6 @@ public class ReviewResponse {
     private String nickname;                // 작성자 닉네임
     private String content;                 // 리뷰 내용
     private Double score;                   // 리뷰 평점
-    private List<String> imageUrls;         // 첨부 이미지 URL 리스트
+    private List<String> imageUrlList;         // 첨부 이미지 URL 리스트
     private LocalDateTime createdAt;        // 리뷰 작성일시
 }

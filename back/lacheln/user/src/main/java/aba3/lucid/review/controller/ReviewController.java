@@ -27,7 +27,7 @@ public class ReviewController {
     public API<ReviewResponse> writeReview(
             @RequestBody ReviewCreateRequest request,
             @AuthenticationPrincipal CustomUserDetails user
-            ) {
+        ) {
         ReviewResponse response = reviewBusiness.writeReview(request, user.getUserId());
 
         return API.OK(response);

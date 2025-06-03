@@ -18,7 +18,7 @@ public class ReviewConverter {
                 .nickname(review.getUser().getUserNickName())
                 .content(review.getRvContent())
                 .score(review.getRvScore())
-                .imageUrls(reviewImageConverter.toResponseList(review.getImageList()))
+                .imageUrlList(reviewImageConverter.toResponseList(review.getImageList()))
                 .createdAt(review.getRvCreate())
                 .build()
                 ;

@@ -3,17 +3,12 @@ package aba3.lucid.review.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
-import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
-import aba3.lucid.domain.payment.repository.PayManagementRepository;
-import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.enums.ReviewStatus;
-import aba3.lucid.domain.review.convertor.ReviewImageConverter;
+import aba3.lucid.domain.review.converter.ReviewImageConverter;
 import aba3.lucid.domain.review.dto.ReviewCommentEventDto;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.entity.ReviewEntity;
-import aba3.lucid.domain.review.entity.ReviewImageEntity;
-import aba3.lucid.domain.review.repository.ReviewImageRepository;
 import aba3.lucid.domain.review.repository.ReviewRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.payment.service.PayDetailService;
@@ -74,7 +69,7 @@ public class ReviewService {
         }
 
         review.updateField(request);
-        review.updateImageList(reviewImageConverter.toEntityList(request.getImageUrls(), review));
+        review.updateImageList(reviewImageConverter.toEntityList(request.getImageUrlList(), review));
 
         // 업체 답글 생성
         ReviewCommentEventDto dto = new ReviewCommentEventDto(review.getReviewId(), review.getPayDetailEntity().getCpId());

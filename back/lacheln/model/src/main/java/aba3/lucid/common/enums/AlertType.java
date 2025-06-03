@@ -15,6 +15,10 @@ public enum AlertType {
             , "시스템에서 중요한 공지를 전달합니다: %s"
             , null),
 
+    REVIEW_COMMENT("리뷰 답글",
+            "%s님에게 답글이 달렸습니다.",
+            "/comment/search/{reviewCommentId}")
+
     ;
 
     private final String title;

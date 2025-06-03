@@ -4,10 +4,10 @@ import aba3.lucid.alert.service.CompanyAlertService;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.domain.alert.converter.AlertConverter;
 import aba3.lucid.domain.alert.dto.CompanyAlertDto;
 import aba3.lucid.domain.alert.dto.MutualAlert;
 import aba3.lucid.domain.alert.entity.CompanyAlertEntity;
-import aba3.lucid.domain.company.converter.CompanyAlertConverter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.sse.service.SseService;
 import com.rabbitmq.client.Channel;
@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CompanyAlertBusiness {
 
-    private final CompanyAlertConverter companyAlertConverter;
+    private final AlertConverter alertConverter;
     private final CompanyAlertService companyAlertService;
     private final CompanyService companyService;
     private final SseService sseService;
@@ -39,7 +39,7 @@ public class CompanyAlertBusiness {
         Validator.throwIfInvalidId(companyId);
 
         CompanyEntity company = companyService.findByIdWithThrow(companyId);
-        CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);
+        CompanyAlertEntity entity = alertConverter.toEntity(dto, company);
 
         companyAlertService.alertRegister(entity);
     }
@@ -62,7 +62,7 @@ public class CompanyAlertBusiness {
         Validator.throwIfInvalidId(companyId);
 
         return companyAlertService.getAlertList(companyId).stream()
-                .map(companyAlertConverter::toDto)
+                .map(alertConverter::toDto)
                 .toList()
                 ;
     }
@@ -76,7 +76,7 @@ public class CompanyAlertBusiness {
             CompanyAlertDto dto = (CompanyAlertDto) rabbitTemplate.getMessageConverter().fromMessage(message);
             
             CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
-            CompanyAlertEntity entity = companyAlertConverter.toEntity(dto, company);
+            CompanyAlertEntity entity = alertConverter.toEntity(dto, company);
 
             companyAlertService.alertRegister(entity);
             sseService.sendAlert(company.getCpId(), dto);

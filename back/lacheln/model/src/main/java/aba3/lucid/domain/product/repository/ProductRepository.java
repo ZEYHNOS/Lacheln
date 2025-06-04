@@ -33,4 +33,21 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
             @Param("minimum") Integer minimum,
             @Param("maximum") Integer maximum, Pageable pageable,
             @Param("status") ProductStatus status);
+
+    @Query("""
+            SELECT p FROM ProductEntity p
+            WHERE (:category IS NULL OR p.company.cpCategory = :category)
+            AND (:productName IS NULL OR LOWER(p.pdName) LIKE LOWER(CONCAT('%', :productName, '%')))
+            AND (:companyName IS NULL OR LOWER(p.company.cpName) LIKE LOWER(CONCAT('%', :companyName, '%')))
+            AND (:maximum IS NULL OR p.pdPrice <= :maximum)
+            AND (:minimum IS NULL OR p.pdPrice >= :minimum)
+            """)
+            Page<ProductEntity> searchProductPage(
+                    Pageable pageable,
+                    @Param("productName") String productName,
+                    @Param("companyName") String companyName,
+                    @Param("category") CompanyCategory category,
+                    @Param("minimum") Integer minimum,
+                    @Param("maximum") Integer maximum
+    );
 }

@@ -9,6 +9,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.product.dto.ProductDetailResponse;
+import aba3.lucid.domain.product.dto.ProductSearchRecord;
 import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
 import aba3.lucid.image.service.ImageService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -46,11 +47,10 @@ public class ProductBusiness {
     private final PackageToProductConverter packageToProductConverter;
     private final PaginationConverter paginationConverter;
 
-    // 특정 업체의 상품 리스트
-    public Page<ProductResponse> getProductList(CompanyCategory category, Integer minimum, Integer maximum, Boolean isDesc, Pageable pageable) {
-        Page<ProductEntity> productEntityPage = productService.getProductList(category, minimum, maximum, isDesc, pageable);
-
-        return productConverter.toResponseList(productEntityPage);
+    // 상품 검색
+    public Page<ProductResponse> getProductList(ProductSearchRecord productSearchRecord) {
+        Page<ProductEntity> productEntityPage = productService.getProductPage(productSearchRecord);
+        return productConverter.toResponsePage(productEntityPage);
     }
 
 

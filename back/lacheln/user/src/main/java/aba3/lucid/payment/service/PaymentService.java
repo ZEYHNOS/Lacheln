@@ -72,21 +72,6 @@ public class PaymentService {
         return payManagementRepository.save(entity);
     }
 
-    @Transactional
-    public PayManagementEntity refund(PayManagementEntity entity) {
-
-        entity.refund();
-        // TODO 환불 로직
-        /**
-         * 1. 결제 취소(환불) 요청 PG사로 보내기
-         * 2. 주문 상태를 실패(FAIL)로 변경하기
-         * 3. 사용자에게 실패 알림 보내기
-         * 4. 쿠폰 복구, 재고 복구 등 후처리하기
-         */
-
-        return payManagementRepository.save(entity);
-    }
-
     // MerchantID 발급
     public String generateMerchantUid() {
         return "order-" + LocalDate.now() + "-" + UUID.randomUUID();
@@ -104,10 +89,11 @@ public class PaymentService {
 //        payDetailService.checkReservation(request.getCardRequestList());
 
         // 카트 Entity List
-        List<Long> cartIdList = request.getCardRequestList().stream()
-                .map(CartPaymentRequest::getCartId)
-                .toList();
+        List<Long> cartIdList = request.getCardRequestList();
+
         List<CartEntity> cartEntityList = cartService.findAllById(cartIdList);
+
+        // RabbitMQ 스냅샷 검증
 
         // 업체마다 그룹을 만들고 업체 별 결제해야 하는 금액 더하기
         Map<Long, BigInteger> groupByCompanyAmountMap = initGroupByCompanyAmount(cartEntityList);
@@ -133,49 +119,27 @@ public class PaymentService {
                 .toList()
                 ;
 
-        // 상품 아이디 리스트
-
+        // 상품 ID 리스트
         List<Long> productIdList = cartEntityList.stream()
                 .map(CartEntity::getPdId)
                 .toList()
                 ;
-
-
-        // 메세지 생성 전 설정하기
-        String correlationId = UUID.randomUUID().toString();
-        MessageProperties props = new MessageProperties();
-        props.setReplyTo("to.user"); // 응답 결과 받는 큐 TODO 다른 큐로 설정하기
-        props.setCorrelationId(correlationId);
-
         // 메세지 보낼 DTO
         CouponVerifyRequest requestMessage = CouponVerifyRequest.builder()
                 .userId(userId)
                 .couponBoxIdList(request.getCouponBoxIdList())
-//                .productIdList(productIdList)
+                .productIdList(productIdList)
                 .amount(groupByCompanyAmount)
                 .build()
                 ;
 
-        // 메세지 생성 및 보내기
-        Message message = rabbitTemplate.getMessageConverter().toMessage(requestMessage, props);
-        rabbitTemplate.send("company.exchange", "to.company", message);
-
-        // 메세지 받기(Timeout : 5초)
-        Message reply = rabbitTemplate.receive("to.user", 5000);
-
-
-        // 성공적으로 통신 했을 때(쿠폰 유효성 통과)
-        if (reply != null && correlationId.equals(reply.getMessageProperties().getCorrelationId())) {
-            // 응답 메시지를 객체로 변환
-            CouponVerifyResponse result = (CouponVerifyResponse) rabbitTemplate.getMessageConverter().fromMessage(reply);
-            return result;
+        // 스냅샷 검증
+        if (!verifySnapshot(productSnapshotList)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "스냅샷 정보가 다름");
         }
-        // 타임아웃일 때
-        else {
-            // 타임아웃 처리
-            log.error("Timeout: No response received within 5 seconds");
-            throw new ApiException(ErrorCode.SERVER_ERROR);
-        }
+
+        // 쿠폰 검증
+        return verifyCoupon(requestMessage);
     }
 
     public List<PayManagementEntity> getUserPaymentList(String userId) {
@@ -189,6 +153,55 @@ public class PaymentService {
         if (user.getUserMileage().compareTo(mileage) < 0) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "마일리지가 부족합니다.");
         }
+    }
+
+    // 스냅샷 검증
+    private boolean verifySnapshot(List<ProductSnapshot> snapshotList) {
+        // 메세지 생성 전 설정하기
+        String correlationId = UUID.randomUUID().toString();
+        MessageProperties props = new MessageProperties();
+        props.setReplyTo("snapshot.queue");
+        props.setCorrelationId(correlationId);
+
+        // 메세지 생성 및 보내기
+        Message message = rabbitTemplate.getMessageConverter().toMessage(snapshotList, props);
+        rabbitTemplate.send("company.exchange", "product.verify", message);
+
+        // 메세지 받기(Timeout : 5초)
+        Message reply = rabbitTemplate.receive("snapshot.queue.response", 5000);
+
+
+        // 성공적으로 통신 했을 때
+        if (reply != null && correlationId.equals(reply.getMessageProperties().getCorrelationId())) {
+            return (boolean) rabbitTemplate.getMessageConverter().fromMessage(reply);
+        }
+
+        return false;
+    }
+
+    // 쿠폰 검증
+    private CouponVerifyResponse verifyCoupon(CouponVerifyRequest requestMessage) {
+        // 메세지 생성 전 설정하기
+        String correlationId = UUID.randomUUID().toString();
+        MessageProperties props = new MessageProperties();
+        props.setReplyTo("from.coupon");
+        props.setCorrelationId(correlationId);
+
+        // 메세지 생성 및 보내기
+        Message message = rabbitTemplate.getMessageConverter().toMessage(requestMessage, props);
+        rabbitTemplate.send("company.exchange", "verify.coupon", message);
+
+        // 메세지 받기(Timeout : 5초)
+        Message reply = rabbitTemplate.receive("from.coupon", 5000);
+
+
+        // 성공적으로 통신 했을 때(쿠폰 유효성 통과)
+        if (reply != null && correlationId.equals(reply.getMessageProperties().getCorrelationId())) {
+            // 응답 메시지를 객체로 변환
+            return (CouponVerifyResponse) rabbitTemplate.getMessageConverter().fromMessage(reply);
+        }
+
+        return null;
     }
 
     // 결제해야 하는 총 금액

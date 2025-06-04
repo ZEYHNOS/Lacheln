@@ -16,9 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PaymentVerifyRequest {
-
-    // 결제 검증을 위한 DTO
-
     // 쿠폰함 ID
     private List<Long> couponBoxIdList;
 
@@ -26,6 +23,5 @@ public class PaymentVerifyRequest {
     private BigInteger mileage;
 
     // 장바구니 리스트
-    private List<CartPaymentRequest> cardRequestList;
-
+    private List<Long> cardRequestList;
 }

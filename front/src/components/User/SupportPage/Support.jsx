@@ -1,12 +1,144 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import Help from "../../../image/Support/help.png";
+import Menu from "../../../image/Support/menu.png";
+import Search from "../../../image/Support/search.png";
+import Call from "../../../image/Support/call.png";
 
-function Service() {
+export function Support() {
+    const menuItems = [
+        { label: "고객지원", path: "/support" },
+        { label: "상담신청", path: "/consult" },
+        { label: "챗봇", path: "/chatbot" },
+        { label: "건의함", path: "/suggestion" },
+    ];
+
+    const menuItems2 = [
+        { label: "아이디정보/보안", path: "/support" },
+        { label: "결제", path: "/support" },
+        { label: "복구", path: "/support" },
+        { label: "광고", path: "/support" },
+        { label: "이벤트", path: "/support" },
+    ]
+
+    const faqList = [
+        "로그인 비밀번호를 잊어버렸어요.",
+        "이메일 인증이 되지 않아요.",
+        "결제 내역을 확인하고 싶어요.",
+        "휴면 계정을 복구하고 싶어요.",
+        "회원 탈퇴는 어떻게 하나요?",
+    ];
+
     return (
-        <div className="min-h-screen bg-white text-black flex flex-col items-center justify-center">
-            <h1 className="mb-4 block">고객지원 페이지</h1>
-            <p className="block">현재 개발중에 있습니다.</p>
-        </div>
+        <>
+            {/* 메인 폼 컨테이너 */}
+            <div className="mx-auto w-full border-[1px] font-semibold border-[#845EC2]">
+                {/* 네비게이션 바 */}
+                <ul className="flex w-full list-none p-0 m-0 border-[1px] bg-[#FFFFFF] border-[#e1c2ff33]">
+                    {menuItems.map((item, idx) => (
+                        <li
+                            key={item.label}
+                            className={`flex items-center justify-center flex-1 border border-[#e1c2ff33] h-[65px]
+        ${idx === 0 ? "border-l-0" : ""} ${idx === 3 ? "border-r-0" : ""}
+    `}
+                        >
+                            <Link
+                                to={item.path}
+                                className={`
+            w-full h-full flex items-center justify-center text-[20px] font-semibold
+            ${item.label === "고객지원" ? "bg-[#E2C5EE] text-[#000000]" : "text-[#615e5e]"}
+            hover:bg-[#E2C5EE] hover:text-[#000000] hover:underline
+        `}
+                            >
+                                {item.label}
+                            </Link>
+                        </li>
+
+                    ))}
+                </ul>
+
+                {/* 본문 */}
+                <div className="mt-4 ml-8">
+                    <div className="text-[24px]">문의유형 선택</div>
+                    <div>문의유형을 선택하면 문의유형에 따라 [자주 찾는 도움말]을 확인할 수 있습니다.</div>
+                    <div>찾는 도움말이 보이지 않으면 [도움말 검색]을 이용해 원하는 도움말을 찾아 주세요.</div>
+                </div>
+
+                <div className="flex justify-end gap-4 mr-8 mt-2 text-[#845EC2] font-semibold">
+                    <img src={Help} alt="Help Icon" className="w-7 h-7" />
+                    <div className="cursor-pointer hover:underline">문의방법 자세히보기</div>
+                    <img src={Menu} alt="Menu Icon" className="w-7 h-7" />
+                    <div className="cursor-pointer hover:underline">문의유형 전체보기</div>
+                </div>
+
+                {/* 네비게이션 바2 */}
+                <div className="mt-4 mr-12">
+                    <ul className="flex justify-center w-[50%] list-none p-0 m-0 border-[1px] bg-purple-200">
+                        {menuItems2.map((item, idx) => (
+                            <li
+                                key={item.label}
+                                className={`flex items-center justify-center flex-1 h-[65px]
+                        ${idx === 0 ? "border-l-0" : ""} ${idx === 3 ? "border-r-0" : ""}
+                    `}
+                            >
+                                <Link
+                                    to={item.path}
+                                    className={`
+                            w-full h-full flex items-center justify-center text-[20px] font-semibold
+                            ${item.label === "아이디정보/보안" ? "bg-purple-600 text-[#FFFFFF]" : "text-gray-700"}
+                            hover:bg-purple-600 hover:text-[#FFFFFF] hover:underline
+                        `}
+                                >
+                                    {item.label}
+                                </Link>
+                            </li>
+
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="mt-4 ml-8 text-[24px]">도움말 검색</div>
+                <div className="mt-4 ml-8">검색으로 빠르게 도움말을 찾아보실 수 있습니다.
+                    <div className="flex justify-end gap-4 mr-8 text-[#845EC2] font-semibold">
+                        <div className="relative w-[450px]">
+                            <input
+                                type="text"
+                                name="text"
+                                className="w-[450px] h-[40px] border border-gray-700"
+                                placeholder="문장이 아닌 '단어'로 검색하세요(특수문자 불가)"
+                            />
+                            <img src={Search} alt="Search Icon" className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 pointer-events-none" />
+                        </div>
+                    </div>
+                </div>
+                <div className="mt-4 ml-8 text-[24px]">자주 묻는 질문</div>
+                <hr></hr>
+                <div className="mt-4 ml-8">원하는 도움말 확인 후 해결되지 않은 문제는 도움말 하단의 문의하기 버튼을 눌러 문의할 수 있습니다.</div>
+
+                <div className="mt-4 ml-8">
+                    <ul className="list-disc list-inside space-y-2 text-[16px] text-gray-800">
+                        {faqList.map((question, index) => (
+                            <li key={index}>{question}</li>
+                        ))}
+                    </ul>
+                </div>
+
+                <Link to="/inquiry">
+                    <button className="bg-[#845EC2] text-white px-4 py-2 rounded mt-4 ml-8">
+                        문의하기
+                    </button>
+                </Link>
+
+                {/* 하단 고객센터 안내 박스 */}
+                <div className="w-full border-t-2 border-[#845EC2] bg-[#e1c2ff66] text-center py-5 mt-10">
+                    <div className="text-[24px] font-bold">고객센터 이용안내</div>
+                    <div className="flex items-center justify-center gap-2 text-[18px] font-bold">
+                        <img src={Call} alt="Call Icon" className="w-10 h-10" />
+                        월~금 10:00~18:00
+                    </div>
+                    <div className="mt-1 text-[16px] text-gray-600 font-bold">(점심 12:00~13:00)</div>
+                </div>
+            </div>
+        </>
     );
 }
-
-export default Service; 

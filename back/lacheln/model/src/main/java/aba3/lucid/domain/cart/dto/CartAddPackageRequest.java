@@ -16,6 +16,7 @@ public class CartAddPackageRequest {
     // 패키지 정보들
     private Long packId;
     private String packName;
+    private BigInteger totalPrice;
     private BigInteger discountPrice;
     private String packImageUrl;
     private LocalTime taskTime;

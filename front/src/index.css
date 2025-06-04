@@ -56,6 +56,16 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+select:focus,
+select:hover,
+input:focus,
+input:hover,
+button:focus,
+button:hover {
+  outline: none;
+  box-shadow: none; /* 혹시 그림자도 제거하고 싶으면 */
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

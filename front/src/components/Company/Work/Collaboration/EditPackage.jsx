@@ -14,7 +14,8 @@ function EditPackage() {
     const [packageData, setPackageData] = useState({
         name: '',
         endDate: '',
-        discountrate: 0
+        discountrate: 0,
+        taskTime: '00:00'
     });
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -50,7 +51,8 @@ function EditPackage() {
                 setPackageData({
                     name: data.name || '',
                     endDate: endDateStr,
-                    discountrate: data.discountrate || 0
+                    discountrate: data.discountrate || 0,
+                    taskTime: data.taskTime || '00:00'
                 });
 
                 // 업체별 정보 저장
@@ -281,6 +283,19 @@ function EditPackage() {
                                     onChange={(e) => setPackageData({...packageData, discountrate: Number(e.target.value)})}
                                     min="0"
                                     max="100"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                                />
+                            </div>
+                            {/* 작업시간 입력 */}
+                            <div>
+                                <label htmlFor="taskTime" className="block text-sm font-medium text-gray-700 mb-1">
+                                    작업시간
+                                </label>
+                                <input
+                                    type="time"
+                                    id="taskTime"
+                                    value={packageData.taskTime}
+                                    onChange={(e) => setPackageData({...packageData, taskTime: e.target.value})}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
                                 />
                             </div>

@@ -31,7 +31,7 @@ public class CouponListener {
 
     // 사용자가 결제 전 쿠폰 유효성 확인하기
     // RabbitMQ 연결하기 RPC 스타일로
-    @RabbitListener(queues = "verify.coupon")
+    @RabbitListener(queues = "to.coupon")
     public void couponVerify(Message message, Channel channel) throws IOException {
         Validator.throwIfNull(message);
 

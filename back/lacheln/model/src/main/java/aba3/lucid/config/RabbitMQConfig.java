@@ -43,6 +43,46 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue snapshotQueue() {
+        return new Queue("snapshot.request.queue");
+    }
+
+    @Bean
+    public Queue snapshotResponseQueue() {
+        return new Queue("snapshot.response.queue");
+    }
+
+    @Bean
+    public Binding snapshotRequestBinding(Queue snapshotQueue, DirectExchange toCompanyExchange) {
+        return BindingBuilder.bind(snapshotQueue).to(toCompanyExchange).with("product.verify");
+    }
+
+    @Bean
+    public Binding snapshotResponseBinding(Queue snapshotQueue, DirectExchange toUserExchange) {
+        return BindingBuilder.bind(snapshotQueue).to(toUserExchange).with("product.verify.response");
+    }
+
+    @Bean
+    public Queue couponRequestQueue() {
+        return new Queue("to.coupon");
+    }
+
+    @Bean
+    public Queue couponResponseQueue() {
+        return new Queue("from.coupon");
+    }
+
+    @Bean
+    public Binding couponRequestBinding(Queue couponRequestQueue, DirectExchange toCompanyExchange) {
+        return BindingBuilder.bind(couponRequestQueue).to(toCompanyExchange).with("coupon.verify");
+    }
+
+    @Bean
+    public Binding couponResponseBinding(Queue couponResponseQueue, DirectExchange toUserExchange) {
+        return BindingBuilder.bind(couponResponseQueue).to(toUserExchange).with("coupon.verify.response");
+    }
+
+    @Bean
     public Queue reviewCommentQueue() {
         return new Queue("review.comment.queue");
     }

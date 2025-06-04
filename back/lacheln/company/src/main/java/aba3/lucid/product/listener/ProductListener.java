@@ -22,7 +22,7 @@ public class ProductListener {
     private final ProductService productService;
     private final RabbitTemplate rabbitTemplate;
 
-    @RabbitListener(queues = "snapshot.queue.request")
+    @RabbitListener(queues = "snapshot.request.queue")
     public void verifySnapshot(Message message, Channel channel) throws IOException {
         String replyTo = message.getMessageProperties().getReplyTo();
         String correlationId = message.getMessageProperties().getCorrelationId();

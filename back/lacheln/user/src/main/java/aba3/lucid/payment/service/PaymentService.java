@@ -189,7 +189,7 @@ public class PaymentService {
 
         // 메세지 생성 및 보내기
         Message message = rabbitTemplate.getMessageConverter().toMessage(requestMessage, props);
-        rabbitTemplate.send("company.exchange", "verify.coupon", message);
+        rabbitTemplate.send("company.exchange", "coupon.verify", message);
 
         // 메세지 받기(Timeout : 5초)
         Message reply = rabbitTemplate.receive("from.coupon", 5000);

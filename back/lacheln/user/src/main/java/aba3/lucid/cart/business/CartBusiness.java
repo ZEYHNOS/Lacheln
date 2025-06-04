@@ -78,8 +78,6 @@ public class CartBusiness {
     public API<CartPackageResponse> addPackage(String userId, CartAddPackageRequest request)    {
         // 유저 정보 불러오기
         UsersEntity user = userService.findByIdWithThrow(userId);
-        List<CartAddProductRequest> products = request.getCartAddProductRequest();
-
 
         // Request가 Null인지 확인
         if(request == null) {

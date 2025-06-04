@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CartAddProductRequest {
+    // 상품에 대한 정보들
     private Long cpId;
     private Long pdId;
     private String cpName;

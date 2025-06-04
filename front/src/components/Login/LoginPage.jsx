@@ -45,7 +45,8 @@ export default function LoginPage() {
                     withCredentials: true, // 쿠키 전송을 위한 설정
                 }
             );
-            console.log(requestData);
+            console.log("response");
+            console.log(response);
 
             // 로그인 성공 시 sessionStorage에 상태 저장
             sessionStorage.setItem('localLoginSuccess', 'true');

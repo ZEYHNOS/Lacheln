@@ -134,6 +134,6 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         // JSON 응답 반환
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("{\"success\":true,\"message\":\"로그인 성공\"}");
+        response.getWriter().write("{\"success\":true,\"message\":\"로그인 성공\", \"role\" : \"" + role + "\"}");
     }
 }

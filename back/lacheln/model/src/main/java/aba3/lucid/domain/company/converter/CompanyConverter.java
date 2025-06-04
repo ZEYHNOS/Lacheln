@@ -35,6 +35,7 @@ public class CompanyConverter {
                 .cpStatus(CompanyStatus.SUSPENSION)
                 .cpProfile("default.png")
                 .cpCategory(CompanyCategory.S)
+                .cpRole("COMPANY")
                 .build();
     }
 

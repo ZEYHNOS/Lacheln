@@ -52,7 +52,7 @@ public class PackageConverter {
                 .cp1(packageToProductConverter.toResponse(entity.getPackId(), entity.getPackCompany1()))
                 .cp2(packageToProductConverter.toResponse(entity.getPackId(), entity.getPackCompany2()))
                 .createAt(entity.getPackCreateDate())
-                .taskTime(entity.getPackageToProductEntityList().get(0).getProduct().getPdTaskTime())
+                .taskTime(entity.getPackageToProductEntityList().isEmpty() ? null : entity.getPackageToProductEntityList().get(0).getProduct().getPdTaskTime())
                 .endDate(entity.getPackEndDate())
                 .status(entity.getPackStatus())
                 .imageUrl(entity.getPackImageUrl())
@@ -89,7 +89,7 @@ public class PackageConverter {
                 .productInfoList(packageToProductConverter.toPackageProductResponseList(packageEntity.getPackageToProductEntityList()))
                 .discountrate(packageEntity.getPackDiscountrate())
                 // TODO 리팩토링
-                .taskTime(packageEntity.getPackageToProductEntityList().get(0).getProduct().getPdTaskTime())
+                .taskTime(packageEntity.getPackageToProductEntityList().isEmpty() ? null : packageEntity.getPackageToProductEntityList().get(0).getProduct().getPdTaskTime())
                 .build()
                 ;
     }

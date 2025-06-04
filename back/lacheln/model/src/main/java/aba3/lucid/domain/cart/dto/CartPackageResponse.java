@@ -14,6 +14,7 @@ public class CartPackageResponse {
 
     private Long packId;
     private String packName;
+    private BigInteger totalPrice;
     private BigInteger discountPrice;
     private String packImageUrl;
     private LocalTime taskTime;

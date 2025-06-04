@@ -58,6 +58,9 @@
         @Column(name = "pd_price", nullable = false)
         private BigInteger price; // 가격
 
+        @Column(name = "discount_price")
+        private BigInteger discountPrice; // 패키지의 경우 할인된 가격
+
         @Column(name = "task_time", nullable = false)
         private LocalTime taskTime; // 작업 시간
 

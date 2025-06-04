@@ -51,7 +51,7 @@ function ViewPackage() {
 
     const { 
         name, admin, cp1, cp2, createAt, endDate, status, 
-        discountrate, imageUrl, totalPrice 
+        discountrate, imageUrl, totalPrice, taskTime 
     } = packageData;
 
     // 날짜 포맷팅 함수
@@ -166,6 +166,10 @@ function ViewPackage() {
                             <p className="flex justify-between">
                                 <span className="text-gray-600">할인율</span>
                                 <span className="font-medium text-red-500">{discountrate}%</span>
+                            </p>
+                            <p className="flex justify-between">
+                                <span className="text-gray-600">작업시간</span>
+                                <span className="font-medium text-black">{taskTime || "00:00"}</span>
                             </p>
                         </div>
                         <div className="mt-4 pt-4 border-t">

@@ -28,6 +28,7 @@ function Setpackage() {
     
     // 상세 설명 저장 (에디터에서 가져올 JSON 배열)
     const [descriptionList, setDescriptionList] = useState([]);
+    const [workTime, setWorkTime] = useState("00:00");
 
     // API에서 패키지 정보 가져오기
     useEffect(() => {
@@ -419,6 +420,17 @@ function Setpackage() {
                             </div>
                         </div>
                         
+                        {/* 작업시간 */}
+                        <div className="flex items-center mb-4">
+                            <label className="w-24">작업시간</label>
+                            <input 
+                                type="time" 
+                                value={workTime}
+                                onChange={e => setWorkTime(e.target.value)}
+                                className="flex-grow border p-2 rounded bg-white text-black"
+                            />
+                        </div>
+                        
                         {/* 할인율 (수정 가능) */}
                         <div className="flex items-center mb-4">
                             <label className="w-24">할인율(%)</label>
@@ -431,6 +443,7 @@ function Setpackage() {
                                 className="flex-grow border p-2 rounded bg-white text-black" 
                             />
                         </div>
+
                         {/* 최종 판매가 표시 */}
                         <div className="flex items-center mb-4">
                             <label className="w-24">최종 판매가</label>
@@ -439,6 +452,7 @@ function Setpackage() {
                                 {discount > 0 && <span className="text-red-500 ml-2">({discount}% 할인)</span>}
                             </div>
                         </div>
+
                         {/* 종료일 (수정 가능) */}
                         <div className="flex items-center mb-4">
                             <label className="w-24">종료일</label>

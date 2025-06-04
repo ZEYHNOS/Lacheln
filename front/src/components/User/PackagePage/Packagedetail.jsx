@@ -56,7 +56,12 @@ function Packagedetail() {
         packName: data.name,
         discountPrice: data.discountrate || data.discountRate || 0,
         packImageUrl: data.imageUrl ? baseUrl + data.imageUrl.replace(/\\/g, '/') : '',
-        taskTime: { hour: 0, minute: 0, second: 0, nano: 0 }, // 필요시 계산
+        taskTime: data.taskTime ? {
+          hour: parseInt(data.taskTime.split(':')[0]),
+          minute: parseInt(data.taskTime.split(':')[1]),
+          second: 0,
+          nano: 0
+        } : { hour: 0, minute: 0, second: 0, nano: 0 },
         startTime: localDateTime,
         cartAddProductRequest: (data.productInfoList || []).map(p => ({
           cp_id: p.companyId || p.cpId || 0,
@@ -103,6 +108,11 @@ function Packagedetail() {
           )}
         </div>
         <div className="text-sm text-gray-500">최대 혜택 적용 시</div>
+        {data.taskTime && (
+          <div className="text-sm text-gray-500 mt-1">
+            예상 작업시간: <span className="font-medium">{data.taskTime}</span>
+          </div>
+        )}
       </div>
 
       <div className="mb-6">

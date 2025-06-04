@@ -52,6 +52,7 @@ public class PackageConverter {
                 .cp1(packageToProductConverter.toResponse(entity.getPackId(), entity.getPackCompany1()))
                 .cp2(packageToProductConverter.toResponse(entity.getPackId(), entity.getPackCompany2()))
                 .createAt(entity.getPackCreateDate())
+                .taskTime(entity.getPackageToProductEntityList().get(0).getProduct().getPdTaskTime())
                 .endDate(entity.getPackEndDate())
                 .status(entity.getPackStatus())
                 .imageUrl(entity.getPackImageUrl())

@@ -66,7 +66,7 @@ public class ProductService {
 
 
     public void updateStatusToPackage(ProductEntity product) {
-        product.setStatusToPackage();
+        product.updateStatusToPackage();
 
         productRepository.save(product);
     }
@@ -106,7 +106,7 @@ public class ProductService {
     // 상품 상태 변경하기
     public ProductEntity updateStatus(CompanyEntity company, ProductEntity product, ProductStatus status) {
         throwIfNotOwnProduct(product, company.getCpId());
-        product.setStatus(status);
+        product.updateStatus(status);
 
         return productRepository.save(product);
     }

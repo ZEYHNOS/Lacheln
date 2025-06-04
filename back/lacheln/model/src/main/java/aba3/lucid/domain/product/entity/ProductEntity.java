@@ -90,7 +90,7 @@ public abstract class ProductEntity {
 
 
     // 상품 이미지 리스트 업데이트
-    public void setProductImage(List<ProductImageEntity> productImageEntityList) {
+    public void updateProductImage(List<ProductImageEntity> productImageEntityList) {
         if (productImageEntityList.isEmpty()) {
             // TODO 생각해보자
             return;
@@ -104,7 +104,7 @@ public abstract class ProductEntity {
     }
 
     // TODO 상품 이름 길이 제약조건 이야기 하기
-    public void setProductName(String name) {
+    public void updateProductName(String name) {
         if (name == null || (name.length() < 3 && name.length() > 100)) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "상품 이름 값이 없거나 조건에 맞지 않습니다.");
         }
@@ -124,7 +124,7 @@ public abstract class ProductEntity {
 
 
     // 상태 변경
-    public void setStatus(ProductStatus changeStatus) {
+    public void updateStatus(ProductStatus changeStatus) {
         if (changeStatus == null) {
             throw new ApiException(ErrorCode.NULL_POINT, "상태 값이 존재하지 않습니다.");
         }
@@ -147,7 +147,7 @@ public abstract class ProductEntity {
     }
 
     // 패키지에서 해당 상품을 삭제 시킬 때
-    public void setStatusToPackageDelete() {
+    public void updateStatusToPackageDelete() {
         if (!this.pdStatus.equals(ProductStatus.PACKAGE)) {
             throw new ApiException(ErrorCode.BAD_REQUEST);
         }
@@ -156,7 +156,7 @@ public abstract class ProductEntity {
     }
 
     // 상품을 패키지에 등록
-    public void setStatusToPackage() {
+    public void updateStatusToPackage() {
         // 삭제 상태이거나 패키지 상태일 때(똑같은 상품이 2개의 패키지에 들어갔을 때 유효기간에 따라 관리가 어려움)
         if (this.pdStatus == ProductStatus.REMOVE || this.pdStatus == ProductStatus.PACKAGE) {
             throw new ApiException(ErrorCode.BAD_REQUEST);
@@ -172,7 +172,7 @@ public abstract class ProductEntity {
 
 
     // 업체 추천 변경
-    public void setRec(BinaryChoice rec) {
+    public void updateRec(BinaryChoice rec) {
         if (rec == null) {
             throw new ApiException(ErrorCode.NULL_POINT, "업체 추천 값이 존재하지 않습니다.");
         }
@@ -180,7 +180,7 @@ public abstract class ProductEntity {
         this.pdRec = rec;
     }
 
-    public void setDescription(List<ProductDescriptionEntity> descriptionEntityList) {
+    public void updateDescription(List<ProductDescriptionEntity> descriptionEntityList) {
         if (this.productDescriptionEntityList == null) {
             this.productDescriptionEntityList = new ArrayList<>();
         }
@@ -194,7 +194,7 @@ public abstract class ProductEntity {
     }
 
     // 소요 시간 변경
-    public void setTaskTime(LocalTime time) {
+    public void updateTaskTime(LocalTime time) {
         if (time == null) {
             throw new ApiException(ErrorCode.BAD_REQUEST, "소요 시간 값이 0 혹은 음수 입니다.");
         }
@@ -202,7 +202,7 @@ public abstract class ProductEntity {
         this.pdTaskTime = time;
     }
 
-    public void setOptionList(List<OptionEntity> optionEntityList) {
+    public void updateOptionList(List<OptionEntity> optionEntityList) {
         if (this.opList == null) {
             this.opList = new ArrayList<>();
         }
@@ -216,7 +216,7 @@ public abstract class ProductEntity {
     }
 
     // 태그 리스트 삭제 후 새로 넣기
-    public void setHashTag(List<HashtagEntity> hashtagList) {
+    public void updateHashTag(List<HashtagEntity> hashtagList) {
         if (this.hashtagList == null) {
             this.hashtagList = new ArrayList<>();
         }
@@ -238,11 +238,11 @@ public abstract class ProductEntity {
         this.hashtagList.addAll(uniqueList);
     }
 
-    public void setFormList(List<OptionEntity> opList, List<HashtagEntity> hashtagEntityList, List<ProductImageEntity> productImageEntityList, List<ProductDescriptionEntity> descriptionEntityList) {
-        setOptionList(opList);
-        setProductImage(productImageEntityList);
-        setHashTag(hashtagEntityList);
-        setDescription(descriptionEntityList);
+    public void updateFormList(List<OptionEntity> opList, List<HashtagEntity> hashtagEntityList, List<ProductImageEntity> productImageEntityList, List<ProductDescriptionEntity> descriptionEntityList) {
+        updateOptionList(opList);
+        updateProductImage(productImageEntityList);
+        updateHashTag(hashtagEntityList);
+        updateDescription(descriptionEntityList);
     }
 
     public void deleteProduct(LocalDateTime now) {

@@ -106,9 +106,9 @@ public class DressEntity extends ProductEntity {
 
     // setFormRequest
     public void setAdditionalField(DressRequest request, List<DressSizeEntity> dressSizeList) {
-        setProductName(request.getName());
-        setTaskTime(request.getTaskTime());
-        setRec(request.getRec());
+        updateProductName(request.getName());
+        updateTaskTime(request.getTaskTime());
+        updateRec(request.getRec());
         setColor(request.getColor());
         setDressSizeList(dressSizeList);
         setOutAvailable(request.getOutAvailable());

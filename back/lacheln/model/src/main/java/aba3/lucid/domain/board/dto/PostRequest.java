@@ -1,5 +1,6 @@
 package aba3.lucid.domain.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -11,13 +12,16 @@ import lombok.*;
 @Builder
 public class PostRequest {
 
+    @JsonProperty("post_title")
     @NotBlank(message = "제목은 필수입니다.")
-    private String postTitle; // 게시글 제목
+    private String postTitle;
 
+    @JsonProperty("post_content")
     @NotBlank(message = "본문은 필수입니다.")
-    private String postContent; // 게시글 본문 (이미지 포함된 HTML 가능)
+    private String postContent;
 
+    @JsonProperty("board_id")
     @NotNull(message = "게시판 ID는 필수입니다.")
-    private Long boardId; // 게시판 ID
+    private Long boardId;
 }
 

@@ -32,12 +32,11 @@ public class PostBusiness {
     private final BoardRepository boardRepository;
     private final PostConvertor postConvertor;
 
-    // 게시글 생성
+    // 게시글 생성 (BoardEntity 필요 → 그대로 유지)
     public PostDetailResponse createPost(PostRequest request) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
 
-        // ✅ 티어 제한 검사
         if (user.getUserTier().ordinal() < TierEnum.SEMI_PRO.ordinal()) {
             throw new ApiException(ErrorCode.FORBIDDEN, "세미프로 이상만 게시글을 작성할 수 있습니다.");
         }
@@ -51,11 +50,10 @@ public class PostBusiness {
 
         PostEntity entity = postConvertor.toEntity(request, board, user);
         PostEntity saved = postService.savePost(entity);
-
         return postConvertor.toDetailResponse(saved);
     }
 
-    // 게시글 상세 조회 + 조회수 증가
+    // 게시글 상세 조회
     public PostDetailResponse getPostById(Long postId) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
@@ -65,7 +63,6 @@ public class PostBusiness {
 
         int likeCount = (int) postService.getLikeCount(postId);
         int viewCount = (int) postService.getViewCount(postId);
-
         return postConvertor.toDetailResponse(post, likeCount, viewCount);
     }
 
@@ -81,10 +78,8 @@ public class PostBusiness {
         }
 
         PostEntity updated = postService.updatePost(post, request);
-
         int likeCount = (int) postService.getLikeCount(post.getPostId());
         int viewCount = (int) postService.getViewCount(post.getPostId());
-
         return postConvertor.toDetailResponse(updated, likeCount, viewCount);
     }
 
@@ -94,7 +89,6 @@ public class PostBusiness {
         UsersEntity user = userService.findByIdWithThrow(userId);
 
         PostEntity post = postService.getPostById(postId);
-
         boolean isWriter = post.getUsersEntity().getUserId().equals(userId);
         boolean isAdmin = isAdmin(userId);
 
@@ -110,7 +104,6 @@ public class PostBusiness {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
 
-        // ✅ 티어 체크: 세미프로 미만이면 추천 불가
         if (user.getUserTier().ordinal() < TierEnum.SEMI_PRO.ordinal()) {
             throw new ApiException(ErrorCode.FORBIDDEN, "세미프로 이상만 추천할 수 있습니다.");
         }
@@ -119,36 +112,30 @@ public class PostBusiness {
         postService.likePost(post, user);
     }
 
-    // 특정 게시판 글 목록 페이징
+    // ✅ 특정 게시판 글 목록 페이징 (boardId 기준)
     public PagedResponse<PostListResponse> getPostPageByBoardId(Long boardId, int page, int size) {
-        BoardEntity board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "게시판이 존재하지 않습니다."));
-
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("postCreate").descending());
-        Page<PostEntity> result = postService.getPostPageByBoardId(board, pageable);
-
+        Page<PostEntity> result = postService.getPostPageByBoardId(boardId, pageable);
         return toPagedResponse(result);
     }
 
-    // 전체 게시판(자유/질문/리뷰) 글 목록 페이징
+    // 전체 게시판 글 목록 페이징
     public PagedResponse<PostListResponse> getAllCategoryPostPage(int page, int size) {
         List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("postCreate").descending());
         Page<PostEntity> result = postService.getAllCategoryPostPage(boardNames, pageable);
-
         return toPagedResponse(result);
     }
 
-    // 인기 게시판(추천수 15 이상) 글 목록 페이징
+    // 인기 게시판 글 목록 페이징
     public PagedResponse<PostListResponse> getPopularPostPage(int page, int size) {
         List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<PostEntity> result = postService.getPopularPostPage(boardNames, pageable);
-
         return toPagedResponse(result);
     }
 
-    // Page<PostEntity> → PagedResponse<PostListResponse> 변환
+    // Page → PagedResponse 변환
     private PagedResponse<PostListResponse> toPagedResponse(Page<PostEntity> result) {
         List<PostListResponse> content = result.getContent().stream()
                 .map(post -> {
@@ -168,7 +155,7 @@ public class PostBusiness {
         );
     }
 
-    // ✅ 관리자 권한 확인 (userTier 기반)
+    // 관리자 권한 확인
     private boolean isAdmin(String userId) {
         UsersEntity user = userService.findByIdWithThrow(userId);
         return user.getUserTier() == TierEnum.ADMIN;

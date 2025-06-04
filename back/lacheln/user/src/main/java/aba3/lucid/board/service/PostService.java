@@ -3,16 +3,13 @@ package aba3.lucid.board.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.board.dto.PostUpdateRequest;
-import aba3.lucid.domain.board.entity.BoardEntity;
 import aba3.lucid.domain.board.entity.PostEntity;
 import aba3.lucid.domain.board.entity.PostLikeEntity;
 import aba3.lucid.domain.board.entity.PostViewEntity;
-import aba3.lucid.domain.board.repository.BoardRepository;
 import aba3.lucid.domain.board.repository.PostLikeRepository;
 import aba3.lucid.domain.board.repository.PostRepository;
 import aba3.lucid.domain.board.repository.PostViewRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
-import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,8 +31,6 @@ public class PostService {
 
     /**
      * 게시글 저장
-     * @param post 작성된 게시글 Entity
-     * @return 저장된 Entity
      */
     @Transactional
     public PostEntity savePost(PostEntity post) {
@@ -69,11 +64,11 @@ public class PostService {
     }
 
     /**
-     * 개별 게시판의 게시글 페이징 조회
+     * ✅ 개별 게시판의 게시글 페이징 조회 (boardId 기반으로 수정됨)
      */
     @Transactional(readOnly = true)
-    public Page<PostEntity> getPostPageByBoardId(BoardEntity board, Pageable pageable) {
-        return postRepository.findAllByBoardAndDeletedFalse(board, pageable);
+    public Page<PostEntity> getPostPageByBoardId(Long boardId, Pageable pageable) {
+        return postRepository.findByBoardBoardIdAndDeletedFalse(boardId, pageable);
     }
 
     /**

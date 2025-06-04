@@ -33,19 +33,24 @@ public class BoardService {
     // 게시판 생성
     @Transactional
     public BoardResponse createBoard(BoardRequest request) {
-        BoardEntity newEntity = boardConvertor.toEntity(request);
+        // ✅ 공백 제거 처리
+        String trimmedName = request.getBoardName().trim();
+
+        BoardEntity newEntity = boardConvertor.toEntity(
+                new BoardRequest(trimmedName)
+        );
         BoardEntity saved = boardRepository.save(newEntity);
         return boardConvertor.toResponse(saved);
     }
 
-    // 게시판 이름 중복 확인
+    // ✅ 게시판 이름 중복 확인 (existsBy로 변경)
     public boolean existsByBoardName(String name) {
-        return boardRepository.findByBoardName(name).isPresent();
+        return boardRepository.existsByBoardName(name.trim());
     }
 
     // 게시판 이름이 본인 외에 중복인지 확인
     public boolean isBoardNameDuplicated(Long boardId, String name) {
-        Optional<BoardEntity> existing = boardRepository.findByBoardName(name);
+        Optional<BoardEntity> existing = boardRepository.findByBoardName(name.trim());
         return existing.isPresent() && !existing.get().getBoardId().equals(boardId);
     }
 
@@ -53,7 +58,7 @@ public class BoardService {
     @Transactional
     public BoardResponse updateBoard(Long boardId, BoardRequest request) {
         BoardEntity board = getBoardByIdWithThrow(boardId);
-        board.changeBoardName(request.getBoardName());
+        board.changeBoardName(request.getBoardName().trim()); // ✅ trim 추가
         return boardConvertor.toResponse(board);
     }
 

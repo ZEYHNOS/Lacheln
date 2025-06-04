@@ -1,33 +1,39 @@
-// BoardTabs.jsx
+// components/User/CommunityPage/BoardTabs.jsx
 import React from "react";
 
 export default function BoardTabs({ boards, selectedBoardId, onSelect }) {
+  const filteredBoards = boards.filter(
+    (board) => board.boardName !== "전체게시판" && board.boardName !== "인기게시판"
+  );
+
+  const tabStyle = (active) =>
+    `text-sm font-medium py-1 px-3 rounded-full border transition-all ${
+      active
+        ? "bg-[#845EC2] text-white border-[#845EC2]"
+        : "text-gray-600 border-gray-300 hover:border-[#845EC2] hover:text-[#845EC2]"
+    }`;
+
   return (
-    <div className="flex space-x-4 mb-4 border-b border-gray-300 pb-2">
-      {/* 전체 게시판 탭 */}
+    <div className="flex flex-wrap gap-2">
       <button
-        className={`text-lg font-semibold pb-1 border-b-4 transition-all duration-150 ${
-          selectedBoardId === null
-            ? "border-[#845EC2] text-[#845EC2]"
-            : "border-transparent text-gray-500 hover:text-[#845EC2]"
-        }`}
+        className={tabStyle(selectedBoardId === null)}
         onClick={() => onSelect(null)}
       >
-        전체게시판
+        전체
       </button>
-
-      {/* 각 게시판별 탭 */}
-      {boards.map((board) => (
+      <button
+        className={tabStyle(selectedBoardId === "popular")}
+        onClick={() => onSelect("popular")}
+      >
+        인기
+      </button>
+      {filteredBoards.map((board) => (
         <button
-          key={board.id}
-          className={`text-lg font-semibold pb-1 border-b-4 transition-all duration-150 ${
-            selectedBoardId === board.id
-              ? "border-[#845EC2] text-[#845EC2]"
-              : "border-transparent text-gray-500 hover:text-[#845EC2]"
-          }`}
-          onClick={() => onSelect(board.id)}
+          key={board.boardId}
+          className={tabStyle(selectedBoardId === board.boardId)}
+          onClick={() => onSelect(board.boardId)}
         >
-          {board.boardName.replace("게시판", "")}게시판
+          {board.boardName.replace("게시판", "")}
         </button>
       ))}
     </div>

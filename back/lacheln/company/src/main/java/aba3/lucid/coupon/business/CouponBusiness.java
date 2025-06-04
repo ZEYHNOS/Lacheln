@@ -9,23 +9,10 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.coupon.convertor.CouponConvertor;
 import aba3.lucid.domain.coupon.dto.CouponRequest;
 import aba3.lucid.domain.coupon.dto.CouponResponse;
-import aba3.lucid.domain.coupon.dto.CouponVerifyRequest;
 import aba3.lucid.domain.coupon.entity.CouponBoxEntity;
 import aba3.lucid.domain.coupon.entity.CouponEntity;
-import aba3.lucid.domain.product.entity.ProductEntity;
-import aba3.lucid.product.service.ProductService;
-import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Business
@@ -34,12 +21,9 @@ public class CouponBusiness {
 
     private final CouponService couponService;
     private final CompanyService companyService;
-    private final ProductService productService;
     private final CouponBoxService couponBoxService;
 
     private final CouponConvertor couponConvertor;
-
-    private final RabbitTemplate rabbitTemplate;
 
     // 쿠폰 등록
     public CouponResponse issueCouponForCompany(Long companyId, CouponRequest couponRequest) {
@@ -110,46 +94,5 @@ public class CouponBusiness {
         CouponEntity newCouponEntity = couponService.updateCoupon(coupon);
         return couponConvertor.toResponse(newCouponEntity);
     }
-
-    // 사용자가 결제 전 쿠폰 유효성 확인하기
-    // RabbitMQ 연결하기 RPC 스타일로
-    @RabbitListener(queues = "to.company")
-    public void couponVerify(Message message, Channel channel) throws IOException {
-        Validator.throwIfNull(message);
-
-        String replyTo = message.getMessageProperties().getReplyTo();
-        String correlationId = message.getMessageProperties().getCorrelationId();
-
-
-        CouponVerifyRequest request = (CouponVerifyRequest) rabbitTemplate.getMessageConverter().fromMessage(message);
-
-
-        if (request.getCouponBoxIdList().isEmpty()) {
-            // TODO 응답값 넣기
-            return;
-        }
-
-        String userId = request.getUserId();
-        List<CouponBoxEntity> couponBoxEntityList = couponBoxService.findAllById(request.getCouponBoxIdList());
-        List<ProductEntity> productEntityList = productService.findAllById(request.getProductIdList());
-
-        couponService.verificationBeforePayment(userId, couponBoxEntityList, productEntityList);
-
-        long deliveryTag = message.getMessageProperties().getDeliveryTag();
-
-        // 응답 메시지 속성 설정
-        MessageProperties replyProps = new MessageProperties();
-        replyProps.setCorrelationId(correlationId);
-
-        // 응답 메시지 생성
-        Message replyMessage = rabbitTemplate.getMessageConverter().toMessage(request, replyProps);
-
-        // 응답 메시지 전송
-        rabbitTemplate.send(replyTo, replyMessage);
-        channel.basicAck(deliveryTag, false);
-        log.info("rpc rabbitmq end");
-    }
-
-
 
 }

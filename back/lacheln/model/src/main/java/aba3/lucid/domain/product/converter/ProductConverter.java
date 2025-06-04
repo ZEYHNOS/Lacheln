@@ -47,7 +47,7 @@ public class ProductConverter {
                 ;
     }
 
-    public Page<ProductResponse> toResponseList(Page<ProductEntity> productEntityPage) {
+    public Page<ProductResponse> toResponsePage(Page<ProductEntity> productEntityPage) {
         return productEntityPage
                 .map(this::toResponse)
                 ;

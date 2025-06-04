@@ -5,17 +5,21 @@ import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.product.dto.ProductSearchRecord;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
 import aba3.lucid.domain.product.dto.option.OptionSnapshot;
 import aba3.lucid.domain.product.entity.OptionDetailEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.enums.ProductSortBy;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -44,11 +48,6 @@ public class ProductService {
                 ;
     }
 
-    // todo 검색어 만들기
-    public Page<ProductEntity> getProductList(CompanyCategory category, Integer minimum, Integer maximum, Boolean isDesc, Pageable pageable) {
-        return productRepository.filteringProducts(category, minimum, maximum, pageable, ProductStatus.ACTIVE);
-    }
-
     // 해시 태그로 상품 찾기
     public List<ProductEntity> findByHashtag(String tagName) {
         return productRepository.findAllByHashtagList_TagName(tagName);
@@ -69,6 +68,10 @@ public class ProductService {
         product.updateStatusToPackage();
 
         productRepository.save(product);
+    }
+
+    public void verifySnapshotListMatch(List<ProductSnapshot> productSnapshotList) {
+        productSnapshotList.forEach(this::verifySnapshotMatch);
     }
 
     // 상품 스냅샷 확인 로직
@@ -126,5 +129,25 @@ public class ProductService {
         if (product.getCompany().getCpId() != companyId) {
             throw new ApiException(ProductErrorCode.NO_PRODUCT_OWNERSHIP);
         }
+    }
+
+    public Page<ProductEntity> getProductPage(ProductSearchRecord productSearchRecord) {
+        Sort.Direction direction = productSearchRecord.isAsc() == null || productSearchRecord.isAsc() ? Sort.Direction.ASC : Sort.Direction.DESC;
+        String sortBy = productSearchRecord.orderBy() == null ? ProductSortBy.CREATE_AT.getSortBy() : productSearchRecord.orderBy();
+
+        Pageable sortedPage = PageRequest.of(
+                productSearchRecord.pageable().getPageNumber(),
+                productSearchRecord.pageable().getPageSize(),
+                Sort.by(direction, sortBy)
+        );
+
+        return productRepository.searchProductPage(
+                sortedPage,
+                productSearchRecord.productName(),
+                productSearchRecord.companyName(),
+                productSearchRecord.category(),
+                productSearchRecord.maximum(),
+                productSearchRecord.minimum()
+        );
     }
 }

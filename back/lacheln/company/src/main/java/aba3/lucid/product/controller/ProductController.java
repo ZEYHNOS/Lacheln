@@ -32,23 +32,6 @@ import java.util.List;
 public class ProductController {
 
     private final ProductBusiness productBusiness;
-    private final PaginationConverter paginationConverter;
-
-    @GetMapping()
-    public API<List<ProductResponse>> getProductList(
-            @RequestParam(defaultValue = "D") CompanyCategory category,
-            @RequestParam(defaultValue = "0") Integer minimum,
-            @RequestParam(defaultValue = "1000000") Integer maximum,
-            @RequestParam(defaultValue = "true") Boolean isDesc,
-            @PageableDefault(page = 0, size = 12) Pageable pageable
-        ) {
-        log.info("정렬 중 :  카테고리 {}, minimum : {}, maximum : {}, isDesc : {}, page : {}", category, minimum, maximum, isDesc, pageable);
-        Page<ProductResponse> productResponsePage = productBusiness.getProductList(category, minimum, maximum, isDesc, pageable);
-        Pagination pagination = paginationConverter.createPagination(productResponsePage, pageable, "desc");
-        log.info("product Response : {}", productResponsePage);
-
-        return API.OK(productResponsePage.stream().toList(), pagination);
-    }
 
     @PostMapping("/package/register/{packageId}")
     @Operation(summary = "패키지에 상품 등록", description = "패키지에 등록된 업체가 상품을 1개 등록하기")

@@ -42,6 +42,8 @@ import Event from "./components/User/EventPage/Event.jsx"
 import Support from "./components/User/SupportPage/Support.jsx"
 import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
 import CompanyProtectedRoute from "./components/Company/Basic/ProtectedRoute.jsx";
+import BoardPage from "./components/User/CommunityPage/BoardPage";
+import CreatePostPage from "./components/User/CommunityPage/CreatePostPage";
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
 function CompanyLayout({ children }) {
@@ -125,6 +127,10 @@ function App() {
                 <Route path="/terms" element={<Layout><Terms /></Layout>} />
                 <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
                 <Route path="/location" element={<Layout><Location /></Layout>} />
+
+                {/* 커뮤니티 게시판 페이지 */}
+                <Route path="/community" element={<Layout><BoardPage /></Layout>} />
+                <Route path="/create" element={<Layout><CreatePostPage /></Layout>} />
 
                 {/* /company 페이지 그룹화 및 Nested Routes 적용 */}
                 {/* 회사 메인페이지 */}

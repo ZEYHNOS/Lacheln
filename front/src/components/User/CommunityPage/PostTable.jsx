@@ -1,60 +1,70 @@
-// PostTable.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 
-// 말머리 정리 함수: "자유게시판" → "자유"
 const getPrefix = (boardName) => boardName.replace("게시판", "");
+
+const formatDate = (dateArr) => {
+  if (!Array.isArray(dateArr)) return "작성일 없음";
+  try {
+    const [y, m, d, h = 0, min = 0, s = 0] = dateArr;
+    const date = new Date(y, m - 1, d, h, min, s);
+    const now = new Date();
+    const isToday =
+      date.getFullYear() === now.getFullYear() &&
+      date.getMonth() === now.getMonth() &&
+      date.getDate() === now.getDate();
+
+    return isToday
+      ? date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false })
+      : `${String(y).slice(-2)}.${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")}`;
+  } catch {
+    return "오류";
+  }
+};
 
 export default function PostTable({ posts }) {
   return (
-    <table className="w-full text-center border border-gray-300">
-      <thead className="bg-[#845EC2] text-white">
-        <tr>
-          <th className="p-2 border">글 번호</th>
-          <th className="p-2 border">말머리</th>
-          <th className="p-2 border">제목</th>
-          <th className="p-2 border">글쓴이</th>
-          <th className="p-2 border">등록일</th>
-          <th className="p-2 border">추천</th>
-          <th className="p-2 border">조회</th>
-        </tr>
-      </thead>
-      <tbody>
-        {posts.length === 0 ? (
+    <div className="w-full max-w-[1280px] mx-auto px-4">
+      <table className="w-full text-center border border-gray-300 text-sm">
+        <thead className="bg-[#845EC2] text-white">
           <tr>
-            <td colSpan="7" className="p-4 text-gray-500">
-              게시글이 없습니다.
-            </td>
+            <th className="p-2 border w-12 text-center">번호</th>
+            <th className="p-2 border w-20 text-center">말머리</th>
+            <th className="p-2 border text-center">제목</th> {/* 헤더 중앙 정렬 */}
+            <th className="p-2 border w-32 text-center">글쓴이</th> {/* 헤더 중앙 정렬 */}
+            <th className="p-2 border w-24 text-center">작성일</th>
+            <th className="p-2 border w-12 text-center">추천</th>
+            <th className="p-2 border w-12 text-center">조회</th>
           </tr>
-        ) : (
-          posts.map((post) => (
-            <tr key={post.postId} className="hover:bg-gray-50">
-              <td className="border p-2">{post.postId}</td>
-              <td className="border p-2 font-semibold text-purple-700">
-                [{getPrefix(post.category)}]
+        </thead>
+        <tbody>
+          {posts.length === 0 ? (
+            <tr>
+              <td colSpan="7" className="p-4 text-gray-500 text-center">
+                게시글이 없습니다.
               </td>
-              <td className="border p-2 text-left">
-                <Link
-                  to={`/post/${post.postId}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  {post.postTitle}
-                </Link>
-              </td>
-              <td className="border p-2">{post.userNickName}</td>
-              <td className="border p-2">
-                {new Date(post.postCreate).toLocaleDateString("ko-KR", {
-                  year: "2-digit",
-                  month: "2-digit",
-                  day: "2-digit",
-                })}
-              </td>
-              <td className="border p-2">{post.likeCount}</td>
-              <td className="border p-2">{post.viewCount}</td>
             </tr>
-          ))
-        )}
-      </tbody>
-    </table>
+          ) : (
+            posts.map((post) => (
+              <tr key={post.postId} className="hover:bg-gray-50 h-8">
+                <td className="border px-2 py-1 text-center">{post.postId}</td>
+                <td className="border px-2 py-1 text-purple-700 font-semibold text-center">
+                  [{getPrefix(post.category)}]
+                </td>
+                <td className="border px-2 py-1 text-left">
+                  <Link to={`/post/${post.postId}`} className="text-blue-600 hover:underline">
+                    {post.postTitle}
+                  </Link>
+                </td>
+                <td className="border px-2 py-1 text-left">{post.userNickName}</td>
+                <td className="border px-2 py-1 text-center">{formatDate(post.postCreate)}</td>
+                <td className="border px-2 py-1 text-center">{post.likeCount}</td>
+                <td className="border px-2 py-1 text-center">{post.viewCount}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }

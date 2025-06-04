@@ -21,7 +21,7 @@ public interface PackageToProductRepository extends JpaRepository<PackageToProdu
             "WHERE p.packageEntity.packId = :packId ")
     long countDistinctProductsByPackage(@Param("packId") Long packId);
 
-    List<PackageToProductEntity> findAllByPackageEntity_packId(Long packageId);
+    List<PackageToProductEntity> findAllByPackageEntity(PackageEntity packageEntity);
 
     Optional<PackageToProductEntity> findByPackageEntity_PackIdAndCpId(Long packId, Long cpId);
 

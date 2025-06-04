@@ -56,7 +56,7 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
 //        imageService.deleteProductImage(existingEntity.getPdId());
 
         updateAdditionalFields(existingEntity, req);
-        existingEntity.setFormList(optionEntityList, hashtagEntityList, productImageEntityList, productDescriptionEntityList);
+        existingEntity.updateFormList(optionEntityList, hashtagEntityList, productImageEntityList, productDescriptionEntityList);
 
 
         return repository.save(existingEntity);
@@ -64,7 +64,7 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
 
     @Override
     public void deleteProduct(T entity) {
-        entity.setStatus(ProductStatus.REMOVE);
+        entity.updateStatus(ProductStatus.REMOVE);
         entity.deleteProduct(LocalDateTime.now());
     }
 

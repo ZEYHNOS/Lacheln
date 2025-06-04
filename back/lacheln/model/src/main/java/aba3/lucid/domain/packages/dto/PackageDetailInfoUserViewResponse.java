@@ -4,6 +4,7 @@ import aba3.lucid.domain.product.dto.DescriptionResponse;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -21,4 +22,6 @@ public class PackageDetailInfoUserViewResponse {
     private List<PackageProductResponse> productInfoList;
 
     private int discountrate;
+
+    private LocalTime taskTime;
 }

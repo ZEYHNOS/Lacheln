@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -27,6 +28,8 @@ public class PackageUpdateRequest {
     private String imageUrl;
 
     private List<String> hashTagList;
+
+    private LocalTime taskTime;
 
 
 }

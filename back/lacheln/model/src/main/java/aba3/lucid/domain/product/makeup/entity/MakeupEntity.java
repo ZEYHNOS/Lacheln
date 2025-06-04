@@ -54,9 +54,9 @@ public class MakeupEntity extends ProductEntity {
     public void setAdditionalField(MakeupRequest request) {
         Validator.throwIfNull(request);
 
-        setProductName(request.getName());
-        setTaskTime(request.getTaskTime());
-        setRec(request.getRec());
+        updateProductName(request.getName());
+        updateTaskTime(request.getTaskTime());
+        updateRec(request.getRec());
         setBusinessTrip(request.getBusinessTrip());
         setVisit(request.getVisit());
         setManager(request.getManager());

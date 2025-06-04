@@ -69,9 +69,9 @@ public class StudioEntity extends ProductEntity{
 
 
     public void setAdditionalField(StudioRequest request) {
-        setProductName(request.getName());
-        setTaskTime(request.getTaskTime());
-        setRec(request.getRec());
+        updateProductName(request.getName());
+        updateTaskTime(request.getTaskTime());
+        updateRec(request.getRec());
         setInAvailable(request.getInAvailable());
         setOutAvailable(request.getOutAvailable());
         setMaxPeople(request.getMaxPeople());

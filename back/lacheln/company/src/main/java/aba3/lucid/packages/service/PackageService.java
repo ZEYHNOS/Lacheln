@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j
@@ -117,6 +118,10 @@ public class PackageService {
         // 정보 변경(상태는 변경 X)
         packageEntity.updateAdditionalField(request);
         packageEntity.updateDescription(descriptionConverter.toDescriptionEntityList(packageEntity, request.getDescriptionRequestList()));
+        List<PackageToProductEntity> packageToProductList = packageToProductRepository.findAllByPackageEntity(packageEntity);
+
+        // 모든 패키지 상품 작업 시간 통일
+        updatePackageProductTaskTime(packageToProductList, request.getTaskTime());
 
         return packageRepository.save(packageEntity);
     }
@@ -191,7 +196,8 @@ public class PackageService {
     }
 
     public BigInteger getTotalPrice(Long packageId) {
-        List<PackageToProductEntity> packageToProductEntityList = packageToProductRepository.findAllByPackageEntity_packId(packageId);
+        PackageEntity packageEntity = findByIdWithThrow(packageId);
+        List<PackageToProductEntity> packageToProductEntityList = packageToProductRepository.findAllByPackageEntity(packageEntity);
 
         BigInteger result = BigInteger.ZERO;
         for (PackageToProductEntity entity : packageToProductEntityList) {
@@ -218,7 +224,7 @@ public class PackageService {
         }
 
         // 상품 정보 수정하기
-        product.setStatus(ProductStatus.REMOVE);
+        product.updateStatus(ProductStatus.REMOVE);
 
         // 테이블에서 삭제하기
         PackageToProductEntity packageToProduct = findByPackIdAndCpId(packageId, companyId);
@@ -230,12 +236,19 @@ public class PackageService {
         return packageToProductRepository.findByPackageEntity_PackIdAndCpId(packId, cpId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
-
     // 활성화된 패키지 상품만 볼 수 있음
     public List<PackageEntity> findAllByActivePackage() {
         return packageRepository.findAll().stream()
                 .filter(it -> it.getPackStatus().equals(PackageStatus.ACTIVE))
                 .toList()
                 ;
+    }
+
+    // 패키지에 등록된 모든 상품들의 작업 시간을 통일하기
+    @Transactional
+    private void updatePackageProductTaskTime(List<PackageToProductEntity> packageToProductEntityList, LocalTime taskTime) {
+        for (PackageToProductEntity packageToProduct : packageToProductEntityList) {
+            packageToProduct.getProduct().updateTaskTime(taskTime);
+        }
     }
 }

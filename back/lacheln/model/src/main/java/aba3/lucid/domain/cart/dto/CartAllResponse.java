@@ -21,8 +21,8 @@ public class CartAllResponse {
     private Long cartId;
     private Long cpId;
     private String cpName;
-    private BigInteger discountPrice;
     private BigInteger price;
+    private BigInteger discountPrice;
     private LocalDateTime startTime;
     private LocalTime taskTime;
     private Integer cartQuantity;

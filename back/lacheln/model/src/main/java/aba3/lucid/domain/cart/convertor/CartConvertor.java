@@ -30,6 +30,7 @@ public class CartConvertor {
                     .pdId(cart.getPdId())
                     .pdName(cart.getPdName())
                     .price(cart.getPrice())
+                    .discountPrice(cart.getDiscountPrice())
                     .cartQuantity(cart.getCartQuantity())
                     .pdImageUrl(cart.getPdImageUrl())
                     .startTime(cart.getStartDatetime())

@@ -28,7 +28,8 @@ function Setpackage() {
     
     // 상세 설명 저장 (에디터에서 가져올 JSON 배열)
     const [descriptionList, setDescriptionList] = useState([]);
-    const [workTime, setWorkTime] = useState("00:00");
+    const [hour, setHour] = useState("00");
+    const [minute, setMinute] = useState("00");
 
     // API에서 패키지 정보 가져오기
     useEffect(() => {
@@ -95,6 +96,14 @@ function Setpackage() {
                 }
                 if (packageData.discountrate !== undefined) {
                     setDiscount(Number(packageData.discountrate));
+                }
+                
+                // 작업시간 설정
+                if (packageData.taskTime) {
+                    // HH:mm:ss 형식 분리
+                    const [h, m] = packageData.taskTime.split(":");
+                    setHour(h.padStart(2, '0'));
+                    setMinute(m.padStart(2, '0'));
                 }
                 
                 // endDate 처리 - 배열 형식으로 오는 경우와 문자열로 오는 경우 모두 처리
@@ -297,7 +306,7 @@ function Setpackage() {
             }
             
             // 대표 이미지 업로드 (있을 경우)
-            let imageUrl = imagePreview; // 기존 이미지가 있으면 유지
+            let imageUrl = imagePreview;
             if (image) {
                 const uploadedImageUrl = await uploadImageToServer(image);
                 if (!uploadedImageUrl) {
@@ -309,12 +318,14 @@ function Setpackage() {
             }
             
             // 요청 데이터 준비
+            const taskTime = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
             const packageData = {
                 name: packageInfo.name,
                 discountrate: parseInt(discount),
                 endDate: new Date(endDate).toISOString(),
                 descriptionRequestList: finalDescriptionList,
-                imageUrl: imageUrl
+                imageUrl: imageUrl,
+                taskTime
             };
             
             const response = await apiClient.put(`/package/update/${packageId}`, packageData, {
@@ -423,12 +434,22 @@ function Setpackage() {
                         {/* 작업시간 */}
                         <div className="flex items-center mb-4">
                             <label className="w-24">작업시간</label>
-                            <input 
-                                type="time" 
-                                value={workTime}
-                                onChange={e => setWorkTime(e.target.value)}
-                                className="flex-grow border p-2 rounded bg-white text-black"
-                            />
+                            <input
+                                type="number"
+                                min="0"
+                                max="23"
+                                value={hour}
+                                onChange={e => setHour(e.target.value.padStart(2, '0'))}
+                                className="w-20 border p-2 rounded bg-white text-black mr-2"
+                            /> 시
+                            <input
+                                type="number"
+                                min="0"
+                                max="59"
+                                value={minute}
+                                onChange={e => setMinute(e.target.value.padStart(2, '0'))}
+                                className="w-20 border p-2 rounded bg-white text-black mx-2"
+                            /> 분
                         </div>
                         
                         {/* 할인율 (수정 가능) */}

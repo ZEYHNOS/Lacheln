@@ -8,6 +8,7 @@ import lombok.*;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -39,5 +40,7 @@ public class PackageResponse {
     private int discountrate;
 
     private String imageUrl;
+
+    private LocalTime taskTime;
 
 }

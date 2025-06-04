@@ -48,20 +48,21 @@ function Packagedetail() {
     .map(p => p.companyId || p.cpId)
     .filter(Boolean);
 
+  function arrayToLocalTime(timeArray) {
+    if (!Array.isArray(timeArray) || timeArray.length !== 2) return null;
+    const [hours, minutes] = timeArray;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+  }
   // 패키지 장바구니 추가 함수
   const handlePackageCartAdd = async ({ localDateTime }) => {
     try {
       const packData = {
         packId: data.packageId || data.id,
         packName: data.name,
-        discountPrice: data.discountrate || data.discountRate || 0,
+        totalPrice: totalPrice,
+        discountPrice: benefit ,
         packImageUrl: data.imageUrl ? baseUrl + data.imageUrl.replace(/\\/g, '/') : '',
-        taskTime: data.taskTime ? {
-          hour: parseInt(data.taskTime.split(':')[0]),
-          minute: parseInt(data.taskTime.split(':')[1]),
-          second: 0,
-          nano: 0
-        } : { hour: 0, minute: 0, second: 0, nano: 0 },
+        taskTime: arrayToLocalTime(data.taskTime),
         startTime: localDateTime,
         cartAddProductRequest: (data.productInfoList || []).map(p => ({
           cp_id: p.companyId || p.cpId || 0,
@@ -71,7 +72,7 @@ function Packagedetail() {
           pd_image_url: p.imageUrl ? baseUrl + p.imageUrl.replace(/\\/g, '/') : '',
           pd_price: p.price,
           cart_quantity: 1,
-          task_time: { hour: 0, minute: 0, second: 0, nano: 0 }, // 필요시 계산
+          task_time: arrayToLocalTime(data.taskTime), // 필요시 계산
           start_datetime: localDateTime,
           option_details: [] // 옵션이 있다면 여기에 추가
         }))
@@ -85,6 +86,7 @@ function Packagedetail() {
         setShowSchedule(false);
       } else {
         toast.error('패키지 장바구니 추가에 실패했습니다.');
+        console.log('패키지 장바구니 추가 실패:', response.data);
       }
     } catch (e) {
       toast.error('패키지 장바구니 추가 중 오류가 발생했습니다.');

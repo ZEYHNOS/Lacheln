@@ -84,7 +84,8 @@ function AddCompany({ onClose, onComplete }) {
             const requestData = {
                 package_name: packageName,
                 cp_email1: invitedUsers[0].email,
-                cp_email2: invitedUsers[1].email
+                cp_email2: invitedUsers[1].email,
+                taskTime: '00:00'  // 기본 작업시간 설정
             };
             
             const response = await apiClient.post('/package/register', requestData);

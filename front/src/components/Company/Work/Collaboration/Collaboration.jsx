@@ -292,7 +292,7 @@ function Collaboration() {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <button 
                                                     className="text-purple-600 hover:text-purple-900 mr-3 bg-white border border-purple-600 rounded-md px-2 py-1"
-                                                    onClick={() => navigate(`/company/collaboration/setproduct/${pkg.id || pkg.packageId}`)}
+                                                    onClick={() => navigate(`/company/collaboration/setproduct/${pkg.packageId}`)}
                                                 >
                                                     상세보기
                                                 </button>

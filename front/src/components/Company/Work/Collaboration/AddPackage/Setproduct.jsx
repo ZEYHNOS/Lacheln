@@ -11,7 +11,7 @@ function AddPackage() {
     const navigate = useNavigate();
     
     // 로그인 사용자 정보
-    const [myCompanyId, setMyCompanyId] = useState(null);
+    const [myCompanyName, setMyCompanyName] = useState(null);
     const isOwner = true;
     
     // 내 상품 선택
@@ -24,6 +24,7 @@ function AddPackage() {
     const [discount, setDiscount] = useState(0);
     const [image, setImage] = useState(null);
     const [endDate, setEndDate] = useState('');
+    const [taskTime, setTaskTime] = useState('00:00');
     
     // 패키지 ID와 정보
     const [packageId, setPackageId] = useState(id || null);
@@ -43,18 +44,107 @@ function AddPackage() {
         const fetchUserInfo = async () => {
             try {
                 const res = await apiClient.get('/auth/me', { withCredentials: true });
+                console.log('사용자 정보:', res.data.data);
                 if (res.data && res.data.data) {
-                    const userId = res.data.data.id;
-                    setMyCompanyId(userId);
+                    const companyName = res.data.data.name;
+                    console.log('내 회사 이름:', companyName);
+                    setMyCompanyName(companyName);
                 }
             } catch (err) {
                 console.error('사용자 정보 조회 실패:', err);
-                setMyCompanyId(1);
             }
         };
         
         fetchUserInfo();
     }, []);
+
+    // 내 상품 리스트 불러오기
+    useEffect(() => {
+        const fetchMyProducts = async () => {
+            try {
+                const res = await apiClient.get('/product/list?status=INACTIVE', { withCredentials: true });
+                if (res.data && res.data.data) {
+                    setMyProductList(res.data.data);
+                }
+            } catch (err) {
+                console.error('상품 목록 불러오기 실패:', err);
+            }
+        };
+        
+        fetchMyProducts();
+    }, []);
+
+    // 패키지 정보 불러오기
+    useEffect(() => {
+        const fetchPackageData = async () => {
+            if (!packageId || !myCompanyName) {
+                console.log('패키지 정보 조회 조건 미충족:', { packageId, myCompanyName });
+                return;
+            }
+            
+            try {
+                console.log('패키지 정보 조회 시작:', { packageId, myCompanyName });
+                const res = await apiClient.get(`/package/${packageId}`);
+                console.log('패키지 정보:', res.data.data);
+                setPackageInfo(res.data.data);
+                
+                // 패키지 정보에서 기본 데이터 설정
+                if (res.data.data) {
+                    const data = res.data.data;
+                    setPackageName(data.name || '');
+                    setTaskTime(data.taskTime || '00:00');
+                    
+                    // 각 업체별 상품 선택 상태 확인
+                    let selectedCount = 0;
+                    if (data.admin && data.admin.productId) selectedCount++;
+                    if (data.cp1 && data.cp1.productId) selectedCount++;
+                    if (data.cp2 && data.cp2.productId) selectedCount++;
+                    
+                    setAllSelected(selectedCount === 3);
+                    
+                    // 내 업체가 이미 상품을 등록했는지 확인
+                    let myCompany = null;
+                    let myProductRegistered = false;
+                    let myProduct = null;
+
+                    // 회사 이름으로 비교
+                    if (data.admin && data.admin.name === myCompanyName) {
+                        myCompany = 'admin';
+                        myProductRegistered = !!data.admin.productId;
+                        myProduct = data.admin;
+                    } else if (data.cp1 && data.cp1.name === myCompanyName) {
+                        myCompany = 'cp1';
+                        myProductRegistered = !!data.cp1.productId;
+                        myProduct = data.cp1;
+                    } else if (data.cp2 && data.cp2.name === myCompanyName) {
+                        myCompany = 'cp2';
+                        myProductRegistered = !!data.cp2.productId;
+                        myProduct = data.cp2;
+                    } else {
+                        console.log('내 회사와 일치하는 업체를 찾을 수 없습니다');
+                        // 모든 업체 이름 비교 로깅
+                        if (data.admin) console.log('admin.name == myCompanyName:', data.admin.name === myCompanyName);
+                        if (data.cp1) console.log('cp1.name == myCompanyName:', data.cp1.name === myCompanyName);
+                        if (data.cp2) console.log('cp2.name == myCompanyName:', data.cp2.name === myCompanyName);
+                    }
+                    
+                    // 이미 상품이 등록되었으면 선택 완료 상태로 설정
+                    if (myProductRegistered) {
+                        setSelectDone(true);
+                        console.log('이미 등록된 상품이 있습니다:', myProduct.productName);
+                    } else {
+                        // 상품이 등록되지 않았으면 선택 가능한 상태로 설정
+                        setSelectDone(false);
+                        console.log('등록된 상품이 없습니다. 상품 선택이 필요합니다.');
+                    }
+                }
+            } catch (err) {
+                console.error('패키지 정보 조회 실패:', err);
+            }
+        };
+
+        fetchPackageData();
+    }, [packageId, myCompanyName]);
 
     // 모든 업체가 상품을 선택했는지 확인
     const checkAllProductsSelected = (packageData) => {
@@ -70,120 +160,48 @@ function AddPackage() {
         setAllSelected(selectedCount === 3);
     };
 
-    // 패키지 정보 조회 함수
-    const fetchPackageInfo = async (packageId) => {
-        try {
-            const res = await apiClient.get(`/package/${packageId}`, { withCredentials: true });
-            setPackageInfo(res.data.data);
-            
-            // 패키지 정보에서 기본 데이터 설정
-            if (res.data.data) {
-                const data = res.data.data;
-                setPackageName(data.name || '');
-                
-                // 문자열로 변환하여 비교
-                const myCompanyIdStr = String(myCompanyId);
-                
-                // 각 업체별 상품 선택 상태 확인 (새로운 데이터 구조 처리)
-                let selectedCount = 0;
-                
-                // admin, cp1, cp2 각각이 productId를 가지고 있는지 확인
-                if (data.admin && data.admin.productId) selectedCount++;
-                if (data.cp1 && data.cp1.productId) selectedCount++;
-                if (data.cp2 && data.cp2.productId) selectedCount++;
-                
-                // 3개 업체 모두 상품을 등록했으면 allSelected를 true로 설정
-                setAllSelected(selectedCount === 3);
-                
-                // 내 업체가 이미 상품을 등록했는지 확인
-                let myCompany = null;
-                let myProductRegistered = false;
-                let myProduct = null;
-
-                // 문자열로 변환하여 비교 (확실한 타입 일치)
-                if (data.admin && String(data.admin.id) === myCompanyIdStr) {
-                    myCompany = 'admin';
-                    myProductRegistered = !!data.admin.productId;
-                    myProduct = data.admin;
-                } else if (data.cp1 && String(data.cp1.id) === myCompanyIdStr) {
-                    myCompany = 'cp1';
-                    myProductRegistered = !!data.cp1.productId;
-                    myProduct = data.cp1;
-                } else if (data.cp2 && String(data.cp2.id) === myCompanyIdStr) {
-                    myCompany = 'cp2';
-                    myProductRegistered = !!data.cp2.productId;
-                    myProduct = data.cp2;
-                } else {
-                    console.log('내 회사와 일치하는 업체를 찾을 수 없습니다');
-                    // 모든 업체 ID 명시적 변환 후 비교 로깅
-                    if (data.admin) console.log('admin.id == myCompanyId:', String(data.admin.id) === myCompanyIdStr);
-                    if (data.cp1) console.log('cp1.id == myCompanyId:', String(data.cp1.id) === myCompanyIdStr);
-                    if (data.cp2) console.log('cp2.id == myCompanyId:', String(data.cp2.id) === myCompanyIdStr);
-                }
-                
-                // 이미 상품이 등록되었으면 선택 완료 상태로 설정
-                if (myProductRegistered) {
-                    setSelectDone(true);
-                    console.log('이미 등록된 상품이 있습니다:', myProduct.productName);
-                } else {
-                    // 상품이 등록되지 않았으면 선택 가능한 상태로 설정
-                    setSelectDone(false);
-                    console.log('등록된 상품이 없습니다. 상품 선택이 필요합니다.');
-                }
-            }
-        } catch (err) {
-            console.error('패키지 정보 조회 실패:', err);
-        }
+    // 현재 사용자가 admin인지 확인하는 함수
+    const isAdmin = () => {
+        return packageInfo && packageInfo.admin && packageInfo.admin.name === myCompanyName;
     };
-
-    // URL에서 패키지 ID가 있거나 상태로 패키지 ID가 있으면 정보 조회
-    useEffect(() => {
-        // 우선 myCompanyId가 설정되어 있어야 함
-        if (myCompanyId && packageId) {
-            fetchPackageInfo(packageId);
-        }
-    }, [packageId, myCompanyId]);
 
     // 이미 상품을 등록한 경우 협업 페이지로 리다이렉트
     useEffect(() => {
-        if (packageInfo && myCompanyId) {
+        if (packageInfo && myCompanyName) {
             let myProductRegistered = false;
             let myCompanyType = '';
             
-            // 문자열로 변환
-            const myCompanyIdStr = String(myCompanyId);
-            
-            // 내가 이미 상품을 등록했는지 확인 (모든 ID를 문자열로 변환하여 비교)
-            if (packageInfo.admin && String(packageInfo.admin.id) === myCompanyIdStr) {
+            // 내가 이미 상품을 등록했는지 확인 (회사 이름으로 비교)
+            if (packageInfo.admin && packageInfo.admin.name === myCompanyName) {
                 myCompanyType = 'admin';
                 myProductRegistered = !!packageInfo.admin.productId;
-            } else if (packageInfo.cp1 && String(packageInfo.cp1.id) === myCompanyIdStr) {
+            } else if (packageInfo.cp1 && packageInfo.cp1.name === myCompanyName) {
                 myCompanyType = 'cp1';
                 myProductRegistered = !!packageInfo.cp1.productId;
-            } else if (packageInfo.cp2 && String(packageInfo.cp2.id) === myCompanyIdStr) {
+            } else if (packageInfo.cp2 && packageInfo.cp2.name === myCompanyName) {
                 myCompanyType = 'cp2';
                 myProductRegistered = !!packageInfo.cp2.productId;
             } else {
-                console.log('내 회사 ID와 일치하는 회사를 찾을 수 없습니다:', myCompanyId);
+                console.log('내 회사와 일치하는 회사를 찾을 수 없습니다:', myCompanyName);
                 console.log('패키지 참여 회사들:', {
-                    admin: packageInfo.admin ? packageInfo.admin.id : '없음',
-                    cp1: packageInfo.cp1 ? packageInfo.cp1.id : '없음',
-                    cp2: packageInfo.cp2 ? packageInfo.cp2.id : '없음'
+                    admin: packageInfo.admin ? packageInfo.admin.name : '없음',
+                    cp1: packageInfo.cp1 ? packageInfo.cp1.name : '없음',
+                    cp2: packageInfo.cp2 ? packageInfo.cp2.name : '없음'
                 });
             }
             
-            // ID 비교 로그 추가 (문자열 변환)
+            // 이름 비교 로그 추가
             if (packageInfo.admin) {
-                console.log(`admin ID (${packageInfo.admin.id}) == myCompanyId (${myCompanyId}): ${String(packageInfo.admin.id) === myCompanyIdStr}`);
+                console.log(`admin name (${packageInfo.admin.name}) == myCompanyName (${myCompanyName}): ${packageInfo.admin.name === myCompanyName}`);
             }
             if (packageInfo.cp1) {
-                console.log(`cp1 ID (${packageInfo.cp1.id}) == myCompanyId (${myCompanyId}): ${String(packageInfo.cp1.id) === myCompanyIdStr}`);
+                console.log(`cp1 name (${packageInfo.cp1.name}) == myCompanyName (${myCompanyName}): ${packageInfo.cp1.name === myCompanyName}`);
             }
             if (packageInfo.cp2) {
-                console.log(`cp2 ID (${packageInfo.cp2.id}) == myCompanyId (${myCompanyId}): ${String(packageInfo.cp2.id) === myCompanyIdStr}`);
+                console.log(`cp2 name (${packageInfo.cp2.name}) == myCompanyName (${myCompanyName}): ${packageInfo.cp2.name === myCompanyName}`);
             }
         }
-    }, [packageInfo, myCompanyId]);
+    }, [packageInfo, myCompanyName]);
 
     // Addcompany에서 초대 완료 시 호출될 함수
     const handleInviteComplete = (invitedUsers, newPackageId) => {
@@ -202,22 +220,6 @@ function AddPackage() {
         
         setCompanyModalOpen(false);
     };
-
-    // 내 상품 리스트 불러오기
-    useEffect(() => {
-        const fetchMyProducts = async () => {
-            try {
-                const res = await apiClient.get('/product/list?status=INACTIVE', { withCredentials: true });
-                if (res.data && res.data.data) {
-                    setMyProductList(res.data.data);
-                }
-            } catch (err) {
-                console.error('상품 목록 불러오기 실패:', err);
-            }
-        };
-        
-        fetchMyProducts();
-    }, []);
 
     // 선택 완료 버튼 클릭
     const handleSelectDone = () => {
@@ -268,25 +270,20 @@ function AddPackage() {
 
     // 내 회사가 항상 맨 위에 오도록 정렬
     const sortedParticipants = [
-        ...participants.filter(p => p.companyId === myCompanyId),
-        ...participants.filter(p => p.companyId !== myCompanyId)
+        ...participants.filter(p => p.companyId === myCompanyName),
+        ...participants.filter(p => p.companyId !== myCompanyName)
     ];
 
     // 패키지 설정 페이지로 이동
     const handleNavigateToPackageSetting = () => {
         // 현재 로그인한 사용자가 admin인지 확인
-        if (packageInfo && packageInfo.admin && String(packageInfo.admin.id) === String(myCompanyId)) {
+        if (packageInfo && packageInfo.admin && packageInfo.admin.name === myCompanyName) {
             navigate(`/company/collaboration/setpackage/${packageId}`);
         } else {
             alert("패키지 관리자만 상세 설정이 가능합니다.");
         }
     };
     
-    // 현재 사용자가 admin인지 확인하는 함수
-    const isAdmin = () => {
-        return packageInfo && packageInfo.admin && String(packageInfo.admin.id) === String(myCompanyId);
-    };
-
     return (
         <>
             {companyModalOpen && (
@@ -319,21 +316,21 @@ function AddPackage() {
                                 
                                 {packageInfo && (
                                     <>
-                                        {packageInfo.admin && String(packageInfo.admin.id) === String(myCompanyId) && packageInfo.admin.productId && (
+                                        {packageInfo.admin && String(packageInfo.admin.id) === String(myCompanyName) && packageInfo.admin.productId && (
                                             <div className="flex items-center mt-3">
                                                 <span className="font-medium mr-2 text-black">등록된 상품:</span>
                                                 <span className="text-green-600 font-semibold">{packageInfo.admin.productName}</span>
                                                 <span className="ml-2 text-gray-600">{packageInfo.admin.productPrice?.toLocaleString()}원</span>
                                             </div>
                                         )}
-                                        {packageInfo.cp1 && String(packageInfo.cp1.id) === String(myCompanyId) && packageInfo.cp1.productId && (
+                                        {packageInfo.cp1 && String(packageInfo.cp1.id) === String(myCompanyName) && packageInfo.cp1.productId && (
                                             <div className="flex items-center mt-3">
                                                 <span className="font-medium mr-2 text-black">등록된 상품:</span>
                                                 <span className="text-green-600 font-semibold">{packageInfo.cp1.productName}</span>
                                                 <span className="ml-2 text-gray-600">{packageInfo.cp1.productPrice?.toLocaleString()}원</span>
                                             </div>
                                         )}
-                                        {packageInfo.cp2 && String(packageInfo.cp2.id) === String(myCompanyId) && packageInfo.cp2.productId && (
+                                        {packageInfo.cp2 && String(packageInfo.cp2.id) === String(myCompanyName) && packageInfo.cp2.productId && (
                                             <div className="flex items-center mt-3">
                                                 <span className="font-medium mr-2 text-black">등록된 상품:</span>
                                                 <span className="text-green-600 font-semibold">{packageInfo.cp2.productName}</span>

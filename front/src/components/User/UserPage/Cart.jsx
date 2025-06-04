@@ -16,7 +16,28 @@ export default function Cart() {
             .then(res => {
                 const list = res.data.data || [];
                 setCartList(list);
-                setChecked(list.map(item => item.cartId));
+                // 패키지/단품 분리 및 그룹화
+                const packageMap = {};
+                const singleList = [];
+                list.forEach(item => {
+                    if (item.packId) {
+                        if (!packageMap[item.packId]) {
+                            packageMap[item.packId] = {
+                                ...item,
+                                products: []
+                            };
+                        }
+                        packageMap[item.packId].products.push(item);
+                    } else {
+                        singleList.push(item);
+                    }
+                });
+                const packageList = Object.values(packageMap);
+                // 패키지ID + 단품ID 모두 checked에 포함
+                setChecked([
+                    ...packageList.map(pkg => pkg.packId),
+                    ...singleList.map(item => item.cartId)
+                ]);
                 setAllChecked(true);
             })
             .catch(() => {
@@ -87,9 +108,11 @@ export default function Cart() {
             return sum + item.cartDetails.reduce((dSum, d) => dSum + (d.detailPrice || 0), 0);
         }, 0);
 
-    const totalDiscount = cartList
-        .filter(item => checked.includes(item.cartId))
-        .reduce((sum, item) => sum + (item.discountPrice || 0), 0);
+    // 패키지/단품 할인금액 계산 (패키지별 discountPrice는 하나만, 단품은 개별)
+    const totalDiscount = [
+        ...packageList.filter(pkg => checked.includes(pkg.packId)).map(pkg => pkg.discountPrice || 0),
+        ...singleList.filter(item => checked.includes(item.cartId)).map(item => item.discountPrice || 0)
+    ].reduce((sum, d) => sum + d, 0);
 
     const finalPrice = totalProductPrice + totalExtraPrice - totalDiscount;
 
@@ -166,29 +189,43 @@ export default function Cart() {
                 ) : (
                     <>
                         {/* 패키지 상품 */}
-                        {packageList.map(pkg => (
-                            <div key={pkg.packId} className="mb-6 border-b pb-4">
-                                <input
-                                    type="checkbox"
-                                    checked={checked.includes(pkg.packId)}
-                                    onChange={() => handlePackageCheck(pkg.packId)}
-                                    className="mr-2 accent-[#845EC2] w-5 h-5"
-                                    style={{ accentColor: '#845EC2' }}
-                                />
-                                <span className="font-bold text-lg">[패키지] {pkg.packName}</span>
-                                <div className="flex flex-col gap-2 mb-2 mt-2 ml-6">
-                                    {pkg.products.map(p => (
-                                        <div key={p.cartId} className="flex items-center">
-                                            <img src={p.pdImageUrl} alt={p.pdName} className="w-12 h-12 mr-2" />
-                                            <span>[{p.cpName}] {p.pdName}</span>
+                        {packageList.map(pkg => {
+                            const firstProduct = pkg.products[0];
+                            return (
+                                <div key={pkg.packId} className="flex items-center border-b py-4">
+                                    <input
+                                        type="checkbox"
+                                        checked={checked.includes(pkg.packId)}
+                                        onChange={() => handlePackageCheck(pkg.packId)}
+                                        className="mr-2 accent-[#845EC2] w-5 h-5"
+                                        style={{ accentColor: '#845EC2' }}
+                                    />
+                                    {/* 왼쪽: 이미지, 상품명, 상세정보 */}
+                                    <div className="flex-1 flex items-start">
+                                        {firstProduct && (
+                                            <img src={firstProduct.pdImageUrl} alt={firstProduct.pdName} className="w-24 h-24 object-cover rounded mr-4" />
+                                        )}
+                                        <div>
+                                            <div className="font-bold text-black text-lg mb-1">[패키지] {pkg.packName}</div>
+                                            {pkg.products.map(p => (
+                                                <div key={p.cartId} className="flex items-center text-semibold">
+                                                    <span>[{p.cpName}] {p.pdName}</span>
+                                                </div>
+                                            ))}
+                                            <div className="text-xs text-gray-500 mb-1">
+                                                예약일시: {formatDateTime(firstProduct.startTime)} / 소요시간: {formatTaskTime(firstProduct.taskTime)}
+                                            </div>
                                         </div>
-                                    ))}
+                                    </div>
+                                    {/* 오른쪽: 가격/원가/할인금액 */}
+                                    <div className="w-1/3 text-right flex flex-col items-end">
+                                        <div className="font-bold text-purple-700 text-xl">{pkg.price?.toLocaleString()}원</div>
+                                        <div className="text-black font-bold mt-1 text-xs">원가 {pkg.products[0]?.price?.toLocaleString() || 0}원</div>
+                                        <div className="text-pink-600 font-bold mt-1 text-xs">할인: -{pkg.discountPrice.toLocaleString()}원</div>
+                                    </div>
                                 </div>
-                                <div className="text-right font-bold text-purple-700 text-xl">
-                                    {pkg.price?.toLocaleString()}원
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                         {/* 단품 상품 */}
                         {singleList.map(item => (
                             <div key={item.cartId} className="flex items-center border-b py-4">
@@ -205,12 +242,14 @@ export default function Cart() {
                                     className="w-24 h-24 object-cover rounded mr-4"
                                 />
                                 <div className="flex-1">
-                                    <div className="font-semibold text-black">[{item.cpName}] {item.pdName}</div>
-                                    <div className="text-xs text-gray-500 mb-1">
+                                    <div className="font-semibold text-black whitespace-nowrap">
+                                        [{item.cpName}] {item.pdName}
+                                    </div>
+                                    <div className="text-xs text-gray-500 whitespace-nowrap">
                                         예약일시: {formatDateTime(item.startTime)} / 소요시간: {formatTaskTime(item.taskTime)}
                                     </div>
                                     {item.cartDetails && item.cartDetails.map(detail => (
-                                        <div key={detail.cartDtId} className="text-xs text-gray-600 ml-2">
+                                        <div key={detail.cartDtId} className="text-xs text-gray-600 whitespace-nowrap">
                                             {detail.optionName}: {detail.optionDetailName} {detail.detailPrice > 0 ? `(+${detail.detailPrice.toLocaleString()}원)` : ''} {formatTaskTime(detail.detailTaskTime)}
                                         </div>
                                     ))}

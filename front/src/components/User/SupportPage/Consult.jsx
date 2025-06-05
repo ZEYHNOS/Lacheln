@@ -1,16 +1,51 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { setHours, setMinutes } from 'date-fns';
+
 import Person from "../../../image/Support/person.png";
 import Smartphone from "../../../image/Support/smartphone.png";
 import Email from "../../../image/Support/email.png";
 import Weekday from "../../../image/Support/weekday.png";
 import Call from "../../../image/Support/call.png";
 
+function formatDate(date) {
+    return date.toISOString().split('T')[0]; // yyyy-mm-dd
+}
+
+function getWeekdayName(date) {
+    return ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+}
+
+// 시간 필터링 함수
+function isFutureTime(date, timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const selectedDateTime = new Date(date);
+    selectedDateTime.setHours(hours, minutes, 0, 0);
+    return selectedDateTime > new Date();
+}
+
 export default function Consult() {
-    const [showModal, setShowModal] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedTime, setSelectedTime] = useState('');
     const [emailLocal, setEmailLocal] = useState("");
     const [emailDomain, setEmailDomain] = useState("gmail.com");
     const [customDomain, setCustomDomain] = useState("");
+    const [showModal, setShowModal] = useState(false);
+
+    // 가상의 예약된 시간 데이터 (날짜 기준)
+    const dummyReservedSlots = {
+        "2025-06-06": ["10:30", "13:00"],
+        "2025-06-10": ["11:00", "15:00"],
+    };
+
+    const times = [
+        '10:00', '10:30', '11:00', '11:30',
+        '13:00', '13:30', '14:00', '14:30',
+        '15:00', '15:30', '16:00', '16:30',
+        '17:00', '17:30'
+    ];
 
     const menuItems = [
         { label: "고객지원", path: "/support" },
@@ -19,21 +54,24 @@ export default function Consult() {
         { label: "건의함", path: "/suggestion" },
     ];
 
+    const formattedDate = selectedDate ? formatDate(selectedDate) : null;
+    const reservedTimes = formattedDate && dummyReservedSlots[formattedDate] ? dummyReservedSlots[formattedDate] : [];
+
     const [agreeChecked, setAgreeChecked] = useState(false);
     const getFullEmail = (localPart) => {
-    return `${localPart}@${emailDomain === "직접 입력" ? customDomain : emailDomain}`;
+        return `${localPart}@${emailDomain === "직접 입력" ? customDomain : emailDomain}`;
     };
 
     const handleSubmit = () => {
-    if (!agreeChecked) {
-    const fullEmail = getFullEmail(emailLocal);
-    console.log("제출 이메일", fullEmail);
-    alert("개인정보 수집에 동의해주세요.");
-    return;
-    }
-  // 실제 제출 로직
-    alert("상담 신청이 완료되었습니다.");
-};
+        if (!agreeChecked) {
+            const fullEmail = getFullEmail(emailLocal);
+            console.log("제출 이메일", fullEmail);
+            alert("개인정보 수집에 동의해주세요.");
+            return;
+        }
+        // 실제 제출 로직
+        alert("상담 신청이 완료되었습니다.");
+    };
 
     return (
         <>
@@ -98,7 +136,7 @@ export default function Consult() {
                             </div>
                             <div className="w-[68%] flex items-center pl-3 py-3 gap-2">
                                 <input type="text" placeholder="example" className="w-[30%] bg-transparent outline-none border-b border-gray-300"
-                                value={emailLocal} onChange={(e) => setEmailLocal(e.target.value)} />
+                                    value={emailLocal} onChange={(e) => setEmailLocal(e.target.value)} />
                                 <span>@</span>
                                 {emailDomain === "직접 입력" ? (
                                     <input
@@ -124,32 +162,57 @@ export default function Consult() {
                             </div>
                         </div>
 
-                        {/* 요일 및 시간 */}
+                        {/* 날짜 및 시간 선택 */}
                         <div className="flex w-[530px] mx-auto border-2 border-[#B39CD0] rounded-[10px] overflow-hidden">
                             <div className="w-[32%] flex items-center justify-center border-r-[5px] border-[#B39CD0] bg-[#f3ebf9] py-1.5">
-                                <img src={Weekday} alt="Weekday Icon" className="w-7 h-7" />
-                                상담 요일/시간
+                                <img src={Weekday} alt="Weekday Icon" className="w-7 h-7 mr-1" />
+                                상담 일시
                             </div>
-                            <div className="w-[68%] flex items-center justify-around pl-3 py-3">
-                                <select className="w-[30%] bg-transparent outline-none">
-                                    {['월', '화', '수', '목', '금'].map(day => (
-                                        <option key={day}>{day}</option>
-                                    ))}
-                                </select>
-                                <select className="w-[40%] bg-transparent outline-none">
-                                    {['10:00', '10:30', '11:00', '11:30',
-                                        '13:00', '13:30', '14:00', '14:30',
-                                        '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'].map(time => (
-                                            <option key={time}>{time}</option>
-                                        ))}
+                            <div className="w-[68%] flex flex-col justify-around pl-3 py-3">
+                                <DatePicker
+                                    selected={selectedDate}
+                                    onChange={(date) => {
+                                        setSelectedDate(date);
+                                        setSelectedTime('');
+                                    }}
+                                    minDate={new Date()}
+                                    dateFormat="yyyy년 MM월 dd일"
+                                    placeholderText="날짜 선택"
+                                    className="bg-transparent outline-none border-b border-[#ccc] w-full mb-2"
+                                    filterDate={(date) => {
+                                        const day = date.getDay();
+                                        return day !== 0 && day !== 6; // 일(0), 토(6) 제외
+                                    }}
+                                />
+                                {selectedDate && (
+                                    <span className="text-sm text-gray-600">
+                                        선택된 요일: {getWeekdayName(selectedDate)}
+                                    </span>
+                                )}
+                                <select
+                                    className="w-[80%] mt-2 bg-transparent outline-none border-b border-[#ccc]"
+                                    value={selectedTime}
+                                    onChange={(e) => setSelectedTime(e.target.value)}
+                                    disabled={!selectedDate}
+                                >
+                                    <option value="">시간 선택</option>
+                                    {times.map((time) => {
+                                        const isReserved = reservedTimes.includes(time);
+                                        const isPastTime = selectedDate && !isFutureTime(selectedDate, time);
+                                        const isDisabled = isReserved || isPastTime;
+                                        return (
+                                            <option key={time} value={time} disabled={isDisabled}>
+                                                {time} {isReserved ? '⛔ 예약됨' : isPastTime ? '⏳ 지난시간' : ''}
+                                            </option>
+                                        );
+                                    })}
                                 </select>
                             </div>
                         </div>
-
                         {/* 개인정보 동의 */}
                         <div className="text-center mt-5">
                             <input type="checkbox" id="outsideAgree" className="scale-125 accent-[#845EC2]"
-                            checked={agreeChecked}  onChange={(e) => setAgreeChecked(e.target.checked)} />
+                                checked={agreeChecked} onChange={(e) => setAgreeChecked(e.target.checked)} />
                             <label htmlFor="outsideAgree" className="ml-2 text-xl">개인정보 수집동의</label>
                             <button onClick={() => setShowModal(true)} className="ml-2 text-purple-700 underline text-sm">[내용보기]</button>
                         </div>
@@ -254,7 +317,7 @@ export default function Consult() {
                         </p>
                         <div className="flex  justify-center items-center mb-4">
                             <input type="checkbox" id="modalAgree" className="mr-2  accent-purple-600 w-5 h-5"
-                            checked={agreeChecked} onChange={(e) => setAgreeChecked(e.target.checked)} />
+                                checked={agreeChecked} onChange={(e) => setAgreeChecked(e.target.checked)} />
                             <label htmlFor="agree" className="text-[18px] font-semibold text-[#000000]">
                                 위 약관에 동의합니다.
                             </label>

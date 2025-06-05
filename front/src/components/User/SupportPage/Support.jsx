@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Help from "../../../image/Support/help.png";
 import Menu from "../../../image/Support/menu.png";
@@ -19,14 +19,14 @@ export function Support() {
         { label: "복구", path: "/support" },
         { label: "광고", path: "/support" },
         { label: "이벤트", path: "/support" },
-    ]
+    ];
 
     const faqList = [
-        "로그인 비밀번호를 잊어버렸어요.",
-        "이메일 인증이 되지 않아요.",
-        "결제 내역을 확인하고 싶어요.",
-        "휴면 계정을 복구하고 싶어요.",
-        "회원 탈퇴는 어떻게 하나요?",
+        { tag: "이용 방법", question: "로그인 비밀번호를 잊어버렸어요." },
+        { tag: "결제 방법", question: "이메일 인증이 되지 않아요." },
+        { tag: "정보", question: "결제 내역을 확인하고 싶어요" },
+        { tag: "이용 방법", question: "휴면 계정을 복구하고 싶어요." },
+        { tag: "이용 방법", question: "회원 탈퇴는 어떻게 하나요?" }
     ];
 
     return (
@@ -53,7 +53,6 @@ export function Support() {
                                 {item.label}
                             </Link>
                         </li>
-
                     ))}
                 </ul>
 
@@ -68,7 +67,9 @@ export function Support() {
                     <img src={Help} alt="Help Icon" className="w-7 h-7" />
                     <div className="cursor-pointer hover:underline">문의방법 자세히보기</div>
                     <img src={Menu} alt="Menu Icon" className="w-7 h-7" />
-                    <div className="cursor-pointer hover:underline">문의유형 전체보기</div>
+                    <div className="cursor-pointer hover:underline" onClick={() => setShowTypeToggle(prev => !prev)}>
+                        문의유형 전체보기
+                    </div>
                 </div>
 
                 {/* 네비게이션 바2 */}
@@ -92,13 +93,13 @@ export function Support() {
                                     {item.label}
                                 </Link>
                             </li>
-
                         ))}
                     </ul>
                 </div>
 
                 <div className="mt-4 ml-8 text-[24px]">도움말 검색</div>
-                <div className="mt-4 ml-8">검색으로 빠르게 도움말을 찾아보실 수 있습니다.
+                <div className="mt-4 ml-8">
+                    검색으로 빠르게 도움말을 찾아보실 수 있습니다.
                     <div className="flex justify-end gap-4 mr-8 text-[#845EC2] font-semibold">
                         <div className="relative w-[450px]">
                             <input
@@ -111,16 +112,18 @@ export function Support() {
                         </div>
                     </div>
                 </div>
+
                 <div className="mt-4 ml-8 text-[24px]">자주 묻는 질문</div>
-                <hr></hr>
+                <hr />
                 <div className="mt-4 ml-8">원하는 도움말 확인 후 해결되지 않은 문제는 도움말 하단의 문의하기 버튼을 눌러 문의할 수 있습니다.</div>
 
-                <div className="mt-4 ml-8">
-                    <ul className="list-disc list-inside space-y-2 text-[16px] text-gray-800">
-                        {faqList.map((question, index) => (
-                            <li key={index}>{question}</li>
-                        ))}
-                    </ul>
+                <div className="mt-4 ml-8 w-full max-w-4xl">
+                    {faqList.map((faq, index) => (
+                        <div key={index} className="py-4 border-b border-gray-300 cursor-pointer hover:bg-gray-50 transition">
+                            <div className="text-[16px] font-medium text-gray-900 mb-1">{faq.tag}</div>
+                            <div className="text-sm text-gray-600">{faq.question}</div>
+                        </div>
+                    ))}
                 </div>
 
                 <Link to="/inquiry">
@@ -142,3 +145,5 @@ export function Support() {
         </>
     );
 }
+
+export default Support;

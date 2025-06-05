@@ -56,11 +56,11 @@ function Product() {
             try {
                 let url;
                 if (isFirstLoad) {
-                    url = "/product";
+                    url = "/api/product/list";
                 } else {
                     url = selected === "드레스"
-                        ? `/product?page=${currentPage - 1}`
-                        : `/product?category=${categoryCodes[selected]}&page=${currentPage - 1}`;
+                        ? `/api/product?page=${currentPage - 1}`
+                        : `/api/product?category=${categoryCodes[selected]}&page=${currentPage - 1}`;
                     if (minPrice) url += `&minimum=${minPrice}`;
                     if (maxPrice) url += `&maximum=${maxPrice}`;
                 }

@@ -34,6 +34,7 @@ import EditProduct from "./components/Company/Management/Product/EditProduct.jsx
 import MainPage from "./components/User/Mainpage/MainPage.jsx"
 import Cart from "./components/User/UserPage/Cart.jsx"
 import ChoicePayment from "./components/User/UserPage/Payment/ChoicePayment.jsx";
+import PaymentSuccess from "./components/User/UserPage/Payment/PaymentSuccess.jsx";
 import Brand from "./components/User/BrandPage/Brand.jsx"
 import Product from "./components/User/ProductPage/Product.jsx"
 import Productdetail from "./components/User/ProductPage/Productdetail.jsx"
@@ -112,6 +113,7 @@ function App() {
                 {/* 유저 페이지 */}
                 <Route path="/cart" element={<Layout><Cart /></Layout>} />
                 <Route path="/cart/payment" element={<Layout><ChoicePayment /></Layout>} />
+                <Route path="/cart/payment/success" element={<Layout><PaymentSuccess /></Layout>} />
                 {/* 브랜드 페이지 */}
                 <Route path="/brand" element={<Layout><Brand /></Layout>} />
                 {/* 상품 페이지 */}

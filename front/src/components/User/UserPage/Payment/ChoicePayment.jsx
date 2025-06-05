@@ -141,15 +141,6 @@ export default function ChoicePayment() {
                 },
                 async function (rsp) {
                     if (rsp.success) {
-                        // 결제내역(pay_management) 데이터 생성
-                        const pay_management = {
-                            pay_tool: selectedPg,
-                            pay_total_price: finally_price,
-                            pay_status: "PAID",
-                            pay_mileage: usePoint,
-                            paid_at: rsp.paid_at,
-                            pay_detail: pay_detail,
-                        };
                         // 결제상세(pay_detail) 데이터 생성
                         let pay_detail = [];
                         if (packageList.length > 0) {
@@ -160,8 +151,27 @@ export default function ChoicePayment() {
                                 coupon_box_id: selectedCouponId,
                             }));
                         }
-                        await axios.post('/payment/save', pay_management);
+                        // paid_at을 'YYYY-MM-DDTHH:mm:ss' (ISO 8601) 문자열로 변환
+                        const paidAtDate = new Date(rsp.paid_at * 1000);
+                        const pad = n => n.toString().padStart(2, '0');
+                        const paidAtString = `${paidAtDate.getFullYear()}-${pad(paidAtDate.getMonth() + 1)}-${pad(paidAtDate.getDate())}T${pad(paidAtDate.getHours())}:${pad(paidAtDate.getMinutes())}:${pad(paidAtDate.getSeconds())}`;
+                        
+                        // 결제내역(pay_management) 데이터 생성
+                        const pay_management = {
+                            pay_id: merchant_uid,
+                            pay_tool: selectedPg,
+                            pay_total_price: finally_price,
+                            pay_dc_price: totalDiscount,
+                            pay_status: "PAID",
+                            pay_mileage: usePoint,
+                            paid_at: paidAtString,
+                            cart_id_list: cartIdList,
+                            pay_imp_uid: rsp.imp_uid
+                        };
+                        console.log("pay_management :", pay_management);
+                        await apiClient.post('/payment/save', pay_management);
                         alert("결제가 완료되었습니다!");
+                        navigate("/cart/payment/success");
                     } else {
                         alert(`결제 실패: ${rsp.error_msg}`);
                     }

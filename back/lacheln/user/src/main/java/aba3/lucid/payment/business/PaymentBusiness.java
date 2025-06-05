@@ -70,6 +70,7 @@ public class PaymentBusiness {
     public BigInteger verificationAndGetTotalAmount(PaymentVerifyRequest request, String userId) {
         Validator.throwIfNull(request, userId);
 
+        log.info("request : {}", request);
         // 장바구니 ID 한 개도 없을 때
         if (request.getCartIdList().isEmpty()) {
             throw new ApiException(PaymentErrorCode.NO_PRODUCT_FOR_PAYMENT);

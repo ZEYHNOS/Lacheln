@@ -6,6 +6,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.domain.user.enums.TierEnum;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.service.AuthService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -61,6 +62,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
+        log.info("Called CustomUsernamePasswordAuthenticationFilter");
         
         // POST 메서드 확인
         if (!request.getMethod().equals("POST")) {
@@ -82,8 +84,15 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
             String password = jsonNode.get("password").asText();
             String role = jsonNode.get("role").asText();
 
+            UsersEntity user = usersRepository.findByUserEmail(username).orElse(null);
+
+            if(user == null) {
+                throw new AuthenticationServiceException("User not found");
+            }
+
             Collection<GrantedAuthority> roles = List.of(
-                    new SimpleGrantedAuthority("ROLE_"+role)
+                    new SimpleGrantedAuthority("ROLE_"+role),
+                    new SimpleGrantedAuthority("ROLE_TIER_"+user.getUserTier()) // ex) hasRole(TIER_CHALLENGER);
             );
 
             String userPk;
@@ -91,13 +100,8 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
             CustomAuthenticationToken authRequest = null;
 
             if(role.equals("USER")) {
-                Optional<UsersEntity> user = usersRepository.findByUserEmail(username);
-                if(user.isPresent()) {
-                    userPk = user.get().getUserId();
-                    authRequest = new CustomAuthenticationToken(username, password, roles, user.get().getUserRole(), userPk);
-                } else {
-                    throw new ApiException(ErrorCode.NOT_FOUND, "User not found");
-                }
+                userPk = user.getUserId();
+                authRequest = new CustomAuthenticationToken(username, password, roles, user.getUserRole(), user.getUserTier(), userPk);
             } else if(role.equals("COMPANY")) {
                 Optional<CompanyEntity> company = companyRepository.findByCpEmail(username);
                 if(company.isPresent()) {

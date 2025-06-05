@@ -45,7 +45,7 @@ public class JwtHandShakeInterceptor implements HandshakeInterceptor {
             CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
 
             // 인증 객체 생성
-            Authentication auth = new CustomAuthenticationToken(userDetails, "", userDetails.getRole(), userDetails.getAuthorities());
+            Authentication auth = new CustomAuthenticationToken(userDetails, "", userDetails.getRole(), userDetails.getTier(), userDetails.getAuthorities());
 
             //StompHeaderAccess에 사용자 정보 추가
             attributes.put("user", auth); // WebSocket에 사용자 정보 추가!

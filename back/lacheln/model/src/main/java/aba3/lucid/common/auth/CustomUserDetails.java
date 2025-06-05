@@ -1,5 +1,6 @@
 package aba3.lucid.common.auth;
 
+import aba3.lucid.domain.user.enums.TierEnum;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,6 +20,7 @@ public class  CustomUserDetails implements UserDetails {
     private String password;
     private String role;
     private String userId;
+    private TierEnum tier;
     private Long companyId;
 
     @Override

@@ -38,10 +38,17 @@
         private final OAuth2LoginSuccessHandler Oauth2LoginSuccessHandler;
         private final OAuth2LoginFailureHandler Oauth2LoginFailureHandler;
 
-        // ROLE(소비자, 업체, 일반사용자)에 따라 접근 가능한 URL들을 저장하는 리스트
-        private final String[] permitAlls = { "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/email/send", "/email/verify", "/static/**", "/ws/**", "/chatroom/**" };
+        //TODO ROLE(소비자, 업체, 일반사용자)에 따라 접근 가능한 URL들을 저장하는 리스트
+        private final String[] permitAlls = { "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/email/send", "/email/verify", "/static/**" };
         private final String[] roleUser = { "/user/**", "/board/**" };
         private final String[] roleCompany = { "/company/**", "/product/**" };
+        
+        //TODO TIER(Amateur, SEMIPRO, PRO, WORLDCLASS, CHALLENGER)에 따라 접근 가능한 URL들을 저장하는 리스트
+        private final String[] AMATEUR = {};
+        private final String[] SEMIPRO = {};
+        private final String[] PRO = {};
+        private final String[] WORLDCLASS = {};
+        private final String[] CHALLENGER = {};
 
         // Http 요청을 가로채어 인증진행
         @Bean
@@ -51,7 +58,7 @@
                     .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화(세션 사용시에만 활성화 우리는 토큰 사용으로 필요없음)
                     .cors(cors -> cors.configurationSource(request -> { // TODO AbstractHttpConfigurer::disable
                         CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(List.of("http://localhost:3000", "ws://localhost:5500"));
+                        config.setAllowedOrigins(List.of("http://localhost:3000"));
                         config.setAllowCredentials(true);
                         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         config.setAllowedHeaders(List.of("*"));
@@ -60,8 +67,13 @@
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
                     .authorizeHttpRequests(auth -> auth
                             .requestMatchers(permitAlls).permitAll()
-                            .requestMatchers(roleUser).permitAll() // TODO .hasRole("USER") 추가예정
-                            .requestMatchers(roleCompany).permitAll() // TODO .hasRole("COMPANY") 추가예정
+                            .requestMatchers(roleUser).permitAll()                  //TODO .hasRole("USER") 추가예정
+                            .requestMatchers(roleCompany).permitAll()               //TODO .hasRole("COMPANY") 추가예정
+                            .requestMatchers(AMATEUR).hasRole("TIER_AMATEUR")       //TODO Tier에 따라 접근 가능한 URL주소 등록
+                            .requestMatchers(SEMIPRO).hasRole("TIER_SEMIPRO")       //TODO Tier에 따라 접근 가능한 URL주소 등록
+                            .requestMatchers(PRO).hasRole("TIER_PRO")               //TODO Tier에 따라 접근 가능한 URL주소 등록
+                            .requestMatchers(WORLDCLASS).hasRole("TIER_WORLDCLASS") //TODO Tier에 따라 접근 가능한 URL주소 등록
+                            .requestMatchers(CHALLENGER).hasRole("TIER_CHALLENGER") //TODO Tier에 따라 접근 가능한 URL주소 등록
                             .anyRequest().permitAll()
                     ) // ROLE에 따른 접근 권한 설정
                     .formLogin(form -> form.loginProcessingUrl("/login"))

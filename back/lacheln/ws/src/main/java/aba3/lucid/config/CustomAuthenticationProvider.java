@@ -62,6 +62,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                     null,
                     authorities,
                     userDetails.getRole(),
+                    userDetails.getTier(),
                     userId // 로그인 타입에 따라 적절한 ID를 전달
             );
         }

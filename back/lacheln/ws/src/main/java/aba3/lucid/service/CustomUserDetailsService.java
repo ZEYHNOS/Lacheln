@@ -42,6 +42,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         .role(usersEntity.getUserRole())
                         .password(null)
                         .userId(usersEntity.getUserId())
+                        .tier(usersEntity.getUserTier())
                         .build();
             }
             // 유저가 Social 형태로 로그인을 진행할때
@@ -50,6 +51,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                     .role(usersEntity.getUserRole())
                     .password(usersEntity.getUserPassword())
                     .userId(usersEntity.getUserId())
+                    .tier(usersEntity.getUserTier())
                     .build();
         } else if(company.isPresent())  {
             // 유저가 없으면 업체쪽임으로 해당 로직실행

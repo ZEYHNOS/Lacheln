@@ -2,6 +2,8 @@ package aba3.lucid.jwt;
 
 import aba3.lucid.common.auth.CustomAuthenticationToken;
 import aba3.lucid.common.auth.CustomUserDetails;
+import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.domain.user.enums.TierEnum;
 import aba3.lucid.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.Cookie;
@@ -31,8 +33,11 @@ public class JwtTokenProvider {
 
     // Access 토큰 생성
     public String createAccessToken(String userEmail, String role) {
+        CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
         Claims claims = Jwts.claims().setSubject(userEmail);
         claims.put("role", role);
+        log.info("tier : {}", "" + userDetails.getTier());
+        claims.put("tier", userDetails.getTier());
         Date now = new Date();
         Date validity = new Date(now.getTime() + Duration.ofDays(1).toMillis()); // 1시간 유효
 
@@ -47,8 +52,10 @@ public class JwtTokenProvider {
 
     // Refresh 토큰 생성
     public String createRefreshToken(String userEmail, String role) {
+        CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(userEmail);
         Claims claims = Jwts.claims().setSubject(userEmail);
         claims.put("role", role);
+        claims.put("tier", userDetails.getTier());
         Date now = new Date();
         Date validity = new Date(now.getTime() + Duration.ofDays(7).toMillis()); // 1일 유효
         log.info("secretKey : {}", secretKey);
@@ -66,10 +73,12 @@ public class JwtTokenProvider {
         CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(getUserEmail(token));
         CustomAuthenticationToken customAuthenticationToken;
         String role = userDetails.getRole(); // "USER" 또는 "COMPANY"일 경우
+        TierEnum tier = userDetails.getTier();
         Collection<GrantedAuthority> authorities = List.of(
-                new SimpleGrantedAuthority("ROLE_" + role)
+                new SimpleGrantedAuthority("ROLE_" + role),
+                new SimpleGrantedAuthority("ROLE_TIER_" + tier)
         );
-        customAuthenticationToken = new CustomAuthenticationToken(userDetails, "", role, authorities);
+        customAuthenticationToken = new CustomAuthenticationToken(userDetails, "", role, tier, authorities);
         return customAuthenticationToken;
     }
 

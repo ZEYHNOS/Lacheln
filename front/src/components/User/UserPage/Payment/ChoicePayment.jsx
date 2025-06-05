@@ -97,20 +97,27 @@ export default function ChoicePayment() {
     // 5. 포인트 적립 예상
     const Lachelnpoint = Math.floor(finalPrice * 0.015);
 
-    // 결제하기 버튼처리리
+    // cartIdList 만들기
+    const packageCartIds = packageList.flatMap(pkg => pkg.products.map(p => p.cartId));
+    const singleCartIds = singleList.map(item => item.cartId);
+    const cartIdList = [...packageCartIds, ...singleCartIds];
+
+    // 결제하기 버튼처리
     const handlePayment = async () => {
         try {
             // 1. 백엔드에 merchant_uid 요청(결제고유번호 백엔드에서 생성)
-            const merchant = await apiClient.post('/payment/verify');
+            const merchant = await apiClient.post('/payment/verify', {withCredentials: true});
             const merchant_uid = merchant.data.merchant_uid;
+            console.log("백엔드에서 UID :", merchant_uid);
             
             // 2. 결제금액 요청(백엔드에서 유효성 검사 및 결제금액 반환)
             const payment_verify = await apiClient.post('/payment/verify', {
-                cartId,
+                cartIdList,
                 mileage: usePoint,
-                couponId: selectedCouponId,
+                couponIdList: selectedCouponId,
             }, {withCredentials: true});
             const finally_price = payment_verify.data.finally_price;
+            console.log("백엔드에서 결제금액 :", finally_price);
 
             // 3. PG사 초기화
             const { IMP } = window;

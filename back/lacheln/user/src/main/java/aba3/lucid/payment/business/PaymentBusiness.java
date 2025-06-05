@@ -53,7 +53,7 @@ public class PaymentBusiness {
 
         UsersEntity user = userService.findByIdWithThrow(userId);
         List<CartAllResponse> cartAllResponseList = new ArrayList<>();
-//        List<CartAllResponse> cartAllResponseList = cartService.findAllById(request.getCartIdList());
+//        List<CartAllResponse> cartAllResponseList = cartService.getCarts(request.getCartIdList());
         PayManagementEntity payManagement = paymentConvertor.toEntity(request, user, cartAllResponseList);
 
         PayManagementEntity savedPayManagement = paymentService.save(payManagement, request.getCartIdList());

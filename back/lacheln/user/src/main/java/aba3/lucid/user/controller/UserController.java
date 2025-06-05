@@ -45,10 +45,10 @@ public class UserController {
     }
 
     // 유저 프로필 조회
-    @GetMapping("/profile/{userId}")
+    @GetMapping("/profile")
     @Operation(summary = "소비자 조회", description = "소비자 정보를 조회합니다.")
-    public API<UserCheckResponse> getUser(@PathVariable String userId)   {
-        return userBusiness.getUser(userId);
+    public API<UserCheckResponse> getUser(@AuthenticationPrincipal CustomUserDetails user)   {
+        return userBusiness.getUser(user.getUserId());
     }
 
     //유저 프로필 이메일로 조회

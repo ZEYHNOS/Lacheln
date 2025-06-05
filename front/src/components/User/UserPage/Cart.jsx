@@ -269,6 +269,11 @@ export default function Cart() {
                                 </div>
                                 <div className="w-1/3 text-right font-bold text-lg text-black">
                                     {item.price?.toLocaleString()}원
+                                    {item.cartDetails && item.cartDetails.reduce((sum, detail) => sum + (detail.detailPrice || 0), 0) > 0 && (
+                                        <div className="text-xs text-gray-500 font-normal mt-1">
+                                            + 옵션 추가금 {item.cartDetails.reduce((sum, detail) => sum + (detail.detailPrice || 0), 0).toLocaleString()}원
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}

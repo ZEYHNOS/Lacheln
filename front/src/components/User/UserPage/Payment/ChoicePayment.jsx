@@ -1,16 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import tosspay from "../../../../image/Payment/tosspay.png";
 import kakaopay from "../../../../image/Payment/kakaopay.png";
 import payco from "../../../../image/Payment/payco.png";
 import axios from "axios";
+import apiClient from "../../../../lib/apiClient";
 
-// 더미 쿠폰/포인트 데이터 예시
+// 더미 쿠폰데이터 예시
 const dummyCouponList = [
     { id: 1, name: "WELCOME쿠폰", discount: 5000 },
     { id: 2, name: "10%할인쿠폰", discount: 10000 },
 ];
-const dummyUserPoint = 18750;
+
+// 결제 상품명 생성(패키지명 + 단품명)
+function getPaymentName(packageList, singleList) {
+    let names = [];
+    if (packageList.length > 0) {
+        names.push(...packageList.map(pkg => pkg.packName));
+    }
+    if (singleList.length > 0) {
+        names.push(...singleList.map(item => item.pdName));
+    }
+    return names.join(' + ');
+}
 
 export default function ChoicePayment() {
     const location = useLocation();
@@ -18,14 +30,30 @@ export default function ChoicePayment() {
     const [selectedPg, setSelectedPg] = useState(null);
     const [selectedCouponId, setSelectedCouponId] = useState("");
     const [couponList] = useState(dummyCouponList);
-    const [userPoint] = useState(dummyUserPoint);
     const [usePoint, setUsePoint] = useState(0);
+    const [inputPoint, setInputPoint] = useState("");
+    const [userName, setUserName] = useState("");
+    const [userEmail, setUserEmail] = useState("");
+    const [mileage, setMileage] = useState(0);
 
   // 패키지/단품 분리
     const packageList = checkedItems.filter(item => item.packId);
     const singleList = checkedItems.filter(item => !item.packId);
 
-  // TODO: 실제 결제정보, 쿠폰, 포인트, 결제수단 등 상태 및 로직 추가
+    // 유저 정보 불러오기 
+    useEffect(() => {
+        async function fetchUser() {
+            try {
+                const userprofile = await apiClient.get('/user/profile', {withCredentials: true});
+                setUserName(userprofile.data.data.name);
+                setUserEmail(userprofile.data.data.email);
+                setMileage(userprofile.data.data.mileage);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchUser();
+    }, []);
 
     // 결제 금액 계산
     // 1. 총 상품금액: 패키지 원가 + 단품 가격
@@ -60,7 +88,8 @@ export default function ChoicePayment() {
     // 3. 총 할인금액: 패키지/단품 할인
     const totalDiscount =
         packageList.reduce((sum, pkg) => sum + (pkg.discountPrice || 0), 0) +
-        singleList.reduce((sum, item) => sum + (item.discountPrice || 0), 0);
+        singleList.reduce((sum, item) => sum + (item.discountPrice || 0), 0) +
+        usePoint;
 
     // 4. 최종 결제금액
     const finalPrice = totalProductPrice + totalExtraPrice - totalDiscount;
@@ -68,47 +97,45 @@ export default function ChoicePayment() {
     // 5. 포인트 적립 예상
     const Lachelnpoint = Math.floor(finalPrice * 0.015);
 
-    // 결제처리
+    // 결제하기 버튼처리리
     const handlePayment = async () => {
         try {
-            // 1. 백엔드에서 결제정보 요청
-            // const res = await axios.post('/api/payment/verify', {
-            //     userId: 123,
-            //     items: [{ id: 1, quantity: 2 }],
-            //     couponId: 456
-            // });
+            // 1. 백엔드에 merchant_uid 요청(결제고유번호 백엔드에서 생성)
+            const merchant = await apiClient.post('/payment/verify');
+            const merchant_uid = merchant.data.merchant_uid;
+            
+            // 2. 결제금액 요청(백엔드에서 유효성 검사 및 결제금액 반환)
+            const payment_verify = await apiClient.post('/payment/verify', {
+                cartId,
+                mileage: usePoint,
+                couponId: selectedCouponId,
+            }, {withCredentials: true});
+            const finally_price = payment_verify.data.finally_price;
 
-            // const {
-            //     pg : "kcp",
-            //     pay_method : "card",
-            //     merchant_uid : "merchant_uid",
-            //     name,
-            //     amount,
-            // } = res.data;
-
-            // 2. 포트원 초기화
+            // 3. PG사 초기화
             const { IMP } = window;
-            IMP.init("imp34856736");
+            IMP.init(process.env.REACT_APP_PORTONE_IDENTIFYCODE);
 
-            // 3. 포트원 결제 요청
+            // 4. PG사 결제 요청
+            const paymentName = getPaymentName(packageList, singleList);
             console.log("결제 요청 파라미터", {
                 pg: selectedPg,
                 pay_method: "card",
-                merchant_uid: "merchant_uid",
-                name: "드레스 3",
-                amount: finalPrice,
+                merchant_uid,
+                name: paymentName,
+                amount: finally_price,
+                buyer_name: userName,
+                buyer_email: userEmail,
             });
             IMP.request_pay(
                 {
                     pg: selectedPg,
                     pay_method: "card",
-                    merchant_uid: "merchant_uid6",
-                    name: "드레스 3",
-                    amount: finalPrice,
-                    buyer_email: "test@example.com",
-                    buyer_name: "홍길동",
-                    buyer_tel: "010-1234-5678",
-                    m_redirect_url: "https://your.site.com/payment/complete"
+                    merchant_uid,
+                    name: paymentName,
+                    amount: finally_price,
+                    buyer_name: userName,
+                    buyer_email: userEmail,
                 },
                 async function (rsp) {
                     if (rsp.success) {
@@ -222,7 +249,7 @@ export default function ChoicePayment() {
                     {/* 포인트 입력 */}
                     <div className="flex-1">
                         <label className="block text-xs text-gray-500 mb-1">
-                            마일리지 <span className="text-purple-700 font-bold">{userPoint.toLocaleString()}P</span> 보유
+                            마일리지 <span className="text-purple-700 font-bold">{mileage.toLocaleString()}P</span> 보유
                         </label>
                         <div className="flex">
                             <input
@@ -231,15 +258,21 @@ export default function ChoicePayment() {
                                 pattern="[0-9]*"
                                 className="border border-purple-700 rounded px-4 py-2 bg-white text-black w-full h-12"
                                 placeholder="사용 포인트"
-                                value={usePoint}
+                                value={inputPoint}
                                 onChange={e => {
                                     const onlyNum = e.target.value.replace(/[^0-9]/g, "");
-                                    setUsePoint(Math.max(0, Math.min(userPoint, Number(onlyNum))));
+                                    setInputPoint(onlyNum);
                                 }}
                                 min={0}
-                                max={userPoint}
+                                max={mileage}
                             />
-                            <button className="ml-2 px-4 h-12 min-w-[64px] bg-purple-700 text-white rounded flex items-center justify-center leading-none whitespace-nowrap">사용</button>
+                            <button
+                                className="ml-2 px-4 h-12 min-w-[64px] bg-purple-700 text-white rounded flex items-center justify-center leading-none whitespace-nowrap"
+                                onClick={() => {
+                                    // 입력값이 mileage보다 크면 mileage로 제한
+                                    setUsePoint(Math.max(0, Math.min(mileage, Number(inputPoint))));
+                                }}
+                            >사용</button>
                         </div>
                     </div>
                 </div>

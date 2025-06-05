@@ -89,7 +89,7 @@ public class PaymentService {
 //        payDetailService.checkReservation(request.getCardRequestList());
 
         // 카트 Entity List
-        List<Long> cartIdList = request.getCardRequestList();
+        List<Long> cartIdList = request.getCartIdList();
 
         List<CartEntity> cartEntityList = cartService.findAllById(cartIdList);
 

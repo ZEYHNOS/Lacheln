@@ -71,7 +71,7 @@ public class PaymentBusiness {
         Validator.throwIfNull(request, userId);
 
         // 장바구니 ID 한 개도 없을 때
-        if (request.getCardRequestList().isEmpty()) {
+        if (request.getCartIdList().isEmpty()) {
             throw new ApiException(PaymentErrorCode.NO_PRODUCT_FOR_PAYMENT);
         }
 

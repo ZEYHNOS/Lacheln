@@ -3,6 +3,8 @@ package aba3.lucid.domain.payment.dto;
 import aba3.lucid.domain.cart.dto.CartPaymentRequest;
 import aba3.lucid.domain.cart.dto.CartRequest;
 import aba3.lucid.domain.product.dto.ProductCouponVerifyDto;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PaymentVerifyRequest {
     // 쿠폰함 ID
     private List<Long> couponBoxIdList;
@@ -23,5 +26,5 @@ public class PaymentVerifyRequest {
     private BigInteger mileage;
 
     // 장바구니 리스트
-    private List<Long> cardRequestList;
+    private List<Long> cartIdList;
 }

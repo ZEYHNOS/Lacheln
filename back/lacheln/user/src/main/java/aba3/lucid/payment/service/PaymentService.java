@@ -242,7 +242,11 @@ public class PaymentService {
 
         for (CartEntity cart : cartEntityList) {
             BigInteger price = cart.getPrice();
-            if (cart.getPackId() != null && packIdSet.add(cart.getPackId())) {
+            if (cart.getPackId() != null) {
+
+                if (packIdSet.add(cart.getPackId())) {
+                    continue;
+                }
                 price = price.subtract(cart.getDiscountPrice());
 
                 if (price.compareTo(BigInteger.ZERO) < 0) {

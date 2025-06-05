@@ -5,6 +5,7 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.PaymentErrorCode;
 import aba3.lucid.domain.cart.dto.CartPaymentRequest;
+import aba3.lucid.domain.cart.entity.CartDetailEntity;
 import aba3.lucid.domain.cart.entity.CartEntity;
 import aba3.lucid.domain.coupon.dto.CouponVerifyRequest;
 import aba3.lucid.domain.coupon.dto.CouponVerifyResponse;
@@ -244,7 +245,7 @@ public class PaymentService {
             BigInteger price = cart.getPrice();
             if (cart.getPackId() != null) {
 
-                if (packIdSet.add(cart.getPackId())) {
+                if (!packIdSet.add(cart.getPackId())) {
                     continue;
                 }
                 price = price.subtract(cart.getDiscountPrice());
@@ -252,6 +253,10 @@ public class PaymentService {
                 if (price.compareTo(BigInteger.ZERO) < 0) {
                     price = BigInteger.ZERO;
                 }
+            }
+
+            for (CartDetailEntity cartDetail : cart.getCartDetails()) {
+                price = price.add(cartDetail.getOptionPrice().multiply(BigInteger.valueOf(cartDetail.getCartDtQuantity())));
             }
 
             groupByCompanyAmountMap.put(cart.getCpId(), groupByCompanyAmountMap.getOrDefault(cart.getCpId(), BigInteger.ZERO).add(price));

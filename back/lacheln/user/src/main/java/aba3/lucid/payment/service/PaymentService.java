@@ -25,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -241,10 +238,11 @@ public class PaymentService {
     // 업체를 그룹으로 생성하고 해당 업체 별 결제해야하는 금액을 계산
     private Map<Long, BigInteger> initGroupByCompanyAmount(List<CartEntity> cartEntityList) {
         Map<Long, BigInteger> groupByCompanyAmountMap = new HashMap<>();
+        Set<Long> packIdSet = new HashSet<>();
 
         for (CartEntity cart : cartEntityList) {
             BigInteger price = cart.getPrice();
-            if (cart.getPackId() != null) {
+            if (cart.getPackId() != null && packIdSet.add(cart.getPackId())) {
                 price = price.subtract(cart.getDiscountPrice());
 
                 if (price.compareTo(BigInteger.ZERO) < 0) {

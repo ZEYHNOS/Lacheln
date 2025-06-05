@@ -48,8 +48,8 @@ public class ProductBusiness {
     private final PaginationConverter paginationConverter;
 
     // 상품 검색
-    public Page<ProductResponse> getProductList(ProductSearchRecord productSearchRecord) {
-        Page<ProductEntity> productEntityPage = productService.getProductPage(productSearchRecord);
+    public Page<ProductResponse> getProductList(Pageable pageable, ProductSearchRecord productSearchRecord) {
+        Page<ProductEntity> productEntityPage = productService.getProductPage(pageable, productSearchRecord);
         return productConverter.toResponsePage(productEntityPage);
     }
 

@@ -10,7 +10,6 @@ public record ProductSearchRecord(
         Integer minimum,
         Integer maximum,
         String orderBy,
-        Boolean isAsc,
-        Pageable pageable
+        Boolean isAsc
 ) {
 }

@@ -131,18 +131,13 @@ public class ProductService {
         }
     }
 
-    public Page<ProductEntity> getProductPage(ProductSearchRecord productSearchRecord) {
+    public Page<ProductEntity> getProductPage(Pageable pageable, ProductSearchRecord productSearchRecord) {
         Sort.Direction direction = productSearchRecord.isAsc() == null || productSearchRecord.isAsc() ? Sort.Direction.ASC : Sort.Direction.DESC;
         String sortBy = productSearchRecord.orderBy() == null ? ProductSortBy.CREATE_AT.getSortBy() : productSearchRecord.orderBy();
 
-        Pageable sortedPage = PageRequest.of(
-                productSearchRecord.pageable().getPageNumber(),
-                productSearchRecord.pageable().getPageSize(),
-                Sort.by(direction, sortBy)
-        );
 
         return productRepository.searchProductPage(
-                sortedPage,
+                pageable,
                 productSearchRecord.productName(),
                 productSearchRecord.companyName(),
                 productSearchRecord.category(),

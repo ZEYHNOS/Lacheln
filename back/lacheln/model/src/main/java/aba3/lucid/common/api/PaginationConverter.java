@@ -7,11 +7,11 @@ import org.springframework.data.domain.Pageable;
 @Converter
 public class PaginationConverter {
 
-    public Pagination createPagination(Page<?> page, Pageable pageable, String order) {
+    public Pagination createPagination(Page<?> page, String order) {
         return Pagination.builder()
-                .curPage(pageable.getPageNumber())
+                .curPage(page.getNumber())
                 .curElement(page.getNumberOfElements())
-                .size(pageable.getPageSize())
+                .size(page.getSize())
                 .totalPage(page.getTotalPages())
                 .totalElement(page.getTotalElements())
                 .order(order)

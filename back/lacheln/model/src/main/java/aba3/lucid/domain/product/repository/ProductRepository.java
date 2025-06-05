@@ -41,6 +41,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
             AND (:companyName IS NULL OR LOWER(p.company.cpName) LIKE LOWER(CONCAT('%', :companyName, '%')))
             AND (:maximum IS NULL OR p.pdPrice <= :maximum)
             AND (:minimum IS NULL OR p.pdPrice >= :minimum)
+            AND (p.pdStatus = ACTIVE)
             """)
             Page<ProductEntity> searchProductPage(
                     Pageable pageable,

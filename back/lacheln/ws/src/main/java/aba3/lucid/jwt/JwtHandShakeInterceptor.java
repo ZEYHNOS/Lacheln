@@ -33,6 +33,8 @@ public class JwtHandShakeInterceptor implements HandshakeInterceptor {
             WebSocketHandler wsHandler,
             Map<String, Object> attributes) throws Exception {
 
+        log.info("JwtHandShakeInterceptor beforeHandshake");
+
         // 쿠키에서 토큰 추출
         String token = getTokenFromCookies(request);
 

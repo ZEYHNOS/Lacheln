@@ -2,6 +2,7 @@
 
     import aba3.lucid.common.exception.ApiException;
     import aba3.lucid.common.status_code.ErrorCode;
+    import aba3.lucid.domain.company.enums.CompanyCategory;
     import aba3.lucid.domain.user.entity.UsersEntity;
     import jakarta.persistence.*;
     import lombok.*;
@@ -63,6 +64,12 @@
 
         @Column(name = "task_time", nullable = false)
         private LocalTime taskTime; // 작업 시간
+        
+        @Column(name = "manager")
+        private String manager; // 메이크업의 담당자 이름
+
+        @Column(name = "category", nullable = false)
+        private CompanyCategory category;
 
         @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
         private List<CartDetailEntity> cartDetails;

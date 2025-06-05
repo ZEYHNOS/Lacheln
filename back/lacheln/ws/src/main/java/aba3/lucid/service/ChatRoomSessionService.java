@@ -85,6 +85,7 @@ public class ChatRoomSessionService {
     // 현재 세션을 통해 채팅방 리스트 가져오기
     public API<ChatRoomListResponse> getRoomList(CustomUserDetails user)    {
         List<ChatRoomEntity> rooms = new ArrayList<>();
+        List<ChatRoomDto> responses = new ArrayList<>();
         String role = user.getRole();
         String userId;
         Long companyId;
@@ -92,25 +93,38 @@ public class ChatRoomSessionService {
         if(role.equals("USER")) {
             userId = user.getUserId();
             rooms = chatRoomRepository.findAllByUsers(userId);
+            responses = rooms
+                    .stream()
+                    .map(chatRoomEntity -> ChatRoomDto
+                            .builder()
+                            .roomId(chatRoomEntity.getChatRoomId() + "")
+                            .companyId(chatRoomEntity.getCompany() + "")
+                            .companyName(companyRepository.findById(chatRoomEntity.getCompany()).orElse(null).getCpName())
+                            .userId(chatRoomEntity.getUsers())
+                            .userName(usersRepository.findById(chatRoomEntity.getUsers()).orElse(null).getUserName())
+                            .unreadCount(messageRepository.countUnreadMessagesByChatRoomId(chatRoomEntity.getChatRoomId(), userId))
+                            .build())
+                    .toList();
         } else if(role.equals("COMPANY"))   {
             companyId = user.getCompanyId();
             rooms = chatRoomRepository.findAllByCompany(companyId);
+            responses = rooms
+                    .stream()
+                    .map(chatRoomEntity -> ChatRoomDto
+                            .builder()
+                            .roomId(chatRoomEntity.getChatRoomId() + "")
+                            .companyId(chatRoomEntity.getCompany() + "")
+                            .companyName(companyRepository.findById(chatRoomEntity.getCompany()).orElse(null).getCpName())
+                            .userId(chatRoomEntity.getUsers())
+                            .userName(usersRepository.findById(chatRoomEntity.getUsers()).orElse(null).getUserName())
+                            .unreadCount(messageRepository.countUnreadMessagesByChatRoomId(chatRoomEntity.getChatRoomId(), companyId))
+                            .build())
+                    .toList();
         }
 
-        List<ChatRoomDto> response = rooms
-                .stream()
-                .map(chatRoomEntity -> ChatRoomDto
-                        .builder()
-                        .roomId(chatRoomEntity.getChatRoomId() + "")
-                        .companyId(chatRoomEntity.getCompany() + "")
-                        .companyName(companyRepository.findById(chatRoomEntity.getCompany()).orElse(null).getCpName())
-                        .userId(chatRoomEntity.getUsers())
-                        .userName(usersRepository.findById(chatRoomEntity.getUsers()).orElse(null).getUserName())
-                        .build())
-                .toList();
 
         return API.OK(ChatRoomListResponse.builder()
-                        .chatRooms(response).build());
+                        .chatRooms(responses).build());
     }
     
     // 특정 채팅방에 있는 메시지들 가져오기

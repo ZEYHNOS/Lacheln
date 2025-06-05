@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.1.1",
     "@tiptap/extension-color": "^2.11.7",
     "@tiptap/extension-image": "^2.11.7",
     "@tiptap/extension-link": "^2.11.7",
@@ -35,7 +36,10 @@
     "react-quill": "^2.0.0",
     "react-router-dom": "^7.1.5",
     "react-select": "^5.10.1",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "socket-client": "^1.0.0",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

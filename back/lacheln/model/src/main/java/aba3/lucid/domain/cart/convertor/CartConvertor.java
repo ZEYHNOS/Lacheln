@@ -34,6 +34,8 @@ public class CartConvertor {
                     .pdImageUrl(cart.getPdImageUrl())
                     .startTime(cart.getStartDatetime())
                     .taskTime(cart.getTaskTime())
+                    .manager(cart.getManager())
+                    .category(cart.getCategory())
                     .cartDetails(convertToDtoByPd((cart.getCartDetails())))
                     .build();
         } else {
@@ -51,6 +53,8 @@ public class CartConvertor {
                     .pdImageUrl(cart.getPdImageUrl())
                     .startTime(cart.getStartDatetime())
                     .taskTime(cart.getTaskTime())
+                    .manager(cart.getManager())
+                    .category(cart.getCategory())
                     .cartDetails(convertToDtoByPd((cart.getCartDetails())))
                     .build();
         }
@@ -69,6 +73,8 @@ public class CartConvertor {
                 .cpId(request.getCpId())
                 .cpName(request.getCpName())
                 .taskTime(request.getTaskTime())
+                .manager(request.getManager())
+                .category(request.getCategory())
                 .cartQuantity(request.getCartQuantity())
                 .build();
     }
@@ -101,6 +107,8 @@ public class CartConvertor {
                 .cartId(cart.getCartId())
                 .taskTime(cart.getTaskTime())
                 .pdId(cart.getPdId())
+                .manager(cart.getManager())
+                .category(cart.getCategory())
                 .cartDetails(response)
                 .build();
     }
@@ -174,6 +182,8 @@ public class CartConvertor {
                     .cpId(product.getCpId())
                     .pdName(product.getPdName())
                     .cpName(product.getCpName())
+                    .category(product.getCategory())
+                    .manager(product.getManager())
                     .cartQuantity(product.getCartQuantity())
                     .build();
             for(CartOptionDetail optionDetail : product.getOptionDetails()) {

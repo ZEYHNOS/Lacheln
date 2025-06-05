@@ -33,6 +33,12 @@ public class CartBusiness {
         List<CartEntity> cart = cartService.getCartByUserId(userId);
         return API.OK(cartConverter.convertToCartAllResponses(cart));
     }
+
+    // 장바구니 리스트 검색<API없는버전>
+    public List<CartAllResponse> getCarts(List<Long> cartIds)    {
+        List<CartEntity> cart = cartService.findAllById(cartIds);
+        return cartConverter.convertToCartAllResponses(cart);
+    }
     
     // 장바구니에 개별 상품 담기
     public API<CartProductResponse> addProduct(String userId, CartAddProductRequest request)    {

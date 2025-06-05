@@ -11,4 +11,5 @@ public class ChatRoomDto {
     private String userName;
     private String companyId;
     private String companyName;
+    private Long unreadCount;
 }

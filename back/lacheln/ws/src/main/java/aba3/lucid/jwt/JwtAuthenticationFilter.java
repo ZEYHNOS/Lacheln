@@ -29,6 +29,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     //SpringFilterChain메서드의 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)가 실행된 경우 해당 로직 실행
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.info("JWT Authentication Filter");
+
         // 토큰 정보를 추출
         Map<String, String> tokens = jwtTokenProvider.resolveTokens(request);
         String accessToken = tokens.get("AccessToken");

@@ -25,11 +25,11 @@ public class ChatRoomEntity {
     private Long chatRoomId;
 
     //업체ID
-    @Column(name = "cp_id")
+    @Column(name = "cp_id", nullable = false)
     private Long company;
 
     //소비자ID
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private String users;
 
     // 메시지들

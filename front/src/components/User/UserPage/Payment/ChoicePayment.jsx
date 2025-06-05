@@ -28,7 +28,7 @@ export default function ChoicePayment() {
     const location = useLocation();
     const checkedItems = location.state?.checkedItems || [];
     const [selectedPg, setSelectedPg] = useState(null);
-    const [selectedCouponId, setSelectedCouponId] = useState("");
+    const [selectedCouponId, setSelectedCouponId] = useState([]);
     const [couponList] = useState(dummyCouponList);
     const [usePoint, setUsePoint] = useState(0);
     const [inputPoint, setInputPoint] = useState("");
@@ -97,43 +97,38 @@ export default function ChoicePayment() {
     // 5. 포인트 적립 예상
     const Lachelnpoint = Math.floor(finalPrice * 0.015);
 
-    // cartIdList 만들기
+    // 상품 cartIdList 만들기
     const packageCartIds = packageList.flatMap(pkg => pkg.products.map(p => p.cartId));
     const singleCartIds = singleList.map(item => item.cartId);
     const cartIdList = [...packageCartIds, ...singleCartIds];
+    console.log("cartIdList :", cartIdList);
 
     // 결제하기 버튼처리
     const handlePayment = async () => {
-        try {
-            // 1. 백엔드에 merchant_uid 요청(결제고유번호 백엔드에서 생성)
-            const merchant = await apiClient.post('/payment/verify', {withCredentials: true});
-            const merchant_uid = merchant.data.merchant_uid;
-            console.log("백엔드에서 UID :", merchant_uid);
-            
-            // 2. 결제금액 요청(백엔드에서 유효성 검사 및 결제금액 반환)
-            const payment_verify = await apiClient.post('/payment/verify', {
+        try {           
+            // 1. 결제금액 요청(백엔드에서 유효성 검사 및 결제금액 반환)
+            const verifydata = {
                 cartIdList,
                 mileage: usePoint,
-                couponIdList: selectedCouponId,
-            }, {withCredentials: true});
-            const finally_price = payment_verify.data.finally_price;
+                couponBoxIdList: selectedCouponId,
+            }
+            console.log("verifydata :", verifydata);
+            const payment_verify = await apiClient.post('/payment/verify',verifydata);
+            const finally_price = payment_verify.data.data;
             console.log("백엔드에서 결제금액 :", finally_price);
+
+            // 2. 백엔드에 merchant_uid 요청(결제고유번호 백엔드에서 생성)
+            const merchant = await apiClient.post('/payment/merchant');
+            const merchant_uid = merchant.data.description;
+            console.log("백엔드에서 UID :", merchant_uid);
 
             // 3. PG사 초기화
             const { IMP } = window;
-            IMP.init(process.env.REACT_APP_PORTONE_IDENTIFYCODE);
+            IMP.init(import.meta.env.VITE_PORTONE_IDENTIFYCODE);
 
-            // 4. PG사 결제 요청
+            // // 4. PG사 결제 요청
             const paymentName = getPaymentName(packageList, singleList);
-            console.log("결제 요청 파라미터", {
-                pg: selectedPg,
-                pay_method: "card",
-                merchant_uid,
-                name: paymentName,
-                amount: finally_price,
-                buyer_name: userName,
-                buyer_email: userEmail,
-            });
+            
             IMP.request_pay(
                 {
                     pg: selectedPg,
@@ -146,11 +141,26 @@ export default function ChoicePayment() {
                 },
                 async function (rsp) {
                     if (rsp.success) {
-                        // 4. 결제 성공: 필요하면 백엔드에 검증 요청
-                        await axios.post('/api/payment/confirm', {
-                            imp_uid: rsp.imp_uid,
-                            merchant_uid: rsp.merchant_uid
-                        });
+                        // 결제내역(pay_management) 데이터 생성
+                        const pay_management = {
+                            pay_tool: selectedPg,
+                            pay_total_price: finally_price,
+                            pay_status: "PAID",
+                            pay_mileage: usePoint,
+                            paid_at: rsp.paid_at,
+                            pay_detail: pay_detail,
+                        };
+                        // 결제상세(pay_detail) 데이터 생성
+                        let pay_detail = [];
+                        if (packageList.length > 0) {
+                            pay_detail = packageCartIds.map(cartId => ({ cart_id: cartId }));
+                        } else {
+                            pay_detail = singleCartIds.map(cartId => ({
+                                cart_id: cartId,
+                                coupon_box_id: selectedCouponId,
+                            }));
+                        }
+                        await axios.post('/payment/save', pay_management);
                         alert("결제가 완료되었습니다!");
                     } else {
                         alert(`결제 실패: ${rsp.error_msg}`);

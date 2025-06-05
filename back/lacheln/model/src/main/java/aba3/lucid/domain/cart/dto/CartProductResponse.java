@@ -1,5 +1,6 @@
 package aba3.lucid.domain.cart.dto;
 
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -22,6 +23,8 @@ public class CartProductResponse {
     private LocalDateTime startTime;
     private LocalTime taskTime;
     private Integer cartQuantity;
+    private String manager;
+    private CompanyCategory category;
     private List<CartDetailResponse> cartDetails;
 
 }

@@ -1,5 +1,6 @@
 package aba3.lucid.domain.cart.dto;
 
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -28,6 +29,8 @@ public class CartAddProductRequest {
     private Integer cartQuantity;
     private LocalTime taskTime;
     private LocalDateTime startDatetime;
+    private String manager;
+    private CompanyCategory category;
 
     // 옵션 리스트
     private List<CartOptionDetail> optionDetails;

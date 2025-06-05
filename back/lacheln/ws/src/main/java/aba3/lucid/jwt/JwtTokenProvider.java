@@ -114,6 +114,7 @@ public class JwtTokenProvider {
 
     // 토큰이 유효한지 검사하는 메소드
     public boolean isValid(String token) {
+        log.info("JWT VALUE : {}", token);
         try {
             // 토큰에서 만료 일자와 서명을 검증
             Jws<Claims> claimsJws = Jwts.parser()

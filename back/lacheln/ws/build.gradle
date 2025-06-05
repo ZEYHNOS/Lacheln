@@ -26,8 +26,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'           // 이메일 인증 의존성
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'  // OAuth 2.0 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'     // Redis 의존성
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'      // 웹 소켓(채팅)의존성
     implementation 'org.springframework.boot:spring-boot-starter-amqp'           // rabbitmq 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'      // 웹 소켓(채팅)의존성
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
     implementation 'io.projectreactor.netty:reactor-netty:1.1.15'                // reactor-netty 의존성
     implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.0'
     implementation 'io.lettuce:lettuce-core'                                     // Redis 관련? 의존성

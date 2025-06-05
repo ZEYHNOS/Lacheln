@@ -18,21 +18,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // 메시지 브로커에 대한 세팅
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.setApplicationDestinationPrefixes("/chat"); // 메시지 송신 경로 접두사(메시지 브로커에 전달하기 위해선 요청의 /chat으로 시작해야함)
         config.enableStompBrokerRelay("/topic") // STOMP를 통해 RabbitMQ 연동
                 .setRelayHost("localhost")      //TODO HAProxy파일을 통해 로드밸런싱 진행 해야댐 localhost는 로컬환경에서 사용가능한것
                 .setRelayPort(61613)            // RabbitMQ 포트번호
                 .setClientLogin("guest")        // RabbitMQ ID
                 .setClientPasscode("guest");    // RabbitMQ PW
-        config.setApplicationDestinationPrefixes("/chat"); // 메시지 송신 경로 접두사(메시지 브로커에 전달하기 위해선 요청의 /chat으로 시작해야함)
     }
 
     // Stomp 프로토콜에 최초로 구독할 수 있는 엔드포인트 등록
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws/chat")
-                .setAllowedOriginPatterns("*")              // CORS 허용 패턴
-                .setAllowedOrigins("http://localhost:5500") // 특정 origin만 허용
-                .withSockJS()                               // SockJS 지원 활성화
-                .setInterceptors(jwtHandShakeInterceptor);  // 핸드셰이크 시 JWT 인증
+                .setAllowedOriginPatterns("*")
+                .withSockJS()
+                .setInterceptors(jwtHandShakeInterceptor);
     }
 }

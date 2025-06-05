@@ -1,6 +1,10 @@
 package aba3.lucid.domain.payment.converter;
 
 import aba3.lucid.common.annotation.Converter;
+import aba3.lucid.domain.cart.dto.CartAllResponse;
+import aba3.lucid.domain.cart.dto.CartDetailResponse;
+import aba3.lucid.domain.cart.entity.CartEntity;
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.payment.dto.PayDetailBlockResponse;
 import aba3.lucid.domain.payment.dto.PayDetailOptionRequest;
 import aba3.lucid.domain.payment.dto.PayDetailRequest;
@@ -94,5 +98,40 @@ public class PayDetailConverter {
         return entityList.stream()
                 .map(this::toBlockResponse)
                 .toList();
+    }
+
+    public List<PayDetailEntity> toPayDetailEntityListByCartEntityList(PayManagementEntity payManagement, List<CartAllResponse> cartAllResponseList) {
+        return cartAllResponseList.stream()
+                .map(it -> toPayDetailEntityByCartEntity(payManagement, it))
+                .toList()
+                ;
+    }
+
+    public PayDetailEntity toPayDetailEntityByCartEntity(PayManagementEntity payManagement, CartAllResponse response) {
+        LocalDateTime endDateTime = response.getStartTime()
+                .plusHours(response.getTaskTime().getHour())
+                .plusMinutes(response.getTaskTime().getMinute())
+                ;
+
+        PayDetailEntity entity = PayDetailEntity.builder()
+                .payManagement(payManagement)
+                .productName(response.getPdName())
+                .pdId(response.getPdId())
+                .payDetailOptionEntityList(null)
+                .payCost(response.getPrice())
+                .startDatetime(response.getStartTime())
+                .endDatetime(endDateTime)
+                .taskTime(response.getTaskTime())
+                .imageUrl(response.getPdImageUrl())
+                .couponName(null)
+//                .category(response.getCategory()) // TODO 장바구니에 생기면 담기
+                .build()
+                ;
+
+//        if (response.getCategory().equals(CompanyCategory.M)) {
+//            endDateTime.updateManager(response.getManager());
+//        }
+
+        return entity;
     }
 }

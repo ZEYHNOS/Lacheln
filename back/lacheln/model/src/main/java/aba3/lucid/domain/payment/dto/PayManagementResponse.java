@@ -39,7 +39,4 @@ public class PayManagementResponse {
 
     private List<PayDetailResponse> payDetails;
 
-
-
-
 }

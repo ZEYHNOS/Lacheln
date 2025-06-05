@@ -99,7 +99,7 @@ public class PaymentService {
         Map<Long, BigInteger> groupByCompanyAmountMap = initGroupByCompanyAmount(cartEntityList);
 
         // 쿠폰 확인을 위해 메세지 보내기
-        CouponVerifyResponse response = couponVerificationSendMessage(userId, request, cartEntityList, groupByCompanyAmountMap);
+//        CouponVerifyResponse response = couponVerificationSendMessage(userId, request, cartEntityList, groupByCompanyAmountMap);
 
         // 마일리지 확인하기
         verifyMileage(userId, request.getMileage());
@@ -107,7 +107,7 @@ public class PaymentService {
         // Redis를 사용하여 일정 블락 하기
 
         // 총액에서 쿠폰으로 할인 금액 빼고 마일리지 뺀 금액
-        return getTotalAmount(response, request.getMileage(), groupByCompanyAmountMap);
+        return getTotalAmount(null, request.getMileage(), groupByCompanyAmountMap);
     }
 
     // 쿠폰 유효성 검사하기
@@ -211,11 +211,14 @@ public class PaymentService {
         BigInteger totalAmount = BigInteger.ZERO;
         for (Long companyId : groupByCompanyAmountMap.keySet()) {
             // 할인율
-            int discountRate = response.getKeyCompanyIdValueDiscountRate().getOrDefault(companyId, 0);
+            int discountRate = 0;
+            if (response != null ) {
+                 discountRate = response.getKeyCompanyIdValueDiscountRate().getOrDefault(companyId, 0);
+            }
 
             BigInteger companyAmount = groupByCompanyAmountMap.get(companyId);
             BigInteger discountedAmount;
-            if (discountRate > 0) {
+            if (response != null && discountRate > 0) {
                 discountedAmount = companyAmount.multiply(BigInteger.valueOf(100 - discountRate))
                         .divide(BigInteger.valueOf(100));
             } else {
@@ -240,10 +243,16 @@ public class PaymentService {
         Map<Long, BigInteger> groupByCompanyAmountMap = new HashMap<>();
 
         for (CartEntity cart : cartEntityList) {
-            groupByCompanyAmountMap.put(
-                    cart.getCpId(),
-                    groupByCompanyAmountMap.getOrDefault(cart.getCpId(), BigInteger.ZERO).add(cart.getPrice())
-            );
+            BigInteger price = cart.getPrice();
+            if (cart.getPackId() != null) {
+                price = price.subtract(cart.getDiscountPrice());
+
+                if (price.compareTo(BigInteger.ZERO) < 0) {
+                    price = BigInteger.ZERO;
+                }
+            }
+
+            groupByCompanyAmountMap.put(cart.getCpId(), groupByCompanyAmountMap.getOrDefault(cart.getCpId(), BigInteger.ZERO).add(price));
         }
 
         return groupByCompanyAmountMap;

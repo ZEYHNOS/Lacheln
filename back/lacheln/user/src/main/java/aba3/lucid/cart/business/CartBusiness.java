@@ -28,7 +28,7 @@ public class CartBusiness {
     private final UserService userService;
     private final CartConvertor cartConverter;
 
-    // 장바구니 리스트 검색
+    // 장바구니 리스트 검색6
     public API<List<CartAllResponse>> getCartList(String userId)    {
         List<CartEntity> cart = cartService.getCartByUserId(userId);
         return API.OK(cartConverter.convertToCartAllResponses(cart));

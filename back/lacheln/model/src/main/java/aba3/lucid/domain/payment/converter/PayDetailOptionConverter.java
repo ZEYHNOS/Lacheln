@@ -1,6 +1,8 @@
 package aba3.lucid.domain.payment.converter;
 
 import aba3.lucid.common.annotation.Converter;
+import aba3.lucid.domain.cart.dto.CartDetailResponse;
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.payment.dto.PayDetailBlockOptionResponse;
 import aba3.lucid.domain.payment.dto.PayDetailOptionRequest;
 import aba3.lucid.domain.payment.dto.PayDetailOptionResponse;
@@ -55,6 +57,33 @@ public class PayDetailOptionConverter {
     public List<PayDetailBlockOptionResponse> toBlockResponseList(List<PayDetailOptionEntity> entityList) {
         return entityList.stream()
                 .map(this::toBlockResponse)
-                .toList();
+                .toList()
+                ;
+    }
+
+    public PayDetailOptionEntity toPayDetailOptionEntityByCartDetailResponse(CartDetailResponse response, PayDetailEntity entity) {
+        PayDetailOptionEntity payDetailOptionEntity = PayDetailOptionEntity.builder()
+                .payDetail(entity)
+                .payOpName(response.getOptionName())
+                .payOpDtName(response.getOptionDetailName())
+                .payOpTaskTime(response.getDetailTaskTime())
+                .payDtQuantity(response.getQuantity())
+                .payOpPlusCost(response.getDetailPrice())
+                .build()
+                ;
+
+        // TODO 드레스 상품 등록할 때 옵션 이름이 사이즈일 때 막기(예약어로 사용)
+        if (entity.getCategory().equals(CompanyCategory.D) && response.getOptionName().equals("사이즈")) {
+            payDetailOptionEntity.updateDressSize(response.getOptionDetailName());
+        }
+
+        return payDetailOptionEntity;
+    }
+
+    public List<PayDetailOptionEntity> toPayDetailOptionEntityListByCartDetailResponseList(List<CartDetailResponse> cartDetailResponseList, PayDetailEntity entity) {
+        return cartDetailResponseList.stream()
+                .map(it -> toPayDetailOptionEntityByCartDetailResponse(it, entity))
+                .toList()
+                ;
     }
 }

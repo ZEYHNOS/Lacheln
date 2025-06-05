@@ -1,16 +1,22 @@
 package aba3.lucid.domain.product.converter;
 
 import aba3.lucid.common.annotation.Converter;
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.dto.option.OptionDto;
 import aba3.lucid.domain.product.entity.OptionDetailEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Converter
+@RequiredArgsConstructor
 public class OptionConverter {
 
+    private final OptionDetailConverter optionDetailConverter;
 
     public List<OptionEntity> toEntityList(List<OptionDto> dtoList, ProductEntity entity) {
         return dtoList.stream()
@@ -33,6 +39,10 @@ public class OptionConverter {
             return null;
         }
 
+        if (dto.getName().equals("사이즈") && entity.getCompany().getCpCategory().equals(CompanyCategory.D)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "사이즈라는 예약어 사용");
+        }
+
         OptionEntity optionEntity = OptionEntity.builder()
                 .product(entity)
                 .opName(dto.getName().trim())
@@ -43,10 +53,7 @@ public class OptionConverter {
                 ;
 
         // 옵션 상세 dto -> entity
-        optionEntity.setOptionDetailList(dto.getOptionDtList().stream()
-                .map(it -> toEntity(it, optionEntity))
-                .toList())
-                ;
+        optionEntity.setOptionDetailList(optionDetailConverter.toEntityList(dto.getOptionDtList(), optionEntity));
 
         return optionEntity;
     }
@@ -63,43 +70,12 @@ public class OptionConverter {
                 .essential(entity.getOpEssential())
                 .overlap(entity.getOpOverlap())
                 .status(entity.getOpStatus())
-                .optionDtList(entity.getOpDtList().stream() // 옵션 상세 entity -> dto
-                        .map(this::toDto)
-                        .toList())
+                .optionDtList(optionDetailConverter.toDtoList(entity.getOpDtList()))
                 .build()
                 ;
     }
 
 
-    // 옵션 상세 dto -> entity
-    public OptionDetailEntity toEntity(OptionDto.OptionDetailDto dto, OptionEntity entity) {
-        if (dto == null) {
-            return null;
-        }
 
-        return OptionDetailEntity.builder()
-                .option(entity)
-                .opDtName(dto.getOpDtName().trim())
-                .opDtPlusCost(dto.getPlusCost())
-                .opDtPlusTime(dto.getPlusTime())
-                .build()
-                ;
-    }
-
-
-    // 옵션 상세 Entity -> dto
-    public OptionDto.OptionDetailDto toDto(OptionDetailEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        return OptionDto.OptionDetailDto.builder()
-                .opDtId(entity.getOpDtId())
-                .opDtName(entity.getOpDtName())
-                .plusTime(entity.getOpDtPlusTime())
-                .plusCost(entity.getOpDtPlusCost())
-                .build()
-                ;
-    }
 
 }

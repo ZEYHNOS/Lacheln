@@ -36,6 +36,7 @@ public class PayDetailOptionEntity {
     private String payOpDtName;
 
     // 드레스 사이즈
+    @Enumerated(EnumType.STRING)
     @Column(name = "dress_size", columnDefinition = "CHAR(3)")
     private DressSize dressSize;
 
@@ -50,4 +51,8 @@ public class PayDetailOptionEntity {
     // 옵션 소요 시간
     @Column(name = "pay_op_task_time", nullable = false)
     private LocalTime payOpTaskTime;
+
+    public void updateDressSize(String size) {
+        this.dressSize = DressSize.valueOf(size);
+    }
 }

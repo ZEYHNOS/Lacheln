@@ -39,9 +39,6 @@ public class PaymentRequest {
     // 결제 일시
     private LocalDateTime paidAt;
 
-    // 결제하는 상품 리스트
-    private List<PayDetailRequest> payDetailRequestList;
-
     // 장바구니 ID 리스트
     private List<Long> cartIdList;
 

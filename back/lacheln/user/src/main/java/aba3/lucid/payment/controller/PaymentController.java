@@ -48,7 +48,6 @@ public class PaymentController {
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         BigInteger totalAmount = paymentBusiness.verificationAndGetTotalAmount(request, user.getUserId());
-
         return API.OK(totalAmount);
     }
 

@@ -1,8 +1,10 @@
 package aba3.lucid.domain.payment.converter;
 
 import aba3.lucid.common.annotation.Converter;
+import aba3.lucid.domain.cart.dto.CartAllResponse;
 import aba3.lucid.domain.payment.dto.PayManagementResponse;
 import aba3.lucid.domain.payment.dto.PaymentRequest;
+import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,7 @@ public class PaymentConvertor {
 
     private final PayDetailConverter payDetailConverter;
 
-    public PayManagementEntity toEntity(PaymentRequest request, UsersEntity user) {
+    public PayManagementEntity toEntity(PaymentRequest request, UsersEntity user, List<CartAllResponse> cartAllResponseList) {
         PayManagementEntity entity = PayManagementEntity.builder()
                 .payId(request.getPayId())
                 .user(user)
@@ -29,7 +31,7 @@ public class PaymentConvertor {
                 .build()
                 ;
 
-        entity.updatePayDetailEntityList(payDetailConverter.toEntityList(request.getPayDetailRequestList(), entity));
+        entity.updatePayDetailEntityList(payDetailConverter.toPayDetailEntityListByCartEntityList(entity, cartAllResponseList));
         return entity;
     }
 

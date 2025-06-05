@@ -31,14 +31,14 @@ export default function SearchBar() {
 
     return (
         <div className="relative w-full">
-            <div className="relative bg-[#FBFBFB] rounded-full border-2 border-[#845EC2] flex items-center px-8 w-full h-16">
+            <div className="relative bg-white rounded-full border-2 border-[#845EC2] flex items-center px-8 w-full h-16">
                 <FaSearch className="text-[#845EC2] text-3xl cursor-pointer" />
                 <input
                     type="text"
                     placeholder="검색..."
                     value={query}
                     onChange={handleChange}
-                    className="w-full h-full bg-[#FBFBFB] text-black placeholder-gray-400 outline-none pl-4 text-xl"
+                    className="w-full h-full bg-white text-black placeholder-gray-400 outline-none pl-4 text-xl"
                 />
             </div>
 

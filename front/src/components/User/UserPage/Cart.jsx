@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import apiClient from "../../../lib/apiClient";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const userId = "user_id"; // 실제 로그인 정보에서 받아와야 함
 
@@ -9,6 +10,7 @@ export default function Cart() {
     const [checked, setChecked] = useState([]);
     const [allChecked, setAllChecked] = useState(false);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
@@ -153,6 +155,17 @@ export default function Cart() {
         }
     };
 
+    const handleOrder = () => {
+        const checkedPackages = packageList.filter(pkg => checked.includes(pkg.packId));
+        const checkedSingles = singleList.filter(item => checked.includes(item.cartId));
+        const checkedItems = [...checkedPackages, ...checkedSingles];
+        if (checkedItems.length === 0) {
+            toast.warning('주문할 상품을 선택하세요.');
+            return;
+        }
+        navigate("/cart/payment", { state: { checkedItems } });
+    };
+
     return (
         <div className="flex flex-col min-h-screen text-black" style={{ background: 'white' }}>
             <div className="flex-1 max-w-4xl mx-auto p-6 w-full">
@@ -203,7 +216,7 @@ export default function Cart() {
                                     {/* 왼쪽: 이미지, 상품명, 상세정보 */}
                                     <div className="flex-1 flex items-start">
                                         {firstProduct && (
-                                            <img src={firstProduct.pdImageUrl} alt={firstProduct.pdName} className="w-24 h-24 object-cover rounded mr-4" />
+                                            <img src={firstProduct.pdImageUrl} alt={firstProduct.pdName} className="w-27 h-36 object-cover rounded mr-4" />
                                         )}
                                         <div>
                                             <div className="font-bold text-black text-lg mb-1">[패키지] {pkg.packName}</div>
@@ -219,7 +232,7 @@ export default function Cart() {
                                     </div>
                                     {/* 오른쪽: 가격/원가/할인금액 */}
                                     <div className="w-1/3 text-right flex flex-col items-end">
-                                        <div className="font-bold text-purple-700 text-xl">{pkg.price?.toLocaleString()}원</div>
+                                        <div className="font-bold text-purple-700 text-xl">{(pkg.price - (pkg.discountPrice || 0)).toLocaleString()}원</div>
                                         <div className="text-black font-bold mt-1 text-xs">원가 {pkg.products[0]?.price?.toLocaleString() || 0}원</div>
                                         <div className="text-pink-600 font-bold mt-1 text-xs">할인: -{pkg.discountPrice.toLocaleString()}원</div>
                                     </div>
@@ -239,7 +252,7 @@ export default function Cart() {
                                 <img
                                     src={item.pdImageUrl}
                                     alt={item.pdName}
-                                    className="w-24 h-24 object-cover rounded mr-4"
+                                    className="w-27 h-36 object-cover rounded mr-4"
                                 />
                                 <div className="flex-1">
                                     <div className="font-semibold text-black whitespace-nowrap">
@@ -256,6 +269,11 @@ export default function Cart() {
                                 </div>
                                 <div className="w-1/3 text-right font-bold text-lg text-black">
                                     {item.price?.toLocaleString()}원
+                                    {item.cartDetails && item.cartDetails.reduce((sum, detail) => sum + (detail.detailPrice || 0), 0) > 0 && (
+                                        <div className="text-xs text-gray-500 font-normal mt-1">
+                                            + 옵션 추가금 {item.cartDetails.reduce((sum, detail) => sum + (detail.detailPrice || 0), 0).toLocaleString()}원
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -285,7 +303,7 @@ export default function Cart() {
 
                 {/* 하단 버튼 */}
                 <div className="flex gap-4 mt-6">
-                    <button className="flex-1 py-3 bg-purple-600 text-white rounded font-bold">주문하기</button>
+                    <button className="flex-1 py-3 bg-purple-600 text-white rounded font-bold" onClick={handleOrder}>주문하기</button>
                     <button className="flex-1 py-3 bg-gray-200 text-black rounded font-bold">쇼핑계속하기</button>
                 </div>
             </div>

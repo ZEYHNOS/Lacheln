@@ -50,12 +50,12 @@ export default function Header() {
     };
 
     return (
-        <header className="bg-[#FBFBFB] shadow-md px-8 py-3 relative">
+        <header className="bg-white shadow-md px-8 py-3 relative">
             {/* 첫 번째 줄: 좌측 메뉴 아이콘 & 우측 아이콘 */}
             <div className="flex items-center justify-between">
                 {/* 좌측 메뉴 버튼 */}
                 <button
-                    className="p-2 text-[#845EC2] text-5xl bg-[#FBFBFB] hover:bg-gray-200 rounded-lg transition focus:outline-none"
+                    className="p-2 text-[#845EC2] text-5xl bg-white hover:bg-gray-200 rounded-lg transition focus:outline-none"
                     onClick={toggleSidebar}>
                     <FaBars />
                 </button>

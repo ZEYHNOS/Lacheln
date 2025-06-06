@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,7 +106,7 @@ public class PackageToProductConverter {
         Object unproxied = Hibernate.unproxy(product);
 
         if (unproxied instanceof DressEntity dress) {
-            updateDressOption(optionDtoList, dress);
+            optionDtoList = updateDressOption(optionDtoList, dress);
         }
 
         switch (company.getCpCategory()) {
@@ -127,8 +128,9 @@ public class PackageToProductConverter {
         }
     }
 
-    private void updateDressOption(List<OptionDto> optionDtoList, DressEntity dress) {
-        optionDtoList.add(
+    private List<OptionDto> updateDressOption(List<OptionDto> optionDtoList, DressEntity dress) {
+        List<OptionDto> result = new ArrayList<>(optionDtoList);
+        result.add(
                 OptionDto.builder()
                         .name("사이즈")
                         .essential(BinaryChoice.Y)
@@ -136,6 +138,8 @@ public class PackageToProductConverter {
                         .optionDtList(optionConverter.toDtoListByDress(dress))
                         .build()
         );
+
+        return result;
     }
 
     private void updateMakeupOption(List<OptionDto> optionDtoList, MakeupEntity makeup) {

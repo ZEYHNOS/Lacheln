@@ -88,7 +88,6 @@ public class PackageConverter {
                 .imageUrl(packageEntity.getPackImageUrl())
                 .productInfoList(packageToProductConverter.toPackageProductResponseList(packageEntity.getPackageToProductEntityList()))
                 .discountrate(packageEntity.getPackDiscountrate())
-                // TODO 리팩토링
                 .taskTime(packageEntity.getPackageToProductEntityList().isEmpty() ? null : packageEntity.getPackageToProductEntityList().get(0).getProduct().getPdTaskTime())
                 .build()
                 ;

@@ -69,6 +69,7 @@ public class PackageToProductConverter {
                 .pdId(packageToProduct.getProduct().getPdId())
                 .companyName(packageToProduct.getProduct().getCompany().getCpName())
                 .productName(packageToProduct.getProduct().getPdName())
+                .category(packageToProduct.getProduct().getCompany().getCpCategory())
                 .price(packageToProduct.getProduct().getPdPrice())
                 .imageUrl(productImageUrl)
                 .build()

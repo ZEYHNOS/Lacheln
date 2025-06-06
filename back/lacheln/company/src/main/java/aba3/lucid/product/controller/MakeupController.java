@@ -5,7 +5,6 @@ import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.product.makeup.dto.MakeUpResponse;
 import aba3.lucid.domain.product.makeup.dto.MakeupRequest;
 import aba3.lucid.product.business.MakeupBusiness;
-import aba3.lucid.product.business.ProductBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class MakeupController {
 
     private final MakeupBusiness makeupBusiness;
-    private final ProductBusiness productBusiness;
 
     @PostMapping("/register")
     @Operation(summary = "메이크업 등록", description = "새로운 메이크업 상품을 등록")
@@ -30,7 +28,6 @@ public class MakeupController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         MakeUpResponse res = makeupBusiness.registerProduct(customUserDetails.getCompanyId(), req);
-//        MakeUpResponse res = makeupBusiness.registerProduct(3L, req);
         log.debug("Register MakeupResponse : {}", res);
 
         return API.OK(res);
@@ -44,7 +41,6 @@ public class MakeupController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         MakeUpResponse response = makeupBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
-//        MakeUpResponse response = makeupBusiness.updateProduct(3L, productId, request);
         log.debug("Update MakeupResponse : {}", response);
 
         return API.OK(response);
@@ -57,7 +53,6 @@ public class MakeupController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         makeupBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
-        makeupBusiness.deleteProduct(3L, productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 

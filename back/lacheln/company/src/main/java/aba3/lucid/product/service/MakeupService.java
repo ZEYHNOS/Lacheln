@@ -1,5 +1,8 @@
 package aba3.lucid.product.service;
 
+import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.packages.dto.PackageDetailInfoUserViewResponse;
+import aba3.lucid.domain.packages.dto.PackageProductResponse;
 import aba3.lucid.image.service.ImageService;
 import aba3.lucid.domain.product.converter.ProductDescriptionConverter;
 import aba3.lucid.domain.product.converter.HashtagConverter;
@@ -43,6 +46,16 @@ public class MakeupService extends ProductAbstractService<MakeupEntity, MakeupRe
     @Override
     protected void updateAdditionalFields(MakeupEntity existingEntity, MakeupRequest request) {
         existingEntity.setAdditionalField(request);
+    }
+
+    public void injectManagerInfo(PackageDetailInfoUserViewResponse response) {
+        for (PackageProductResponse packageProduct : response.getProductInfoList()) {
+            if (packageProduct.getCategory().equals(CompanyCategory.M)) {
+                MakeupEntity entity = findByIdWithThrow(packageProduct.getPdId());
+                packageProduct.setManager(entity.getMakeupManager());
+                break;
+            }
+        }
     }
 }
 

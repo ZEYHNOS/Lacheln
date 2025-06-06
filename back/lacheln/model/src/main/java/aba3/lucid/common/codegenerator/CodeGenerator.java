@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 @Component
-public class EmailCodeGenerator {
+public class CodeGenerator {
 
     // 6자리의 랜덤한 숫자만들기
     public String generateNumbericCode()    {

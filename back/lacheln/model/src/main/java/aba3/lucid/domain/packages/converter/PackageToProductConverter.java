@@ -101,13 +101,19 @@ public class PackageToProductConverter {
     private void updateDiffOptions(List<OptionDto> optionDtoList, CompanyEntity company, ProductEntity product) {
         switch (company.getCpCategory()) {
             case S -> {
-                updateStudioOption(optionDtoList, (StudioEntity) product);
+                if (product instanceof StudioEntity studio) {
+                    updateStudioOption(optionDtoList, studio);
+                }
             }
             case M -> {
-                updateMakeupOption(optionDtoList, (MakeupEntity) product);
+                if (product instanceof MakeupEntity makeup) {
+                    updateMakeupOption(optionDtoList, makeup);
+                }
             }
             case D -> {
-                updateDressOption(optionDtoList, (DressEntity) product);
+                if (product instanceof DressEntity dress) {
+                    updateDressOption(optionDtoList, dress);
+                }
             }
         }
     }

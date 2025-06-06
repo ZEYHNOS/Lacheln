@@ -1,12 +1,14 @@
 package aba3.lucid.domain.packages.dto;
 
 import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.product.dto.option.OptionDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -31,5 +33,7 @@ public class PackageCompanyResponse {
     private String productName;
 
     private BigInteger productPrice;
+
+    List<OptionDto> optionDtoList;
 
 }

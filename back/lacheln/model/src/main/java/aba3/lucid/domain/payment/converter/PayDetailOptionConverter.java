@@ -32,6 +32,8 @@ public class PayDetailOptionConverter {
                 ;
     }
 
+
+
     public PayDetailOptionResponse toResponse(PayDetailOptionEntity entity) {
         return PayDetailOptionResponse.builder()
                 .payDetailOptionId(entity.getPayDetailOptionId())

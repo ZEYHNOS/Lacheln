@@ -89,4 +89,8 @@ public class PayDetailEntity {
         this.payDetailOptionEntityList = payDetailOptionEntityList;
     }
 
+    public void updateManager(String manager) {
+        this.manager = manager;
+    }
+
 }

@@ -2,20 +2,16 @@ package aba3.lucid.domain.payment.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.cart.dto.CartAllResponse;
-import aba3.lucid.domain.cart.dto.CartDetailResponse;
-import aba3.lucid.domain.cart.entity.CartEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.payment.dto.PayDetailBlockResponse;
 import aba3.lucid.domain.payment.dto.PayDetailOptionRequest;
 import aba3.lucid.domain.payment.dto.PayDetailRequest;
 import aba3.lucid.domain.payment.dto.PayDetailResponse;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
-import aba3.lucid.domain.payment.entity.PayDetailOptionEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Converter
@@ -23,6 +19,7 @@ import java.util.List;
 public class PayDetailConverter {
 
     private final PayDetailOptionConverter payDetailOptionConverter;
+    private final CartToPaymentConverter cartToPaymentConverter;
 
     public PayDetailEntity toEntity(PayDetailRequest request, PayManagementEntity payManagement) {
         LocalDateTime endDateTime = request.getScheduleDate()
@@ -124,13 +121,15 @@ public class PayDetailConverter {
                 .taskTime(response.getTaskTime())
                 .imageUrl(response.getPdImageUrl())
                 .couponName(null)
-//                .category(response.getCategory()) // TODO 장바구니에 생기면 담기
+                .category(response.getCategory())
                 .build()
                 ;
 
-//        if (response.getCategory().equals(CompanyCategory.M)) {
-//            endDateTime.updateManager(response.getManager());
-//        }
+        entity.updatePayDetailOptionEntity(cartToPaymentConverter.toEntityList(response.getCartDetails(), entity));
+
+        if (response.getCategory().equals(CompanyCategory.M)) {
+            entity.updateManager(response.getManager());
+        }
 
         return entity;
     }

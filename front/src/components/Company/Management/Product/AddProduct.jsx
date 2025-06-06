@@ -276,7 +276,7 @@ function AddProduct() {
             <div className="flex items-start space-x-6">
                 <div className="w-1/3 p-2">
                     {/* 대표 이미지 */}
-                    <div className="border rounded-lg overflow-hidden bg-gray-100 w-full h-96">
+                    <div className="border rounded-lg overflow-hidden bg-gray-100 w-full h-96 aspect-[3/4]">
                         {selectedImage ? (
                             <img src={selectedImage} alt="대표 이미지" className="w-full h-full object-cover" />
                         ) : (
@@ -376,27 +376,6 @@ function AddProduct() {
                                     <span className="text-black">야외촬영가능</span>
                                 </label>
                             </div>
-                            <div className="flex items-center">
-                                <label className="w-32">최대수용인원</label>
-                                <input 
-                                    type="number" 
-                                    min="1"
-                                    value={maxPeople} 
-                                    onChange={(e) => setMaxPeople(e.target.value)}
-                                    className="flex-grow border p-2 rounded bg-white text-black"
-                                />
-                            </div>
-                            <div className="flex items-center">
-                                <label className="w-32">배경선택여부</label>
-                                <select
-                                    value={backgroundOption}
-                                    onChange={(e) => setBackgroundOption(e.target.value)}
-                                    className="flex-grow border p-2 rounded bg-white text-black"
-                                >
-                                    <option value="Y">가능</option>
-                                    <option value="N">불가능</option>
-                                </select>
-                            </div>
                         </div>
                     )}
 
@@ -429,17 +408,6 @@ function AddProduct() {
                                     />
                                     <span className="text-black">방문</span>
                                 </label>
-                            </div>
-                            <div className="flex items-center">
-                                <label className="w-24">담당자</label>
-                                <input 
-                                    type="text"
-                                    maxLength="10" 
-                                    value={manager} 
-                                    onChange={(e) => setManager(e.target.value)}
-                                    className="flex-grow border p-2 rounded bg-white text-black"
-                                    placeholder="담당자 이름"
-                                />
                             </div>
                         </div>
                     )}
@@ -501,6 +469,45 @@ function AddProduct() {
                                     <option value="03:00:00">3시간 대여</option>
                                 </select>
                             </div>
+                            {/* 메이크업 담당자 - 대여시간 아래로 이동 */}
+                            {categoryCode === "M" && (
+                                <div className="flex items-center mt-2">
+                                    <label className="w-24">담당자</label>
+                                    <input
+                                        type="text"
+                                        maxLength="10"
+                                        value={manager}
+                                        onChange={(e) => setManager(e.target.value)}
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                        placeholder="담당자 이름"
+                                    />
+                                </div>
+                            )}
+                            {categoryCode === "S" && (
+                                <div className="bg-white rounded-md mt-4 space-y-4">
+                                    <div className="flex items-center">
+                                        <label className="w-32">최대수용인원</label>
+                                        <input 
+                                            type="number" 
+                                            min="1"
+                                            value={maxPeople} 
+                                            onChange={(e) => setMaxPeople(e.target.value)}
+                                            className="flex-grow border p-2 rounded bg-white text-black"
+                                        />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <label className="w-32">배경선택여부</label>
+                                        <select
+                                            value={backgroundOption}
+                                            onChange={(e) => setBackgroundOption(e.target.value)}
+                                            className="flex-grow border p-2 rounded bg-white text-black"
+                                        >
+                                            <option value="Y">가능</option>
+                                            <option value="N">불가능</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* 옵션 추가하기 */}
                             {options.map((option, optIdx) => (
@@ -658,8 +665,10 @@ function AddProduct() {
                             
             {/* 상품 추가/취소 버튼 */}
             <div className="flex justify-end mt-6 space-x-4">
-                <button onClick={handleSubmit} 
-                className="bg-[#845EC2] text-white px-6 py-2 rounded hover:bg-purple-500">추가</button>
+                <button onClick={handleSubmit}
+                className="bg-[#845EC2] text-white px-6 py-2 rounded hover:bg-purple-500"
+                disabled={categoryCode === 'M' && manager.trim() === ''}
+                >추가</button>
                 <button className="bg-gray-300 text-black px-6 py-2 rounded" onClick={() => navigate(-1)}>취소</button>
             </div>
         </div>

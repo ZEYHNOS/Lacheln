@@ -39,7 +39,7 @@ function ViewProduct() {
             .then(res => {
                 const data = res.data.data;
                 setProduct(data);
-                setIsActive(data.status === "ACTIVE");
+                setIsActive(data.status === "ACTIVE" || data.status === "PACKAGE");
                 if (data.productImageUrl?.length > 0) {
                     setSelectedImage(`${imageBaseUrl}${data.productImageUrl[0].url}`);
                 }
@@ -120,15 +120,20 @@ function ViewProduct() {
                 <h1 className="text-2xl font-bold text-[#845EC2]">상품 상세 보기</h1>
                 <button
                     onClick={() => navigate(`/company/product/edit/${id}`)}
-                    className="bg-[#845EC2] text-white px-4 py-2 rounded hover:bg-purple-500"
+                    className={`px-4 py-2 rounded ${
+                        product.status === "PACKAGE" 
+                        ? "bg-gray-400 cursor-not-allowed" 
+                        : "bg-[#845EC2] hover:bg-purple-500"
+                    } text-white`}
+                    disabled={product.status === "PACKAGE"}
                 >
                     수정
                 </button>
             </div>
 
             <div className="flex items-start space-x-6">
-                <div className="w-full lg:w-1/2">
-                    <div className="border rounded-lg overflow-hidden bg-gray-100 w-full h-96">
+                <div className="w-1/3 p-2">
+                    <div className="border rounded-lg overflow-hidden bg-gray-100 w-full h-96 aspect-[3/4]">
                         {selectedImage ? (
                             <img src={selectedImage} alt="대표 이미지" className="w-full h-full object-cover" />
                         ) : (
@@ -187,47 +192,6 @@ function ViewProduct() {
                                 </span>
                             </label>
                         </div>
-
-                        {/* 스튜디오 전용 필드 */}
-                        {isStudio && (
-                            <div className="space-y-4">
-                                <div className="flex items-center">
-                                    <label className="w-32">최대수용인원</label>
-                                    <input 
-                                        type="text" 
-                                        value={maxPeople}
-                                        disabled
-                                        className="flex-grow border p-2 rounded bg-white text-black"
-                                    />
-                                </div>
-                                <div className="flex items-center">
-                                    <label className="w-32">배경선택여부</label>
-                                    <select
-                                        value={bgOptions}
-                                        disabled
-                                        className="flex-grow border p-2 rounded bg-white text-black appearance-none"
-                                    >
-                                        <option value="Y">가능</option>
-                                        <option value="N">불가능</option>
-                                    </select>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 메이크업 전용 필드 */}
-                        {isMakeup && (
-                            <div className="space-y-4">
-                                <div className="flex items-center">
-                                    <label className="w-24">담당자</label>
-                                    <input 
-                                        type="text" 
-                                        value={manager || "-"}
-                                        disabled
-                                        className="flex-grow border p-2 rounded bg-white text-black"
-                                    />
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -282,6 +246,43 @@ function ViewProduct() {
                                 <option value="03:00:00">3시간 대여</option>
                             </select>
                         </div>
+                        {/* 메이크업 담당자 */}
+                        {isMakeup && (
+                            <div className="flex items-center mt-2">
+                                <label className="w-24">담당자</label>
+                                <input 
+                                    type="text" 
+                                    value={manager || "-"}
+                                    disabled
+                                    className="flex-grow border p-2 rounded bg-white text-black"
+                                />
+                            </div>
+                        )}
+                        {/* 스튜디오 전용 필드 */}
+                        {isStudio && (
+                            <div className="space-y-4">
+                                <div className="flex items-center">
+                                    <label className="w-32">최대수용인원</label>
+                                    <input 
+                                        type="text" 
+                                        value={maxPeople}
+                                        disabled
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                    />
+                                </div>
+                                <div className="flex items-center">
+                                    <label className="w-32">배경선택여부</label>
+                                    <select
+                                        value={bgOptions}
+                                        disabled
+                                        className="flex-grow border p-2 rounded bg-white text-black appearance-none"
+                                    >
+                                        <option value="Y">가능</option>
+                                        <option value="N">불가능</option>
+                                    </select>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* 드레스 사이즈 리스트 출력 */}

@@ -59,8 +59,8 @@ function Product() {
                     url = "/api/product/list";
                 } else {
                     url = selected === "드레스"
-                        ? `/api/product?page=${currentPage - 1}`
-                        : `/api/product?category=${categoryCodes[selected]}&page=${currentPage - 1}`;
+                        ? `/api/product/list?page=${currentPage - 1}`
+                        : `/api/product/list?category=${categoryCodes[selected]}&page=${currentPage - 1}`;
                     if (minPrice) url += `&minimum=${minPrice}`;
                     if (maxPrice) url += `&maximum=${maxPrice}`;
                 }

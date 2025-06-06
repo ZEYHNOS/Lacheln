@@ -306,7 +306,7 @@ function EditProduct() {
 
             <div className="flex items-start space-x-6">
                 <div className="w-1/3 p-2">
-                    <div className="border rounded-lg overflow-hidden bg-gray-100 w-full h-96">
+                    <div className="border rounded-lg overflow-hidden bg-gray-100 w-full h-96 aspect-[3/4]">
                         {selectedImage ? (
                             <img src={selectedImage} alt="대표 이미지" className="w-full h-full object-cover" />
                         ) : (
@@ -391,27 +391,6 @@ function EditProduct() {
                                         <span className="text-black">야외촬영가능</span>
                                     </label>
                                 </div>
-                                <div className="flex items-center">
-                                    <label className="w-32">최대수용인원</label>
-                                    <input 
-                                        type="number" 
-                                        min="1"
-                                        value={maxPeople} 
-                                        onChange={(e) => setMaxPeople(e.target.value)}
-                                        className="flex-grow border p-2 rounded bg-white text-black"
-                                    />
-                                </div>
-                                <div className="flex items-center">
-                                    <label className="w-32">배경선택여부</label>
-                                    <select
-                                        value={backgroundOption}
-                                        onChange={(e) => setBackgroundOption(e.target.value)}
-                                        className="flex-grow border p-2 rounded bg-white text-black"
-                                    >
-                                        <option value="Y">가능</option>
-                                        <option value="N">불가능</option>
-                                    </select>
-                                </div>
                             </div>
                         )}
 
@@ -436,17 +415,6 @@ function EditProduct() {
                                         />
                                         <span className="text-black">방문</span>
                                     </label>
-                                </div>
-                                <div className="flex items-center">
-                                    <label className="w-24">담당자</label>
-                                    <input 
-                                        type="text"
-                                        maxLength="10" 
-                                        value={manager} 
-                                        onChange={(e) => setManager(e.target.value)}
-                                        className="flex-grow border p-2 rounded bg-white text-black"
-                                        placeholder="담당자 이름"
-                                    />
                                 </div>
                             </div>
                         )}
@@ -511,6 +479,45 @@ function EditProduct() {
                                     <option value="03:00:00">3시간 대여</option>
                                 </select>
                             </div>
+                            {/* 메이크업 담당자 - 대여시간 아래로 이동 */}
+                            {categoryCode === "M" && (
+                                <div className="flex items-center mt-2">
+                                    <label className="w-24">담당자</label>
+                                    <input
+                                        type="text"
+                                        maxLength="10"
+                                        value={manager}
+                                        onChange={(e) => setManager(e.target.value)}
+                                        className="flex-grow border p-2 rounded bg-white text-black"
+                                        placeholder="담당자 이름"
+                                    />
+                                </div>
+                            )}
+                            {categoryCode === "S" && (
+                                <div className="bg-white rounded-md mt-4 space-y-4">
+                                    <div className="flex items-center">
+                                        <label className="w-32">최대수용인원</label>
+                                        <input 
+                                            type="number" 
+                                            min="1"
+                                            value={maxPeople} 
+                                            onChange={(e) => setMaxPeople(e.target.value)}
+                                            className="flex-grow border p-2 rounded bg-white text-black"
+                                        />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <label className="w-32">배경선택여부</label>
+                                        <select
+                                            value={backgroundOption}
+                                            onChange={(e) => setBackgroundOption(e.target.value)}
+                                            className="flex-grow border p-2 rounded bg-white text-black"
+                                        >
+                                            <option value="Y">가능</option>
+                                            <option value="N">불가능</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* 드레스 사이즈 리스트 보여주기 */}
                             {categoryCode === "D" && sizeList.length > 0 && (
@@ -770,6 +777,7 @@ function EditProduct() {
                 <button
                     onClick={handleSubmit}
                     className="bg-[#845EC2] text-white px-6 py-2 rounded hover:bg-purple-500"
+                    disabled={categoryCode === 'M' && manager.trim() === ''}
                 >
                     수정하기
                 </button>

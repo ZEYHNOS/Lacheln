@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigInteger;
+import java.time.LocalTime;
 
 @Getter
 @Entity
@@ -31,5 +32,5 @@ public class OptionDetailEntity {
     private BigInteger opDtPlusCost; // 추가금
 
     @Column(name = "op_dt_plus_time")
-    private int opDtPlusTime; // 추가 시간
+    private LocalTime opDtPlusTime; // 추가 시간
 }

@@ -1,5 +1,6 @@
 package aba3.lucid.payment.business;
 
+import aba3.lucid.cart.business.CartBusiness;
 import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.exception.ApiException;
@@ -45,15 +46,14 @@ public class PaymentBusiness {
     private final PaymentService paymentService;
     private final PayDetailService payDetailService;
     private final UserService userService;
-    private final CartService cartService;
+    private final CartBusiness cartBusiness;
 
     // 결제 정보 저장하기
     public PayManagementResponse save(String userId, PaymentRequest request) {
         Validator.throwIfNull(userId, request);
 
         UsersEntity user = userService.findByIdWithThrow(userId);
-        List<CartAllResponse> cartAllResponseList = new ArrayList<>();
-//        List<CartAllResponse> cartAllResponseList = cartService.getCarts(request.getCartIdList());
+        List<CartAllResponse> cartAllResponseList = cartBusiness.getCarts(request.getCartIdList());
         PayManagementEntity payManagement = paymentConvertor.toEntity(request, user, cartAllResponseList);
 
         PayManagementEntity savedPayManagement = paymentService.save(payManagement, request.getCartIdList());

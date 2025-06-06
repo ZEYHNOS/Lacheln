@@ -4,12 +4,18 @@ import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.product.dress.entity.DressEntity;
+import aba3.lucid.domain.product.dress.entity.DressSizeEntity;
 import aba3.lucid.domain.product.dto.option.OptionDto;
 import aba3.lucid.domain.product.entity.OptionDetailEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.enums.DressSize;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigInteger;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Converter
@@ -76,6 +82,21 @@ public class OptionConverter {
     }
 
 
+    public List<OptionDto.OptionDetailDto> toDtoListByDress(DressEntity entity) {
+        List<OptionDto.OptionDetailDto> result = new ArrayList<>();
 
+        for (DressSizeEntity dressSize : entity.getDressSizeList()) {
+            result.add(
+                    OptionDto.OptionDetailDto.builder()
+                            .opDtId(dressSize.getDressSizeId())
+                            .opDtName(dressSize.getSize().toString())
+                            .plusCost(dressSize.getPlusCost())
+                            .plusTime(LocalTime.of(0, 0))
+                            .build()
+            );
+        }
+
+        return result;
+    }
 
 }

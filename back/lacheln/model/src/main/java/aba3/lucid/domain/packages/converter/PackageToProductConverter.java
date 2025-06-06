@@ -1,15 +1,19 @@
 package aba3.lucid.domain.packages.converter;
 
 import aba3.lucid.common.annotation.Converter;
-import aba3.lucid.common.exception.ApiException;
-import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.PackageCompanyResponse;
 import aba3.lucid.domain.packages.dto.PackageProductResponse;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
+import aba3.lucid.domain.product.converter.OptionConverter;
+import aba3.lucid.domain.product.dress.entity.DressEntity;
+import aba3.lucid.domain.product.dto.option.OptionDto;
 import aba3.lucid.domain.product.entity.ProductEntity;
+import aba3.lucid.domain.product.makeup.entity.MakeupEntity;
 import aba3.lucid.domain.product.repository.PackageToProductRepository;
+import aba3.lucid.domain.product.studio.entity.StudioEntity;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -20,6 +24,7 @@ import java.util.Optional;
 public class PackageToProductConverter {
 
     private final PackageToProductRepository packageToProductRepository;
+    private final OptionConverter optionConverter;
 
     public PackageToProductEntity toEntity(PackageEntity packageEntity, ProductEntity productEntity) {
         return PackageToProductEntity.builder()
@@ -35,7 +40,7 @@ public class PackageToProductConverter {
         if (optionalPackageToProductEntity.isPresent()) {
             PackageToProductEntity packageToProduct = optionalPackageToProductEntity.get();
 
-            return PackageCompanyResponse.builder()
+            PackageCompanyResponse response = PackageCompanyResponse.builder()
                     .id(company.getCpId())
                     .email(company.getCpEmail())
                     .address(company.getCpAddress())
@@ -45,8 +50,13 @@ public class PackageToProductConverter {
                     .productId(packageToProduct.getProduct().getPdId())
                     .productName(packageToProduct.getProduct().getPdName())
                     .productPrice(packageToProduct.getProduct().getPdPrice())
+                    .optionDtoList(optionConverter.toDtoList(packageToProduct.getProduct().getOpList()))
                     .build()
                     ;
+
+            updateDiffOptions(response.getOptionDtoList(), company, packageToProduct.getProduct());
+
+            return response;
         }
 
         return PackageCompanyResponse.builder()
@@ -72,6 +82,7 @@ public class PackageToProductConverter {
                 .category(packageToProduct.getProduct().getCompany().getCpCategory())
                 .price(packageToProduct.getProduct().getPdPrice())
                 .imageUrl(productImageUrl)
+                .optionDtoList(optionConverter.toDtoList(packageToProduct.getProduct().getOpList()))
                 .build()
                 ;
     }
@@ -81,5 +92,38 @@ public class PackageToProductConverter {
                 .map(this::toPackageProductResponse)
                 .toList()
                 ;
+    }
+
+    private void updateDiffOptions(List<OptionDto> optionDtoList, CompanyEntity company, ProductEntity product) {
+        switch (company.getCpCategory()) {
+            case S -> {
+                updateStudioOption(optionDtoList, (StudioEntity) product);
+            }
+            case M -> {
+                updateMakeupOption(optionDtoList, (MakeupEntity) product);
+            }
+            case D -> {
+                updateDressOption(optionDtoList, (DressEntity) product);
+            }
+        }
+    }
+
+    private void updateDressOption(List<OptionDto> optionDtoList, DressEntity dress) {
+        optionDtoList.add(
+                OptionDto.builder()
+                        .name("사이즈")
+                        .essential(BinaryChoice.Y)
+                        .overlap(BinaryChoice.Y)
+                        .optionDtList(optionConverter.toDtoListByDress(dress))
+                        .build()
+        );
+    }
+
+    private void updateMakeupOption(List<OptionDto> optionDtoList, MakeupEntity makeup) {
+
+    }
+
+    private void updateStudioOption(List<OptionDto> optionDtoList, StudioEntity studio) {
+
     }
 }

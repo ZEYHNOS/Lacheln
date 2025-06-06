@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigInteger;
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -67,7 +68,7 @@ public class OptionDto {
 
         // 추가 시간
         @Negative
-        private int plusTime;
+        private LocalTime plusTime;
 
     }
 

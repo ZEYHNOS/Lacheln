@@ -7,6 +7,7 @@ import aba3.lucid.domain.packages.dto.PackageRegisterRequest;
 import aba3.lucid.domain.packages.dto.PackageResponse;
 import aba3.lucid.domain.packages.dto.PackageUserViewListResponse;
 import aba3.lucid.domain.packages.entity.PackageEntity;
+import aba3.lucid.domain.product.converter.OptionConverter;
 import aba3.lucid.domain.product.enums.PackageStatus;
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +20,7 @@ public class PackageConverter {
 
     private final PackageToProductConverter packageToProductConverter;
     private final PackageDescriptionConverter packageDescriptionConverter;
+    private final OptionConverter optionConverter;
 
     public List<PackageResponse> toResponseList(List<PackageEntity> entityList) {
         return entityList.stream()
@@ -52,7 +54,7 @@ public class PackageConverter {
                 .cp1(packageToProductConverter.toResponse(entity.getPackId(), entity.getPackCompany1()))
                 .cp2(packageToProductConverter.toResponse(entity.getPackId(), entity.getPackCompany2()))
                 .createAt(entity.getPackCreateDate())
-                .taskTime(entity.getPackageToProductEntityList().isEmpty() ? null : entity.getPackageToProductEntityList().get(0).getProduct().getPdTaskTime())
+                .taskTime(entity.getPackageToProductEntityList() == null || entity.getPackageToProductEntityList().isEmpty() ? null : entity.getPackageToProductEntityList().get(0).getProduct().getPdTaskTime())
                 .endDate(entity.getPackEndDate())
                 .status(entity.getPackStatus())
                 .imageUrl(entity.getPackImageUrl())

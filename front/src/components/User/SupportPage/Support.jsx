@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Help from "../../../image/Support/help.png";
 import Menu from "../../../image/Support/menu.png";
+import Arrowdown from "../../../image/Support/arrowdown.png";
 import Search from "../../../image/Support/search.png";
 import Call from "../../../image/Support/call.png";
 
@@ -57,8 +58,8 @@ export function Support() {
                 </ul>
 
                 {/* 본문 */}
-                <div className="mt-4 ml-8">
-                    <div className="text-[24px]">문의유형 선택</div>
+                <div className="mt-6 mx-auto text-center">
+                    <div className="text-[24px] mb-2">문의유형 선택</div>
                     <div>문의유형을 선택하면 문의유형에 따라 [자주 찾는 도움말]을 확인할 수 있습니다.</div>
                     <div>찾는 도움말이 보이지 않으면 [도움말 검색]을 이용해 원하는 도움말을 찾아 주세요.</div>
                 </div>
@@ -66,14 +67,16 @@ export function Support() {
                 <div className="flex justify-end gap-4 mr-8 mt-2 text-[#845EC2] font-semibold">
                     <img src={Help} alt="Help Icon" className="w-7 h-7" />
                     <div className="cursor-pointer hover:underline">문의방법 자세히보기</div>
+                    <img src={Arrowdown} alt="Arrowdown Icon" className="w-7 h-7" />
                     <img src={Menu} alt="Menu Icon" className="w-7 h-7" />
                     <div className="cursor-pointer hover:underline" onClick={() => setShowTypeToggle(prev => !prev)}>
                         문의유형 전체보기
                     </div>
+                    <img src={Arrowdown} alt="Arrowdown Icon" className="w-7 h-7" />
                 </div>
 
                 {/* 네비게이션 바2 */}
-                <div className="mt-4 mr-12">
+                <div className="mt-4 flex justify-center">
                     <ul className="flex justify-center w-[50%] list-none p-0 m-0 border-[1px] bg-purple-200">
                         {menuItems2.map((item, idx) => (
                             <li
@@ -97,10 +100,10 @@ export function Support() {
                     </ul>
                 </div>
 
-                <div className="mt-4 ml-8 text-[24px]">도움말 검색</div>
-                <div className="mt-4 ml-8">
+                <div className="mt-4 ml-8 text-[24px] text-center">도움말 검색</div>
+                <div className="mt-2 ml-8 text-center">
                     검색으로 빠르게 도움말을 찾아보실 수 있습니다.
-                    <div className="flex justify-end gap-4 mr-8 text-[#845EC2] font-semibold">
+                    <div className="flex justify-end gap-4 mr-[280px] text-[#845EC2] font-semibold">
                         <div className="relative w-[450px]">
                             <input
                                 type="text"

@@ -81,7 +81,7 @@ public class SmsService {
         // Redis에 저장된 코드 전화번호로 불러오기
         String savedCode = smsRepository.getVerificationCode(phoneNumber);
         
-        // 해당 전화번호를 key값으로하는 코드가 없을 시 예외처리
+        // Redis에 해당 전화번호를 key값으로하는 코드가 없을 시 예외처리
         if(savedCode == null)    {
             throw new ApiException(ErrorCode.NOT_FOUND, "해당 번호로 전송된 인증번호가 존재하지 않습니다.");
         }

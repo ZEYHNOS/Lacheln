@@ -92,12 +92,12 @@ button:hover {
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #845EC2; /* 색상 */
+    background: #d0b7f8; /* 색상 */
     border-radius: 10px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #6b40b5; /* 호버 시 더 진한 보라색 */
+    background : #b18bee /* 호버 시 더 진한 보라색 */
   }
 
   .custom-scrollbar::-webkit-scrollbar-button {

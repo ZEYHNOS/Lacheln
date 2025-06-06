@@ -1,5 +1,6 @@
 package aba3.lucid.domain.product.dto.option;
 
+import aba3.lucid.common.annotation.ValidList;
 import aba3.lucid.common.enums.ActiveEnum;
 import aba3.lucid.common.enums.BinaryChoice;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -41,6 +42,7 @@ public class OptionDto {
 
     // 옵션 상세 정보
     @Valid
+    @ValidList
     private List<OptionDetailDto> optionDtList;
 
     @Data

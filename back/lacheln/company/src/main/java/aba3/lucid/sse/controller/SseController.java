@@ -27,6 +27,4 @@ public class SseController {
     ) throws IOException {
         return sseService.subscribe(user.getCompanyId());
     }
-
-
 }

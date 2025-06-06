@@ -134,14 +134,10 @@ public abstract class ProductEntity {
             return;
         }
 
-
-        // 비공개 -> 삭제
-        // TODO 예약 현황 확인하기 만약 예약자가 있다면 삭제 불가능
-        if (this.pdStatus == ProductStatus.INACTIVE
-                && changeStatus == ProductStatus.ACTIVE) {
-
+        // 패키지 상품 일 때 조작 불가능
+        if (this.pdStatus.equals(ProductStatus.PACKAGE)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
         }
-
 
         this.pdStatus = changeStatus;
     }

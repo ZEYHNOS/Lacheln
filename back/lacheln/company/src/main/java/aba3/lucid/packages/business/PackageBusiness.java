@@ -8,6 +8,8 @@ import aba3.lucid.domain.packages.converter.PackageConverter;
 import aba3.lucid.domain.packages.dto.*;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.packages.service.PackageService;
+import aba3.lucid.product.service.DressService;
+import aba3.lucid.product.service.MakeupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +22,7 @@ public class PackageBusiness {
 
     private final PackageService packageService;
     private final CompanyService companyService;
+    private final MakeupService makeupService;
 
     private final PackageConverter packageConverter;
 
@@ -96,6 +99,10 @@ public class PackageBusiness {
     public PackageDetailInfoUserViewResponse getPackageDetailInfo(Long packageId) {
         PackageEntity packageEntity = packageService.findByIdWithThrow(packageId);
 
-        return packageConverter.toPackageDetailInfo(packageEntity);
+        PackageDetailInfoUserViewResponse response = packageConverter.toPackageDetailInfo(packageEntity);
+
+        makeupService.injectManagerInfo(response);
+
+        return response;
     }
 }

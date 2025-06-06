@@ -29,10 +29,8 @@ public class DressController {
             @RequestBody DressRequest req,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
             ) {
-        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
         log.info("DressRequest : {}", req);
         DressResponse res = dressBusiness.registerProduct(customUserDetails.getCompanyId(), req);
-//        DressResponse res = dressBusiness.registerProduct(1L, req);
         log.debug("Register DressResponse : {}", res);
 
         return API.OK(res);
@@ -46,7 +44,6 @@ public class DressController {
             @RequestBody DressRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
 
         DressResponse response = dressBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
 //        DressResponse response = dressBusiness.updateProduct(1L, productId, request);
@@ -62,8 +59,6 @@ public class DressController {
             @PathVariable Long productId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        // TODO 토큰을 통해 파싱한 업체 객체 데이터 가지고 오기
-
 //        dressBusiness.deleteProduct(1L, productId);
         dressBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
         return API.OK("상품이 삭제되었습니다.");

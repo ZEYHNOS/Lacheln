@@ -1,9 +1,8 @@
 package aba3.lucid.product.service;
 
-import aba3.lucid.image.service.ImageService;
-import aba3.lucid.domain.product.converter.ProductDescriptionConverter;
 import aba3.lucid.domain.product.converter.HashtagConverter;
 import aba3.lucid.domain.product.converter.OptionConverter;
+import aba3.lucid.domain.product.converter.ProductDescriptionConverter;
 import aba3.lucid.domain.product.converter.ProductImageConverter;
 import aba3.lucid.domain.product.dress.convertor.DressSizeConverter;
 import aba3.lucid.domain.product.dress.dto.DressRequest;
@@ -11,9 +10,9 @@ import aba3.lucid.domain.product.dress.entity.DressEntity;
 import aba3.lucid.domain.product.dress.entity.DressSizeEntity;
 import aba3.lucid.domain.product.dress.repository.DressRepository;
 import aba3.lucid.domain.product.enums.ProductStatus;
+import aba3.lucid.image.service.ImageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

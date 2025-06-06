@@ -6,6 +6,7 @@ export default function CartButton({ isActive, onClick, isLoggedIn }) {
 
     const handleCartClick = () => {
         if (isLoggedIn) {
+            onClick();
             navigate("/cart");
         }
     };

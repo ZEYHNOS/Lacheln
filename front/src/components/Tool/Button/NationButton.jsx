@@ -17,6 +17,7 @@ export default function NationButton({ isActive, onClick }) {
 
     const handleClick = (countryCode) => {
         setSelectedFlag(countryCode);
+        onClick(); // 드롭다운 닫기
         // 드롭다운 닫기는 Header에서 관리
     };
 
@@ -44,7 +45,7 @@ export default function NationButton({ isActive, onClick }) {
             {isActive && (
                 <div className="absolute left-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50">
                     <p className="text-gray-500 text-center py-1 font-semibold">국가설정</p>
-                    <ul className="text-black text-sm">
+                    <ul className="text-black text-sm" >
                         {countries.map((country) => (
                             <li
                                 key={country.code}

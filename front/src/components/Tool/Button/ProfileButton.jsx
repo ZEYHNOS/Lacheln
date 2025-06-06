@@ -32,6 +32,7 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
                     autoClose: 1000,
                 });
                 onLogout();
+                onClick();
                 navigate("/");
             }
         } catch (error) {

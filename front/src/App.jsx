@@ -26,7 +26,7 @@ import Setpackage from "./components/Company/Work/Collaboration/AddPackage/Setpa
 import ViewPackage from "./components/Company/Work/Collaboration/ViewPackage.jsx";
 import EditPackage from "./components/Company/Work/Collaboration/EditPackage.jsx";
 import Messenger from "./components/Company/Work/Messenger";
-import Notification from "./components/Company/Work/Notification";
+import Notification from "./components/Company/Work/Notification/Notification.jsx";
 import Schedule from "./components/Company/Work/Schedule";
 import AddProduct from "./components/Company/Management/Product/AddProduct.jsx";
 import ViewProduct from "./components/Company/Management/Product/ViewProduct.jsx";
@@ -110,17 +110,23 @@ function App() {
                 <Route path="/register/company/form" element={<Layout><CompanyRegisterForm /></Layout>} />
                 {/* 회원가입 성공 */}
                 <Route path="/register/success" element={<Layout><RegistrationSuccess /></Layout>} />
-                {/* 유저 페이지 */}
+                {/* 장바구니 페이지 */}
                 <Route path="/cart" element={<Layout><Cart /></Layout>} />
+                {/* 결제 페이지 */}
                 <Route path="/cart/payment" element={<Layout><ChoicePayment /></Layout>} />
+                {/* 결제 완료 페이지 */}
                 <Route path="/cart/payment/success" element={<Layout><PaymentSuccess /></Layout>} />
+                {/* 알림 페이지 */}
+                <Route path="/notification" element={<Layout><Notification /></Layout>} />
                 {/* 브랜드 페이지 */}
                 <Route path="/brand" element={<Layout><Brand /></Layout>} />
                 {/* 상품 페이지 */}
                 <Route path="/product" element={<Layout><Product /></Layout>} />
+                {/* 상품상세 페이지 */}
                 <Route path="/product/:category/:productid" element={<Layout><Productdetail /></Layout>} />
                 {/* 패키지 페이지 */}
                 <Route path="/package" element={<Layout><Package /></Layout>} />
+                {/* 패키지상세 페이지 */}
                 <Route path="/package/:id" element={<Layout><PackageDetail /></Layout>} />
                 {/* 이벤트 페이지 */}
                 <Route path="/event" element={<Layout><Event /></Layout>} />
@@ -143,94 +149,104 @@ function App() {
                         <CompanyLayout><MainCompany /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
-                {/* 가게 정보 페이지(정보수정, 통계) */}
+                {/* 가게 정보 페이지 */}
                 <Route path="/company/modifyinfo" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><ModifyInfo /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 가게 통계 페이지 */}
                 <Route path="/company/statistics" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><Statistics /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
-                {/* 관리페이지(상품, 주문, 리뷰) */}
+                {/* 상품 관리 페이지 */}
                 <Route path="/company/product" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><ProductManagement /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 상품 추가 페이지 */}
                 <Route path="/company/product/add" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><AddProduct/></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 상품 상세 페이지 */}
                 <Route path="/company/product/:id" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><ViewProduct /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 상품 수정 페이지 */}
                 <Route path="/company/product/edit/:id" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><EditProduct /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 주문 관리 페이지 */}
                 <Route path="/company/order" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><OrderManagement /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 리뷰 관리 페이지 */}
                 <Route path="/company/review" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><ReviewManagement /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
-                {/* 업무페이지(협업, 메신저, 알림, 일정) */}
+                {/* 협업(패키지리스트) 페이지 */}
                 <Route path="/company/collaboration" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><Collaboration /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
-                <Route path="/company/collaboration/setproduct" element={
-                    <CompanyProtectedRoute>
-                        <CompanyLayout><Setproduct /></CompanyLayout>
-                    </CompanyProtectedRoute>
-                } />
+                {/* 패키지 상품 설정 페이지 */}
                 <Route path="/company/collaboration/setproduct/:id" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><Setproduct /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 패키지 설정 페이지 */}
                 <Route path="/company/collaboration/setpackage/:id" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><Setpackage /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 패키지 상세 페이지 */}
                 <Route path="/company/collaboration/package/:id" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><ViewPackage /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 패키지 수정 페이지 */}
                 <Route path="/company/collaboration/package/edit/:packageId" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><EditPackage /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 메신저 페이지 */}
                 <Route path="/company/messenger" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><Messenger /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 알림 페이지 */}
                 <Route path="/company/notification" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><Notification /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 일정 페이지 */}
                 <Route path="/company/schedule" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><Schedule /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+
+                {/* 관리자페이지 */}
                 <Route path="/report" element={<ReportPage />} />
                 <Route path="/report/:id" element={<ReportPage />} />
             </Routes>

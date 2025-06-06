@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaBars } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -15,6 +15,7 @@ export default function Header() {
     const [activeButton, setActiveButton] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const location = useLocation();
+    const headerRef = useRef();
 
     useEffect(() => {
         // /login에서 왔는지 확인
@@ -37,6 +38,20 @@ export default function Header() {
             .catch(() => setIsLoggedIn(false));
     }, [location]);
 
+    // 바깥 클릭 시 드롭다운/사이드바 닫기
+    useEffect(() => {
+        if (activeButton || isSidebarOpen) {
+            const handleClickOutside = (e) => {
+                if (headerRef.current && !headerRef.current.contains(e.target)) {
+                    setActiveButton(null);
+                    setIsSidebarOpen(false);
+                }
+            };
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => document.removeEventListener("mousedown", handleClickOutside);
+        }
+    }, [activeButton, isSidebarOpen]);
+
     const handleLogout = () => {
         setIsLoggedIn(false);
     };
@@ -50,7 +65,7 @@ export default function Header() {
     };
 
     return (
-        <header className="bg-white shadow-md px-8 py-3 relative">
+        <header className="bg-white shadow-md px-8 py-3 relative" ref={headerRef}>
             {/* 첫 번째 줄: 좌측 메뉴 아이콘 & 우측 아이콘 */}
             <div className="flex items-center justify-between">
                 {/* 좌측 메뉴 버튼 */}

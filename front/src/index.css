@@ -104,6 +104,36 @@ button:hover {
     display: none; /* 스크롤바 양 끝 버튼 제거 */
   }
 }
+
+/* 전체 페이지(브라우저) 스크롤바에 적용 */
+html, body, #root {
+  scrollbar-width: thin;
+  scrollbar-color: #845EC2 #ffffff;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar {
+  width: 8px;
+  background: #ffffff;
+}
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+#root::-webkit-scrollbar-thumb {
+  background: #845EC2;
+  border-radius: 10px;
+}
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+#root::-webkit-scrollbar-thumb:hover {
+  background: #6b40b5;
+}
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+#root::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
 /* AddWrite.jsx 툴바 커스텀 */
 .btn-toolbar {
   @apply px-3 py-1 rounded text-sm bg-white text-black border border-gray-300 hover:bg-gray-200;

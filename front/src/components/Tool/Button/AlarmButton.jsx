@@ -1,13 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import ChattingRoomModal from "../../User/UserPage/chattingRoomModal";
 
 export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
+    const [notifications, setNotifications] = useState([]);
+    const eventSourceRef = useRef(null);
+
+    useEffect(() => {
+        if (!isLoggedIn) return;
+        const eventSource = new EventSource("/user/sse/subscribe", { withCredentials: true });
+        eventSourceRef.current = eventSource;
+
+        eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.isTrusted) return; // 연결 확인 메시지는 무시
+                setNotifications((prev) => [data, ...prev].slice(0, 10)); // 최근 10개만
+            } catch (e) {}
+        };
+        eventSource.onerror = () => {
+            eventSource.close();
+        };
+        return () => {
+            eventSource.close();
+        };
+    }, [isLoggedIn]);
 
     const handleAlertHistoryClick = () => {
         onClick(); // 드롭다운 닫기
-        // 여기에 알림 내역 보기 로직 추가하면 됩니다.
-        console.log("🔔 알림 내역 보기");
+        // URL 이동 등 추가 동작
+        window.location.href = "/user/alert/list";
     };
 
     return (
@@ -26,16 +48,24 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
 
             {/* 드롭다운 메뉴 */}
             {isActive && isLoggedIn && (
-                <div className="absolute left-0 mt-2 w-40 bg-white shadow-lg rounded-lg py-2 z-50">
-                    <p className="text-gray-500 text-center py-1">알림 센터</p>
+                <div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-lg py-2 z-50">
+                    <p
+                        className="text-gray-500 text-center py-1 cursor-pointer"
+                        onClick={handleAlertHistoryClick}
+                    >
+                        🔔 알림내역
+                    </p>
                     <hr />
-                    <ul className="text-black text-sm">
-                        <li
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            onClick={handleAlertHistoryClick}
-                        >
-                            🔔 알림내역
-                        </li>
+                    <ul className="text-black text-sm max-h-80 overflow-y-auto">
+                        {notifications.length === 0 && (
+                            <li className="px-4 py-2 text-gray-400 text-center">알림이 없습니다.</li>
+                        )}
+                        {notifications.map((item, idx) => (
+                            <li key={idx} className="px-4 py-2 hover:bg-gray-100 flex items-start gap-2">
+                                <span className="text-xl">{item.icon || "🔔"}</span>
+                                <span className="flex-1">{item.text || JSON.stringify(item)}</span>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             )}

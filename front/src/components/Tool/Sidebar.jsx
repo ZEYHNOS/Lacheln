@@ -10,6 +10,15 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         setOpenMenu(openMenu === menu ? null : menu);
     };
 
+    const handleMenuClick = (menu) => {
+        const items = subMenus[menu];
+        if (items.length === 1) {
+            window.location.href = items[0].url;
+        } else {
+            toggleMenu(menu);
+        }
+    };
+
     const subMenus = {
         " 브랜드": [
             { name: "브랜드 페이지", url: "/brand" },
@@ -60,10 +69,12 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                         <li key={index} className="cursor-pointer">
                             <div
                                 className="flex items-center space-x-2 hover:text-[#845EC2]"
-                                onClick={() => toggleMenu(menu)}
+                                onClick={() => handleMenuClick(menu)}
                             >
-                                {openMenu === menu ? <FaChevronUp /> : <FaChevronDown />}
-                                <span>{menu}</span>
+                                <div className="flex items-center">
+                                    <span className="text-2xl mr-2">·</span>
+                                    <span>{menu}</span>
+                                </div>
                             </div>
     
                             {/* 페이지 바로가기 목록*/}

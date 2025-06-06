@@ -59,7 +59,7 @@ function CompanySidebar() {
     const location = useLocation();
 
     return (
-        <aside className="bg-white w-60 h-full shadow-md p-4 border-r-2 border-[#845ec2] flex flex-col overflow-y-auto custom-scroll">
+        <aside className="bg-white w-60 h-full shadow-md p-4 border-r-2 border-purple-600 flex flex-col overflow-y-auto custom-scroll">
             <div className="space-y-8 flex-grow">
                 {menuSections.map((section) => (
                     <div key={section.title} className="mb-6">
@@ -75,7 +75,7 @@ function CompanySidebar() {
                                         key={item.path}
                                         to={`${BASE_PATH}/${item.path}`}
                                         className={`flex items-center text-purple-600 cursor-pointer rounded-md transition-all 
-                                        ${isActive ? "bg-purple-200 text-purple-700 font-bold" : "hover:text-blue-600"}`}
+                                        ${isActive ? "bg-green-200 text-purple-700 font-bold" : "hover:text-blue-600"}`}
                                     >
                                         <img src={item.icon} alt={item.label} className="w-7 h-7 mr-2" />
                                         {item.label}

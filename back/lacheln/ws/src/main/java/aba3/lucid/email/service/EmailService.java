@@ -1,6 +1,6 @@
 package aba3.lucid.email.service;
 
-import aba3.lucid.common.codegenerator.EmailCodeGenerator;
+import aba3.lucid.common.codegenerator.CodeGenerator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -23,7 +23,7 @@ public class EmailService {
 
     private final UsersRepository usersRepository;
     private final CompanyRepository companyRepository;
-    private final EmailCodeGenerator emailCodeGenerator;
+    private final CodeGenerator emailCodeGenerator;
     private final EmailVerificationRepository emailVerificationRepository;
     private final JavaMailSender mailSender;
 

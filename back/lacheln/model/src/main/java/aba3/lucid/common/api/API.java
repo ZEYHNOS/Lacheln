@@ -108,4 +108,13 @@ public class API<T> {
                 .build()
                 ;
     }
+
+    public static <T>API<T> ERROR(T data, StatusCodeIfs statusCode, String description) {
+        return API.<T>builder()
+                .result(Result.ERROR(statusCode))
+                .data(data)
+                .description(description)
+                .build()
+                ;
+    }
 }

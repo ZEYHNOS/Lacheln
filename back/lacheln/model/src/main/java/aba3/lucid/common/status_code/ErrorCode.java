@@ -16,6 +16,8 @@ public enum ErrorCode implements StatusCodeIfs {
     GONE(404, 410, "현재 존재하지 않는 리소스입니다."),
     TOO_MANY_REQUESTS(400, 429, "짧은 시간동안 너무 많은 요청을 보내셨습니다."),
     IT_ALREADY_EXISTS(407, 407, "이미 존재합니다."),
+    FAILED_SEND_CODE(408, 408, "SMS 전송에 실패하였습니다!"),
+    CODE_NOT_MATCH(409, 409, "검증 코드가 일치하지않습니다!"),
 
     SERVER_ERROR(500, 500, "서버에서 에러가 발생했습니다."),
 

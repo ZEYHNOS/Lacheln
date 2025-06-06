@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import apiClient from "../../../lib/apiClient";
 import ChattingRoomModal from "../../User/UserPage/chattingRoomModal";
+import ChattingModal from "../../User/UserPage/ChattingModal";
 
 export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout }) {
     const [showMessageModal, setShowMessageModal] = useState(false);
@@ -89,7 +90,7 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">❤️ 구독내역</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🎟 내 쿠폰</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={openMessageModal}>
-                                📩 내 메시지
+                                    📩 내 메시지
                                 </li>
                             </ul>
                         </>
@@ -98,6 +99,11 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
                     {showMessageModal && (
                         <ChattingRoomModal showModal={showMessageModal} onClose={closeMessageModal} />
                     )}
+
+                    {/* 채팅창만 있는 모달 인자값으로 CompanyId와 onClose가져가기 */}
+                    {/* {showMessageModal && (
+                        <ChattingModal companyId={1} onClose={closeMessageModal} />
+                    )} */}
                 </div>
             )}
         </div>

@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Converter
 @RequiredArgsConstructor
@@ -42,5 +43,25 @@ public class ChatMessageConvertor {
                 .senderName(messageEntity.getMsgSenderName())
                 .receiverName(messageEntity.getMsgReceiverName())
                 .build();
+    }
+
+    public ChatMessageDto convertToDto2(MessageEntity messageEntity) {
+        return ChatMessageDto.builder()
+                .chatRoomId(messageEntity.getChatRoomId().getChatRoomId())
+                .senderId(messageEntity.getMsgSender())
+                .senderName(messageEntity.getMsgSenderName())
+                .receiverName(messageEntity.getMsgReceiverName())
+                .receiverId(messageEntity.getMsgReceiver())
+                .messageId(messageEntity.getMsgId())
+                .sendAt(messageEntity.getMsgSendTime())
+                .message(messageEntity.getMsgContent())
+                .read(messageEntity.getMsgRead())
+                .build();
+    }
+
+    public List<ChatMessageDto> convertToDtoList(List<MessageEntity> messageEntityList) {
+        return messageEntityList.stream()
+                .map(this::convertToDto2)
+                .toList();
     }
 }

@@ -90,7 +90,7 @@ public class PackageToProductConverter {
                 .build()
                 ;
 
-        updateDiffOptions(response.getOptionDtoList(), packageToProduct.getProduct().getCompany(), packageToProduct.getProduct());
+        response.setOptionDtoList(updateDiffOptions(response.getOptionDtoList(), packageToProduct.getProduct().getCompany(), packageToProduct.getProduct()));
 
         return response;
     }
@@ -102,7 +102,7 @@ public class PackageToProductConverter {
                 ;
     }
 
-    private void updateDiffOptions(List<OptionDto> optionDtoList, CompanyEntity company, ProductEntity product) {
+    private List<OptionDto> updateDiffOptions(List<OptionDto> optionDtoList, CompanyEntity company, ProductEntity product) {
         Object unproxied = Hibernate.unproxy(product);
 
         if (unproxied instanceof DressEntity dress) {
@@ -126,6 +126,8 @@ public class PackageToProductConverter {
                 }
             }
         }
+
+        return optionDtoList;
     }
 
     private List<OptionDto> updateDressOption(List<OptionDto> optionDtoList, DressEntity dress) {

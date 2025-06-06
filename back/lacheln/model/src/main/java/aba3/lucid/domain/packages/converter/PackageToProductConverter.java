@@ -102,11 +102,9 @@ public class PackageToProductConverter {
     }
 
     private void updateDiffOptions(List<OptionDto> optionDtoList, CompanyEntity company, ProductEntity product) {
-        Class<?> actualClass =  Hibernate.getClass(product);
-        log.info("actual class: {}", actualClass.getName());
+        Object unproxied = Hibernate.unproxy(product);
 
-        if (actualClass.equals(DressEntity.class)) {
-            DressEntity dress = (DressEntity) product;
+        if (unproxied instanceof DressEntity dress) {
             updateDressOption(optionDtoList, dress);
         }
 

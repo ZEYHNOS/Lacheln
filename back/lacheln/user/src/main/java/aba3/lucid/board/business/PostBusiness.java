@@ -32,7 +32,11 @@ public class PostBusiness {
     private final BoardRepository boardRepository;
     private final PostConvertor postConvertor;
 
-    // 게시글 생성 (BoardEntity 필요 → 그대로 유지)
+    /**
+     * 게시글 생성
+     * - 세미프로 이상만 가능
+     * - 전체/인기 게시판은 작성 불가
+     */
     public PostDetailResponse createPost(PostRequest request) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
@@ -53,20 +57,35 @@ public class PostBusiness {
         return postConvertor.toDetailResponse(saved);
     }
 
-    // 게시글 상세 조회
+    /**
+     * 게시글 상세 조회
+     * - 비회원도 조회 가능
+     * - 조회수는 로그인한 사용자만 기록
+     */
     public PostDetailResponse getPostById(Long postId) {
-        String userId = AuthUtil.getUserId();
-        UsersEntity user = userService.findByIdWithThrow(userId);
-
         PostEntity post = postService.getPostById(postId);
-        postService.addPostView(post, user);
+
+        boolean hasLiked = false;
+
+        // 로그인 사용자 여부 체크
+        try {
+            String userId = AuthUtil.getUserId();
+            UsersEntity user = userService.findByIdWithThrow(userId);
+            postService.addPostView(post, user); // 조회수 기록
+            hasLiked = postService.hasLiked(postId, userId);
+        } catch (Exception e) {
+            // 비회원이거나 인증 실패 → 조회수 기록 생략
+        }
 
         int likeCount = (int) postService.getLikeCount(postId);
         int viewCount = (int) postService.getViewCount(postId);
-        return postConvertor.toDetailResponse(post, likeCount, viewCount);
+        return postConvertor.toDetailResponse(post, likeCount, viewCount, hasLiked);
     }
 
-    // 게시글 수정
+    /**
+     * 게시글 수정
+     * - 작성자만 가능
+     */
     public PostDetailResponse updatePost(PostUpdateRequest request) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
@@ -83,7 +102,10 @@ public class PostBusiness {
         return postConvertor.toDetailResponse(updated, likeCount, viewCount);
     }
 
-    // 게시글 삭제
+    /**
+     * 게시글 삭제
+     * - 작성자 또는 관리자만 가능
+     */
     public void deletePost(Long postId) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
@@ -99,7 +121,11 @@ public class PostBusiness {
         postService.deletePost(post);
     }
 
-    // 게시글 추천
+    /**
+     * 게시글 추천
+     * - 세미프로 이상만 가능
+     * - 중복 추천 불가
+     */
     public void likePost(Long postId) {
         String userId = AuthUtil.getUserId();
         UsersEntity user = userService.findByIdWithThrow(userId);
@@ -112,30 +138,38 @@ public class PostBusiness {
         postService.likePost(post, user);
     }
 
-    // ✅ 특정 게시판 글 목록 페이징 (boardId 기준)
+    /**
+     * 특정 게시판의 게시글 목록 조회 (페이징)
+     */
     public PagedResponse<PostListResponse> getPostPageByBoardId(Long boardId, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("postCreate").descending());
         Page<PostEntity> result = postService.getPostPageByBoardId(boardId, pageable);
         return toPagedResponse(result);
     }
 
-    // 전체 게시판 글 목록 페이징
+    /**
+     * 전체 게시판(자유/질문/리뷰) 목록 조회 (페이징)
+     */
     public PagedResponse<PostListResponse> getAllCategoryPostPage(int page, int size) {
-        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
+        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판", "핫딜게시판");
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by("postCreate").descending());
         Page<PostEntity> result = postService.getAllCategoryPostPage(boardNames, pageable);
         return toPagedResponse(result);
     }
 
-    // 인기 게시판 글 목록 페이징
+    /**
+     * 인기 게시판(추천 수 15 이상) 목록 조회 (페이징)
+     */
     public PagedResponse<PostListResponse> getPopularPostPage(int page, int size) {
-        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판");
+        List<String> boardNames = List.of("자유게시판", "질문게시판", "리뷰게시판", "핫딜게시판");
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<PostEntity> result = postService.getPopularPostPage(boardNames, pageable);
         return toPagedResponse(result);
     }
 
-    // Page → PagedResponse 변환
+    /**
+     * Page<PostEntity> → PagedResponse<PostListResponse> 변환
+     */
     private PagedResponse<PostListResponse> toPagedResponse(Page<PostEntity> result) {
         List<PostListResponse> content = result.getContent().stream()
                 .map(post -> {
@@ -155,7 +189,9 @@ public class PostBusiness {
         );
     }
 
-    // 관리자 권한 확인
+    /**
+     * 관리자 권한 확인
+     */
     private boolean isAdmin(String userId) {
         UsersEntity user = userService.findByIdWithThrow(userId);
         return user.getUserTier() == TierEnum.ADMIN;

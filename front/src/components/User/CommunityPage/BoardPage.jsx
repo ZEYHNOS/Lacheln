@@ -20,7 +20,7 @@ export default function BoardPage() {
       const res = await apiClient.get("/auth/me");
       const tier = res.data.data?.userTier || res.data.data?.tier;
       setIsAdmin(tier === "ADMIN");
-      setIsSemiPro(["SEMI_PRO", "PRO", "ADMIN"].includes(tier)); // ✅ 조건 추가
+      setIsSemiPro(["SEMI_PRO", "PROFESSIONAL", "WORLD_CLASS", "CHALLENGER", "ADMIN"].includes(tier)); // ✅ 조건 추가
     } catch {
       setIsAdmin(false);
       setIsSemiPro(false);

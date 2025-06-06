@@ -28,7 +28,9 @@ public class PostDetailResponse {
     private Long boardId;            // 게시판 ID (어떤 게시판에 속한 글인지 구분)
     private String category;         // 게시판 이름 (ex. 자유게시판, 질문게시판 등)
     private String userNickName;     // 게시글 작성자의 닉네임 (UUID 아님)
+    private String userId;
 
     private int likeCount;           // 해당 게시글의 추천 수
     private int viewCount;           // 해당 게시글의 조회 수
+    private boolean hasLiked; // 추천 여부
 }

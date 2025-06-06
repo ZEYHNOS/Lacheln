@@ -45,6 +45,8 @@ public class PostConvertor {
      * @return 목록 응답용 DTO
      */
     public PostListResponse toListResponse(PostEntity post, int likeCount, int viewCount) {
+        int commentCount = post.getCommentList() != null ? post.getCommentList().size() : 0;
+
         return PostListResponse.builder()
                 .postId(post.getPostId())
                 .postTitle(post.getPostTitle())
@@ -53,6 +55,7 @@ public class PostConvertor {
                 .postCreate(post.getPostCreate())
                 .likeCount(likeCount)
                 .viewCount(viewCount)
+                .commentCount(commentCount)
                 .build();
     }
 
@@ -65,7 +68,7 @@ public class PostConvertor {
      * @param viewCount 조회 수
      * @return 상세 응답 DTO
      */
-    public PostDetailResponse toDetailResponse(PostEntity post, int likeCount, int viewCount) {
+    public PostDetailResponse toDetailResponse(PostEntity post, int likeCount, int viewCount, boolean hasLiked) {
         return PostDetailResponse.builder()
                 .postId(post.getPostId())
                 .postTitle(post.getPostTitle())
@@ -76,8 +79,10 @@ public class PostConvertor {
                 .boardId(post.getBoard().getBoardId())
                 .category(post.getBoard().getBoardName())
                 .userNickName(post.getUsersEntity().getUserNickName())
+                .userId(post.getUsersEntity().getUserId())
                 .likeCount(likeCount)
                 .viewCount(viewCount)
+                .hasLiked(hasLiked)
                 .build();
     }
 
@@ -85,6 +90,10 @@ public class PostConvertor {
      * 기존 방식 호환용: 추천수/조회수 제외 (기본값 0)
      */
     public PostDetailResponse toDetailResponse(PostEntity post) {
-        return toDetailResponse(post, 0, 0);
+        return toDetailResponse(post, 0, 0, false);
+    }
+
+    public PostDetailResponse toDetailResponse(PostEntity post, int likeCount, int viewCount) {
+        return toDetailResponse(post, likeCount, viewCount, false);
     }
 }

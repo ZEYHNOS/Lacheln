@@ -1,5 +1,6 @@
 package aba3.lucid.domain.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -15,10 +16,13 @@ import lombok.*;
 public class CommentRequest {
 
     @NotNull(message = "게시글 ID는 필수입니다.")
+    @JsonProperty("post_id")
     private Long postId; // 댓글을 달 게시글의 ID
 
+    @JsonProperty("parent_cmt_id")
     private Long parentCmtId; // 부모 댓글 ID (null이면 일반 댓글, 값이 있으면 대댓글)
 
     @NotBlank(message = "내용은 비워둘 수 없습니다.")
+    @JsonProperty("cmt_content")
     private String cmtContent; // 댓글/답글의 실제 내용
 }

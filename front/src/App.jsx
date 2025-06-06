@@ -46,6 +46,8 @@ import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/C
 import CompanyProtectedRoute from "./components/Company/Basic/ProtectedRoute.jsx";
 import BoardPage from "./components/User/CommunityPage/BoardPage";
 import CreatePostPage from "./components/User/CommunityPage/CreatePostPage";
+import PostDetailPage from "./components/User/CommunityPage/PostDetailPage";
+import EditPostPage from "./components/User/CommunityPage/EditPostPage";
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
 function CompanyLayout({ children }) {
@@ -141,6 +143,8 @@ function App() {
                 {/* 커뮤니티 게시판 페이지 */}
                 <Route path="/community" element={<Layout><BoardPage /></Layout>} />
                 <Route path="/create" element={<Layout><CreatePostPage /></Layout>} />
+                <Route path="/post/:postId" element={<Layout><PostDetailPage /></Layout>} />
+                <Route path="/post/edit/:postId" element={<Layout><EditPostPage /></Layout>} />
 
                 {/* /company 페이지 그룹화 및 Nested Routes 적용 */}
                 {/* 회사 메인페이지 */}

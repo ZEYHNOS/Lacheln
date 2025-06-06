@@ -26,7 +26,7 @@ public class CommentService {
     private final CommentConvertor commentConvertor;
 
     /**
-     * 댓글 또는 대댓글 저장
+     * ✅ 댓글 또는 대댓글 저장
      */
     @Transactional
     public CommentEntity saveComment(Long postId, Long parentCmtId, String content, UsersEntity user) {
@@ -63,7 +63,10 @@ public class CommentService {
     }
 
     /**
-     * 게시글의 댓글/답글 목록 조회 (계층 구조 포함)
+     * ✅ 게시글의 댓글/답글 목록 조회 (계층 구조 포함)
+     *
+     * - userId가 null이면 비회원으로 간주
+     * - userId는 댓글 작성자가 게시글 작성자인지 여부 판단에만 사용
      */
     @Transactional
     public List<CommentResponse> getCommentsByPostId(Long postId, String userId) {
@@ -76,7 +79,12 @@ public class CommentService {
         List<CommentResponse> result = new ArrayList<>();
 
         for (CommentEntity comment : comments) {
-            boolean isPostWriter = comment.getUsers().getUserId().equals(post.getUsersEntity().getUserId());
+            // ✅ userId가 null인 경우에도 NullPointerException 없이 처리되도록 방어적 코딩
+            boolean isPostWriter = false;
+            if (userId != null) {
+                isPostWriter = comment.getUsers().getUserId().equals(post.getUsersEntity().getUserId());
+            }
+
             CommentResponse response = commentConvertor.toResponse(comment, isPostWriter);
             commentMap.put(comment.getCmtId(), response);
 
@@ -94,7 +102,7 @@ public class CommentService {
     }
 
     /**
-     * 댓글 삭제 (작성자 또는 ADMIN만 가능, 자식 댓글도 함께 Soft Delete)
+     * ✅ 댓글 삭제 (작성자 또는 ADMIN만 가능, 자식 댓글도 함께 Soft Delete)
      */
     @Transactional
     public void deleteComment(Long cmtId, UsersEntity user) {
@@ -108,19 +116,18 @@ public class CommentService {
             throw new ApiException(ErrorCode.FORBIDDEN, "해당 댓글을 삭제할 권한이 없습니다.");
         }
 
-        deleteRecursively(comment); // ✅ 자식 댓글까지 함께 삭제
+        deleteRecursively(comment); // ✅ 자식 댓글까지 함께 Soft Delete 처리
     }
 
     /**
-     * 자식 댓글 포함 재귀 Soft Delete
+     * ✅ 자식 댓글 포함 재귀 Soft Delete
      */
     private void deleteRecursively(CommentEntity comment) {
         if (comment.getChildren() != null) {
             for (CommentEntity child : comment.getChildren()) {
-                deleteRecursively(child); // 자식도 재귀 삭제
+                deleteRecursively(child);
             }
         }
-
         comment.deleteWithChildren();
     }
 }

@@ -17,9 +17,9 @@ public class MutualAlert {
 
     private String userId;
 
-    private String title;
+    private String type;
 
-    private String content;
+    private String text;
 
     private LocalDateTime sentTime;
 
@@ -28,12 +28,12 @@ public class MutualAlert {
     private String accessUrl;
 
 
-    public static MutualAlert createCompanyAlert(String title, String content, String accessUrl, Long companyId, String userId) {
+    public static MutualAlert createCompanyAlert(String type, String text, String accessUrl, Long companyId, String userId) {
         return MutualAlert.builder()
                 .companyId(companyId)
                 .userId(userId)
-                .title(title)
-                .content(content)
+                .type(type)
+                .text(text)
                 .accessUrl(accessUrl)
                 .isRead(BinaryChoice.N)
                 .sentTime(LocalDateTime.now())
@@ -41,12 +41,12 @@ public class MutualAlert {
                 ;
     }
 
-    public static MutualAlert createCompanyAlert(String title, String content, Long companyId, String userId) {
+    public static MutualAlert createCompanyAlert(String type, String text, Long companyId, String userId) {
         return MutualAlert.builder()
                 .companyId(companyId)
                 .userId(userId)
-                .title(title)
-                .content(content)
+                .type(type)
+                .text(text)
                 .accessUrl(null)
                 .isRead(BinaryChoice.N)
                 .sentTime(LocalDateTime.now())

@@ -1,7 +1,9 @@
 package aba3.lucid.domain.alert.entity;
 
 import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.domain.alert.enums.AlertType;
 import aba3.lucid.domain.company.entity.CompanyEntity;
+import aba3.lucid.domain.review.entity.ReviewCommentEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,11 +29,11 @@ public class CompanyAlertEntity {
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;
 
-    @Column(name = "cp_alert_title", columnDefinition = "VARCHAR(50)", nullable = false)
-    private String cpAlertTitle;
+    @Column(name = "cp_alert_type", columnDefinition = "VARCHAR(50)", nullable = false)
+    private String cpAlertType;
 
-    @Column(name = "cp_alert_content", columnDefinition = "VARCHAR(100)", nullable = false)
-    private String cpAlertContent;
+    @Column(name = "cp_alert_text", columnDefinition = "VARCHAR(100)", nullable = false)
+    private String cpAlertText;
 
     @Column(name = "cp_alert_sendtime", nullable = false, updatable = false)
     private LocalDateTime cpAlertSendTime;
@@ -42,6 +44,18 @@ public class CompanyAlertEntity {
 
     @Column(name = "cp_alert_access_url", columnDefinition = "VARCHAR(255)")
     private String cpAlertAccessUrl;
+
+    public static CompanyAlertEntity createReviewAlert(CompanyEntity company, String userName) {
+        return CompanyAlertEntity.builder()
+                .company(company)
+                .cpAlertType(AlertType.REVIEW.getType())
+                .cpAlertText(String.format(AlertType.REVIEW.getText(), userName))
+                .cpAlertSendTime(LocalDateTime.now())
+                .cpAlertRead(BinaryChoice.N)
+                .cpAlertAccessUrl(AlertType.REVIEW.getBaseUrl())
+                .build()
+                ;
+    }
 
     public void readAlert() {
         this.cpAlertRead = BinaryChoice.Y;

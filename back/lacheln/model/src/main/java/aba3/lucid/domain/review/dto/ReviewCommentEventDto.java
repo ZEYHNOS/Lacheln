@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class ReviewCommentEventDto {
     private Long reviewId;
     private Long cpId;
+    private String userId;
 }

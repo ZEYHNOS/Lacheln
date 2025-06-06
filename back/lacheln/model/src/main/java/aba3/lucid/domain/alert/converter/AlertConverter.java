@@ -15,8 +15,8 @@ public class AlertConverter {
     public CompanyAlertEntity toEntity(MutualAlert dto, CompanyEntity company) {
         return CompanyAlertEntity.builder()
                 .company(company)
-                .cpAlertTitle(dto.getTitle())
-                .cpAlertContent(dto.getContent())
+                .cpAlertType(dto.getType())
+                .cpAlertText(dto.getText())
                 .cpAlertSendTime(dto.getSentTime())
                 .cpAlertAccessUrl(dto.getAccessUrl())
                 .cpAlertRead(dto.getIsRead())
@@ -39,8 +39,8 @@ public class AlertConverter {
     public CompanyAlertEntity toEntity(CompanyAlertDto dto, CompanyEntity company) {
         return CompanyAlertEntity.builder()
                 .company(company)
-                .cpAlertTitle(dto.getTitle())
-                .cpAlertContent(dto.getContent())
+                .cpAlertType(dto.getType())
+                .cpAlertText(dto.getText())
                 .cpAlertSendTime(dto.getSentTime())
                 .cpAlertAccessUrl(dto.getAccessUrl())
                 .cpAlertRead(dto.getIsRead())
@@ -50,8 +50,8 @@ public class AlertConverter {
 
     public MutualAlert toDto(CompanyAlertEntity entity) {
         return MutualAlert.builder()
-                .title(entity.getCpAlertTitle())
-                .content(entity.getCpAlertContent())
+                .type(entity.getCpAlertType())
+                .text(entity.getCpAlertText())
                 .sentTime(entity.getCpAlertSendTime())
                 .accessUrl(entity.getCpAlertAccessUrl())
                 .isRead(entity.getCpAlertRead())

@@ -48,11 +48,7 @@ public class ReviewCommentListener {
             reviewCommentRepository.save(comment);
 
             //알림 엔티티 생성
-            CompanyAlertEntity alertEntity = CompanyAlertEntity.builder()
-                    .company(company)
-                    .cpAlertTitle("새로운 리뷰 댓글이 등록되었습니다.")
-                    .cpAlertContent("리뷰에 새로운 댓글이 등록되었습니다. 확인해주세요.")
-                    .build();
+            CompanyAlertEntity alertEntity = CompanyAlertEntity.createReviewAlert(company, eventDto.getUserId());
             sendCompanyAlert(alertEntity);
 
             channel.basicAck(deliveryTag, false);

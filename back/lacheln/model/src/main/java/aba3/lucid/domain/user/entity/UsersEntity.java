@@ -50,7 +50,7 @@ public class UsersEntity {
     @Column(name = "user_name", length = 255, nullable = false)
     private String userName; //외국 이름 포함
 
-    @Column(name = "user_nickname", columnDefinition = "CHAR(255)", nullable = false)
+    @Column(name = "user_nickname", columnDefinition = "CHAR(255)", nullable = false, unique = true)
     private String userNickName; //닉네임
 
     @Column(name = "user_birthday")

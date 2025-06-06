@@ -35,6 +35,7 @@ export default function ChattingRoomModal({ showModal, onClose }) {
   }, []);
 
   useEffect(() => {
+    loadChatRooms();
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
@@ -186,7 +187,7 @@ export default function ChattingRoomModal({ showModal, onClose }) {
               return (
                 <div
                   key={msg.messageId}
-                  className={`mb-2 p-2 rounded max-w-[70%] ${isSent ? 'ml-auto bg-purple-100' : 'bg-gray-200'}`}
+                  className={`mb-2 p-2 rounded max-w-[35%] ${isSent ? 'ml-auto bg-pink-100 shadow-lg' : 'bg-purple-100 shadow-lg'}`}
                 >
                   <div className="text-sm font-semibold">{msg.senderName}</div>
                   <div>{msg.message}</div>

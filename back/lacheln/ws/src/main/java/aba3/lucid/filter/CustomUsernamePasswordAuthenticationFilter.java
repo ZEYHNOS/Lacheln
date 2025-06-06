@@ -86,25 +86,23 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
 
             UsersEntity user = usersRepository.findByUserEmail(username).orElse(null);
 
-            if(user == null) {
-                throw new AuthenticationServiceException("User not found");
-            }
-
-            Collection<GrantedAuthority> roles = List.of(
-                    new SimpleGrantedAuthority("ROLE_"+role),
-                    new SimpleGrantedAuthority("ROLE_TIER_"+user.getUserTier()) // ex) hasRole(TIER_CHALLENGER);
-            );
-
             String userPk;
             Long cpPk;
             CustomAuthenticationToken authRequest = null;
 
-            if(role.equals("USER")) {
+            if(user != null) {
+                Collection<GrantedAuthority> roles = List.of(
+                        new SimpleGrantedAuthority("ROLE_"+role),
+                        new SimpleGrantedAuthority("ROLE_TIER_"+user.getUserTier()) // ex) hasRole(TIER_CHALLENGER);
+                );
                 userPk = user.getUserId();
                 authRequest = new CustomAuthenticationToken(username, password, roles, user.getUserRole(), user.getUserTier(), userPk);
-            } else if(role.equals("COMPANY")) {
+            } else if(user == null) {
                 Optional<CompanyEntity> company = companyRepository.findByCpEmail(username);
                 if(company.isPresent()) {
+                    Collection<GrantedAuthority> roles = List.of(
+                            new SimpleGrantedAuthority("ROLE_"+role)
+                    );
                     cpPk = company.get().getCpId();
                     authRequest = new CustomAuthenticationToken(username, password, roles, company.get().getCpRole(), cpPk);
                 } else {

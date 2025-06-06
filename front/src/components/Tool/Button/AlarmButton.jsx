@@ -3,14 +3,6 @@ import { FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import ChattingRoomModal from "../../User/UserPage/chattingRoomModal";
 
 export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
-    const [showMessageModal, setShowMessageModal] = useState(false);
-
-    const openMessageModal = () => {
-        onClick(); // 드롭다운 닫기
-        setShowMessageModal(true); // 메시지 모달 열기
-    };
-
-    const closeMessageModal = () => setShowMessageModal(false);
 
     const handleAlertHistoryClick = () => {
         onClick(); // 드롭다운 닫기
@@ -40,23 +32,12 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
                     <ul className="text-black text-sm">
                         <li
                             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            onClick={openMessageModal}
-                        >
-                            📩 메시지
-                        </li>
-                        <li
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                             onClick={handleAlertHistoryClick}
                         >
                             🔔 알림내역
                         </li>
                     </ul>
                 </div>
-            )}
-
-            {/* 메시지 모달 */}
-            {showMessageModal && (
-                <ChattingRoomModal showModal={showMessageModal} onClose={closeMessageModal} />
             )}
         </div>
     );

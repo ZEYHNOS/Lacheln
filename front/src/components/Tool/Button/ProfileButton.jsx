@@ -1,10 +1,22 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { FaUser, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import apiClient from "../../../lib/apiClient";
+import ChattingRoomModal from "../../User/UserPage/chattingRoomModal";
 
 export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout }) {
+    const [showMessageModal, setShowMessageModal] = useState(false);
+
+    const openMessageModal = () => {
+        setShowMessageModal(true); // 메시지 모달 열기
+    };
+
+    const closeMessageModal = () => {
+        onClick(); // 드롭다운 닫기
+        setShowMessageModal(false);
+    }
+
     const navigate = useNavigate();
 
     const handleLogin = () => {
@@ -75,8 +87,15 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">💰 내 리뷰</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">❤️ 구독내역</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🎟 내 쿠폰</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={openMessageModal}>
+                                📩 내 메시지
+                                </li>
                             </ul>
                         </>
+                    )}
+                    {/* 메시지 모달 */}
+                    {showMessageModal && (
+                        <ChattingRoomModal showModal={showMessageModal} onClose={closeMessageModal} />
                     )}
                 </div>
             )}

@@ -20,6 +20,7 @@ public class PostListResponse {
     private String userNickName;     // 작성자 닉네임 (UUID는 노출하지 않음)
     private String category;         // 게시판 이름
     private LocalDateTime postCreate; // 작성일
-    private int viewCount;           // 조회수 (추후 구현)
-    private int likeCount;           // 추천수 (추후 구현)
+    private int viewCount;           // 조회수
+    private int likeCount;           // 추천수
+    private int commentCount;
 }

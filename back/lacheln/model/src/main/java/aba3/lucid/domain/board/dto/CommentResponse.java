@@ -18,6 +18,7 @@ public class CommentResponse {
     private Long cmtId;             // 댓글 ID (PK)
     private Long parentCmtId;       // 부모 댓글 ID (없으면 null → 일반 댓글)
     private String userNickName;    // 작성자의 닉네임
+    private String userId;
     private String cmtContent;      // 댓글/답글의 내용
     private LocalDateTime cmtCreate; // 작성 시간
     private boolean isPostWriter;   // 해당 댓글 작성자가 게시글 작성자인지 여부

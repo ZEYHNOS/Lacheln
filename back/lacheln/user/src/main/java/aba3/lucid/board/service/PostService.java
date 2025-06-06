@@ -128,4 +128,10 @@ public class PostService {
     public long getViewCount(Long postId) {
         return postViewRepository.countByPostPostId(postId);
     }
+
+    // 게시글 추천 여부 확인
+    @Transactional(readOnly = true)
+    public boolean hasLiked(Long postId, String userId) {
+        return postLikeRepository.existsByPostPostIdAndUsersUserId(postId, userId);
+    }
 }

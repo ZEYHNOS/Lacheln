@@ -30,8 +30,8 @@ export default function PostTable({ posts }) {
           <tr>
             <th className="p-2 border w-12 text-center">번호</th>
             <th className="p-2 border w-20 text-center">말머리</th>
-            <th className="p-2 border text-center">제목</th> {/* 헤더 중앙 정렬 */}
-            <th className="p-2 border w-32 text-center">글쓴이</th> {/* 헤더 중앙 정렬 */}
+            <th className="p-2 border text-center">제목</th>
+            <th className="p-2 border w-32 text-center">글쓴이</th>
             <th className="p-2 border w-24 text-center">작성일</th>
             <th className="p-2 border w-12 text-center">추천</th>
             <th className="p-2 border w-12 text-center">조회</th>
@@ -52,8 +52,11 @@ export default function PostTable({ posts }) {
                   [{getPrefix(post.category)}]
                 </td>
                 <td className="border px-2 py-1 text-left">
-                  <Link to={`/post/${post.postId}`} className="text-blue-600 hover:underline">
+                  <Link to={`/post/${post.postId}`} className="text-black">
                     {post.postTitle}
+                    {typeof post.commentCount === "number" && post.commentCount > 0 && (
+                      <span className="ml-1 text-gray-500">[{post.commentCount}]</span>
+                    )}
                   </Link>
                 </td>
                 <td className="border px-2 py-1 text-left">{post.userNickName}</td>

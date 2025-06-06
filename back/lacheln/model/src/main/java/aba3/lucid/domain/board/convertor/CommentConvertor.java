@@ -43,6 +43,7 @@ public class CommentConvertor {
                 .cmtId(comment.getCmtId()) // 댓글 ID
                 .parentCmtId(comment.getParent() != null ? comment.getParent().getCmtId() : null) // 부모 댓글 ID
                 .userNickName(comment.getUsers().getUserNickName()) // 작성자 닉네임
+                .userId(comment.getUsers().getUserId())
                 .cmtContent(displayedContent) // 상태에 따라 가공된 댓글 내용
                 .cmtCreate(comment.getCmtCreate()) // 작성 시간
                 .isPostWriter(isPostWriter) // 게시글 작성자인지 여부

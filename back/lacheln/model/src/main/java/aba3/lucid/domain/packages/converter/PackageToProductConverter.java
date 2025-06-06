@@ -15,10 +15,13 @@ import aba3.lucid.domain.product.makeup.entity.MakeupEntity;
 import aba3.lucid.domain.product.repository.PackageToProductRepository;
 import aba3.lucid.domain.product.studio.entity.StudioEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Converter
 @RequiredArgsConstructor
 public class PackageToProductConverter {
@@ -99,6 +102,14 @@ public class PackageToProductConverter {
     }
 
     private void updateDiffOptions(List<OptionDto> optionDtoList, CompanyEntity company, ProductEntity product) {
+        Class<?> actualClass =  Hibernate.getClass(product);
+        log.info("actual class: {}", actualClass.getName());
+
+        if (actualClass.equals(DressEntity.class)) {
+            DressEntity dress = (DressEntity) product;
+            updateDressOption(optionDtoList, dress);
+        }
+
         switch (company.getCpCategory()) {
             case S -> {
                 if (product instanceof StudioEntity studio) {

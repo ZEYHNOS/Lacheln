@@ -74,7 +74,7 @@ public class ReviewService {
         review.updateImageList(reviewImageConverter.toEntityList(request.getImageUrlList(), review));
 
         // 업체 답글 생성
-        ReviewCommentEventDto dto = new ReviewCommentEventDto(review.getReviewId(), review.getPayDetailEntity().getCpId());
+        ReviewCommentEventDto dto = new ReviewCommentEventDto(review.getReviewId(), review.getPayDetailEntity().getCpId(), userId);
         rabbitTemplate.convertAndSend("review.comment.exchange", "review.comment.queue", dto);
 
         return reviewRepository.save(review);

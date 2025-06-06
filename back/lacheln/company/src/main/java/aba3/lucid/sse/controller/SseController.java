@@ -25,6 +25,6 @@ public class SseController {
     public SseEmitter subscribe(
             @AuthenticationPrincipal CustomUserDetails user
     ) throws IOException {
-        return sseService.subscribe(user.getCompanyId());
+        return sseService.subscribe(1L);
     }
 }

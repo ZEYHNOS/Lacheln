@@ -74,7 +74,7 @@ public class PackageToProductConverter {
         String productImageUrl = packageToProduct.getProduct().getImageList().isEmpty()
                 ? "/default/product.png" : packageToProduct.getProduct().getImageList().get(0).getPdImageUrl();
 
-        return PackageProductResponse.builder()
+        PackageProductResponse response = PackageProductResponse.builder()
                 .cpId(packageToProduct.getProduct().getCompany().getCpId())
                 .pdId(packageToProduct.getProduct().getPdId())
                 .companyName(packageToProduct.getProduct().getCompany().getCpName())
@@ -85,6 +85,10 @@ public class PackageToProductConverter {
                 .optionDtoList(optionConverter.toDtoList(packageToProduct.getProduct().getOpList()))
                 .build()
                 ;
+
+        updateDiffOptions(response.getOptionDtoList(), packageToProduct.getProduct().getCompany(), packageToProduct.getProduct());
+
+        return response;
     }
 
     public List<PackageProductResponse> toPackageProductResponseList(List<PackageToProductEntity> packageToProductEntityList) {

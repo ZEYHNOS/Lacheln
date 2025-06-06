@@ -5,6 +5,7 @@ import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.chat.convertor.ChatMessageConvertor;
 import aba3.lucid.domain.chat.dto.*;
 import aba3.lucid.domain.chat.entity.ChatRoomEntity;
 import aba3.lucid.domain.chat.entity.MessageEntity;
@@ -16,7 +17,9 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ChatRoomSessionService {
 
+    private final ChatMessageConvertor convertor;
     private final RedisTemplate<String, String> redisTemplate;
     private final MessageRepository messageRepository;
     private final ChatRoomRepository chatRoomRepository;
@@ -43,19 +47,37 @@ public class ChatRoomSessionService {
 
     // 유저와 업체를 조회하여 채팅방이 있다면 해당 채팅방으로 접근, 없다면 채팅방을 만들기
     public API<ChatRoomEnterResponse> enterOrAddRoom(String userId, Long companyId) {
+        
+        // 유저 및 업체조회
         UsersEntity user = usersRepository.findById(userId).orElse(null);
         CompanyEntity company = companyRepository.findById(companyId).orElse(null);
 
+        // 예외 처리
         if(user == null || company == null) {
             throw new ApiException(ErrorCode.GONE);
         }
-
+        
+        // 방 조회
         Optional<ChatRoomEntity> room = chatRoomRepository.findByUsersAndCompany(userId, companyId);
         ChatRoomEnterResponse response;
         
+        // 방이 존재한다면
         if(room.isPresent()) {
+            // 방에 존재하는 메시지들 전부 가져와서
+            List<MessageEntity> messages = messageRepository.findByChatRoomId_ChatRoomIdOrderByMsgSendTime(room.get().getChatRoomId());
+            
+            // 읽음 처리로 변경
+            for (MessageEntity entity : messages) {
+                entity.changeMsgRead(BinaryChoice.Y);
+            }
+            
+            // 후 저장
+            List<MessageEntity> savedMessages = messageRepository.saveAll(messages);
+            
+            // Response 생성
             response = ChatRoomEnterResponse
                     .builder()
+                    .messages(convertor.convertToDtoList(savedMessages))
                     .chatRoomId(room.get().getChatRoomId())
                     .userId(userId)
                     .userName(user.getUserName())
@@ -84,7 +106,7 @@ public class ChatRoomSessionService {
 
     // 현재 세션을 통해 채팅방 리스트 가져오기
     public API<ChatRoomListResponse> getRoomList(CustomUserDetails user)    {
-        List<ChatRoomEntity> rooms = new ArrayList<>();
+        List<ChatRoomEntity> rooms;
         List<ChatRoomDto> responses = new ArrayList<>();
         String role = user.getRole();
         String userId;

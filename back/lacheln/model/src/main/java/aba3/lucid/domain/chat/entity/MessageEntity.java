@@ -60,12 +60,4 @@ public class MessageEntity {
     public void changeMsgRead(BinaryChoice binaryChoice) {
         this.msgRead = binaryChoice;
     }
-
-    public void changeSender(Object sender) {
-        this.msgSender = sender + "";
-    }
-
-    public void changeReceiver(Object receiver) {
-        this.msgReceiver = receiver + "";
-    }
 }

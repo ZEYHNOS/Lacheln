@@ -21,9 +21,22 @@ public class LoggerFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
+        HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
-        var req = new ContentCachingRequestWrapper((HttpServletRequest) servletRequest);
-        var res = new ContentCachingResponseWrapper((HttpServletResponse) servletResponse);
+        // SSE 요청인지 확인
+        String acceptHeader = httpRequest.getHeader("Accept");
+        boolean isSse = acceptHeader != null && acceptHeader.contains("text/event-stream");
+
+        if (isSse) {
+            // SSE는 래핑하지 않고 그대로 진행
+            filterChain.doFilter(httpRequest, httpResponse);
+            return;
+        }
+
+        // 일반 요청은 래핑해서 로그 처리
+        ContentCachingRequestWrapper req = new ContentCachingRequestWrapper(httpRequest);
+        ContentCachingResponseWrapper res = new ContentCachingResponseWrapper(httpResponse);
 
 
         // 다음 필터 혹은 서블릿으로 요청 전달

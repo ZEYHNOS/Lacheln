@@ -70,6 +70,9 @@ public class OptionDto {
         @Negative
         private LocalTime plusTime;
 
+        @Negative
+        private int quantity;
+
     }
 
 

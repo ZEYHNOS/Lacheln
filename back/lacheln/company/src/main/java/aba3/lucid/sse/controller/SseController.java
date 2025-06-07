@@ -16,7 +16,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/company/sse")
+@RequestMapping("/sse/company")
 public class SseController {
 
     private final SseService sseService;
@@ -25,6 +25,6 @@ public class SseController {
     public SseEmitter subscribe(
             @AuthenticationPrincipal CustomUserDetails user
     ) throws IOException {
-        return sseService.subscribe(1L);
+        return sseService.subscribe(user.getCompanyId());
     }
 }

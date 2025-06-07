@@ -53,7 +53,14 @@ export default function LoginPage() {
             sessionStorage.setItem('userType', userType); // 유저 타입도 저장
             
             // 유저 타입에 따라 다른 페이지로 이동
-            navigate(userType === "USER" ? "/" : "/company");
+            // navigate(userType === "USER" ? "/" : "/company");
+            if (userType === "ADMIN") {
+                navigate("/admin");
+            } else if (userType === "COMPANY") {
+                navigate("/company");
+            } else {
+                navigate("/");
+            }
         
         } catch (error) {
             console.error("로그인 에러 상세:", error);
@@ -147,6 +154,13 @@ export default function LoginPage() {
                     >
                         업체
                     </button>
+                     <button 
+                        className={`flex-1 py-3 text-lg font-semibold transition border-2 border-transparent hover:border-[#845EC2] 
+                            focus:outline-none focus:ring-0 ${
+                            userType === "ADMIN"
+                                ? "bg-[#845EC2] text-white" : "bg-white text-[#845EC2]"}`}
+                        onClick={() => setUserType("ADMIN")}
+                    >관리자</button>
                 </div>
 
                 <form className="space-y-4">

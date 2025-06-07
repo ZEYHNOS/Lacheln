@@ -49,6 +49,7 @@ import CreatePostPage from "./components/User/CommunityPage/CreatePostPage";
 import PostDetailPage from "./components/User/CommunityPage/PostDetailPage";
 import EditPostPage from "./components/User/CommunityPage/EditPostPage";
 
+
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
 function CompanyLayout({ children }) {
     return (
@@ -250,7 +251,7 @@ function App() {
                     </CompanyProtectedRoute>
                 } />
 
-                {/* 관리자페이지 */}
+
                 <Route path="/report" element={<ReportPage />} />
                 <Route path="/report/:id" element={<ReportPage />} />
             </Routes>

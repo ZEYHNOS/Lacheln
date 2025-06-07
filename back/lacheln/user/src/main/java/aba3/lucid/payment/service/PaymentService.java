@@ -4,12 +4,15 @@ import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.PaymentErrorCode;
+import aba3.lucid.domain.calendar.dto.CalendarDto;
 import aba3.lucid.domain.cart.dto.CartPaymentRequest;
 import aba3.lucid.domain.cart.entity.CartDetailEntity;
 import aba3.lucid.domain.cart.entity.CartEntity;
 import aba3.lucid.domain.coupon.dto.CouponVerifyRequest;
 import aba3.lucid.domain.coupon.dto.CouponVerifyResponse;
+import aba3.lucid.domain.payment.converter.PayDetailConverter;
 import aba3.lucid.domain.payment.dto.PaymentVerifyRequest;
+import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
@@ -41,6 +44,8 @@ public class PaymentService {
 
     private final PayManagementRepository payManagementRepository;
 
+    private final PayDetailConverter payDetailConverter;
+
     // PaymentErrorCode.BAD_REQUEST => ExceptionHandler 에서 환불 로직 실행
     @Transactional
     public PayManagementEntity save(PayManagementEntity entity, List<Long> cartIdList) {
@@ -55,13 +60,24 @@ public class PaymentService {
         // 장바구니에서 삭제하기
         cartService.removeCart(cartIdList);
 
-        // TODO RABBITMQ SETTING
-
-        // 업체에 알림 보내기
-        rabbitTemplate.convertAndSend("메세지 객체 생성한 후 보내기");
 
         // 업체 캘린더에 데이터 넣기
-        rabbitTemplate.convertAndSend("캘린더 용 데이터 만들어서 보내기");
+        for (PayDetailEntity payDetail : entity.getPayDetailEntityList()) {
+            CalendarDto dto = CalendarDto.builder()
+                    .title("뭘 넣어야 좋을까요")
+                    .content("알아 맞춰 봅시다.")
+                    .start(payDetail.getStartDatetime())
+                    .end(payDetail.getEndDatetime())
+                    .memo("메모 해라")
+                    .optionDtoList(payDetailConverter.toDtoList(payDetail.getPayDetailOptionEntityList()))
+                    .managerName(payDetail.getManager())
+                    .phoneNum(entity.getUser().getUserName())
+                    .build()
+                    ;
+
+
+            rabbitTemplate.convertAndSend("company.exchange", "company.schedule", dto);
+        }
 
         // 마일리지 추가하기
         UsersEntity user = entity.getUser();

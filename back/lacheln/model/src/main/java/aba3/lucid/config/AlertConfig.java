@@ -47,6 +47,7 @@ public class AlertConfig {
         allowedMappings.put("aba3.lucid.domain.alert.dto.CompanyAlertDto", aba3.lucid.domain.alert.dto.CompanyAlertDto.class);
         allowedMappings.put("aba3.lucid.domain.coupon.dto.CouponVerifyRequest", aba3.lucid.domain.coupon.dto.CouponVerifyRequest.class);
         allowedMappings.put("aba3.lucid.domain.chat.dto.ChatMessageDto", aba3.lucid.domain.chat.dto.ChatMessageDto.class);
+        allowedMappings.put("aba3.lucid.domain.calendar.dto.CalendarDto", aba3.lucid.domain.calendar.dto.CalendarDto.class);
         typeMapper.setIdClassMapping(allowedMappings); // ➤ 위에 정의한 클래스만 역직렬화 허용
 
         converter.setJavaTypeMapper(typeMapper); // ➤ 타입 매핑 정보 적용

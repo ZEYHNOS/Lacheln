@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RequestMapping("/calendar")
 @RestController
@@ -19,29 +21,20 @@ public class CalendarController {
 
     private final CalendarBusiness calendarBusiness;
 
-    @PostMapping("/create")
-    public API<CalendarResponse> createCalendar(
-            @AuthenticationPrincipal CustomUserDetails company,
-            @RequestBody CalendarRequest request
-
-
-    ){
-        CalendarResponse response = calendarBusiness.createCalendar(request, company.getCompanyId());
-        log.debug("Create Calendar:{}", response);
-        return API.OK(response);
-
-
-    }
-
-    @PutMapping("/update")
-    public API<CalendarResponse> updateCalendar(
-            @AuthenticationPrincipal CustomUserDetails company,
-            @RequestParam Long callId,
-            @RequestBody CalendarRequest request
+    @GetMapping
+    public API<List<CalendarResponse>> readAll(
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-       CalendarResponse response = calendarBusiness.updateCalendar(request, company.getCompanyId(), callId);
-        return API.OK(response);
+        List<CalendarResponse> responseList = calendarBusiness.readAllByCpId(user.getCompanyId());
+        return API.OK(responseList);
     }
 
-
+    @PostMapping("/create")
+    public API<CalendarResponse> create(
+            @RequestBody CalendarRequest request,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        CalendarResponse response = calendarBusiness.createCalendar(user.getCompanyId(), request);
+        return API.OK(response);
+    }
 }

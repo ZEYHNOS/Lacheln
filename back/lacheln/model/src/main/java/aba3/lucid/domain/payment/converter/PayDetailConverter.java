@@ -8,11 +8,13 @@ import aba3.lucid.domain.payment.dto.PayDetailOptionRequest;
 import aba3.lucid.domain.payment.dto.PayDetailRequest;
 import aba3.lucid.domain.payment.dto.PayDetailResponse;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
+import aba3.lucid.domain.payment.entity.PayDetailOptionEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
+import aba3.lucid.domain.product.dto.option.OptionDto;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 @Converter
 @RequiredArgsConstructor
@@ -132,5 +134,30 @@ public class PayDetailConverter {
         }
 
         return entity;
+    }
+
+    public List<OptionDto> toDtoList(List<PayDetailOptionEntity> payDetailOptionEntityList) {
+        Map<String, List<OptionDto.OptionDetailDto>> map = new HashMap<>();
+        for (PayDetailOptionEntity payDetailOption : payDetailOptionEntityList) {
+            String key = payDetailOption.getPayOpName();
+            OptionDto.OptionDetailDto value = OptionDto.OptionDetailDto.builder()
+                    .opDtName(payDetailOption.getPayOpDtName())
+                    .quantity(payDetailOption.getPayDtQuantity())
+                    .build()
+                    ;
+
+            map.getOrDefault(key, new ArrayList<>()).add(value);
+        }
+
+        List<OptionDto> result = new ArrayList<>();
+        for (Map.Entry<String, List<OptionDto.OptionDetailDto>> entrySet : map.entrySet()) {
+            result.add(OptionDto.builder()
+                            .name(entrySet.getKey())
+                            .optionDtList(entrySet.getValue())
+                    .build()
+            );
+        }
+
+        return result;
     }
 }

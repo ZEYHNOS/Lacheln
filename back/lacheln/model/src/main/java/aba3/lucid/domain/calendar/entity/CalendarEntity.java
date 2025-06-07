@@ -22,7 +22,7 @@ public class CalendarEntity {
     @Id
     @Column(name = "cal_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long calId;
+    private Long calId;
 
     // 캘린더 날짜
     @Column(name = "cal_date", columnDefinition = "DATE", nullable = false)

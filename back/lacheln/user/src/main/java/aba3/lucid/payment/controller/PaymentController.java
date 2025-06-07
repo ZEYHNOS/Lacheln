@@ -4,11 +4,13 @@ import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomAuthenticationToken;
 import aba3.lucid.common.auth.CustomUserDetails;
+import aba3.lucid.domain.calendar.dto.CalendarDto;
 import aba3.lucid.domain.payment.dto.*;
 import aba3.lucid.payment.business.PaymentBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +39,6 @@ public class PaymentController {
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         PayManagementResponse response = paymentBusiness.save(user.getUserId(), request);
-
         return API.OK(response);
     }
 

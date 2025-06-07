@@ -29,6 +29,7 @@ public enum AlertType {
             "/review 주소 어디인가요/%s")
 
 
+
     ;
 
     private final String type;

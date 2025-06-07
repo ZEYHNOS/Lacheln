@@ -47,5 +47,11 @@ public class CalendarConverter {
                 .build();
     }
 
+    public List<CalendarResponse> toResponseList(List<CalendarEntity> calendarEntityList) {
+        return calendarEntityList.stream()
+                .map(this::toResponse)
+                .toList()
+                ;
+    }
 }
 

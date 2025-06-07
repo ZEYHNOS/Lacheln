@@ -63,6 +63,16 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue scheduleQueue() {
+        return new Queue("schedule.request.queue");
+    }
+
+    @Bean
+    public Binding scheduleQueueBinding(Queue scheduleQueue, DirectExchange toCompanyExchange) {
+        return BindingBuilder.bind(scheduleQueue).to(toCompanyExchange).with("company.schedule");
+    }
+
+    @Bean
     public Queue couponRequestQueue() {
         return new Queue("to.coupon");
     }

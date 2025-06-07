@@ -46,6 +46,8 @@ import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/C
 import CompanyProtectedRoute from "./components/Company/Basic/ProtectedRoute.jsx";
 import BoardPage from "./components/User/CommunityPage/BoardPage";
 import CreatePostPage from "./components/User/CommunityPage/CreatePostPage";
+import AdminLayout from "./components/Admin/AdminLayout";
+import AdminDashboard from "./components/Admin/AdminDashboard";
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
 function CompanyLayout({ children }) {
@@ -231,6 +233,15 @@ function App() {
                         <CompanyLayout><Schedule /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+
+                 <Route
+                        path="/admin"element={<AdminLayout>
+                                <AdminDashboard />
+                            </AdminLayout>
+                        }
+                />
+
+
                 <Route path="/report" element={<ReportPage />} />
                 <Route path="/report/:id" element={<ReportPage />} />
             </Routes>

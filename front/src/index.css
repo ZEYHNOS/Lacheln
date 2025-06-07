@@ -15,6 +15,24 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  /* pp 색상 변수 추가 */
+  --pp: #845ec2;
+}
+
+/* pp 텍스트 색상 클래스 추가 */
+.text-pp {
+  color: var(--pp);
+}
+
+/* pp border 색상 클래스 추가 */
+.border-pp {
+  border-color: var(--pp);
+}
+
+/* pp 배경색 클래스 추가 */
+.bg-pp {
+  background-color: var(--pp);
 }
 
 a {
@@ -92,12 +110,12 @@ button:hover {
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #d0b7f8; /* 색상 */
+    background: #845EC2; /* 색상 */
     border-radius: 10px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background : #b18bee /* 호버 시 더 진한 보라색 */
+    background: #6b40b5; /* 호버 시 더 진한 보라색 */
   }
 
   .custom-scrollbar::-webkit-scrollbar-button {

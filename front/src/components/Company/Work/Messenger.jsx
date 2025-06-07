@@ -204,10 +204,10 @@ export default function Messenger() {
             type="text"
             ref={messageRef}
             placeholder="메시지를 입력하세요"
-            className="border border-gray-300 rounded p-2 flex-1 focus:ring-2 focus:ring-purple-500 hover:border-purple-500"
+            className="border border-pp bg-white rounded p-2 flex-1 focus:ring-2 focus:ring-purple-500 hover:border-purple-500"
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
-          <button className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600" onClick={sendMessage}>
+          <button className="bg-pp text-white px-4 py-2 rounded hover:bg-purple-700" onClick={sendMessage}>
             전송
           </button>
         </div>

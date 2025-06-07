@@ -1,29 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
-import ChattingRoomModal from "../../User/UserPage/chattingRoomModal";
+import apiClient from "../../../lib/apiClient";
 
 export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
     const [notifications, setNotifications] = useState([]);
-    const eventSourceRef = useRef(null);
 
     useEffect(() => {
         if (!isLoggedIn) return;
-        const eventSource = new EventSource("/user/sse/subscribe", { withCredentials: true });
-        eventSourceRef.current = eventSource;
-
-        eventSource.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                if (data.isTrusted) return; // 연결 확인 메시지는 무시
-                setNotifications((prev) => [data, ...prev].slice(0, 10)); // 최근 10개만
-            } catch (e) {}
-        };
-        eventSource.onerror = () => {
-            eventSource.close();
-        };
-        return () => {
-            eventSource.close();
-        };
+        apiClient.get("/user/sse/subscribe").then((res) => {
+            console.log(res);
+            if (res.data.status == 200) {
+                setNotifications(res.data.data);
+                console.log(notifications);
+            }
+        });
     }, [isLoggedIn]);
 
     const handleAlertHistoryClick = () => {

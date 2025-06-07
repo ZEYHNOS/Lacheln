@@ -109,7 +109,7 @@ function Collaboration() {
                     </div>
                     <button
                         onClick={() => navigate('/company/collaboration/setproduct')}
-                        className="min-w-[90px] px-3 py-1.5 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+                        className="min-w-[90px] px-3 py-1.5 text-sm bg-pp text-white rounded hover:bg-purple-700 transition-colors"
                     >
                         패키지 추가
                     </button>

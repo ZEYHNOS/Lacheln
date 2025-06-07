@@ -59,11 +59,11 @@ function CompanySidebar() {
     const location = useLocation();
 
     return (
-        <aside className="bg-white w-60 h-full shadow-md p-4 border-r-2 border-purple-600 flex flex-col overflow-y-auto custom-scroll">
+        <aside className="bg-white w-60 h-full shadow-md p-4 border-r-2 border-pp flex flex-col overflow-y-auto custom-scroll">
             <div className="space-y-8 flex-grow">
                 {menuSections.map((section) => (
                     <div key={section.title} className="mb-6">
-                        <div className="flex items-center text-purple-600 font-bold text-lg mb-2">
+                        <div className="flex items-center text-pp font-bold text-lg mb-2">
                             <img src={section.icon} alt={section.title} className="w-9 h-9 mr-2" />
                             <span>{section.title}</span>
                         </div>
@@ -74,8 +74,8 @@ function CompanySidebar() {
                                     <Link
                                         key={item.path}
                                         to={`${BASE_PATH}/${item.path}`}
-                                        className={`flex items-center text-purple-600 cursor-pointer rounded-md transition-all 
-                                        ${isActive ? "bg-green-200 text-purple-700 font-bold" : "hover:text-blue-600"}`}
+                                        className={`flex items-center text-pp cursor-pointer rounded-md transition-all 
+                                        ${isActive ? "bg-green-200 text-pp font-bold" : "hover:text-blue-600"}`}
                                     >
                                         <img src={item.icon} alt={item.label} className="w-7 h-7 mr-2" />
                                         {item.label}
@@ -90,7 +90,7 @@ function CompanySidebar() {
             <div className="mt-12 space-y-6">
                 <ul className="space-y-2 text-gray-600 text-sm">
                     {bottomMenu.map((item) => (
-                        <li key={item.label} className="flex items-center text-purple-600 font-bold cursor-pointer hover:text-blue-600">
+                        <li key={item.label} className="flex items-center text-pp font-bold cursor-pointer hover:text-blue-600">
                             <img src={item.icon} alt={item.label} className="w-9 h-9 mr-2" />
                             {item.label}
                         </li>

@@ -208,6 +208,12 @@ function App() {
                         <CompanyLayout><Collaboration /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
+                {/* 패키지 업체 초대 페이지 */}
+                <Route path="/company/collaboration/setproduct" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Setproduct /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
                 {/* 패키지 상품 설정 페이지 */}
                 <Route path="/company/collaboration/setproduct/:id" element={
                     <CompanyProtectedRoute>

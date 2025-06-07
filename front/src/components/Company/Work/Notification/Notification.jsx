@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from "react";
+import apiClient from "../../../../lib/apiClient";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function Notification() {
     const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
+        // sse 연결
+        apiClient.get("/company/sse/subscribe").then((res) => {
+            console.log(res);
+            if (res.data.status == 200) {
+                setNotifications(res.data.data);
+                console.log(notifications);
+            }
+        });
+
+        // 알림 목록 조회
         fetch(`${baseUrl}/company/alert/list`, { credentials: 'include' })
             .then(response => response.json())
             .then(data => {
@@ -44,11 +55,10 @@ function Notification() {
                         <li className="text-gray-400 py-8 text-center">알림이 없습니다.</li>
                     )}
                     {notifications.map((item, idx) => (
-                        <li key={idx} className="flex items-start py-4 border-b last:border-b-0 border-[#D6CDEA]">
+                        <li key={idx} onClick={() => handleNotificationClick(item.msId, item.accessUrl)} className="flex items-start py-4 border-b last:border-b-0 border-[#D6CDEA]">
                             <span className="text-2xl mr-4 mt-1">{getIconByType(item.type)}</span>
                             <span className="flex-1 text-base leading-relaxed">{item.content}</span>
                             <span className="text-sm text-gray-500">{new Date(item.sentTime).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
-                            <button onClick={() => handleNotificationClick(item.msId, item.accessUrl)} className="ml-2 text-blue-500">이동</button>
                         </li>
                     ))}
                 </ul>

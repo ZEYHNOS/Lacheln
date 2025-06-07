@@ -80,14 +80,15 @@ public class CompanyAlertBusiness {
 
             companyAlertService.alertRegister(entity);
             sseService.sendAlert(company.getCpId(), dto);
+            log.info("dto : {}", dto);
 
             // 정상 처리되었으므로 ACK
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
-            log.error("Error processing message: {}", e.getMessage(), e);
+            log.error("v: {}", e.getMessage(), e);
 
             // 메시지를 다시 큐에 넣고 재시도하도록 설정
-            channel.basicNack(deliveryTag, false, true);
+            channel.basicAck(deliveryTag, false);
         }
     }
 }

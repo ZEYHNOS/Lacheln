@@ -4,7 +4,7 @@ import CompanyNav from "./CompanyNavgation/CompanyNav.jsx";
 
 export default function Footer() {
   return (
-    <footer className="bg-purple-600 text-white h-auto py-2 px-8">
+    <footer className="-pp text-white h-auto py-2 px-8">
       <div className="grid grid-cols-3 gap-2 pl-10 items-start"> 
         
         {/* 좌측 */}

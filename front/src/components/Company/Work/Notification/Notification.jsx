@@ -1,36 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import apiClient from "../../../../lib/apiClient";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function Notification() {
     const [notifications, setNotifications] = useState([]);
+    const eventSourceRef = useRef(null);
+    const retryDelay = 5000; // 5초 후 재연결
 
-    useEffect(() => {
-        // sse 연결
-        apiClient.get("/company/sse/subscribe").then((res) => {
-            console.log(res);
-            if (res.data.status == 200) {
-                setNotifications(res.data.data);
-                console.log(notifications);
+    const connectSSE = () => {
+        if (eventSourceRef.current) {
+            eventSourceRef.current.close(); // 기존 연결 닫기
+        }
+
+        const eventSource = new EventSource(`${baseUrl}/sse/company/subscribe`, { withCredentials: true });
+        eventSourceRef.current = eventSource;
+
+        eventSource.onopen = (e) => {
+            console.log("✅ SSE 연결됨:", e);
+        };
+
+        eventSource.addEventListener("connect", (e) => {
+            console.log("🔌 connect 이벤트 수신:", e.data);
+        });
+
+        eventSource.addEventListener("alert", (e) => {
+            console.log("📩 alert 이벤트 수신:", e.data);
+            try {
+                const newNotification = JSON.parse(e.data);
+                setNotifications((prev) => [newNotification, ...prev]);
+            } catch (err) {
+                console.error("❗ JSON 파싱 실패", err);
             }
         });
 
-        // 알림 목록 조회
-        fetch(`${baseUrl}/company/alert/list`, { credentials: 'include' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result.resultCode === 200) {
-                    setNotifications(data.data);
-                    console.log(data.data);
-                }
-            })
-            .catch(error => console.error("알림 데이터 로드 오류", error));
+        eventSource.onerror = (e) => {
+            console.error("❌ SSE 에러 발생:", e);
+            console.log("🛰️ readyState:", eventSource.readyState);
+
+            eventSource.close();
+            eventSourceRef.current = null;
+
+            // 재연결 시도
+            setTimeout(() => {
+                console.log("🔄 SSE 재연결 시도 중...");
+                connectSSE();
+            }, retryDelay);
+        };
+    };
+
+    useEffect(() => {
+        connectSSE();
+        return () => {
+            if (eventSourceRef.current) {
+                eventSourceRef.current.close();
+            }
+        };
     }, []);
 
     const getIconByType = (type) => {
         const iconMap = {
             "상품 예약 알림": "📅",
-            // 추가 타입별 아이콘 매핑
         };
         return iconMap[type] || "🔔";
     };
@@ -67,4 +96,4 @@ function Notification() {
     );
 }
 
-export default Notification; 
+export default Notification;

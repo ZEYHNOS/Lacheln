@@ -13,4 +13,5 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Long>   
 
     Optional<CompanyEntity> findByCpEmail(String cpEmail);
     boolean existsByCpEmail(String cpEmail);
+    boolean existsByCpMainContact(String cpMainContact);
 }

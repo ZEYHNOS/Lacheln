@@ -90,24 +90,32 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
             Long cpPk;
             CustomAuthenticationToken authRequest = null;
 
-            if(user != null) {
+            if(role.equals("USER")) {
                 Collection<GrantedAuthority> roles = List.of(
                         new SimpleGrantedAuthority("ROLE_"+role),
-                        new SimpleGrantedAuthority("ROLE_TIER_"+user.getUserTier()) // ex) hasRole(TIER_CHALLENGER);
+                        new SimpleGrantedAuthority("ROLE_TIER_" + user.getUserTier()) // ex) hasRole(TIER_CHALLENGER);
                 );
                 userPk = user.getUserId();
                 authRequest = new CustomAuthenticationToken(username, password, roles, user.getUserRole(), user.getUserTier(), userPk);
-            } else if(user == null) {
+            } else if(role.equals("COMPANY")) {
                 Optional<CompanyEntity> company = companyRepository.findByCpEmail(username);
-                if(company.isPresent()) {
+                if (company.isPresent()) {
                     Collection<GrantedAuthority> roles = List.of(
-                            new SimpleGrantedAuthority("ROLE_"+role)
+                            new SimpleGrantedAuthority("ROLE_" + role)
                     );
                     cpPk = company.get().getCpId();
                     authRequest = new CustomAuthenticationToken(username, password, roles, company.get().getCpRole(), cpPk);
                 } else {
                     throw new ApiException(ErrorCode.NOT_FOUND, "Company not found");
                 }
+            } else if(role.equals("ADMIN")){
+                Collection<GrantedAuthority> roles = List.of(
+                        new SimpleGrantedAuthority("ROLE_"+role)
+                );
+                userPk = user.getUserId();
+                authRequest = new CustomAuthenticationToken(username, password, roles, user.getUserRole(), null, userPk);
+            } else {
+                throw new ApiException(ErrorCode.BAD_REQUEST, "해당하는 유저가 없습니다.");
             }
 
             // CustomAuthenticationToken 생성 후 인증 시도 후 성공 시 ContextHolder에 세션 정보 저장

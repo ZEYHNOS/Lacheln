@@ -3,6 +3,9 @@ package aba3.lucid.sms.service;
 import aba3.lucid.common.codegenerator.CodeGenerator;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.sms.repository.SmsRepository;
 import jakarta.annotation.PostConstruct;
 import net.nurigo.sdk.NurigoApp;
@@ -25,13 +28,17 @@ public class SmsService {
     @Value("${coolsms.api.sender}")
     private String sender;
 
+    private final CompanyRepository companyRepository;
+    private final UsersRepository usersRepository;
     private final SmsRepository smsRepository;
     private final CodeGenerator codeGenerator;
     private DefaultMessageService defaultMessageService;
 
-    public SmsService(SmsRepository smsRepository, CodeGenerator codeGenerator)  {
+    public SmsService(SmsRepository smsRepository, CodeGenerator codeGenerator, UsersRepository usersRepository, CompanyRepository companyRepository)  {
         this.smsRepository = smsRepository;
         this.codeGenerator = codeGenerator;
+        this.usersRepository = usersRepository;
+        this.companyRepository = companyRepository;
     }
 
     // @Value의 값들이 정의된 후 해당 생성자를 실행해야함
@@ -40,8 +47,19 @@ public class SmsService {
         this.defaultMessageService = NurigoApp.INSTANCE.initialize(key, secret, "https://api.coolsms.co.kr");
     }
 
+    public boolean findNumber(String phoneNumber) {
+        boolean isExistUser = usersRepository.existsByUserPhone(phoneNumber);
+        boolean isExistCp = companyRepository.existsByCpMainContact(phoneNumber);
+        return isExistUser && isExistCp;
+    }
+
     // SMS로 코드 전송
     public String sendCode(String phoneNumber)   {
+        // 현재 등록된 전화번호인지 확인
+        if(findNumber(phoneNumber)) {
+            throw new ApiException(ErrorCode.IT_ALREADY_EXISTS, "이미 등록된 전화번호 입니다.");
+        }
+        
         // 랜덤 코드 생성
         String verifyCode = codeGenerator.generateNumbericCode();
 

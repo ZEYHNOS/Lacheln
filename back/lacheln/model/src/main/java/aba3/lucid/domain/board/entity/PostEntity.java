@@ -31,6 +31,7 @@ public class PostEntity {
     private UsersEntity usersEntity; // 작성자 정보 (회원)
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
     private BoardEntity board; // 게시판 정보
 
     @Column(name = "post_title", columnDefinition = "CHAR(100)", nullable = false)

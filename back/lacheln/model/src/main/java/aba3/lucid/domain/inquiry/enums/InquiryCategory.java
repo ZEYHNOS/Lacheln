@@ -13,8 +13,8 @@ public enum InquiryCategory {
 
     ACCOUNT("계정"),   // 계정 관련 문의
     PAYMENT("결제"),   // 결제 관련 문의
-    REFUND("환불"),    // 환불 관련 문의
-    SERVICE("서비스"); // 서비스 이용 관련 문의
+    ADVERTISEMENT("광고"), // 광고 관련 문의
+    EVENT("이벤트"); // 이벤트 관련 문의
 
     private final String label;
 }

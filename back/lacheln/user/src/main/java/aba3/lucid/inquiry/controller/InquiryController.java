@@ -47,6 +47,7 @@ public class InquiryController {
     /**
      * 내 문의 목록 조회 API
      * - 로그인한 사용자가 작성한 모든 문의 내역을 조회합니다.
+     * TODO 지금 스웨거 조회시 목록 조회가 아닌 상세 조회로 뜸 수정해야함
      */
     @GetMapping("")
     @Operation(

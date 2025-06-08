@@ -15,6 +15,18 @@ export default function PostDetailPage() {
   const [hasLiked, setHasLiked] = useState(false);
   const [error, setError] = useState("");
 
+  // ✅ 전체 댓글(답글 포함) 개수 계산 함수
+  const countAllComments = (comments) => {
+    let count = 0;
+    for (const comment of comments) {
+      count += 1;
+      if (comment.children && comment.children.length > 0) {
+        count += countAllComments(comment.children);
+      }
+    }
+    return count;
+  };
+
   const fetchPost = async () => {
     try {
       const res = await apiClient.get(`/post/${postId}`);
@@ -46,7 +58,6 @@ export default function PostDetailPage() {
 
   const handleCommentSubmit = async () => {
     if (!commentContent.trim()) return;
-
     try {
       await apiClient.post("/comment", {
         postId: Number(postId),
@@ -168,9 +179,9 @@ export default function PostDetailPage() {
 
       {/* 댓글 박스 */}
       <div ref={commentRef} className="bg-white border border-gray-300 rounded px-5 py-4">
-        {/* ✅ 댓글 수 표기 추가 */}
+        {/* ✅ 전체 댓글 수 반영 */}
         <h3 className="text-lg font-semibold border-b border-gray-200 pb-2 mb-4">
-          댓글 [{comments.length}]
+          댓글 [{countAllComments(comments)}]
         </h3>
 
         <div className="space-y-4 mb-6">

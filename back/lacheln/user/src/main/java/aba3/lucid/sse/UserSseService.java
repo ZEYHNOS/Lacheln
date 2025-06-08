@@ -2,6 +2,7 @@ package aba3.lucid.sse;
 
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.alert.dto.UserAlertDto;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -33,6 +34,7 @@ public class UserSseService {
         return emitter;
     }
 
+    @Async
     public void sendAlert(String userId, UserAlertDto dto) {
         SseEmitter emitter = emitters.get(userId);
 

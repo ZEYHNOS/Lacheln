@@ -3,6 +3,7 @@ package aba3.lucid.sse.service;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.alert.dto.CompanyAlertDto;
 import aba3.lucid.domain.alert.dto.MutualAlert;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -37,6 +38,7 @@ public class SseService {
         return emitter;
     }
 
+    @Async
     // TODO MutualAlert 로 변경하기
     public void sendAlert(Long companyId, CompanyAlertDto dto) {
         SseEmitter emitter = emitters.get(companyId);

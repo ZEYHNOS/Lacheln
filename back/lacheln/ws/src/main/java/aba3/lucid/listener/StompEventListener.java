@@ -21,6 +21,7 @@ public class StompEventListener {
     // 구독 이벤트 발생시 수행 로직
     @EventListener
     public void handleSessionSubscribe(SessionSubscribeEvent event)    {
+
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         Authentication auth = (Authentication) accessor.getUser();
 

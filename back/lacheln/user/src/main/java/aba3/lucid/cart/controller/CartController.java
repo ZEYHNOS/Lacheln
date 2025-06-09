@@ -57,6 +57,7 @@ public class CartController {
             @RequestBody CartAddPackageRequest request,
             @AuthenticationPrincipal CustomUserDetails user
     )    {
+        log.info("request: {}", request);
         return cartBusiness.addPackage(user.getUserId(), request);
     }
 

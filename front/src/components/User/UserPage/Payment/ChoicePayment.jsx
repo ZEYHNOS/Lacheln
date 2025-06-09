@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import tosspay from "../../../../image/Payment/tosspay.png";
 import kakaopay from "../../../../image/Payment/kakaopay.png";
 import payco from "../../../../image/Payment/payco.png";
@@ -26,6 +26,7 @@ function getPaymentName(packageList, singleList) {
 
 export default function ChoicePayment() {
     const location = useLocation();
+    const navigate = useNavigate();
     const checkedItems = location.state?.checkedItems || [];
     const [selectedPg, setSelectedPg] = useState(null);
     const [selectedCouponId, setSelectedCouponId] = useState([]);
@@ -170,7 +171,6 @@ export default function ChoicePayment() {
                         };
                         console.log("pay_management :", pay_management);
                         await apiClient.post('/payment/save', pay_management);
-                        alert("결제가 완료되었습니다!");
                         navigate("/cart/payment/success");
                     } else {
                         alert(`결제 실패: ${rsp.error_msg}`);

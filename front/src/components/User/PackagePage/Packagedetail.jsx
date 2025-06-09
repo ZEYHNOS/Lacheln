@@ -69,6 +69,7 @@ function Packagedetail() {
           pd_id: p.productId || p.pdId || 0,
           cp_name: p.companyName,
           pd_name: p.productName,
+          category: p.category,
           pd_image_url: p.imageUrl ? baseUrl + p.imageUrl.replace(/\\/g, '/') : '',
           pd_price: p.price,
           cart_quantity: 1,
@@ -90,6 +91,7 @@ function Packagedetail() {
       }
     } catch (e) {
       toast.error('패키지 장바구니 추가 중 오류가 발생했습니다.');
+      console.log('패키지 장바구니 추가 중 오류:', e);
     }
   };
 

@@ -27,7 +27,7 @@ public class CalendarListener {
 
         try {
             CalendarReservation dto = (CalendarReservation) rabbitTemplate.getMessageConverter().fromMessage(message);
-            log.info("Calendar Request Dto : {}", dto);
+            log.info("Calendar reservation: {}", dto);
             calendarBusiness.userReservation(dto);
 
             channel.basicAck(deliveryTag, false);

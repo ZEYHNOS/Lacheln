@@ -41,7 +41,7 @@ public class SseService {
     @Async
     // TODO MutualAlert 로 변경하기
     public void sendAlert(Long companyId, CompanyAlertDto dto) {
-        SseEmitter emitter = emitters.get(companyId);
+        SseEmitter emitter = emitters.getOrDefault(companyId, null);
         if (emitter == null) {
             return;
         }

@@ -128,15 +128,18 @@ function Schedule() {
                     }}
                     tileContent={({ date, view }) => {
                         if (view === 'month') {
-                            const reservations = getReservationsForDate(date);
+                            // 이번 달이 아니면 예약 표시 X
+                            if (date.getMonth() + 1 !== month) return null;
+                            const day = date.getDate().toString();
+                            const reservations = calendarData[day] && calendarData[day][0] !== null ? calendarData[day] : [];
                             // 요일별 색상 클래스 지정
                             let colorClass = '';
-                            const day = date.getDay();
+                            const dayOfWeek = date.getDay();
                             if (date.getMonth() !== value.getMonth() || date.getFullYear() !== value.getFullYear()) {
                                 colorClass = 'text-gray-300';
-                            } else if (day === 0) {
+                            } else if (dayOfWeek === 0) {
                                 colorClass = 'text-red-500';
-                            } else if (day === 6) {
+                            } else if (dayOfWeek === 6) {
                                 colorClass = 'text-blue-500';
                             } else {
                                 colorClass = 'text-black';

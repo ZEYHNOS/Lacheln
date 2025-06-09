@@ -12,10 +12,12 @@ import aba3.lucid.domain.payment.entity.PayDetailOptionEntity;
 import aba3.lucid.domain.payment.entity.PayManagementEntity;
 import aba3.lucid.domain.product.dto.option.OptionDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Converter
 @RequiredArgsConstructor
 public class PayDetailConverter {
@@ -69,7 +71,7 @@ public class PayDetailConverter {
                 .cpId(entity.getCpId())
                 .couponName(entity.getCouponName())
                 .pdName(entity.getProductName())
-                .payCost(entity.getPayCost().subtract(entity.getPayDcPrice()))
+                .payCost(entity.getPayDcPrice())
                 .status(entity.getPayManagement().getPayStatus())
                 .paidAt(entity.getPayManagement().getPaidAt())
                 .refundPrice(entity.getPayManagement().getPayRefundPrice())
@@ -128,6 +130,7 @@ public class PayDetailConverter {
                 .build()
                 ;
 
+        log.info("payDetailConverter : entity {}", entity);
         entity.updatePayDetailOptionEntity(cartToPaymentConverter.toEntityList(response.getCartDetails(), entity));
 
         if (response.getCategory().equals(CompanyCategory.M)) {

@@ -83,6 +83,8 @@ public class PaymentService {
                     .build()
                     ;
 
+            log.info("paymentService dto : " + dto);
+
             rabbitTemplate.convertAndSend("company.exchange", "company.schedule", dto);
         }
 

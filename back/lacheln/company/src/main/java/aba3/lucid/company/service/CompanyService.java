@@ -35,6 +35,7 @@ public class CompanyService {
 
 
     public CompanyEntity findByIdWithThrow(Long cpId) {
+        log.info("findByIdWithThrow {}", cpId);
         return companyRepository.findById(cpId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }

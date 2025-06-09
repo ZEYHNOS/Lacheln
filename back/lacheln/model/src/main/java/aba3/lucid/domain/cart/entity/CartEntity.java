@@ -68,6 +68,7 @@
         @Column(name = "manager")
         private String manager; // 메이크업의 담당자 이름
 
+        @Enumerated(EnumType.STRING)
         @Column(name = "category", nullable = false)
         private CompanyCategory category;
 

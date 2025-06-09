@@ -251,7 +251,7 @@ public class PaymentService {
             return BigInteger.ZERO;
         }
 
-        return totalAmount;
+        return totalAmount.subtract(mileage);
     }
 
     // 업체를 그룹으로 생성하고 해당 업체 별 결제해야하는 금액을 계산

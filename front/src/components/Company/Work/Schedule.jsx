@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import apiClient from "../../../lib/apiClient";
 
 function Schedule() {
     const today = new Date();
@@ -51,10 +52,11 @@ function Schedule() {
             const m = (activeStartDate.getMonth() + 1).toString().padStart(2, '0');
             console.log(`요청하는 달: ${y}-${m}`);
             try {
-                const res = await fetch(`/calendar/${y}-${m}`);
-                const data = await res.json();
+                const { data } = await apiClient.get(`/calendar/${y}/${m}`);
+                console.log(data);
                 setCalendarData(data);
             } catch (err) {
+                console.error('캘린더 데이터 로딩 실패:', err);
                 setCalendarData({});
             }
         };

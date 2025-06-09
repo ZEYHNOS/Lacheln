@@ -3,6 +3,8 @@ import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import apiClient from "../../../lib/apiClient";
+import ScheduleDetail from "./ScheduleDetail";
+import { COLOR_CODE_MAP } from "../../../constants/colorcodeMap";
 
 function Schedule() {
     const today = new Date();
@@ -11,11 +13,21 @@ function Schedule() {
     const [calendarData, setCalendarData] = useState({});
     const year = value.getFullYear();
     const month = value.getMonth() + 1; // 1~12
+    const [selectedEvent, setSelectedEvent] = useState(null); // 선택된 일정
+    const [isModalOpen, setIsModalOpen] = useState(false);    // 모달 오픈 여부
 
     // 날짜 포맷 함수
     const formatDate = (date) => {
         return date.toISOString().slice(0, 10);
     };
+
+    // 시간 배열([yyyy, mm, dd, hh, min])을 'hh:mm~' 포맷 문자열로 변환
+    function formatTime(arr) {
+        if (!Array.isArray(arr) || arr.length < 5) return '';
+        const hh = String(arr[3]).padStart(2, '0');
+        const mm = String(arr[4]).padStart(2, '0');
+        return `${hh}:${mm}~`;
+    }
 
     // 달 이동 핸들러
     const handlePrevMonth = () => {
@@ -54,7 +66,7 @@ function Schedule() {
             try {
                 const { data } = await apiClient.get(`/calendar/${y}/${m}`);
                 console.log(data);
-                setCalendarData(data);
+                setCalendarData(data.data);
             } catch (err) {
                 console.error('캘린더 데이터 로딩 실패:', err);
                 setCalendarData({});
@@ -117,7 +129,7 @@ function Schedule() {
                     tileContent={({ date, view }) => {
                         if (view === 'month') {
                             const reservations = getReservationsForDate(date);
-                            // 요일별 색상 클래스
+                            // 요일별 색상 클래스 지정
                             let colorClass = '';
                             const day = date.getDay();
                             if (date.getMonth() !== value.getMonth() || date.getFullYear() !== value.getFullYear()) {
@@ -129,28 +141,40 @@ function Schedule() {
                             } else {
                                 colorClass = 'text-black';
                             }
+                            // 달력 한 칸(타일)마다 날짜와 일정을 렌더링
                             return (
                                 <span className={`calendar-date-only ${colorClass}`}>
-                                    {date.getDate()}
-                                    {reservations.map((r, idx) =>
-                                        r && (
-                                            <div
-                                                key={r.id || idx}
-                                                className="reservation-pill"
-                                                style={{
-                                                    background: r.color,
-                                                    color: 'white',
-                                                    fontSize: '0.9rem',
-                                                    marginTop: 4,
-                                                    borderRadius: 8,
-                                                    padding: '2px 8px',
-                                                    whiteSpace: 'nowrap'
-                                                }}
-                                            >
-                                                {r.title} ({r.starttime})
-                                            </div>
-                                        )
-                                    )}
+                                    {/* 날짜(숫자) 우측 상단 */}
+                                    <div className="calendar-date-row">
+                                        <span className="calendar-date-number">{date.getDate()}</span>
+                                    </div>
+                                    {/* 일정 리스트 (날짜 아래) */}
+                                    <div className="calendar-reservation-list">
+                                        {reservations.map((r, idx) =>
+                                            r && (
+                                                <div
+                                                    key={r.id || idx}
+                                                    className="reservation-pill w-full"
+                                                    style={{
+                                                        background: COLOR_CODE_MAP[r.color?.toUpperCase()] || r.color || '#845EC2',
+                                                        color: 'white',
+                                                        fontSize: '0.85rem',
+                                                        borderRadius: 8,
+                                                        padding: '2px 0',
+                                                        whiteSpace: 'nowrap',
+                                                        marginTop: 4
+                                                    }}
+                                                    onClick={() => {
+                                                        setSelectedEvent(r);
+                                                        setIsModalOpen(true);
+                                                    }}
+                                                >
+                                                    {/* 일정 제목 및 시간 */}
+                                                    {r.title} ({formatTime(r.startTime)})
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
                                 </span>
                             );
                         }
@@ -169,7 +193,12 @@ function Schedule() {
                         return '';
                     }}
                 />
+                {/* 일정 상세 모달 */}
+                {isModalOpen && selectedEvent && (
+                    <ScheduleDetail event={selectedEvent} onClose={() => setIsModalOpen(false)} />
+                )}
                 <style>{`
+                    /* 달력 전체 wrapper */
                     .schedule-calendar-wrapper .react-calendar {
                         border: none !important;
                         box-shadow: none !important;
@@ -188,6 +217,7 @@ function Schedule() {
                         width: 100% !important;
                         font-size: 2rem;
                     }
+                    /* 요일 헤더 스타일 */
                     .schedule-calendar-wrapper .react-calendar__month-view__weekdays {
                         background: var(--pp);
                         border-radius: 0;
@@ -205,44 +235,63 @@ function Schedule() {
                     .schedule-calendar-wrapper .react-calendar__month-view__weekdays__weekday:last-child {
                         color: #ff4d4f !important;
                     }
+                    /* 달력 타일(한 칸) 스타일 */
                     .schedule-calendar-wrapper .react-calendar__tile {
                         font-size: 1rem;
                         min-width: 100px;
                         min-height: 150px;
                         height: auto;
                         vertical-align: top;
-                        padding: 16px 0 0 0;
+                        padding: 0 0 0 0;
                         border-radius: 0;
                     }
+                    /* 선택된 타일 스타일 */
                     .schedule-calendar-wrapper .react-calendar__tile--active {
                         border: 1px solid var(--pp) !important;
                         color: inherit !important;
                         background: rgb(129, 144, 255) !important;
                     }
+                    /* 일정 pill 스타일 */
                     .reservation-pill {
                         display: inline-block;
                         background: var(--pp);
                         color: white;
                         font-size: 1.1rem;
                         border-radius: 0;
-                        padding: 6px 18px;
                         margin-top: 12px;
                         white-space: nowrap;
+                        width: 100%;
+                        box-sizing: border-box;
                     }
-                    /* 기본 날짜 숨김 */
+                    /* 기본 날짜 숨김(react-calendar 기본 날짜 abbr 숨김) */
                     .schedule-calendar-wrapper .react-calendar__tile abbr {
                         display: none !important;
                     }
+                    /* 날짜+일정 전체 wrapper (한 칸) */
                     .calendar-date-only {
-                        font-size: 1rem;
-                        font-weight: 600;
+                        display: flex;
+                        flex-direction: column;
+                        width: 100%;
+                        height: 100%;
+                    }
+                    /* 날짜 row (오른쪽 정렬) */
+                    .calendar-date-row {
                         width: 100%;
                         display: flex;
                         justify-content: flex-end;
                         align-items: flex-start;
-                        padding: 0 12px 0 0;
-                        height: 100%;
-                        pointer-events: none;
+                    }
+                    /* 날짜 숫자 스타일 */
+                    .calendar-date-number {
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                    }
+                    /* 일정 리스트(날짜 아래) */
+                    .calendar-reservation-list {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
                     }
                     /* 요일별 세로줄 구분선 */
                     .schedule-calendar-wrapper .react-calendar__month-view__days__day:not(:nth-child(7n+1)) {

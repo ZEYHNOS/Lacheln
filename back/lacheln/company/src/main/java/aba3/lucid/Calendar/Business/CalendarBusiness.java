@@ -2,8 +2,11 @@ package aba3.lucid.Calendar.Business;
 
 
 import aba3.lucid.Calendar.Service.CalendarService;
+import aba3.lucid.alert.service.CompanyAlertService;
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.domain.alert.dto.CompanyAlertDto;
 import aba3.lucid.domain.calendar.converter.CalendarConverter;
 import aba3.lucid.domain.calendar.converter.CalendarDetailConverter;
 import aba3.lucid.domain.calendar.dto.*;
@@ -26,6 +29,7 @@ public class CalendarBusiness {
 
     private final CompanyService companyService;
     private final CalendarService calendarService;
+    private final CompanyAlertService companyAlertService;
 
     private final CalendarConverter calendarConverter;
     private final CalendarDetailConverter calendarDetailConverter;
@@ -70,5 +74,11 @@ public class CalendarBusiness {
         CalendarEntity calendar = calendarService.initCalendar(company, dto.getStart().toLocalDate());
         CalendarDetailEntity calendarDetail = calendarDetailConverter.toEntity(dto, calendar);
         calendarService.createCalendar(calendar, calendarDetail);
+        companyAlertService.sendAlertCompany(CompanyAlertDto.builder()
+                .text("예약 알림")
+                .accessUrl("/company/schedule")
+                .type("예약")
+                .isRead(BinaryChoice.N)
+                .build());
     }
 }

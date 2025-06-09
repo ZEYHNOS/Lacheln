@@ -6,5 +6,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class SmsSendResponse {
+    private boolean status;
     private String phoneNum;
 }

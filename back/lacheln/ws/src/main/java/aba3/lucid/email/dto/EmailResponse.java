@@ -7,5 +7,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class EmailResponse {
-    private EmailCodes message;
+    private String message;
 }

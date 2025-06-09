@@ -24,7 +24,7 @@ public class EmailVerificationBusiness {
         
         // 현 상황과 함께 결과 반환
         EmailResponse emailResponse = EmailResponse.builder()
-                .message(messageCode)
+                .message(messageCode.getDescription())
                 .build();
         if(messageCode.equals(EmailCodes.SEND_SUCCESS))    {
             return API.OK(emailResponse);
@@ -40,10 +40,10 @@ public class EmailVerificationBusiness {
         // 현 상황과 함께 결과 반환
         EmailResponse emailResponse = EmailResponse
                 .builder()
-                .message(messageCode)
+                .message(messageCode.getDescription())
                 .build();
         if(messageCode.equals(EmailCodes.SUCCESS))    {
-            return API.OK(emailResponse);
+            return API.OK(emailResponse, EmailCodes.SUCCESS.getDescription());
         }
         return API.ERROR(emailResponse, ErrorCode.BAD_REQUEST);
     }

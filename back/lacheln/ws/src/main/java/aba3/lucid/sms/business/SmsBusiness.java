@@ -2,6 +2,7 @@ package aba3.lucid.sms.business;
 
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
+import aba3.lucid.common.enums.SmsEnum;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.sms.dto.SmsSendRequest;
 import aba3.lucid.sms.dto.SmsSendResponse;
@@ -9,10 +10,12 @@ import aba3.lucid.sms.dto.SmsVerifyRequest;
 import aba3.lucid.sms.dto.SmsVerifyResponse;
 import aba3.lucid.sms.service.SmsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.http.HttpStatusCode;
 
+@Slf4j
 @Business
 @RequiredArgsConstructor
 public class SmsBusiness {
@@ -20,21 +23,33 @@ public class SmsBusiness {
     private final SmsService smsService;
 
     public API<SmsSendResponse> sendSms(SmsSendRequest request) {
-        String sendPhoneNum = smsService.sendCode(request.getPhoneNum());
+        boolean status = false;
+        SmsEnum sendPhoneNum = smsService.sendCode(request.getPhoneNum());
+        if(sendPhoneNum == SmsEnum.SEND_SUCCESS) {
+            status = true;
+        }
         SmsSendResponse response = SmsSendResponse.builder()
-                .phoneNum(sendPhoneNum)
+                .status(status)
+                .phoneNum(request.getPhoneNum())
                 .build();
-        return API.OK(response, "인증번호 전송에 완료, 핸드폰을 확인하여 인증번호를 입력해주세요.");
+        log.info("SendPhoneNum.getDescription() : {}", sendPhoneNum.getDescription());
+        return status
+                ? API.OK(response, sendPhoneNum.getDescription())
+                : API.ERROR(response, ErrorCode.BAD_REQUEST, sendPhoneNum.getDescription());
     }
 
     public API<SmsVerifyResponse> verifySms(SmsVerifyRequest request) {
-        boolean verifyCode = smsService.verifyCode(request.getPhoneNum(), request.getCode());
+        boolean status = false;
+        SmsEnum verifyCode = smsService.verifyCode(request.getPhoneNum(), request.getCode());
+        if(verifyCode == SmsEnum.VERIFY_SUCCESS) {
+            status = true;
+        }
         SmsVerifyResponse response = SmsVerifyResponse.builder()
                 .phoneNum(request.getPhoneNum())
-                .verified(verifyCode)
+                .verified(status)
                 .build();
-        return response.getVerified()
-                ? API.OK(response, "인증완료 되었습니다!")
-                : API.ERROR(response, ErrorCode.CODE_NOT_MATCH, ErrorCode.CODE_NOT_MATCH.getDescription());
+        return status
+                ? API.OK(response, verifyCode.getDescription())
+                : API.ERROR(response, ErrorCode.BAD_REQUEST, verifyCode.getDescription());
     }
 }

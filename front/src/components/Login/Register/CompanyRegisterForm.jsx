@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 export default function CompanyRegisterForm() {
@@ -130,22 +131,24 @@ export default function CompanyRegisterForm() {
         alert("모든 필수 항목을 올바르게 입력해주세요.");
         return;
     }
+    console.log("PassWordConfirm : {}", passwordConfirm);
     const requestData = {
         email,
         password,
-        passwordConfirm,
+        password_confirm: passwordConfirm,
         name,
         repName,
         mainContact,
-        bnRegNo,
+        bn_reg_no: bnRegNo,
         mos: `${firstNum}-${koreanText}-${lastNum}`,
         address,
-        postalCode,
+        postal_code: postalCode,
         profile: "default-profile-image.jpg", // 기본 프로필 이미지 또는 파일 경로
-        category,
+        category: selectedCategory,
         status: "ACTIVATE",   // 기본 상태 값
         role: "USER"        // 기본 역할 값
     };
+    console.log("PasswordConfirm in RequestData : ", requestData.passwordConfirm);
       try {
           const response = await fetch(`${baseUrl}/company/signup`, {
               method: "POST",
@@ -164,123 +167,138 @@ export default function CompanyRegisterForm() {
       }
     };
   
-  // // ✅ 이메일 인증번호 전송 요청
-  // const handleSendEmailCode = async () => {
-  //   try {
-  //     const res = await fetch(`${baseUrl}/email/send`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email }),
-  //     });
-  //     const data = await res.json();
-  //     if (res.ok) {
-  //       setEmailAuthMessage(data.message);
-  //     } else {
-  //       setEmailAuthMessage(data.message);
-  //     }
-  //   } catch (err) {
-  //     console.error("이메일 전송 실패:", err);
-  //     setEmailAuthMessage("이메일 전송 중 오류 발생");
-  //   }
-  // };
-
-  // // ✅ 이메일 인증 확인
-  // const handleVerifyEmailCode = async () => {
-  //   try {
-  //     const res = await fetch(`${baseUrl}/email/verify`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email, code: emailAuthCode }),
-  //     });
-  //     const data = await res.json();
-  //     if (res.ok) {
-  //       setIsEmailVerified(true);
-  //       setEmailAuthMessage(data.message);
-  //     } else {
-  //       setEmailAuthMessage(data.message);
-  //     }
-  //   } catch (err) {
-  //     console.error("이메일 인증 실패:", err);
-  //     setEmailAuthMessage("이메일 인증 중 오류 발생");
-  //   }
-  // };
-
-  // 더미 이메일 인증
+  // ✅ 이메일 인증번호 전송 요청
   const handleSendEmailCode = async () => {
     try {
-      if (email === "thswlgns0820@naver.com") {
-        setEmailAuthMessage("인증코드가 이메일로 전송되었습니다.");
-        setIsEmailSent(true);
-  
-        // ✅ 이전 타이머 클리어하고 새 타이머 시작
+      const res = await fetch(`${baseUrl}/email/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      console.log("Email Send : ", data);
+      setIsEmailSent(true);
+      if (data.result.resultCode === 200) {
+        toast.success(data.data.message, {
+                        position: "top-center",
+                        autoClose: 750,
+                    });
+        setEmailAuthMessage(data.data.message);
         clearTimeout(emailTimerRef.current);
         setEmailTimer(300); // 5분
-  
-        return;
+      } else {
+        setIsEmailSent(false);
+        toast.error(data.data.message, {
+                        position: "top-center",
+                        autoClose: 750,
+                    });
       }
-  
-      // 실제 API 호출도 여기에 추가 가능
     } catch (err) {
       console.error("이메일 전송 실패:", err);
       setEmailAuthMessage("이메일 전송 중 오류 발생");
     }
   };
+
+  // ✅ 이메일 인증 확인
   const handleVerifyEmailCode = async () => {
     try {
-      if (email === "thswlgns0820@naver.com" && emailAuthCode === "000000") {
+      const res = await fetch(`${baseUrl}/email/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code: emailAuthCode }),
+      });
+      const data = await res.json();
+      console.log("Email Verifing : ",data);
+      if (data.result.resultCode === 200) {
+        toast.success(data.data.message, {
+                        position: "top-center",
+                        autoClose: 750,
+                    });
         setIsEmailVerified(true);
-        setEmailAuthMessage("이메일 인증이 완료되었습니다.");
+        setEmailAuthMessage(data.data.message);
         setErrors(prev => {
           const { email, ...rest } = prev;
           return rest;
         });
-        return;
+      } else {
+        toast.error(data.data.message, {
+                        position: "top-center",
+                        autoClose: 750,
+                    });
+        setEmailAuthMessage(data.data.message);
       }
-  
-      setEmailAuthMessage("인증코드가 일치하지 않습니다.");
     } catch (err) {
       console.error("이메일 인증 실패:", err);
       setEmailAuthMessage("이메일 인증 중 오류 발생");
     }
   };
 
-  // 인증 코드 전송 (더미 데이터)
-  const handleSendAuthCode = () => {
-    setSentCode(""); // 기존 코드 초기화
-
-    if (mainContact === "010-3755-2866") {
-      setIsVerifiedPhone(false);
-      setSentCode("000000");
-    
-      // ✅ 메시지 분기
-      if (hasRequestedPhoneCode) {
-        setPhoneAuthMessage("📨 재요청된 인증번호가 전송되었습니다.");
-      } else {
-        setPhoneAuthMessage("✅ 인증번호가 전송되었습니다.");
-        setHasRequestedPhoneCode(true); // 첫 요청 이후엔 true로 설정
+  // 핸드폰 인증 코드 전송 (더미 데이터)
+  const handleSendAuthCode = async () => {
+    const requestNumber = mainContact.replace(/-/g, "");
+      try {
+        const res = await fetch(`${baseUrl}/sms/send`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phoneNum: requestNumber }),
+        });
+        const data = await res.json();
+        console.log("Phone Send : ",data);
+        console.log(data.result.resultCode);
+        console.log(data.description);
+        if(data.result.resultCode === 200)  {
+          toast.success(data.description, {
+                          position: "top-center",
+                          autoClose: 750,
+                      });
+        } else {
+          toast.error(data.description, {
+                          position: "top-center",
+                          autoClose: 750,
+                      });
+        }
+        setPhoneAuthMessage(data.data.description);
+      } catch (err) {
+        console.log(err);
       }
-    
-      setTimer(300);
-      clearTimeout(timerRef.current);
-      setErrors((prevErrors) => ({ ...prevErrors, mainContact: "" }));
-    } else {
-      setPhoneAuthMessage("❌ 인증 실패: 올바른 전화번호를 입력해주세요.");
-    }
   };
 
-  const handleVerifyPhone = () => {
-    if (!authCode.trim()) {
-      setPhoneAuthMessage("❌ 인증 실패: 인증번호를 입력해주세요.");
-      return;
-    }
-
-    if (authCode === sentCode) {
-      setIsVerifiedPhone(true);
-      setPhoneAuthMessage("✅ 전화번호 인증 완료");
-      setErrors((prevErrors) => ({ ...prevErrors, authCode: "" }));
-    } else {
-      setPhoneAuthMessage("❌ 인증 실패: 인증번호를 확인해주세요.");
-    }
+  const handleVerifyPhone = async () => {
+    const requestNumber = mainContact.replace(/-/g, "");
+      try {
+        const res = await fetch(`${baseUrl}/sms/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phoneNum: requestNumber, code: authCode }),
+        });
+        const data = await res.json();
+        console.log("Phone Verifing : ", data);
+        if(data.data.verified === true) {
+          setIsVerifiedPhone(true);
+          setPhoneAuthMessage("✅ 전화번호 인증 완료");
+          toast.success(data.description, {
+                          position: "top-center",
+                          autoClose: 750,
+                      });
+          setErrors((prevErrors) => ({ ...prevErrors, authCode: "" }));
+        } else {
+          toast.error(data.description, {
+                          position: "top-center",
+                          autoClose: 750,
+                      });
+        }
+      } catch (err) {
+        toast.error("전화번호 인증실패...", {
+                          position: "top-center",
+                          autoClose: 750,
+                      });
+        console.error("전화번호 인증코드 전송 실패:", err);
+        setPhoneAuthMessage("전화번호 인증번호 전송 중 에러발생");
+      }
+      if (!authCode.trim()) {
+        setPhoneAuthMessage("❌ 인증 실패: 인증번호를 입력해주세요.");
+        return;
+      }
   };
 
   // 카카오 주소 검색 API 실행 함수

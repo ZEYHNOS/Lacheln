@@ -1,6 +1,7 @@
 package aba3.lucid.sms.service;
 
 import aba3.lucid.common.codegenerator.CodeGenerator;
+import aba3.lucid.common.enums.SmsEnum;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.repository.CompanyRepository;
@@ -8,6 +9,7 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.sms.repository.SmsRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
@@ -15,8 +17,10 @@ import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Slf4j
+@Service
 public class SmsService {
 
     @Value("${coolsms.api.key}")
@@ -50,14 +54,14 @@ public class SmsService {
     public boolean findNumber(String phoneNumber) {
         boolean isExistUser = usersRepository.existsByUserPhone(phoneNumber);
         boolean isExistCp = companyRepository.existsByCpMainContact(phoneNumber);
-        return isExistUser && isExistCp;
+        return isExistUser || isExistCp;
     }
 
     // SMS로 코드 전송
-    public String sendCode(String phoneNumber)   {
+    public SmsEnum sendCode(String phoneNumber)   {
         // 현재 등록된 전화번호인지 확인
         if(findNumber(phoneNumber)) {
-            throw new ApiException(ErrorCode.IT_ALREADY_EXISTS, "이미 등록된 전화번호 입니다.");
+            return SmsEnum.ALREADY_EXISTS;
         }
         
         // 랜덤 코드 생성
@@ -80,7 +84,7 @@ public class SmsService {
 
         // 메시지가 없을경우 예외처리
         if(response == null)    {
-            throw new ApiException(ErrorCode.FAILED_SEND_CODE, ErrorCode.FAILED_SEND_CODE.getDescription());
+            return SmsEnum.CODE_NOT_FOUND;
         }
 
         System.out.println(response);
@@ -88,11 +92,11 @@ public class SmsService {
         // 예외가 없을 경우 전화번호를 key 코드를 value로 Redis에 저장
         smsRepository.saveVerificationCode(phoneNumber, verifyCode);
 
-        return phoneNumber;
+        return SmsEnum.SEND_SUCCESS;
     }
 
     // 전송한 인증번호 검증
-    public boolean verifyCode(String phoneNumber, String code) {
+    public SmsEnum verifyCode(String phoneNumber, String code) {
         // 결과값 초기화
         boolean result = false;
         
@@ -101,16 +105,18 @@ public class SmsService {
         
         // Redis에 해당 전화번호를 key값으로하는 코드가 없을 시 예외처리
         if(savedCode == null)    {
-            throw new ApiException(ErrorCode.NOT_FOUND, "해당 번호로 전송된 인증번호가 존재하지 않습니다.");
+            return SmsEnum.CODE_NOT_FOUND;
         }
 
         // 저장된 코드와 사용자가 제출한 코드가 같을 시 true로 변환
         if(savedCode.equals(code))    {
             result = true;
             smsRepository.deleteVerificationCode(phoneNumber);
+        } else {
+            return SmsEnum.CODE_NOT_MATCHED;
         }
 
         // 결과 값 return
-        return result;
+        return SmsEnum.VERIFY_SUCCESS;
     }
 }

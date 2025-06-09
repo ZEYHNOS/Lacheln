@@ -42,6 +42,10 @@ import Package from "./components/User/PackagePage/Package.jsx"
 import PackageDetail from "./components/User/PackagePage/Packagedetail.jsx"
 import Event from "./components/User/EventPage/Event.jsx"
 import Support from "./components/User/SupportPage/Support.jsx"
+import InquiryForm from "./components/User/SupportPage/InquiryForm.jsx"
+import Consult from "./components/User/SupportPage/Consult.jsx"
+import Chatbot from "./components/User/SupportPage/Chatbot.jsx"
+import Suggestion from "./components/User/SupportPage/Suggestion.jsx"
 import CompanyNav, { About, Terms, Privacy, Location } from "./components/Tool/CompanyNavgation/CompanyNav.jsx";
 import CompanyProtectedRoute from "./components/Company/Basic/ProtectedRoute.jsx";
 import BoardPage from "./components/User/CommunityPage/BoardPage";
@@ -138,6 +142,10 @@ function App() {
                 <Route path="/event" element={<Layout><Event /></Layout>} />
                 {/* 고객지원 */}
                 <Route path="/support" element={<Layout><Support /></Layout>} />
+                <Route path="/inquiry" element={<Layout><InquiryForm /></Layout>} />
+                <Route path="/consult" element={<Layout><Consult /></Layout>} />
+                <Route path="/chatbot" element={<Layout><Chatbot /></Layout>} />
+                <Route path="/suggestion" element={<Layout><Suggestion /></Layout>} />
                 {/* 회사관련 네비게이션 */}
                 <Route path="/about" element={<Layout><About /></Layout>} />
                 <Route path="/terms" element={<Layout><Terms /></Layout>} />

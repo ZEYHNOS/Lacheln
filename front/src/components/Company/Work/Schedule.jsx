@@ -1,17 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
-// 예시 예약 데이터 (7일에 예약)
-const reservations = {
-    '2024-03-07': '신관준비 예약(10:00~)'
-};
 
 function Schedule() {
     const today = new Date();
     const [value, setValue] = useState(today);
     const [activeStartDate, setActiveStartDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+    const [calendarData, setCalendarData] = useState({});
     const year = value.getFullYear();
     const month = value.getMonth() + 1; // 1~12
 
@@ -46,6 +42,29 @@ function Schedule() {
             d.setDate(1);
             return d;
         });
+    };
+
+    // 달력 데이터 불러오기
+    useEffect(() => {
+        const fetchCalendarData = async () => {
+            const y = activeStartDate.getFullYear();
+            const m = (activeStartDate.getMonth() + 1).toString().padStart(2, '0');
+            console.log(`요청하는 달: ${y}-${m}`);
+            try {
+                const res = await fetch(`/calendar/${y}-${m}`);
+                const data = await res.json();
+                setCalendarData(data);
+            } catch (err) {
+                setCalendarData({});
+            }
+        };
+        fetchCalendarData();
+    }, [activeStartDate]);
+
+    // 날짜별 예약 가져오기
+    const getReservationsForDate = (date) => {
+        const day = date.getDate().toString();
+        return calendarData[day] && calendarData[day][0] !== null ? calendarData[day] : [];
     };
 
     return (
@@ -95,7 +114,7 @@ function Schedule() {
                     }}
                     tileContent={({ date, view }) => {
                         if (view === 'month') {
-                            const key = formatDate(date);
+                            const reservations = getReservationsForDate(date);
                             // 요일별 색상 클래스
                             let colorClass = '';
                             const day = date.getDay();
@@ -111,10 +130,24 @@ function Schedule() {
                             return (
                                 <span className={`calendar-date-only ${colorClass}`}>
                                     {date.getDate()}
-                                    {reservations[key] && (
-                                        <div className="reservation-pill" style={{ fontSize: '1rem', marginTop: 8 }}>
-                                            {reservations[key]}
-                                        </div>
+                                    {reservations.map((r, idx) =>
+                                        r && (
+                                            <div
+                                                key={r.id || idx}
+                                                className="reservation-pill"
+                                                style={{
+                                                    background: r.color,
+                                                    color: 'white',
+                                                    fontSize: '0.9rem',
+                                                    marginTop: 4,
+                                                    borderRadius: 8,
+                                                    padding: '2px 8px',
+                                                    whiteSpace: 'nowrap'
+                                                }}
+                                            >
+                                                {r.title} ({r.starttime})
+                                            </div>
+                                        )
                                     )}
                                 </span>
                             );

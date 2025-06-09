@@ -16,6 +16,7 @@ import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.product.service.ProductAbstractService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -88,6 +89,7 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
 
     // 유저용
     // 활성화된 상품 리스트만 출력(패키지, 비공개, 삭제 제외)
+    @Transactional(readOnly = true)
     public List<RES> getActiveProductList(Long companyId) {
         return productService.getActiveProductList(companyId).stream()
                 .map(productConverterIfs::toResponse)
@@ -96,9 +98,11 @@ public abstract class ProductAbstractBusiness<REQ extends ProductRequest, RES ex
     }
 
     // 현재 영역의 카테고리 반환(DressBusiness 면 CompanyCategory.D 반환)
+    @Transactional(readOnly = true)
     public abstract CompanyCategory getCategory();
 
     // 상품 상세 정보
+    @Transactional(readOnly = true)
     public RES getProductDetailInfo(Long productId) {
         Validator.throwIfInvalidId(productId);
 

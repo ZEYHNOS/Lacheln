@@ -5,6 +5,7 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.PaymentErrorCode;
 import aba3.lucid.domain.calendar.dto.CalendarDto;
+import aba3.lucid.domain.calendar.dto.CalendarScheduleRequest;
 import aba3.lucid.domain.cart.dto.CartPaymentRequest;
 import aba3.lucid.domain.cart.entity.CartDetailEntity;
 import aba3.lucid.domain.cart.entity.CartEntity;
@@ -63,7 +64,7 @@ public class PaymentService {
 
         // 업체 캘린더에 데이터 넣기
         for (PayDetailEntity payDetail : entity.getPayDetailEntityList()) {
-            CalendarDto dto = CalendarDto.builder()
+            CalendarScheduleRequest dto = CalendarScheduleRequest.builder()
                     .title("뭘 넣어야 좋을까요")
                     .content("알아 맞춰 봅시다.")
                     .start(payDetail.getStartDatetime())

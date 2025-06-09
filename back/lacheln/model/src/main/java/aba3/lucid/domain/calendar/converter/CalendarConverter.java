@@ -5,6 +5,7 @@ import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.calendar.dto.CalendarDetailResponse;
 import aba3.lucid.domain.calendar.dto.CalendarRequest;
 import aba3.lucid.domain.calendar.dto.CalendarResponse;
+import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CalendarConverter {
 
-    private final CalendarDetailConverter converter;
+    private final CalendarDetailConverter calendarDetailConverter;
 
 
     public CalendarEntity toEntity(CalendarRequest request, CompanyEntity company) {
@@ -28,30 +29,45 @@ public class CalendarConverter {
                 .build();
     }
 
-
-
-    // 캘린더 + 상세(일정) 응답
     public CalendarResponse toResponse(CalendarEntity entity) {
-        // 상세 리스트 → response용 list로 변환
-        List<CalendarDetailResponse> detailResponses = entity.getCalendarDetailEntity() == null ?
-                new ArrayList<>():
-                entity.getCalendarDetailEntity().stream()
-                        .map(converter::toResponse)
-                        .collect(Collectors.toList());
-
         return CalendarResponse.builder()
-                .calId(entity.getCalId())
-                .calDate(entity.getCalDate())
-                .companyId(entity.getCompany().getCpId())
-                .details(detailResponses)
-                .build();
+                .date(entity.getCalDate())
+                .calendarDetailList(calendarDetailConverter.toResponseList(entity.getCalendarDetailEntity()))
+                .build()
+                ;
     }
 
-    public List<CalendarResponse> toResponseList(List<CalendarEntity> calendarEntityList) {
-        return calendarEntityList.stream()
+    public CalendarDetailResponse toDetailResponse(CalendarDetailEntity entity) {
+        return CalendarDetailResponse.builder()
+                .title(entity.getCalDtTitle())
+                .content(entity.getCalDtContent())
+                .startTime(entity.getCalDtStart())
+                .endTime(entity.getCalDtEnd())
+                .color(entity.getCalDtColor())
+                .manager(entity.getCalDtManager())
+                .memo(entity.getCalDtMemo())
+                .build()
+                ;
+    }
+
+    public List<CalendarResponse> toResponseList(List<CalendarEntity> entityList) {
+        return entityList.stream()
                 .map(this::toResponse)
                 .toList()
                 ;
+    }
+
+    public List<CalendarDetailResponse>[] toResponseList(List<CalendarDetailEntity>[] calendarList) {
+        List<CalendarDetailResponse>[] result = new List[calendarList.length];
+        for (int i = 1; i < calendarList.length; i++) {
+            if (calendarList[i].isEmpty()) {
+                continue;
+            }
+
+            result[i].addAll(calendarDetailConverter.toResponseList(calendarList[i]));
+        }
+
+        return result;
     }
 }
 

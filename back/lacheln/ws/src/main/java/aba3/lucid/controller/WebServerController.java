@@ -177,7 +177,7 @@ public class WebServerController {
 
                         // 일치하면 true반환
                         if (getEmail.equals(sessionUser)) {
-                            if(role.equals("USER")) {
+                            if(role.equals("USER") || role.equals("ADMIN")) {
                                 name = authService.getUserNickName(getEmail);
                                 tier = authService.getUserTier(getEmail);
                             } else  {

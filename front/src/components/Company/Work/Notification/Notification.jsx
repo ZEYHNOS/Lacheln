@@ -19,10 +19,6 @@ function Notification() {
             console.log("✅ SSE 연결됨:", e);
         };
 
-        eventSource.addEventListener("connect", (e) => {
-            console.log("🔌 connect 이벤트 수신:", e.data);
-        });
-
         eventSource.addEventListener("alert", (e) => {
             console.log("📩 alert 이벤트 수신:", e.data);
             try {

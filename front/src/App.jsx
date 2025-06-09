@@ -48,6 +48,9 @@ import BoardPage from "./components/User/CommunityPage/BoardPage";
 import CreatePostPage from "./components/User/CommunityPage/CreatePostPage";
 import PostDetailPage from "./components/User/CommunityPage/PostDetailPage";
 import EditPostPage from "./components/User/CommunityPage/EditPostPage";
+import AdminLayout from "./components/Admin/AdminLayout";
+import AdminDashboard from "./components/Admin/AdminDashboard";
+
 
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
@@ -146,6 +149,10 @@ function App() {
                 <Route path="/create" element={<Layout><CreatePostPage /></Layout>} />
                 <Route path="/post/:postId" element={<Layout><PostDetailPage /></Layout>} />
                 <Route path="/post/edit/:postId" element={<Layout><EditPostPage /></Layout>} />
+
+                {/* 신고 페이지 */} 
+                <Route path="/report" element={<Layout><ReportPage /></Layout>} />
+                <Route path="/report/:id" element={<Layout><ReportPage /></Layout>} />
 
                 {/* /company 페이지 그룹화 및 Nested Routes 적용 */}
                 {/* 회사 메인페이지 */}
@@ -256,10 +263,13 @@ function App() {
                         <CompanyLayout><Schedule /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
-
-
-                <Route path="/report" element={<ReportPage />} />
-                <Route path="/report/:id" element={<ReportPage />} />
+                
+                {/* 관리자 페이지 */}
+                <Route path="/admin" element={
+                    <AdminLayout>
+                                <AdminDashboard />
+                    </AdminLayout>
+                }/>
             </Routes>
         </Router>
     );

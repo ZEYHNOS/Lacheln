@@ -45,21 +45,29 @@ export default function LoginPage() {
                     withCredentials: true, // 쿠키 전송을 위한 설정
                 }
             );
-            console.log("response");
-            console.log(response);
 
             // 로그인 성공 시 sessionStorage에 상태 저장
             sessionStorage.setItem('localLoginSuccess', 'true');
-            sessionStorage.setItem('userType', userType); // 유저 타입도 저장
-            
-            // 유저 타입에 따라 다른 페이지로 이동
-            // navigate(userType === "USER" ? "/" : "/company");
-            if (userType === "ADMIN") {
-                navigate("/admin");
-            } else if (userType === "COMPANY") {
+            sessionStorage.setItem('userType', userType);
+
+            // 회원/업체 구분에 따라 다른 엔드포인트로 사용자 정보 조회
+            if (userType === "COMPANY") {
+                // 업체인 경우 바로 회사 페이지로 이동
                 navigate("/company");
             } else {
-                navigate("/");
+                // 회원인 경우 role 확인 후 리다이렉션
+                console.log("회원인 경우");
+                const userInfoResponse = await axios.get(`${baseUrl}/auth/me`, {
+                    withCredentials: true
+                });
+                const userRole = userInfoResponse.data.data.role;
+                console.log(userRole);
+                
+                if (userRole === "ADMIN") {
+                    navigate("/admin");
+                } else {
+                    navigate("/");
+                }
             }
         
         } catch (error) {
@@ -154,13 +162,6 @@ export default function LoginPage() {
                     >
                         업체
                     </button>
-                     <button 
-                        className={`flex-1 py-3 text-lg font-semibold transition border-2 border-transparent hover:border-[#845EC2] 
-                            focus:outline-none focus:ring-0 ${
-                            userType === "ADMIN"
-                                ? "bg-[#845EC2] text-white" : "bg-white text-[#845EC2]"}`}
-                        onClick={() => setUserType("ADMIN")}
-                    >관리자</button>
                 </div>
 
                 <form className="space-y-4">

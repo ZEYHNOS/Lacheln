@@ -6,6 +6,7 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.calendar.converter.CalendarConverter;
 import aba3.lucid.domain.calendar.converter.CalendarDetailConverter;
+import aba3.lucid.domain.calendar.dto.CalendarDetailRequest;
 import aba3.lucid.domain.calendar.dto.CalendarDetailResponse;
 import aba3.lucid.domain.calendar.dto.CalendarRequest;
 import aba3.lucid.domain.calendar.dto.CalendarResponse;
@@ -35,30 +36,10 @@ public class CalendarBusiness {
     @Transactional(readOnly = true)
     public List<CalendarDetailResponse>[] readAllByCpIdAndDate(Long companyId, Integer year, Integer month) {
         CompanyEntity company = companyService.findByIdWithThrow(companyId);
-        List<CalendarEntity> calendarList = calendarService.findCompanyCalendarByYearMonth(company, YearMonth.of(year, month));
-
-        int lastDay = YearMonth.of(year, month).atEndOfMonth().getDayOfMonth();
-        List<CalendarDetailEntity>[] response = new List[lastDay+1];
-        for (int i = 0; i <= lastDay; i++) {
-            response[i] = new ArrayList<>();
-        }
-
-        for (CalendarEntity calendar : calendarList) {
-            int day = calendar.getCalDate().getDayOfMonth();
-
-            for (CalendarDetailEntity calendarDetail : calendar.getCalendarDetailEntity()) {
-                response[day].add(calendarDetail);
-            }
-
-            response[day].sort(new Comparator<CalendarDetailEntity>() {
-                @Override
-                public int compare(CalendarDetailEntity o1, CalendarDetailEntity o2) {
-                    return o1.getCalDtStart().compareTo(o2.getCalDtStart());
-                }
-            });
-        }
-
-        return calendarConverter.toResponseList(response);
+        YearMonth yearMonth = YearMonth.of(year, month);
+        List<CalendarEntity> calendarList = calendarService.findCompanyCalendarByYearMonth(company, yearMonth);
+        List<CalendarDetailEntity>[] detailArrayList = calendarService.sortedCalendarSchedule(calendarList, yearMonth);
+        return calendarConverter.toResponseList(detailArrayList);
     }
 
 
@@ -70,5 +51,16 @@ public class CalendarBusiness {
 
         CalendarEntity savedCalendar = calendarService.createCalendar(calendar, calendarDetail);
         return calendarConverter.toResponse(savedCalendar);
+    }
+
+    @Transactional
+    public CalendarDetailResponse updateCalendar(Long companyId, Long calDtId, CalendarDetailRequest calendarRequest) {
+        CompanyEntity company = companyService.findByIdWithThrow(companyId);
+        CalendarDetailEntity calendarDetail = calendarService.findDetailIdWithThrow(calDtId);
+        CalendarDetailEntity updatedCalendarDetail = calendarService.updateCalendarDetail(calendarDetail, calendarRequest, company);
+        return calendarDetailConverter.toResponse(updatedCalendarDetail);
+    }
+
+    public void deleteCalendarDetail(Long calDtId, Long companyId) {
     }
 }

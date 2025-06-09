@@ -1,6 +1,7 @@
 package aba3.lucid.domain.calendar.entity;
 
 import aba3.lucid.common.enums.Color;
+import aba3.lucid.domain.calendar.dto.CalendarDetailRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +20,7 @@ public class CalendarDetailEntity {
     @Id
     @Column(name = "cal_dt_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long calDtId;
+    private Long calDtId;
 
     // ManyToOne
     // 캘린더 id(날짜 식별하기 위해서)
@@ -56,6 +57,16 @@ public class CalendarDetailEntity {
     // 메모
     @Column(name = "cal_dt_memo", columnDefinition = "CHAR(255)")
     private String calDtMemo;
+
+    public void updateField(CalendarDetailRequest request) {
+        this.calDtColor = request.getColor();
+        this.calDtMemo = request.getMemo();
+        this.calDtStart = request.getStartTime();
+        this.calDtEnd = request.getEndTime();
+        this.calDtTitle = request.getTitle();
+        this.calDtContent = request.getContent();
+        this.calDtManager = request.getManager();
+    }
 
 
 //    @PrePersist

@@ -59,6 +59,10 @@ public class CalendarConverter {
 
     public List<CalendarDetailResponse>[] toResponseList(List<CalendarDetailEntity>[] calendarList) {
         List<CalendarDetailResponse>[] result = new List[calendarList.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = new ArrayList<>();
+        }
+
         for (int i = 1; i < calendarList.length; i++) {
             if (calendarList[i].isEmpty()) {
                 continue;

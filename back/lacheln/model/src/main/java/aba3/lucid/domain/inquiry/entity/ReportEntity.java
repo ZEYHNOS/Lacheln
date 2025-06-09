@@ -2,6 +2,7 @@ package aba3.lucid.domain.inquiry.entity;
 
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.inquiry.enums.ReportCategory;
+import aba3.lucid.domain.inquiry.enums.ReportStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -50,6 +51,12 @@ public class ReportEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
     private List<ReportImageEntity> reportImages;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "report_status", columnDefinition = "char(20)", nullable = false)
+    @Builder.Default
+    private ReportStatus reportStatus = ReportStatus.NEW;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cp_id")

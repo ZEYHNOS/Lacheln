@@ -2,6 +2,7 @@ package aba3.lucid.report.Business;
 
 
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.image.ImageType;
@@ -16,6 +17,8 @@ import aba3.lucid.domain.inquiry.dto.ReportRequest;
 import aba3.lucid.domain.inquiry.dto.ReportResponse;
 import aba3.lucid.domain.inquiry.entity.ReportEntity;
 import aba3.lucid.domain.inquiry.entity.ReportImageEntity;
+import aba3.lucid.domain.inquiry.enums.ReportStatus;
+import aba3.lucid.domain.inquiry.repository.ReportRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.repository.UsersRepository;
 import aba3.lucid.image.service.ImageService;
@@ -41,7 +44,37 @@ public class ReportBusiness {
     private final ReportConverter reportConverter;
     private final ImageService imageService;
     private final CompanyService companyService;
+    private final ReportRepository reportRepository;
 
+    //신고 건수(알림 뱃지용)
+    public int countUnreadReports() {
+        return reportRepository.countByReportStatus(ReportStatus.NEW);
+    }
+
+    //신고 상세 리스트
+    public List<ReportResponse> getUnreadReports() {
+        List<ReportEntity> reports = reportRepository.findByReportStatus(ReportStatus.NEW);
+        return reports.stream()
+                .map(reportConverter::toReportResponse)
+                .collect(Collectors.toList());
+
+    }
+
+    //신고 상세 조회 (ID로)
+    public ReportResponse getReportDetail(Long reportId) {
+        ReportEntity report = reportRepository.findById(reportId).orElseThrow(()
+                -> new ApiException(ErrorCode.NOT_FOUND));
+        ReportResponse detailedReport = reportConverter.toReportResponse(report);
+        return detailedReport;
+    }
+
+    //관리자가 신고 상세/내용을 확인하면 status를 ‘CHECKED’로 변경
+    public void checkReport(Long reportId) {
+        ReportEntity report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+        report.setReportStatus(ReportStatus.NEW);
+        reportRepository.save(report);
+    }
 
     //업체 -->> 유저를 신고하기
     public ReportResponse reportUserByCompany(ReportRequest req, CustomUserDetails company) {

@@ -20,4 +20,5 @@ public class UserCheckResponse {
     private BigInteger mileage;
     private LanguageEnum language;
     private CurrencyEnum currency;
+    private String profileImageUrl;
 }

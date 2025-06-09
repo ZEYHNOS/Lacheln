@@ -20,6 +20,11 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
 
     const navigate = useNavigate();
 
+    const handleMyPage = () => {
+        onClick();
+        navigate("/user");
+    };
+
     const handleLogin = () => {
         navigate("/login");
     };
@@ -84,7 +89,7 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
                     {isLoggedIn && ( <>
                             <hr />
                             <ul className="text-black text-sm">
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">😊 내 정보</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleMyPage}>😊 내 정보</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">📦 내 주문</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">💰 내 리뷰</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">❤️ 구독내역</li>

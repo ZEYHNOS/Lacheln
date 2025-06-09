@@ -105,7 +105,4 @@ public class CalendarService {
         }
         calendarDetailRepository.delete(calendarDetail);
     }
-
-    public boolean existsCompanyAndDate(CompanyEntity company, LocalDateTime start) {
-    }
 }

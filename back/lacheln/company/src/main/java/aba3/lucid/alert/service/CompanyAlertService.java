@@ -75,6 +75,10 @@ public class CompanyAlertService {
         }
     }
 
+    public void sendAlertCompany(CompanyAlertDto dto) {
+        rabbitTemplate.convertAndSend("company.exchange", "company", dto);
+    }
+
     public void sendAlertCompany(PackageEntity entity) {
         List<CompanyEntity> companies = List.of(
                 entity.getPackAdmin(),

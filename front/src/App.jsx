@@ -26,7 +26,7 @@ import Setpackage from "./components/Company/Work/Collaboration/AddPackage/Setpa
 import ViewPackage from "./components/Company/Work/Collaboration/ViewPackage.jsx";
 import EditPackage from "./components/Company/Work/Collaboration/EditPackage.jsx";
 import Messenger from "./components/Company/Work/Messenger";
-import Notification from "./components/Company/Work/Notification/Notification.jsx";
+import Notification from "./components/Company/Basic/Notification.jsx";
 import Schedule from "./components/Company/Work/Schedule";
 import AddProduct from "./components/Company/Management/Product/AddProduct.jsx";
 import ViewProduct from "./components/Company/Management/Product/ViewProduct.jsx";
@@ -249,12 +249,6 @@ function App() {
                 <Route path="/company/messenger" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><Messenger /></CompanyLayout>
-                    </CompanyProtectedRoute>
-                } />
-                {/* 알림 페이지 */}
-                <Route path="/company/notification" element={
-                    <CompanyProtectedRoute>
-                        <CompanyLayout><Notification /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
                 {/* 일정 페이지 */}

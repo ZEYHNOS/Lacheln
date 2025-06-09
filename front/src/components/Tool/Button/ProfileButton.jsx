@@ -49,11 +49,11 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
         <div className="relative">
             {/* 프로필 버튼 */}
             <div
-                className={`flex items-center gap-1 cursor-pointer hover:bg-gray-200 p-2 rounded-lg transition ${isActive && isLoggedIn ? "bg-gray-300" : ""}`}
+                className={`flex items-center gap-1 cursor-pointer hover:bg-gray-200 p-2 rounded-lg transition ${isActive ? "bg-gray-300" : ""}`}
                 onClick={onClick}
             >
                 <FaUser className="text-3xl text-[#845EC2]" />
-                {isActive && isLoggedIn ? (
+                {isActive ? (
                     <FaChevronUp className="text-2xl text-[#845EC2]" />
                 ) : (
                     <FaChevronDown className="text-2xl text-[#845EC2]" />

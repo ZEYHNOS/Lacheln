@@ -11,7 +11,6 @@ import Review from "../../../image/Company/SideBar/review_management.png";
 import Work from "../../../image/Company/SideBar/work.png";
 import Collaboration from "../../../image/Company/SideBar/collaboration.png";
 import Messenger from "../../../image/Company/SideBar/messenger.png";
-import Notification from "../../../image/Company/SideBar/notification.png";
 import Schedule from "../../../image/Company/SideBar/schedule.png";
 import Community from "../../../image/Company/SideBar/community.png";
 import Support from "../../../image/Company/SideBar/support.png";
@@ -43,7 +42,6 @@ const menuSections = [
         items: [
             { path: "collaboration", icon: Collaboration, label: "협업" },
             { path: "messenger", icon: Messenger, label: "메신저" },
-            { path: "notification", icon: Notification, label: "알림" },
             { path: "schedule", icon: Schedule, label: "일정" },
         ],
     },

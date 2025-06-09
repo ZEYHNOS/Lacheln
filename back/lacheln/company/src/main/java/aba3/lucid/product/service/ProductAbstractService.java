@@ -63,6 +63,7 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
     }
 
     @Override
+    @Transactional
     public void deleteProduct(T entity) {
         entity.updateStatus(ProductStatus.REMOVE);
         entity.deleteProduct(LocalDateTime.now());

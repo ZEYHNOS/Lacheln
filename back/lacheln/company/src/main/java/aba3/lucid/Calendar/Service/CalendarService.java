@@ -6,6 +6,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.calendar.dto.CalendarRequest;
 import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
+import aba3.lucid.domain.calendar.repository.CalendarDetailRepository;
 import aba3.lucid.domain.calendar.repository.CalendarRepository;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,7 @@ import java.util.Optional;
 public class CalendarService {
 
     private final CalendarRepository calendarRepository;
+    private final CalendarDetailRepository calendarDetailRepository;
 
     @Transactional
     public CalendarEntity createCalendar(CalendarEntity calendarEntity, CalendarDetailEntity calendarDetailEntity) {
@@ -57,5 +60,12 @@ public class CalendarService {
     public CalendarEntity findByCpIdAndDateWithThrow(Long companyId, LocalDate date) {
         return calendarRepository.findByCompany_CpIdAndCalDate(companyId, date)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+    }
+
+    // 업체, 년, 월 캘린더 호출
+    public List<CalendarEntity> findCompanyCalendarByYearMonth(CompanyEntity company, YearMonth yearMonth) {
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+        return calendarRepository.findByCompanyAndCalDateBetween(company, startDate, endDate);
     }
 }

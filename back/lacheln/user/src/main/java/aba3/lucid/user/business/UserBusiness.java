@@ -74,7 +74,7 @@ public class UserBusiness {
     // 유저 프로필 조회
     public API<UserCheckResponse> getUser(String userId) {
         // 현재 세션 존재 여부 확인
-        if(AuthUtil.getAuth() == null)  {
+        if(userId == null)  {
             throw new ApiException(ErrorCode.UNAUTHORIZED, "세션이 존재하지 않습니다.");
         }
         

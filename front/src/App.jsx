@@ -54,7 +54,8 @@ import PostDetailPage from "./components/User/CommunityPage/PostDetailPage";
 import EditPostPage from "./components/User/CommunityPage/EditPostPage";
 import AdminLayout from "./components/Admin/AdminLayout";
 import AdminDashboard from "./components/Admin/AdminDashboard";
-
+import MyPage from "./components/User/UserPage/UserProfile/MyPage";
+import MyPageUpdate from "./components/User/UserPage/UserProfile/MyPageUpdate.jsx";
 
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
@@ -110,6 +111,12 @@ function App() {
                 {/* /user 페이지 그룹화 */}
                 {/* 메인 페이지 */}
                 <Route path="/" element={<Layout><MainPage /></Layout>} />
+
+                {/* 내 정보 페이지 */}
+                <Route path="/user" element={<Layout><MyPage /></Layout>}/>
+                {/* 내 정보 수정 페이지 */}
+                <Route path="/user/update" element={<Layout><MyPageUpdate /></Layout>}/>
+
                 {/* 로그인창 */}
                 <Route path="/login" element={<Layout><LoginPage /></Layout>} />
                 {/* 유저 로컬 회원가입 */}

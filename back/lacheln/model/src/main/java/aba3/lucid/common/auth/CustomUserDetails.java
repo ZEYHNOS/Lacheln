@@ -3,6 +3,7 @@ package aba3.lucid.common.auth;
 import aba3.lucid.domain.user.enums.TierEnum;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +14,7 @@ import java.util.Collections;
 
 @Getter
 @Builder
+@ToString
 public class  CustomUserDetails implements UserDetails {
 
     // UserDetails 구현체를 상속받아 현재 프로젝트에 필요한 정보들로 재구성한 클래스

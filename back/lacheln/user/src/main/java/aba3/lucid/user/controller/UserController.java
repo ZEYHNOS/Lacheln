@@ -48,6 +48,7 @@ public class UserController {
     @GetMapping("/profile")
     @Operation(summary = "소비자 조회", description = "소비자 정보를 조회합니다.")
     public API<UserCheckResponse> getUser(@AuthenticationPrincipal CustomUserDetails user)   {
+        log.info("user.getUserId() : {}", user.getUserId());
         return userBusiness.getUser(user.getUserId());
     }
 

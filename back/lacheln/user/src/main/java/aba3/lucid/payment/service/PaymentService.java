@@ -55,10 +55,18 @@ public class PaymentService {
         // 마일리지 차감하기
         userService.deductMileage(entity.getUser(), entity.getPayMileage());
 
+        // 마일리지 추가하기
+        UsersEntity user = entity.getUser();
+        user.addMileage(entity.getPayTotalPrice());
 
+
+        // 장바구니에서 삭제하기
+        cartService.removeCart(cartIdList);
+
+        PayManagementEntity savedPayManagement = payManagementRepository.save(entity);
 
         // 업체 캘린더에 데이터 넣기
-        for (PayDetailEntity payDetail : entity.getPayDetailEntityList()) {
+        for (PayDetailEntity payDetail : savedPayManagement.getPayDetailEntityList()) {
             CalendarReservation dto = CalendarReservation.builder()
                     .title("상품 예약")
                     .content("내용????")
@@ -75,19 +83,10 @@ public class PaymentService {
                     .build()
                     ;
 
-
-            // 장바구니에서 삭제하기
-            cartService.removeCart(cartIdList);
-
-
             rabbitTemplate.convertAndSend("company.exchange", "company.schedule", dto);
         }
 
-        // 마일리지 추가하기
-        UsersEntity user = entity.getUser();
-        user.addMileage(entity.getPayTotalPrice());
-
-        return payManagementRepository.save(entity);
+        return savedPayManagement;
     }
 
     // MerchantID 발급

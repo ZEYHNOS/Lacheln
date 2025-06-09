@@ -123,6 +123,7 @@ public class PayDetailConverter {
                 .taskTime(response.getTaskTime())
                 .imageUrl(response.getPdImageUrl())
                 .couponName(null)
+                .cpId(response.getCpId())
                 .category(response.getCategory())
                 .build()
                 ;

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @ToString
-public class InquiryResponse {
+public class InquiryDetailResponse {
 
     private Long inquiryId;
     private String title;

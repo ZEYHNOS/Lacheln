@@ -55,8 +55,6 @@ public class PaymentService {
         // 마일리지 차감하기
         userService.deductMileage(entity.getUser(), entity.getPayMileage());
 
-        // 장바구니에서 삭제하기
-        cartService.removeCart(cartIdList);
 
 
         // 업체 캘린더에 데이터 넣기
@@ -70,12 +68,16 @@ public class PaymentService {
                     .optionDtoList(payDetailConverter.toDtoList(payDetail.getPayDetailOptionEntityList()))
                     .managerName(payDetail.getManager())
                     .phoneNum(entity.getUser().getUserPhone())
-                    .companyId(payDetail.getCpId()  )
+                    .companyId(payDetail.getCpId())
                     .userName(payDetail.getPayManagement().getUser().getUserName())
                     .payDtId(payDetail.getPayDetailId())
                     .productName(payDetail.getProductName())
                     .build()
                     ;
+
+
+            // 장바구니에서 삭제하기
+            cartService.removeCart(cartIdList);
 
 
             rabbitTemplate.convertAndSend("company.exchange", "company.schedule", dto);

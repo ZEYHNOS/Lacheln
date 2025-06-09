@@ -8,6 +8,7 @@ import aba3.lucid.domain.alert.entity.CompanyAlertEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyAlertRepository;
 import aba3.lucid.domain.packages.entity.PackageEntity;
+import aba3.lucid.sse.service.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,6 +25,7 @@ public class CompanyAlertService {
     private final CompanyAlertRepository companyAlertRepository;
 
     private final RabbitTemplate rabbitTemplate;
+    private final SseService sseService;
 
     // 알림 등록
     public void alertRegister(CompanyAlertEntity entity) {
@@ -72,11 +74,13 @@ public class CompanyAlertService {
     public void sendAlertCompany(List<CompanyAlertDto> dtoList) {
         for (CompanyAlertDto dto : dtoList) {
             rabbitTemplate.convertAndSend("company.exchange", "company", dto);
+            sseService.sendAlert(dto.getCompanyId(), dto);
         }
     }
 
     public void sendAlertCompany(CompanyAlertDto dto) {
         rabbitTemplate.convertAndSend("company.exchange", "company", dto);
+        sseService.sendAlert(dto.getCompanyId(), dto);
     }
 
     public void sendAlertCompany(PackageEntity entity) {

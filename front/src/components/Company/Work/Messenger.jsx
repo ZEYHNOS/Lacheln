@@ -187,7 +187,7 @@ export default function Chatting() {
     <div className="flex w-full h-full">
       {/* 채팅방 목록 - 스크롤바 스타일 개선 */}
       <div className="w-[500px] border-r p-4 flex flex-col">
-        <h2 className="text-xl font-bold mb-4">채팅방 목록</h2>
+        <h2 className="text-xl font-bold mb-4 text-pp">채팅방 목록</h2>
         <button onClick={fetchChatRooms} className="w-full mb-4 px-3 py-1 bg-purple-300 text-white rounded hover:bg-purple-400">
           새로고침
         </button>
@@ -219,8 +219,8 @@ export default function Chatting() {
               className={`p-3 rounded cursor-pointer hover:bg-purple-100 ${currentRoomId === room.roomId ? "bg-purple-200" : "bg-white"}`}
               onClick={() => joinRoom(room.roomId, room.userId, room.companyId, room.userName, room.companyName)}
             >
-              <div className="font-semibold">{room.userName}</div>
-              <div className="text-sm text-gray-600">상대 회사: {room.companyName}</div>
+              <div className="font-semibold text-pp">{room.companyName}</div>
+              <div className="text-sm text-pp">고객: {room.userName}</div>
               {room.unreadCount > 0 && (
                 <div className="inline-block bg-red-500 text-white text-xs px-2 py-0.5 rounded-full mt-1">
                   {room.unreadCount}
@@ -286,7 +286,7 @@ export default function Chatting() {
             ref={messageRef}
             type="text"
             placeholder="메시지를 입력하세요"
-            className="flex-1 border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="flex-1 border bg-white border-pp rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
             onKeyDown={(e) => { if(e.key === "Enter") sendMessage(); }}
           />
           <button

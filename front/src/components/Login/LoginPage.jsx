@@ -182,6 +182,7 @@ export default function LoginPage() {
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            onKeyDown={(e) => { if(e.key === "Enter") handleLogin(); }}
                             className="w-full px-4 py-3 border-2 border-[#845EC2] rounded-lg bg-white text-black focus:ring-1 focus:ring-purple-400 outline-none"/>
                     </div>
 

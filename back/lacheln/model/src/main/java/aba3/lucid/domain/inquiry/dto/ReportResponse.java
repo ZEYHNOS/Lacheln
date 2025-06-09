@@ -1,5 +1,6 @@
 package aba3.lucid.domain.inquiry.dto;
 import aba3.lucid.domain.inquiry.enums.ReportCategory;
+import aba3.lucid.domain.inquiry.enums.ReportStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,5 +17,6 @@ public class ReportResponse {
     private String reportTitle;
     private String reportContent;
     private ReportCategory reportCategory;
+    private ReportStatus reportStatus;
     private List<String> imageUrls;
 }

@@ -26,6 +26,7 @@ public class ReportController {
 
     private final ReportBusiness reportBusiness;
 
+
     @PostMapping("/company")
     public API<ReportResponse> reportUser(
             @AuthenticationPrincipal CustomUserDetails company,
@@ -83,5 +84,31 @@ public class ReportController {
         );
         return API.OK(urls);
     }
+
+    @GetMapping("/admin/unread/count")
+    public API<Integer> countUnreadReports() {
+        int count = reportBusiness.countUnreadReports();
+        return API.OK(count);
+    }
+
+    @GetMapping("/admin/unread")
+    public API<List<ReportResponse>> getUnreadReports() {
+        List<ReportResponse> responses = reportBusiness.getUnreadReports();
+        return API.OK(responses);
+    }
+
+    @GetMapping("/admin/{reportId}")
+    public API<ReportResponse> getReportDetail(@PathVariable Long reportId) {
+        ReportResponse reportDetail = reportBusiness.getReportDetail(reportId);
+        return API.OK(reportDetail);
+    }
+
+    @PatchMapping("/admin/{reportId}/check")
+    public API<Void> checkReport(@PathVariable Long reportId) {
+        reportBusiness.checkReport(reportId);
+        return API.OK();
+    }
+
+
 
 }

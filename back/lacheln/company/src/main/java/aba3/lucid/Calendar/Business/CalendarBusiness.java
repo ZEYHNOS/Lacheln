@@ -6,10 +6,7 @@ import aba3.lucid.common.annotation.Business;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.calendar.converter.CalendarConverter;
 import aba3.lucid.domain.calendar.converter.CalendarDetailConverter;
-import aba3.lucid.domain.calendar.dto.CalendarDetailRequest;
-import aba3.lucid.domain.calendar.dto.CalendarDetailResponse;
-import aba3.lucid.domain.calendar.dto.CalendarRequest;
-import aba3.lucid.domain.calendar.dto.CalendarResponse;
+import aba3.lucid.domain.calendar.dto.*;
 import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -46,7 +43,7 @@ public class CalendarBusiness {
 
     public CalendarResponse createCalendar(Long companyId, CalendarRequest request) {
         CompanyEntity company = companyService.findByIdWithThrow(companyId);
-        CalendarEntity calendar = calendarService.initCalendar(company, request);
+        CalendarEntity calendar = calendarService.initCalendar(company, request.getDate());
         CalendarDetailEntity calendarDetail = calendarDetailConverter.toEntity(request.getDetails(), calendar);
 
         CalendarEntity savedCalendar = calendarService.createCalendar(calendar, calendarDetail);
@@ -62,5 +59,16 @@ public class CalendarBusiness {
     }
 
     public void deleteCalendarDetail(Long calDtId, Long companyId) {
+        CompanyEntity company = companyService.findByIdWithThrow(companyId);
+        CalendarDetailEntity calendarDetail = calendarService.findDetailIdWithThrow(calDtId);
+        calendarService.deleteCalendarDetail(calendarDetail, company);
+    }
+
+    @Transactional
+    public void userReservation(CalendarReservation dto) {
+        CompanyEntity company = companyService.findByIdWithThrow(dto.getCompanyId());
+        CalendarEntity calendar = calendarService.initCalendar(company, dto.getStart().toLocalDate());
+        CalendarDetailEntity calendarDetail = calendarDetailConverter.toEntity(dto, calendar);
+        calendarService.createCalendar(calendar, calendarDetail);
     }
 }

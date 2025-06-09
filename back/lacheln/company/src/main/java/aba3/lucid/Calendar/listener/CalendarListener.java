@@ -2,6 +2,7 @@ package aba3.lucid.Calendar.listener;
 
 import aba3.lucid.Calendar.Business.CalendarBusiness;
 import aba3.lucid.domain.calendar.dto.CalendarDto;
+import aba3.lucid.domain.calendar.dto.CalendarReservation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -25,8 +26,9 @@ public class CalendarListener {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
 
         try {
-            CalendarDto dto = (CalendarDto) rabbitTemplate.getMessageConverter().fromMessage(message);
+            CalendarReservation dto = (CalendarReservation) rabbitTemplate.getMessageConverter().fromMessage(message);
             log.info("Calendar Request Dto : {}", dto);
+            calendarBusiness.userReservation(dto);
 
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {

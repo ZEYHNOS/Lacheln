@@ -1,10 +1,8 @@
 package aba3.lucid.domain.calendar.converter;
 
 import aba3.lucid.common.annotation.Converter;
-import aba3.lucid.domain.calendar.dto.CalendarDetailRequest;
-import aba3.lucid.domain.calendar.dto.CalendarDetailResponse;
-import aba3.lucid.domain.calendar.dto.CalendarDto;
-import aba3.lucid.domain.calendar.dto.CalendarResponse;
+import aba3.lucid.common.enums.Color;
+import aba3.lucid.domain.calendar.dto.*;
 import aba3.lucid.domain.calendar.entity.CalendarDetailEntity;
 import aba3.lucid.domain.calendar.entity.CalendarEntity;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,6 @@ public class CalendarDetailConverter {
 
 
     public CalendarDetailEntity toEntity(CalendarDetailRequest request, CalendarEntity calendar){
-
         return CalendarDetailEntity.builder()
                 .calDtTitle(request.getTitle())
                 .calDtContent(request.getContent())
@@ -28,6 +25,25 @@ public class CalendarDetailConverter {
                 .calDtColor(request.getColor())
                 .calDtMemo(request.getMemo())
                 .calendar(calendar)
+                .build();
+    }
+
+    public CalendarDetailEntity toEntity(CalendarReservation request, CalendarEntity calendar){
+        return CalendarDetailEntity.builder()
+                .calDtTitle(request.getTitle())
+                .calDtContent(request.getContent())
+                .calDtStart(request.getStart())
+                .calDtEnd(request.getEnd())
+                .calDtColor(Color.BLACK)
+                .calDtMemo(String.format("%s님이 %s상품, %s 옵션을 예약했습니다.\n전화번호 : %s\n특이사항 : %s",
+                        request.getUserName(),
+                        request.getProductName(),
+                        request.getOptionDtoList().toString(),
+                        request.getPhoneNum(),
+                        request.getMemo()))
+                .calendar(calendar)
+                .calDtManager(request.getManagerName())
+                .payDtId(request.getPayDtId())
                 .build();
     }
 

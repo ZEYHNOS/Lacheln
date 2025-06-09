@@ -3,10 +3,7 @@ package aba3.lucid.payment.service;
 import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.common.status_code.PaymentErrorCode;
-import aba3.lucid.domain.calendar.dto.CalendarDto;
-import aba3.lucid.domain.calendar.dto.CalendarScheduleRequest;
-import aba3.lucid.domain.cart.dto.CartPaymentRequest;
+import aba3.lucid.domain.calendar.dto.CalendarReservation;
 import aba3.lucid.domain.cart.entity.CartDetailEntity;
 import aba3.lucid.domain.cart.entity.CartEntity;
 import aba3.lucid.domain.coupon.dto.CouponVerifyRequest;
@@ -64,15 +61,19 @@ public class PaymentService {
 
         // 업체 캘린더에 데이터 넣기
         for (PayDetailEntity payDetail : entity.getPayDetailEntityList()) {
-            CalendarScheduleRequest dto = CalendarScheduleRequest.builder()
-                    .title("뭘 넣어야 좋을까요")
-                    .content("알아 맞춰 봅시다.")
+            CalendarReservation dto = CalendarReservation.builder()
+                    .title("상품 예약")
+                    .content("내용????")
                     .start(payDetail.getStartDatetime())
                     .end(payDetail.getEndDatetime())
-                    .memo("메모 해라")
+                    .memo("토트넘 우승 축하해~")
                     .optionDtoList(payDetailConverter.toDtoList(payDetail.getPayDetailOptionEntityList()))
                     .managerName(payDetail.getManager())
-                    .phoneNum(entity.getUser().getUserName())
+                    .phoneNum(entity.getUser().getUserPhone())
+                    .companyId(payDetail.getCpId()  )
+                    .userName(payDetail.getPayManagement().getUser().getUserName())
+                    .payDtId(payDetail.getPayDetailId())
+                    .productName(payDetail.getProductName())
                     .build()
                     ;
 

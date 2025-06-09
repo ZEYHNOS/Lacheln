@@ -2,7 +2,8 @@ package aba3.lucid.inquiry.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.domain.inquiry.dto.InquiryCreateRequest;
-import aba3.lucid.domain.inquiry.dto.InquiryResponse;
+import aba3.lucid.domain.inquiry.dto.InquiryDetailResponse;
+import aba3.lucid.domain.inquiry.dto.InquiryListResponse;
 import aba3.lucid.inquiry.business.InquiryBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,10 +27,7 @@ public class InquiryController {
 
     private final InquiryBusiness inquiryBusiness;
 
-    /**
-     * 문의 작성 API
-     * - JSON 요청을 통해 제목, 카테고리, 내용을 작성
-     */
+    // 문의 작성
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "문의 작성",
@@ -40,24 +38,35 @@ public class InquiryController {
                     @ApiResponse(responseCode = "404", description = "사용자 없음")
             }
     )
-    public API<InquiryResponse> createInquiry(@Valid @RequestBody InquiryCreateRequest request) {
+    public API<InquiryDetailResponse> createInquiry(@Valid @RequestBody InquiryCreateRequest request) {
         return API.OK(inquiryBusiness.createInquiry(request));
     }
 
-    /**
-     * 내 문의 목록 조회 API
-     * - 로그인한 사용자가 작성한 모든 문의 내역을 조회합니다.
-     * TODO 지금 스웨거 조회시 목록 조회가 아닌 상세 조회로 뜸 수정해야함
-     */
+    // 내 문의 목록 조회
     @GetMapping("")
     @Operation(
             summary = "내 문의 목록 조회",
-            description = "로그인한 사용자가 작성한 모든 문의 내역을 조회합니다.",
+            description = "로그인한 사용자가 작성한 문의 리스트를 조회합니다.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "조회 성공")
+                    @ApiResponse(responseCode = "200", description = "문의 목록 조회 성공")
             }
     )
-    public API<List<InquiryResponse>> getMyInquiries() {
+    public API<List<InquiryListResponse>> getMyInquiries() {
         return API.OK(inquiryBusiness.getMyInquiries());
+    }
+
+    // 내 문의 상세 조회
+    @GetMapping("/{inquiryId}")
+    @Operation(
+            summary = "내 문의 상세 조회",
+            description = "문의 ID를 통해 내가 작성한 문의 내용을 상세 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "문의 상세 조회 성공"),
+                    @ApiResponse(responseCode = "403", description = "본인의 문의가 아님"),
+                    @ApiResponse(responseCode = "404", description = "문의 없음")
+            }
+    )
+    public API<InquiryDetailResponse> getMyInquiryDetail(@PathVariable Long inquiryId) {
+        return API.OK(inquiryBusiness.getMyInquiryDetail(inquiryId));
     }
 }

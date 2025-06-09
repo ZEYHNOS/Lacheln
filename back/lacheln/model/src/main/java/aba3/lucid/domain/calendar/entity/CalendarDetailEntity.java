@@ -58,6 +58,9 @@ public class CalendarDetailEntity {
     @Column(name = "cal_dt_memo", columnDefinition = "CHAR(255)")
     private String calDtMemo;
 
+    @Column(name = "pay_dt_id")
+    private Long payDtId;
+
     public void updateField(CalendarDetailRequest request) {
         this.calDtColor = request.getColor();
         this.calDtMemo = request.getMemo();

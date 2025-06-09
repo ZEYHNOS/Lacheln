@@ -13,7 +13,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CalendarScheduleRequest {
+public class CalendarReservation {
+
+    private Long companyId;
+
+    private Long payDtId;
+
+    private String userName;
 
     private String title;
 
@@ -24,6 +30,8 @@ public class CalendarScheduleRequest {
     private LocalDateTime end;
 
     private String memo;
+
+    private String productName;
 
     private List<OptionDto> optionDtoList;
 

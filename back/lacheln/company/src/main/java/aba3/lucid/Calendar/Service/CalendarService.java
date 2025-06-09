@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -66,12 +67,6 @@ public class CalendarService {
         });
     }
 
-
-    public CalendarEntity findById(Long calId) {
-        return calendarRepository.findById(calId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "존재하지 않는 캘린더입니다." + calId));
-    }
-
     @Transactional
     public CalendarDetailEntity updateCalendarDetail(CalendarDetailEntity calendar, CalendarDetailRequest request, CompanyEntity company) {
         if (!calendar.getCalendar().getCompany().equals(company)) {
@@ -81,23 +76,14 @@ public class CalendarService {
         return calendarDetailRepository.save(calendar);
     }
 
-    public List<CalendarEntity> findAllByCpId(Long companyId) {
-        return calendarRepository.findAllByCompany_CpId(companyId);
-    }
-
-    public CalendarEntity initCalendar(CompanyEntity company, CalendarRequest request) {
-        Optional<CalendarEntity> optionalCalendar = calendarRepository.findByCompanyAndCalDate(company, request.getDate());
+    public CalendarEntity initCalendar(CompanyEntity company, LocalDate date) {
+        Optional<CalendarEntity> optionalCalendar = calendarRepository.findByCompanyAndCalDate(company, date);
 
         return optionalCalendar.orElseGet(() -> CalendarEntity.builder()
                 .company(company)
-                .calDate(request.getDate())
+                .calDate(date)
                 .calendarDetailEntity(new ArrayList<>())
                 .build());
-    }
-
-    public CalendarEntity findByCpIdAndDateWithThrow(Long companyId, LocalDate date) {
-        return calendarRepository.findByCompany_CpIdAndCalDate(companyId, date)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
     // 업체, 년, 월 캘린더 호출
@@ -109,6 +95,17 @@ public class CalendarService {
 
     public CalendarDetailEntity findDetailIdWithThrow(Long calDtId) {
         return calendarDetailRepository.findById(calDtId)
-                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ApiException(ErrorCode.UNAUTHORIZED));
+    }
+
+    @Transactional
+    public void deleteCalendarDetail(CalendarDetailEntity calendarDetail, CompanyEntity company) {
+        if (!calendarDetail.getCalendar().getCompany().equals(company)) {
+            throw new ApiException(ErrorCode.UNAUTHORIZED);
+        }
+        calendarDetailRepository.delete(calendarDetail);
+    }
+
+    public boolean existsCompanyAndDate(CompanyEntity company, LocalDateTime start) {
     }
 }

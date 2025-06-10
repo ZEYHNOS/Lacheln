@@ -6,10 +6,7 @@ import aba3.lucid.domain.product.enums.ReviewStatus;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "review")

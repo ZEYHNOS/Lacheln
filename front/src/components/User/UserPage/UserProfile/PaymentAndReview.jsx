@@ -23,6 +23,15 @@ const PaymentAndReview = () => {
   const [orderList, setOrderList] = useState([]);
   const [reviewList, setReviewList] = useState([]);
   const [currentView, setCurrentView] = useState('orders'); // 'orders' or 'reviews'
+  const [pagination, setPagination] = useState({
+    curPage: 0,
+    curElement: 0,
+    size: 0,
+    totalPage: 0,
+    totalElement: 0,
+    order: ""
+  });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const tabs = [
@@ -32,7 +41,7 @@ const PaymentAndReview = () => {
     { name: '주문내역 & 리뷰', path: '/user/review' }
   ];
 
-  // 샘플 주문 데이터
+  // 샘플 주문 데이터 (API가 없는 경우 사용)
   const sampleOrders = [
     {
       id: 1,
@@ -66,30 +75,6 @@ const PaymentAndReview = () => {
     }
   ];
 
-  // 샘플 리뷰 데이터
-  const sampleReviews = [
-    {
-      id: 1,
-      orderNumber: "ORD20241201001",
-      productName: "프리미엄 골프 레슨",
-      instructor: "김코치",
-      rating: 5,
-      comment: "정말 친절하고 자세하게 가르쳐주셨습니다. 스윙 폼이 많이 개선되었어요!",
-      date: "2024-12-02",
-      images: []
-    },
-    {
-      id: 2,
-      orderNumber: "ORD20241115004",
-      productName: "골프 퍼팅 레슨",
-      instructor: "최프로",
-      rating: 4,
-      comment: "퍼팅 실력이 눈에 띄게 향상되었습니다. 추천해요!",
-      date: "2024-11-16",
-      images: []
-    }
-  ];
-
   useEffect(() => {
     getUserProfile();
     getOrderList();
@@ -102,36 +87,70 @@ const PaymentAndReview = () => {
         headers: { "Content-Type": "application/json" },
       });
       if(res.status === 200) {
+        console.log(res.data.data);
         setUserInfo(res.data.data);
       }
     } catch (err) {
       console.error("User 정보 로딩 실패 :", err);
-      // 임시 데이터 설정
-      setUserInfo({
-        name: "신현준",
-        currency: "KRW",
-        language: "KOR"
-      });
     }
   };
 
   const getOrderList = async () => {
+    setLoading(true);
     try {
-      // API 호출 대신 샘플 데이터 사용
-      setOrderList(sampleOrders);
+      const res = await apiClient.get(`${baseUrl}/payment/user/list`, {
+        headers: { "Content-Type": "application/json" },
+      });
+      
+      console.log("Payment Data : ", res.data);
+      if(res.status === 200 && res.data.result.resultCode === 0) {
+        console.log("결제 내역 데이터 : ", res.data.data);
+        // API 데이터를 화면 표시용으로 변환
+        const transformedOrders = res.data.data.map(payment => ({
+          id: payment.payDetailId,
+          orderNumber: `PAY${payment.payDetailId}`,
+          date: formatDate(payment.paidAt),
+          productName: payment.pdName,
+          instructor: payment.cpId ? `업체 ID: ${payment.cpId}` : '정보 없음',
+          price: Number(payment.payCost),
+          status: getPaymentStatusText(payment.status),
+          reviewWritten: false, // 리뷰 작성 여부는 별도 로직으로 확인 필요
+          scheduleAt: payment.scheduleAt ? formatDate(payment.scheduleAt) : null,
+          couponName: payment.couponName,
+          category: payment.category,
+          refundPrice: payment.refundPrice ? Number(payment.refundPrice) : 0,
+          options: payment.options || []
+        }));
+        setOrderList(transformedOrders);
+      } else {
+        // API 실패시 샘플 데이터 사용
+        setOrderList(sampleOrders);
+      }
     } catch (err) {
       console.error("주문내역 로딩 실패 :", err);
       setOrderList(sampleOrders);
+    } finally {
+      setLoading(false);
     }
   };
 
   const getReviewList = async () => {
+    setLoading(true);
     try {
-      // API 호출 대신 샘플 데이터 사용
-      setReviewList(sampleReviews);
+      const res = await apiClient.get(`${baseUrl}/review/user`, {
+        headers: { "Content-Type": "application/json" },
+      });
+      
+      if(res.status === 200 && res.data.result.resultCode === 0) {
+        console.log("리뷰 데이터:", res.data.data);
+        setReviewList(res.data.data || []);
+        setPagination(res.data.pagination || {});
+      }
     } catch (err) {
       console.error("리뷰 로딩 실패 :", err);
-      setReviewList(sampleReviews);
+      setReviewList([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -146,31 +165,59 @@ const PaymentAndReview = () => {
     navigate("/");
   };
 
+  // 결제 상태 텍스트 변환
+  const getPaymentStatusText = (status) => {
+    switch(status) {
+      case 'COMPLETED': return '완료';
+      case 'PENDING': return '진행중';
+      case 'CANCELLED': return '취소';
+      case 'REFUNDED': return '환불';
+      case 'FAILED': return '실패';
+      default: return status;
+    }
+  };
+
+  // 결제 상태 표시 함수
+  const getPaymentStatusColor = (status) => {
+    switch(status) {
+      case 'COMPLETED': return 'text-green-600 bg-green-100';
+      case 'PENDING': return 'text-blue-600 bg-blue-100';
+      case 'CANCELLED': return 'text-red-600 bg-red-100';
+      case 'REFUNDED': return 'text-orange-600 bg-orange-100';
+      case 'FAILED': return 'text-red-600 bg-red-100';
+      default: return 'text-gray-600 bg-gray-100';
+    }
+  };
+
   // 주문 상태 표시 함수
   const getOrderStatusColor = (status) => {
     switch(status) {
       case '완료': return 'text-green-600 bg-green-100';
       case '진행중': return 'text-blue-600 bg-blue-100';
       case '취소': return 'text-red-600 bg-red-100';
+      case '환불': return 'text-orange-600 bg-orange-100';
+      case '실패': return 'text-red-600 bg-red-100';
       default: return 'text-gray-600 bg-gray-100';
     }
   };
 
-  // 언어 표시 함수
-  const getLanguageDisplay = (language) => {
-    switch(language) {
-      case 'KOR': return '한국어';
-      case 'ENG': return 'English';
-      default: return language;
+  // 리뷰 상태 표시 함수
+  const getReviewStatusColor = (status) => {
+    switch(status) {
+      case 'REGISTERED': return 'text-green-600 bg-green-100';
+      case 'PENDING': return 'text-yellow-600 bg-yellow-100';
+      case 'DELETED': return 'text-red-600 bg-red-100';
+      default: return 'text-gray-600 bg-gray-100';
     }
   };
 
-  // 통화 표시 함수
-  const getCurrencyDisplay = (currency) => {
-    switch(currency) {
-      case 'KRW': return 'KRW';
-      case 'USD': return 'USD';
-      default: return currency;
+  // 리뷰 상태 텍스트 변환
+  const getReviewStatusText = (status) => {
+    switch(status) {
+      case 'REGISTERED': return '등록됨';
+      case 'PENDING': return '대기중';
+      case 'DELETED': return '삭제됨';
+      default: return status;
     }
   };
 
@@ -181,6 +228,16 @@ const PaymentAndReview = () => {
         ★
       </span>
     ));
+  };
+
+  // 날짜 포맷팅
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
   };
 
   return (
@@ -207,21 +264,21 @@ const PaymentAndReview = () => {
         </div>
 
         {/* Profile Header */}
-        <div className="relative p-8 rounded-b-3xl">
+        <div className="relative pl-8 rounded-b-3xl">
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <h2 className="text-pp text-sm mb-1">안녕하세요</h2>
-              <h1 className="text-xl font-bold text-pp">{userInfo.name || '신현준'} 고객님</h1>
+              <h1 className="text-xl font-bold text-pp">{userInfo.name || userInfo.nickname || '고객'} 님</h1>
             </div>
-            <div className="flex items-center justify-between mb-6 mt-6">
+            <div className="flex items-center justify-between mt-10 mr-10">
               <div className="flex gap-6 text-sm">
                 <div className="text-center">
-                  <div className="text-pp">설정화폐</div>
-                  <div className="text-pp font-medium">{getCurrencyDisplay(userInfo.currency)}</div>
+                  <div className="text-pp text-xl font-bold mb-2">주문내역</div>
+                  <div className="text-pp text-2xl">{orderList.length}건</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-pp">설정언어</div>
-                  <div className="text-pp font-medium text-purple-600">{getLanguageDisplay(userInfo.language)}</div>
+                  <div className="text-pp text-xl font-bold mb-2">리뷰</div>
+                  <div className="text-pp text-2xl">{reviewList.length}건</div>
                 </div>
               </div>
             </div>
@@ -239,7 +296,7 @@ const PaymentAndReview = () => {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              주문내역
+              결제내역 ({orderList.length})
             </button>
             <button 
               onClick={() => setCurrentView('reviews')}
@@ -249,7 +306,7 @@ const PaymentAndReview = () => {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              내 리뷰
+              내 리뷰 ({reviewList.length})
             </button>
           </div>
         </div>
@@ -257,18 +314,25 @@ const PaymentAndReview = () => {
         {/* Orders List */}
         {currentView === 'orders' && (
           <div className="px-8 space-y-4">
-            <h3 className="text-lg font-bold text-pp mb-4">주문내역</h3>
-            {orderList.length === 0 ? (
+            <h3 className="text-lg font-bold text-pp mb-4">결제내역</h3>
+            {loading ? (
               <div className="text-center py-12 text-gray-500">
-                주문내역이 없습니다.
+                결제내역을 불러오는 중...
+              </div>
+            ) : orderList.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                결제내역이 없습니다.
               </div>
             ) : (
               orderList.map((order) => (
                 <div key={order.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <div className="text-sm text-gray-500 mb-1">주문번호: {order.orderNumber}</div>
-                      <div className="text-sm text-gray-500">주문일: {order.date}</div>
+                      <div className="text-sm text-gray-500 mb-1">결제번호: {order.orderNumber}</div>
+                      <div className="text-sm text-gray-500">결제일: {order.date}</div>
+                      {order.scheduleAt && (
+                        <div className="text-sm text-gray-500">일정일: {order.scheduleAt}</div>
+                      )}
                     </div>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${getOrderStatusColor(order.status)}`}>
                       {order.status}
@@ -277,12 +341,39 @@ const PaymentAndReview = () => {
                   
                   <div className="mb-4">
                     <h4 className="font-medium text-pp text-lg mb-1">{order.productName}</h4>
-                    <p className="text-gray-600">강사: {order.instructor}</p>
+                    <p className="text-gray-600">{order.instructor}</p>
+                    {order.couponName && (
+                      <p className="text-sm text-blue-600">쿠폰: {order.couponName}</p>
+                    )}
+                    {order.category && (
+                      <p className="text-sm text-gray-500">카테고리: {order.category}</p>
+                    )}
                   </div>
                   
+                  {/* 옵션 표시 */}
+                  {order.options && order.options.length > 0 && (
+                    <div className="mb-4">
+                      <div className="text-sm text-gray-600 mb-2">선택 옵션:</div>
+                      <div className="flex flex-wrap gap-2">
+                        {order.options.map((option, idx) => (
+                          <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                            {option.name || `옵션 ${idx + 1}`}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="flex justify-between items-center">
-                    <div className="text-lg font-bold text-pp">
-                      {order.price.toLocaleString()}원
+                    <div>
+                      <div className="text-lg font-bold text-pp">
+                        {order.price.toLocaleString()}원
+                      </div>
+                      {order.refundPrice > 0 && (
+                        <div className="text-sm text-red-600">
+                          환불금액: {order.refundPrice.toLocaleString()}원
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-2">
                       {order.status === '완료' && !order.reviewWritten && (
@@ -309,45 +400,95 @@ const PaymentAndReview = () => {
         {/* Reviews List */}
         {currentView === 'reviews' && (
           <div className="px-8 space-y-4">
-            <h3 className="text-lg font-bold text-pp mb-4">내 리뷰</h3>
-            {reviewList.length === 0 ? (
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-pp">내 리뷰</h3>
+              {pagination.totalElement > 0 && (
+                <div className="text-sm text-gray-500">
+                  총 {pagination.totalElement}개의 리뷰
+                </div>
+              )}
+            </div>
+            
+            {loading ? (
+              <div className="text-center py-12 text-gray-500">
+                리뷰를 불러오는 중...
+              </div>
+            ) : reviewList.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 작성한 리뷰가 없습니다.
               </div>
             ) : (
-              reviewList.map((review) => (
-                <div key={review.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+              reviewList.map((review, index) => (
+                <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h4 className="font-medium text-pp text-lg mb-1">{review.productName}</h4>
-                      <p className="text-gray-600 mb-2">강사: {review.instructor}</p>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="font-medium text-pp text-lg">{review.productName}</h4>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getReviewStatusColor(review.status)}`}>
+                          {getReviewStatusText(review.status)}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 mb-2">작성자: {review.nickname}</p>
                       <div className="flex items-center gap-2">
-                        {renderStars(review.rating)}
-                        <span className="text-sm text-gray-500">({review.rating}/5)</span>
+                        {renderStars(review.score)}
+                        <span className="text-sm text-gray-500">({review.score}/5)</span>
                       </div>
                     </div>
                     <div className="text-sm text-gray-500">
-                      {review.date}
+                      {formatDate(review.createdAt)}
                     </div>
                   </div>
                   
                   <div className="mb-4">
-                    <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                    <p className="text-gray-700 leading-relaxed">{review.content}</p>
                   </div>
                   
-                  <div className="flex justify-between items-center text-sm text-gray-500">
-                    <span>주문번호: {review.orderNumber}</span>
-                    <div className="flex gap-2">
-                      <button className="px-3 py-1 border border-gray-300 text-gray-700 rounded text-sm hover:bg-gray-50">
-                        수정
-                      </button>
-                      <button className="px-3 py-1 border border-gray-300 text-gray-700 rounded text-sm hover:bg-gray-50">
-                        삭제
-                      </button>
+                  {/* 리뷰 이미지 표시 */}
+                  {review.imageUrlList && review.imageUrlList.length > 0 && (
+                    <div className="mb-4">
+                      <div className="flex gap-2 flex-wrap">
+                        {review.imageUrlList.map((imageUrl, imgIndex) => (
+                          <img 
+                            key={imgIndex}
+                            src={imageUrl} 
+                            alt={`리뷰 이미지 ${imgIndex + 1}`}
+                            className="w-20 h-20 object-cover rounded-lg border"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                        ))}
+                      </div>
                     </div>
+                  )}
+                  
+                  <div className="flex justify-between items-center text-sm text-gray-500">
+                    <div className="flex gap-4">
+                      <span>상품 ID: {review.productId}</span>
+                      <span>업체 ID: {review.companyId}</span>
+                    </div>
+                    {review.status === 'REGISTERED' && (
+                      <div className="flex gap-2">
+                        <button className="px-3 py-1 border border-gray-300 text-gray-700 rounded text-sm hover:bg-gray-50">
+                          수정
+                        </button>
+                        <button className="px-3 py-1 border border-gray-300 text-gray-700 rounded text-sm hover:bg-gray-50">
+                          삭제
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
+            )}
+            
+            {/* 페이지네이션 정보 */}
+            {pagination.totalPage > 1 && (
+              <div className="flex justify-center mt-6">
+                <div className="text-sm text-gray-500">
+                  페이지 {pagination.curPage + 1} / {pagination.totalPage}
+                </div>
+              </div>
             )}
           </div>
         )}

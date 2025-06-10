@@ -73,5 +73,13 @@ public class CompanyController {
         return companyBusiness.getCategory(customUserDetails.getCompanyId());
     }
 
+    @GetMapping("/info/{id}")
+    public API<CompanyResponse> getCompanyInfo(
+            @PathVariable Long id
+    ) {
+        CompanyResponse response = companyBusiness.getCompanyInfo(id);
+        return API.OK(response);
+    }
+
 
 }

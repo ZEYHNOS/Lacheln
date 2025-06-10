@@ -146,7 +146,10 @@ public class CompanyBusiness {
         return companyService.getCategory(companyId);
     }
 
-
+    public CompanyResponse getCompanyInfo(Long id) {
+        CompanyEntity company = findByIdWithThrow(id);
+        return companyConverter.toResponse(company);
+    }
 
 
 //    public Map<String, Object> checkBusinessStatus(String bNo) {

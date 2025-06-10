@@ -55,6 +55,7 @@ public class DressConverter extends ProductAbstractConverter<DressEntity, DressR
                 .price(entity.getPdPrice())
                 .color(entity.getDressColor())
                 .status(entity.getPdStatus())
+                .category(entity.getCompany().getCpCategory())
                 .outAvailable(entity.getDressOutAvailable())
                 .inAvailable(entity.getDressInAvailable())
                 .rec(entity.getPdRec())

@@ -42,6 +42,7 @@ public class StudioConverter extends ProductAbstractConverter<StudioEntity, Stud
                 .cpId(entity.getCompany().getCpId())
                 .name(entity.getPdName())
                 .price(entity.getPdPrice())
+                .category(entity.getCompany().getCpCategory())
                 .status(entity.getPdStatus())
                 .rec(entity.getPdRec())
                 .taskTime(entity.getPdTaskTime())

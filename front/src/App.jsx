@@ -116,6 +116,7 @@ function App() {
                 <Route path="/user" element={<Layout><MyPage /></Layout>}/>
                 {/* 내 정보 수정 페이지 */}
                 <Route path="/user/update" element={<Layout><MyPageUpdate /></Layout>}/>
+                <Route path="/user/review" element={<Layout><PaymentAndReview /></Layout>}/>
 
                 {/* 로그인창 */}
                 <Route path="/login" element={<Layout><LoginPage /></Layout>} />

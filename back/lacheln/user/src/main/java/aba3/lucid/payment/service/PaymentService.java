@@ -52,6 +52,8 @@ public class PaymentService {
             return payManagementRepository.save(entity);
         }
 
+        log.info("entity.getPayId() : {}", entity.getPayId());
+
         // 마일리지 차감하기
         userService.deductMileage(entity.getUser(), entity.getPayMileage());
 
@@ -63,6 +65,7 @@ public class PaymentService {
         // 장바구니에서 삭제하기
         cartService.removeCart(cartIdList);
 
+        log.info("entity.getPayId() : {}", entity.getPayId());
         PayManagementEntity savedPayManagement = payManagementRepository.save(entity);
 
         // 업체 캘린더에 데이터 넣기

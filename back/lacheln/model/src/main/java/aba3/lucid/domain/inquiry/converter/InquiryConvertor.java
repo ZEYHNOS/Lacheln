@@ -27,7 +27,7 @@ public class InquiryConvertor {
                 .inquiryTitle(request.getInquiryTitle())
                 .inquiryCategory(request.getInquiryCategory())
                 .inquiryContent(request.getInquiryContent())
-                .inquiryStatus(InquiryStatus.RECEIVED)  // 기본 상태는 '접수'
+                .inquiryStatus(InquiryStatus.IN_PROGRESS)  // 기본 상태는 '접수'
                 .build();
     }
 

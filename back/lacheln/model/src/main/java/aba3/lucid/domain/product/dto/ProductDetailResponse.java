@@ -1,6 +1,7 @@
 package aba3.lucid.domain.product.dto;
 
 import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.product.dto.option.OptionDto;
 import aba3.lucid.domain.product.enums.ProductStatus;
 import lombok.*;
@@ -45,6 +46,9 @@ public class ProductDetailResponse {
 
     // 옵션 리스트
     private List<OptionDto> optionList;
+
+    // 카테고리
+    private CompanyCategory category;
 
     // 상품 이미지 리스트
     private List<ProductImageResponse> productImageUrl;

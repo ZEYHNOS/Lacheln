@@ -43,6 +43,7 @@ public class MakeUpConverter extends ProductAbstractConverter<MakeupEntity, Make
                 .price(entity.getPdPrice())
                 .status(entity.getPdStatus())
                 .rec(entity.getPdRec())
+                .category(entity.getCompany().getCpCategory())
                 .taskTime(entity.getPdTaskTime())
                 .visit(entity.getMakeupVisit())
                 .manager(entity.getMakeupManager())

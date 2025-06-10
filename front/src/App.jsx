@@ -56,7 +56,7 @@ import AdminDashboard from "./components/Admin/AdminDashboard";
 import MyPage from "./components/User/UserPage/UserProfile/MyPage";
 import MyPageUpdate from "./components/User/UserPage/UserProfile/MyPageUpdate.jsx";
 import PaymentAndReview from "./components/User/UserPage/UserProfile/PaymentAndReview.jsx";
-
+import Review from "./components/User/UserPage/review.jsx";
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
 function CompanyLayout({ children }) {
@@ -116,7 +116,6 @@ function App() {
                 <Route path="/user" element={<Layout><MyPage /></Layout>}/>
                 {/* 내 정보 수정 페이지 */}
                 <Route path="/user/update" element={<Layout><MyPageUpdate /></Layout>}/>
-                <Route path="/user/review" element={<Layout><PaymentAndReview /></Layout>}/>
 
                 {/* 로그인창 */}
                 <Route path="/login" element={<Layout><LoginPage /></Layout>} />
@@ -134,6 +133,8 @@ function App() {
                 <Route path="/cart/payment" element={<Layout><ChoicePayment /></Layout>} />
                 {/* 결제 완료 페이지 */}
                 <Route path="/cart/payment/success" element={<Layout><PaymentSuccess /></Layout>} />
+                {/* 리뷰 페이지 */}
+                <Route path="/review" element={<Layout><Review /></Layout>} />
                 {/* 알림 페이지 */}
                 <Route path="/notification" element={<Layout><Notification /></Layout>} />
                 {/* 브랜드 페이지 */}

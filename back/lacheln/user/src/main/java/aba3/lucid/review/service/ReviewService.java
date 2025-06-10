@@ -8,6 +8,7 @@ import aba3.lucid.domain.product.enums.ReviewStatus;
 import aba3.lucid.domain.review.converter.ReviewImageConverter;
 import aba3.lucid.domain.review.dto.ReviewCommentEventDto;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
+import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.repository.ReviewRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -110,5 +111,15 @@ public class ReviewService {
     public ReviewEntity findByIdWithThrow(Long reviewId) {
         return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+    }
+
+    public ReviewEntity updateReview(UsersEntity user, ReviewEntity review, ReviewUpdateRequest request) {
+        if (!review.getUser().equals(user)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST)
+        }
+
+        if (review.getRvStatus().equals(ReviewStatus.DELETED) || review.getRvStatus().equals(ReviewStatus.REPLY_NEEDED)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
     }
 }

@@ -34,7 +34,7 @@ public class ReviewEntity {
     private PayDetailEntity payDetailEntity;
 
     // 리뷰 작성자 (1:1)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private UsersEntity user;
 
@@ -65,6 +65,9 @@ public class ReviewEntity {
     // 리뷰 이미지 리스트 (1:N)
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewImageEntity> imageList;
+
+    @Column(name = "product_name")
+    private String productName;
 
     // 리뷰 논리 삭제 시각 (nullable)
     @Column(name = "rv_deleted_at")

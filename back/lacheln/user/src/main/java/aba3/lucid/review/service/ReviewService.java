@@ -41,13 +41,14 @@ public class ReviewService {
                 it -> {
                     reviewEntityList.add(ReviewEntity.builder()
                             .productId(it.getPdId())
+                            .productName(it.getProductName())
                             .companyId(it.getCpId())
                             .payDetailEntity(it)
                             .rvStatus(ReviewStatus.REPLY_NEEDED)
                             .build())
                     ;
 
-                    rabbitTemplate.convertAndSend("", "", "");
+                    rabbitTemplate.convertAndSend("company.exchange", "company", "리뷰 알림");
                 }
         );
 

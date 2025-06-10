@@ -20,7 +20,7 @@ import java.util.List;
 @ToString
 public class ReviewCreateRequest {
 
-    @NotNull(message = "결제 ID는 필수입니다.")
+    @NotNull
     private Long reviewId;
 
     @NotBlank(message = "리뷰 내용은 필수입니다.")
@@ -31,6 +31,6 @@ public class ReviewCreateRequest {
     @DecimalMax(value = "5.0", inclusive = true, message = "리뷰 평점은 5.0 이하여야 합니다.")
     private Double rvScore;
 
-    private List<String> imageUrlList; // 선택 항목
+    private List<String> imageUrlList;
 }
 

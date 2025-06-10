@@ -52,4 +52,19 @@ public class ReviewController {
         return null;
     }
 
+    // 유저 리뷰 불러오기
+    @GetMapping("/user")
+    public API<List<ReviewResponse>> getUserReview(
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        List<ReviewResponse> reviewResponseList = reviewBusiness.getUserReviewList(user.getUserId());
+        return API.OK(reviewResponseList);
+    }
+
+    // 업체 리뷰 불러오기
+
+    // 상품 리뷰 불러오기
+
+
+
 }

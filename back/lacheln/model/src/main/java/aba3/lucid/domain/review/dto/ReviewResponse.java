@@ -1,5 +1,6 @@
 package aba3.lucid.domain.review.dto;
 
+import aba3.lucid.domain.product.enums.ReviewStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,8 +19,21 @@ import java.util.List;
 public class ReviewResponse {
 
     private String nickname;                // 작성자 닉네임
+
+    private Long productId;
+
+    private String productName;
+
+    private Long companyId;
+
+    private ReviewStatus status;
+
     private String content;                 // 리뷰 내용
+
     private Double score;                   // 리뷰 평점
+
     private List<String> imageUrlList;         // 첨부 이미지 URL 리스트
+
     private LocalDateTime createdAt;        // 리뷰 작성일시
+
 }

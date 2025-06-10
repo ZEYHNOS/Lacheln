@@ -95,6 +95,26 @@ const PaymentAndReview = () => {
     }
   };
 
+  // 배열 형태의 날짜를 Date 객체로 변환하는 함수
+  const convertArrayToDate = (dateArray) => {
+    if (!dateArray || !Array.isArray(dateArray)) return null;
+    
+    // [2025, 6, 10, 20, 29, 32] -> new Date(2025, 5, 10, 20, 29, 32)
+    // 월은 0부터 시작하므로 -1 해줌
+    const [year, month, day, hour = 0, minute = 0, second = 0] = dateArray;
+    return new Date(year, month - 1, day, hour, minute, second);
+  };
+
+  // 카테고리 텍스트 변환
+  const getCategoryText = (category) => {
+    switch(category) {
+      case 'D': return '드레스';
+      case 'S': return '스튜디오';
+      case 'M': return '메이크업';
+      default: return category || '기타';
+    }
+  };
+
   const getOrderList = async () => {
     setLoading(true);
     try {
@@ -103,26 +123,37 @@ const PaymentAndReview = () => {
       });
       
       console.log("Payment Data : ", res.data);
-      if(res.status === 200 && res.data.result.resultCode === 0) {
+      console.log("Payment resultCode : ", res.data.result?.resultCode);
+      
+      if(res.status === 200 && res.data.result?.resultCode === 200) {
         console.log("결제 내역 데이터 : ", res.data.data);
+        
         // API 데이터를 화면 표시용으로 변환
-        const transformedOrders = res.data.data.map(payment => ({
-          id: payment.payDetailId,
-          orderNumber: `PAY${payment.payDetailId}`,
-          date: formatDate(payment.paidAt),
-          productName: payment.pdName,
-          instructor: payment.cpId ? `업체 ID: ${payment.cpId}` : '정보 없음',
-          price: Number(payment.payCost),
-          status: getPaymentStatusText(payment.status),
-          reviewWritten: false, // 리뷰 작성 여부는 별도 로직으로 확인 필요
-          scheduleAt: payment.scheduleAt ? formatDate(payment.scheduleAt) : null,
-          couponName: payment.couponName,
-          category: payment.category,
-          refundPrice: payment.refundPrice ? Number(payment.refundPrice) : 0,
-          options: payment.options || []
-        }));
+        const transformedOrders = res.data.data.map(payment => {
+          const paidDate = convertArrayToDate(payment.paidAt);
+          const scheduleDate = convertArrayToDate(payment.scheduleAt);
+          
+          return {
+            id: payment.payDetailId,
+            orderNumber: `PAY${payment.payDetailId}`,
+            date: paidDate ? formatDate(paidDate) : '날짜 정보 없음',
+            productName: payment.pdName || '상품명 정보 없음',
+            instructor: payment.cpId ? `업체 ID: ${payment.cpId}` : '정보 없음',
+            price: payment.payCost ? Number(payment.payCost) : 0,
+            status: getPaymentStatusText(payment.status),
+            reviewWritten: false, // 리뷰 작성 여부는 별도 로직으로 확인 필요
+            scheduleAt: scheduleDate ? formatDate(scheduleDate) : null,
+            couponName: payment.couponName,
+            category: getCategoryText(payment.category),
+            refundPrice: payment.refundPrice ? Number(payment.refundPrice) : 0,
+            options: payment.options || [],
+            userName: payment.userName
+          };
+        });
+        
         setOrderList(transformedOrders);
       } else {
+        console.log("API 응답이 예상과 다름, 샘플 데이터 사용");
         // API 실패시 샘플 데이터 사용
         setOrderList(sampleOrders);
       }
@@ -168,18 +199,20 @@ const PaymentAndReview = () => {
   // 결제 상태 텍스트 변환
   const getPaymentStatusText = (status) => {
     switch(status) {
+      case 'PAID': return '결제완료';
       case 'COMPLETED': return '완료';
       case 'PENDING': return '진행중';
       case 'CANCELLED': return '취소';
       case 'REFUNDED': return '환불';
       case 'FAILED': return '실패';
-      default: return status;
+      default: return status || '상태 정보 없음';
     }
   };
 
   // 결제 상태 표시 함수
   const getPaymentStatusColor = (status) => {
     switch(status) {
+      case 'PAID':
       case 'COMPLETED': return 'text-green-600 bg-green-100';
       case 'PENDING': return 'text-blue-600 bg-blue-100';
       case 'CANCELLED': return 'text-red-600 bg-red-100';
@@ -192,6 +225,7 @@ const PaymentAndReview = () => {
   // 주문 상태 표시 함수
   const getOrderStatusColor = (status) => {
     switch(status) {
+      case '결제완료':
       case '완료': return 'text-green-600 bg-green-100';
       case '진행중': return 'text-blue-600 bg-blue-100';
       case '취소': return 'text-red-600 bg-red-100';
@@ -231,9 +265,25 @@ const PaymentAndReview = () => {
   };
 
   // 날짜 포맷팅
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
+  const formatDate = (date) => {
+    if (!date) return '날짜 정보 없음';
+    
+    // Date 객체인 경우
+    if (date instanceof Date) {
+      return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+    }
+    
+    // 문자열인 경우
+    const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) {
+      return '날짜 형식 오류';
+    }
+    
+    return dateObj.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
@@ -331,7 +381,10 @@ const PaymentAndReview = () => {
                       <div className="text-sm text-gray-500 mb-1">결제번호: {order.orderNumber}</div>
                       <div className="text-sm text-gray-500">결제일: {order.date}</div>
                       {order.scheduleAt && (
-                        <div className="text-sm text-gray-500">일정일: {order.scheduleAt}</div>
+                        <div className="text-sm text-gray-500">예약일: {order.scheduleAt}</div>
+                      )}
+                      {order.userName && (
+                        <div className="text-sm text-gray-500">주문자: {order.userName}</div>
                       )}
                     </div>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${getOrderStatusColor(order.status)}`}>
@@ -366,9 +419,15 @@ const PaymentAndReview = () => {
                   
                   <div className="flex justify-between items-center">
                     <div>
-                      <div className="text-lg font-bold text-pp">
-                        {order.price.toLocaleString()}원
-                      </div>
+                      {order.price > 0 ? (
+                        <div className="text-lg font-bold text-pp">
+                          {order.price.toLocaleString()}원
+                        </div>
+                      ) : (
+                        <div className="text-lg font-bold text-gray-500">
+                          금액 정보 없음
+                        </div>
+                      )}
                       {order.refundPrice > 0 && (
                         <div className="text-sm text-red-600">
                           환불금액: {order.refundPrice.toLocaleString()}원
@@ -376,7 +435,7 @@ const PaymentAndReview = () => {
                       )}
                     </div>
                     <div className="flex gap-2">
-                      {order.status === '완료' && !order.reviewWritten && (
+                      {(order.status === '완료' || order.status === '결제완료') && !order.reviewWritten && (
                         <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700">
                           리뷰 작성
                         </button>

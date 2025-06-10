@@ -71,7 +71,7 @@ public class PayDetailConverter {
                 .cpId(entity.getCpId())
                 .couponName(entity.getCouponName())
                 .pdName(entity.getProductName())
-                .payCost(entity.getPayDcPrice())
+                .payCost(entity.getPayCost())
                 .status(entity.getPayManagement().getPayStatus())
                 .paidAt(entity.getPayManagement().getPaidAt())
                 .refundPrice(entity.getPayManagement().getPayRefundPrice())

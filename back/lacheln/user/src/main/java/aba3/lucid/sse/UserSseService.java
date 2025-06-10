@@ -36,7 +36,7 @@ public class UserSseService {
 
     @Async
     public void sendAlert(String userId, UserAlertDto dto) {
-        SseEmitter emitter = emitters.get(userId);
+        SseEmitter emitter = emitters.getOrDefault(userId, null);
 
         if (emitter == null) {
             return;

@@ -130,7 +130,6 @@ public class PayDetailConverter {
                 .build()
                 ;
 
-        log.info("payDetailConverter : entity {}", entity);
         entity.updatePayDetailOptionEntity(cartToPaymentConverter.toEntityList(response.getCartDetails(), entity));
 
         if (response.getCategory().equals(CompanyCategory.M)) {

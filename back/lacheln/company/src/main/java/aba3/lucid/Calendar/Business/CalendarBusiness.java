@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -75,6 +76,8 @@ public class CalendarBusiness {
         CalendarDetailEntity calendarDetail = calendarDetailConverter.toEntity(dto, calendar);
         calendarService.createCalendar(calendar, calendarDetail);
         companyAlertService.sendAlertCompany(CompanyAlertDto.builder()
+                .companyId(company.getCpId())
+                .sentTime(LocalDateTime.now())
                 .text("예약 알림")
                 .accessUrl("/company/schedule")
                 .type("예약")

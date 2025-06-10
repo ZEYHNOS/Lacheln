@@ -4,6 +4,7 @@ import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.product.enums.CommentStatus;
 import aba3.lucid.domain.product.enums.ReviewStatus;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
+import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -83,6 +84,13 @@ public class ReviewEntity {
         this.rvCreate = LocalDateTime.now();
         this.rvContent = request.getRvContent();
         this.rvScore = request.getRvScore();
+    }
+
+    public void updateField(ReviewUpdateRequest request) {
+        this.rvStatus = ReviewStatus.UPDATED;
+        this.rvCreate = LocalDateTime.now();
+        this.rvContent = request.getContent();
+        this.rvScore = request.getScore();
     }
 
     public void updateImageList(List<ReviewImageEntity> reviewImageEntityList) {

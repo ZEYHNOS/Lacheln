@@ -55,6 +55,7 @@ import AdminLayout from "./components/Admin/AdminLayout";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 import MyPage from "./components/User/UserPage/UserProfile/MyPage";
 import MyPageUpdate from "./components/User/UserPage/UserProfile/MyPageUpdate.jsx";
+import PaymentAndReview from "./components/User/UserPage/UserProfile/PaymentAndReview.jsx";
 
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
@@ -115,6 +116,7 @@ function App() {
                 <Route path="/user" element={<Layout><MyPage /></Layout>}/>
                 {/* 내 정보 수정 페이지 */}
                 <Route path="/user/update" element={<Layout><MyPageUpdate /></Layout>}/>
+                <Route path="/user/review" element={<Layout><PaymentAndReview /></Layout>}/>
 
                 {/* 로그인창 */}
                 <Route path="/login" element={<Layout><LoginPage /></Layout>} />

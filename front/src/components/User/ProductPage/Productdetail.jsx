@@ -77,6 +77,7 @@ const ProductDetail = () => {
                     descriptionList: data.descriptionList,
                     optionList: data.optionList,
                     sizeList: data.sizeList,
+                    thiscate: data.category,
                     color: data.color,
                     image_url_list: data.productImageUrl ? data.productImageUrl.map(img => baseUrl + img.url.replace(/\\/g, '/')) : [],
                     // 기타 필요한 필드
@@ -417,6 +418,7 @@ const ProductDetail = () => {
                                         start_datetime: localDateTime,
                                         cart_quantity: 1,
                                         task_time: arrayToLocalTime(product.taskTime) || null,
+                                        category: product.thiscate,
                                         option_details: cartDetailData
                                     };
 
@@ -424,6 +426,7 @@ const ProductDetail = () => {
 
                                     // cartData만 전송
                                     const response = await apiClient.post('/user/cart/add/product', cartData);
+                                    console.log("Add Cart data : ", response);
                                     if (response.data?.result?.resultCode === 200) {
                                         toast.success('장바구니에 추가되었습니다.');
                                         setShowSchedule(false);

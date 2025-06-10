@@ -10,6 +10,7 @@ import aba3.lucid.domain.review.dto.ReviewCommentEventDto;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
 import aba3.lucid.domain.review.entity.ReviewEntity;
+import aba3.lucid.domain.review.entity.ReviewImageEntity;
 import aba3.lucid.domain.review.repository.ReviewRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.payment.service.PayDetailService;
@@ -113,13 +114,20 @@ public class ReviewService {
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
+    @Transactional
     public ReviewEntity updateReview(UsersEntity user, ReviewEntity review, ReviewUpdateRequest request) {
         if (!review.getUser().equals(user)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST)
+            throw new ApiException(ErrorCode.BAD_REQUEST);
         }
 
         if (review.getRvStatus().equals(ReviewStatus.DELETED) || review.getRvStatus().equals(ReviewStatus.REPLY_NEEDED)) {
             throw new ApiException(ErrorCode.BAD_REQUEST);
         }
+
+        List<ReviewImageEntity> reviewImageEntityList = reviewImageConverter.toEntityList(request.getReviewImageUrl(), review);
+
+        review.updateField(request);
+        review.updateImageList(reviewImageEntityList);
+        return review;
     }
 }

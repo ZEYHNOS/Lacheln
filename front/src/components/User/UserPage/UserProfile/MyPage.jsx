@@ -19,7 +19,15 @@ const MyPage = () => {
     currency: "",
     profileImageUrl: ""
   });
+  const [activeTab, setActiveTab] = useState('내 정보');
   const navigate = useNavigate();
+
+  const tabs = [
+    { name: '내 정보', path: '/user' },
+    { name: '내 쿠폰', path: '/user/coupons' },
+    { name: '찜 & 구독', path: '/user/wishlist' },
+    { name: '주문내역 & 리뷰', path: '/user/review' }
+  ];
 
   useEffect(() => {
     getUserProfile();
@@ -42,6 +50,12 @@ const MyPage = () => {
     } catch (err) {
       console.error("User 정보 로딩 실패 :", err);
     }
+  };
+
+  // 탭 클릭 핸들러
+  const handleTabClick = (tab) => {
+    setActiveTab(tab.name);
+    navigate(tab.path);
   };
 
   // 메인 페이지
@@ -91,6 +105,25 @@ const MyPage = () => {
     <div className="bg-white min-h-screen">
       {/* Main Profile Section */}
       <div className="w-[880px] mx-auto bg-white">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <nav className="flex px-8 pt-6">
+            {tabs.map((tab) => (
+              <button
+                key={tab.name}
+                onClick={() => handleTabClick(tab)}
+                className={`flex-1 grid place-items-center pb-4 px-4 border-b-2 font-medium text-md transition-colors duration-200 text-center ${
+                  activeTab === tab.name
+                    ? 'border-purple-600 text-purple-600 bg-pp text-white text-md'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                {tab.name}
+              </button>
+            ))}
+          </nav>
+        </div>
+
         {/* Profile Header */}
         <div className="relative p-8 rounded-b-3xl">
           <div className="flex items-center justify-between">

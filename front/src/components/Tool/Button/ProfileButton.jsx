@@ -29,6 +29,10 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
         navigate("/login");
     };
 
+    const handleReview = () => {
+        navigate("/user/review");
+    }
+
     const handleLogout = async () => {
         try {
             const response = await apiClient.post("/userlogout");
@@ -90,8 +94,7 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
                             <hr />
                             <ul className="text-black text-sm">
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleMyPage}>😊 내 정보</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">📦 내 주문</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">💰 내 리뷰</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleReview}>📦 주문 & 리뷰</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">❤️ 구독내역</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🎟 내 쿠폰</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={openMessageModal}>

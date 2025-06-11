@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -32,10 +33,13 @@ public class ReviewCommentListener {
     private final ReviewCommentBusiness reviewCommentBusiness;
     private final CompanyAlertService companyAlertService;
 
+    private final RabbitTemplate rabbitTemplate;
+
     @RabbitListener(queues = "review.comment.queue")
-    public void receive(ReviewCommentEventDto eventDto, Message message, Channel channel) throws IOException {
+    public void receive(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
+            ReviewCommentEventDto eventDto = (ReviewCommentEventDto) rabbitTemplate.getMessageConverter().fromMessage(message);
             ReviewEntity review = reviewRepository.findById(eventDto.getReviewId()).orElseThrow();
             CompanyEntity company = companyRepository.findById(eventDto.getCpId()).orElseThrow();
             ReviewCommentEntity comment = ReviewCommentEntity.builder()

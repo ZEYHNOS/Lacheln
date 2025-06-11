@@ -9,7 +9,8 @@ public enum ImageType {
 
     PROFILE("profile"),
     PRODUCT("product"),
-    REPORT("report")
+    REPORT("report"),
+    REVIEW("review")
     ;
 
     private final String type;

@@ -2,17 +2,21 @@ package aba3.lucid.review.controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
+import aba3.lucid.common.image.ImageType;
 import aba3.lucid.domain.review.dto.ReviewSearchRequest;
 import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewResponse;
 import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
+import aba3.lucid.image.ImageService;
 import aba3.lucid.review.business.ReviewBusiness;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -23,6 +27,7 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewBusiness reviewBusiness;
+    private final ImageService imageService;
 
     @PostMapping("/write")
     public API<ReviewResponse> writeReview(
@@ -51,6 +56,16 @@ public class ReviewController {
     ) {
         reviewBusiness.deleteReview(user.getUserId(), reviewId);
         return API.OK("삭제 완료");
+    }
+
+    @PostMapping("/image/{reviewId}")
+    public API<List<String>> imageUpload(
+            List<MultipartFile> imageList,
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) throws IOException {
+        List<String> imageUrl = imageService.imageUpload(imageList, reviewId, user.getUserId(), ImageType.REVIEW);
+        return API.OK(imageUrl);
     }
 
     // 유저 리뷰 불러오기

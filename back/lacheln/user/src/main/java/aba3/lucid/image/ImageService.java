@@ -1,0 +1,63 @@
+package aba3.lucid.image;
+
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.image.ImageType;
+import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.config.ImageConfig;
+import aba3.lucid.domain.review.entity.ReviewEntity;
+import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.review.service.ReviewService;
+import aba3.lucid.user.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class ImageService {
+
+    private final ImageConfig imageConfig;
+    private final UserService userService;
+    private final ReviewService reviewService;
+
+    public List<String> imageUpload(List<MultipartFile> imageList, Long reviewId, String userId, ImageType type) throws IOException {
+        UsersEntity user = userService.findByIdWithThrow(userId);
+        ReviewEntity review = reviewService.findByIdWithThrow(reviewId);
+
+        for (MultipartFile image : imageList) {
+            if (image.getContentType() == null || image.getContentType().startsWith("image/")) {
+                throw new ApiException(ErrorCode.BAD_REQUEST, "image 아닙니다.");
+            }
+        }
+
+        String dir = imageConfig.getDir() + "\\" + user.getUserId() + "\\" + type.getType();
+        File fileDir = new File(dir);
+        if (!fileDir.exists()) {
+            fileDir.mkdirs();
+        }
+
+        List<String> filePathList = new ArrayList<>();
+        for (MultipartFile image : imageList) {
+            String originalName = image.getOriginalFilename();
+            if (originalName == null) {
+                throw new ApiException(ErrorCode.BAD_REQUEST, "이미지 이름 존재 X");
+            }
+            String uuid = UUID.randomUUID().toString();
+            String savedName = "\\" + uuid + "_" + originalName;
+
+            File destination = new File(fileDir, savedName);
+            image.transferTo(destination);
+
+            filePathList.add("\\" + user.getUserId() + "\\" + type.getType() + savedName);
+        }
+
+        return filePathList;
+    }
+
+}

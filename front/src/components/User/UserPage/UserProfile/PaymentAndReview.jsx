@@ -42,11 +42,20 @@ const PaymentAndReview = () => {
   };
 
   const formatDate = (date) => {
-    if (!date) return '날짜 정보 없음';
-    const dt = date instanceof Date ? date : (Array.isArray(date) ? convertArrayToDate(date) : new Date(date));
-    if (!dt || isNaN(dt.getTime())) return '날짜 형식 오류';
-    return dt.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-  };
+  if (!date) return '날짜 정보 없음';
+  const dt = date instanceof Date ? date : (Array.isArray(date) ? convertArrayToDate(date) : new Date(date));
+  if (!dt || isNaN(dt.getTime())) return '날짜 형식 오류';
+  return dt.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+};
+
 
   const getCategoryText = (c) => {
     switch(c) {

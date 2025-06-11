@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ImageService {
+public class UserImageService {
 
     private final ImageConfig imageConfig;
     private final UserService userService;

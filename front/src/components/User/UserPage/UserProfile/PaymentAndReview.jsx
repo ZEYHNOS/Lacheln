@@ -45,20 +45,20 @@ const PaymentAndReview = () => {
   };
 
   const formatDate = (date) => {
-  if (!date) return '날짜 정보 없음';
-  const dt = date instanceof Date ? date : (Array.isArray(date) ? convertArrayToDate(date) : new Date(date));
-  if (!dt || isNaN(dt.getTime())) return '날짜 형식 오류';
-  return dt.toLocaleString('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-};
-
+    if (!date) return '날짜 정보 없음';
+    const dt = date instanceof Date ? date : (Array.isArray(date) ? convertArrayToDate(date) : new Date(date));
+    if (!dt || isNaN(dt.getTime())) return '날짜 형식 오류';
+    return dt.toLocaleString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      millisecond: '2-digit',
+      hour12: false
+    });
+  };
 
   const getCategoryText = (c) => {
     switch(c) {
@@ -97,6 +97,7 @@ const PaymentAndReview = () => {
       case 'REGISTERED': return '등록됨';
       case 'PENDING': return '대기중';
       case 'DELETED': return '삭제됨';
+      case 'REPLY_NEEDED': return '답변 필요';
       default: return s;
     }
   };
@@ -106,6 +107,7 @@ const PaymentAndReview = () => {
       case 'REGISTERED': return 'text-green-600 bg-green-100';
       case 'PENDING': return 'text-yellow-600 bg-yellow-100';
       case 'DELETED': return 'text-red-600 bg-red-100';
+      case 'REPLY_NEEDED': return 'text-blue-600 bg-blue-100';
       default: return 'text-gray-600 bg-gray-100';
     }
   };
@@ -115,6 +117,18 @@ const PaymentAndReview = () => {
     return [...Array(5)].map((_, i) => (
       <span key={i} className={`text-lg ${i < r ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
     ));
+  };
+
+  // 리뷰 상태 확인 함수
+  const getReviewStatusForOrder = (payDetailId) => {
+    const review = reviewList.find(r => r.payDtId === payDetailId);
+    if (!review) return { hasReview: false, status: null };
+    return { hasReview: true, status: review.status };
+  };
+
+  // 표시할 리뷰 필터링 (REGISTERED 상태만)
+  const getDisplayReviews = () => {
+    return reviewList.filter(r => r.status === 'REGISTERED');
   };
 
   const getOrderList = async () => {
@@ -129,7 +143,6 @@ const PaymentAndReview = () => {
           price: p.payCost ? Number(p.payCost) : 0,
           refundPrice: p.refundPrice ? Number(p.refundPrice) : 0,
           status: getPaymentStatusText(p.status),
-          reviewWritten: false,
           couponName: p.couponName,
           category: getCategoryText(p.category),
           options: p.options || [],
@@ -169,6 +182,21 @@ const PaymentAndReview = () => {
     navigate(tab.path);
   };
 
+  // 리뷰 수정 모달 열기
+  const handleEditReview = (review) => {
+    setReviewTarget({ 
+      reviewId: review.reviewId, 
+      cpId: review.companyId, 
+      pdName: review.productName,
+      isEdit: true,
+      existingReview: review
+    });
+    setIsReviewOpen(true);
+  };
+
+  // 표시할 리뷰 목록
+  const displayReviews = getDisplayReviews();
+
   return (
     <div className="bg-white min-h-screen">
       <div className="w-[880px] mx-auto">
@@ -190,13 +218,13 @@ const PaymentAndReview = () => {
           </div>
           <div className="flex gap-6 mt-6 text-sm mr-10">
             <div className="text-center text-pp"><div>주문내역</div><div className="text-xl font-bold text-pp">{orderList.length}</div></div>
-            <div className="text-center text-pp"><div>리뷰</div><div className="text-xl font-bold text-pp">{reviewList.length}</div></div>
+            <div className="text-center text-pp"><div>리뷰</div><div className="text-xl font-bold text-pp">{displayReviews.length}</div></div>
           </div>
         </div>
 
         <div className="flex gap-3 px-8 mb-6">
           <button onClick={() => setCurrentView('orders')} className={`px-6 py-3 rounded-lg font-medium ${currentView === 'orders' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700'}`}>결제내역 ({orderList.length})</button>
-          <button onClick={() => setCurrentView('reviews')} className={`px-6 py-3 rounded-lg font-medium ${currentView === 'reviews' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700'}`}>내 리뷰 ({reviewList.length})</button>
+          <button onClick={() => setCurrentView('reviews')} className={`px-6 py-3 rounded-lg font-medium ${currentView === 'reviews' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700'}`}>내 리뷰 ({displayReviews.length})</button>
         </div>
 
         {currentView === 'orders' ? (
@@ -206,6 +234,7 @@ const PaymentAndReview = () => {
             ) : orderList.length === 0 ? (
               <div className="py-12 text-center text-gray-500">결제내역이 없습니다.</div>
             ) : orderList.map(o => {
+              const reviewStatus = getReviewStatusForOrder(o.payDetailId);
               return (
                 <div key={o.payDetailId} className="border p-6 rounded-lg hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-4">
@@ -242,15 +271,49 @@ const PaymentAndReview = () => {
                       {o.refundPrice > 0 && <div className="text-sm text-red-600">환불금액: {o.refundPrice.toLocaleString()}원</div>}
                     </div>
                     <div className="flex gap-2">
-                      {(o.status === '완료' || o.status === '결제완료') && !o.reviewWritten ? (
-                        <button className="px-4 py-2 bg-purple-600 text-white rounded-lg" onClick={() => {
-                          setReviewTarget({ reviewId: o.payDetailId, cpId: o.cpId, pdName: o.pdName });
-                          setIsReviewOpen(true);
-                        }}>리뷰 작성</button>
-                      ) : (
-                        <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">리뷰 작성완료</span>
+                      {/* 리뷰 작성/상태 버튼 로직 */}
+                      {(o.status === '완료' || o.status === '결제완료') && (
+                        <>
+                          {!reviewStatus.hasReview && (
+                            <button 
+                              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700" 
+                              onClick={() => {
+                                setReviewTarget({ 
+                                  reviewId: o.reviewId, 
+                                  cpId: o.cpId, 
+                                  pdName: o.pdName,
+                                  isEdit: false
+                                });
+                                setIsReviewOpen(true);
+                              }}
+                            >
+                              리뷰 작성
+                            </button>
+                          )}
+                          {reviewStatus.hasReview && reviewStatus.status === 'REGISTERED' && (
+                            <span className="px-4 py-2 bg-green-100 text-green-600 rounded-lg text-sm">
+                              리뷰 작성완료
+                            </span>
+                          )}
+                          {reviewStatus.hasReview && reviewStatus.status === 'REPLY_NEEDED' && (
+                            <button 
+                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" 
+                              onClick={() => {
+                                setReviewTarget({ 
+                                  reviewId: o.reviewId, 
+                                  cpId: o.cpId, 
+                                  pdName: o.pdName,
+                                  isEdit: false
+                                });
+                                setIsReviewOpen(true);
+                              }}
+                            >
+                              리뷰 작성
+                            </button>
+                          )}
+                        </>
                       )}
-                      <button className="px-4 py-2 border border-gray-300 rounded-lg">상세보기</button>
+                      <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">상세보기</button>
                     </div>
                   </div>
                 </div>
@@ -261,15 +324,17 @@ const PaymentAndReview = () => {
           <div className="px-8 space-y-4">
             {loading ? (
               <div className="py-12 text-center text-gray-500">리뷰를 불러오는 중...</div>
-            ) : reviewList.length === 0 ? (
+            ) : displayReviews.length === 0 ? (
               <div className="py-12 text-center text-gray-500">작성한 리뷰가 없습니다.</div>
-            ) : reviewList.map((r, idx) => (
+            ) : displayReviews.map((r, idx) => (
               <div key={idx} className="border p-6 rounded-lg hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <div className="flex items-center gap-3 mb-2">
                       <h4 className="font-medium text-pp">{r.productName}</h4>
-                      <span className={`px-2 py-1 rounded-full text-xs ${getReviewStatusColor(r.status)}`}>{getReviewStatusText(r.status)}</span>
+                      <span className={`px-2 py-1 rounded-full text-xs ${getReviewStatusColor(r.status)}`}>
+                        {getReviewStatusText(r.status)}
+                      </span>
                     </div>
                     <p className="text-gray-600 mb-2">작성자: {r.nickname}</p>
                     <div className="flex items-center gap-2">
@@ -285,7 +350,13 @@ const PaymentAndReview = () => {
                 {r.imageUrlList?.length > 0 && (
                   <div className="flex gap-2 mb-4">
                     {r.imageUrlList.map((u, i) => (
-                      <img key={i} src={u} alt={`리뷰 이미지 ${i+1}`} className="w-20 h-20 object-cover rounded-lg border" onError={e => e.currentTarget.style.display = 'none'} />
+                      <img 
+                        key={i} 
+                        src={u} 
+                        alt={`리뷰 이미지 ${i+1}`} 
+                        className="w-20 h-20 object-cover rounded-lg border" 
+                        onError={e => e.currentTarget.style.display = 'none'} 
+                      />
                     ))}
                   </div>
                 )}
@@ -295,8 +366,13 @@ const PaymentAndReview = () => {
                   <span>업체 ID: {r.companyId}</span>
                   {r.status === 'REGISTERED' && (
                     <div className="flex gap-2">
-                      <button className="px-3 py-1 border rounded text-sm">수정</button>
-                      <button className="px-3 py-1 border rounded text-sm">삭제</button>
+                      <button 
+                        className="px-3 py-1 border rounded text-sm hover:bg-gray-50"
+                        onClick={() => handleEditReview(r)}
+                      >
+                        수정
+                      </button>
+                      <button className="px-3 py-1 border rounded text-sm hover:bg-gray-50">삭제</button>
                     </div>
                   )}
                 </div>
@@ -314,7 +390,15 @@ const PaymentAndReview = () => {
         <div className="px-8 mt-8 mb-8">
           <button className="w-full py-3 bg-pp text-white rounded-lg font-medium" onClick={() => navigate('/')}>메인 페이지</button>
         </div>
-        <ReviewModal isOpen={isReviewOpen} onClose={() => setIsReviewOpen(false)} reviewId={reviewTarget.reviewId} cpId={reviewTarget.cpId} pdName={reviewTarget.pdName} />
+        <ReviewModal 
+          isOpen={isReviewOpen} 
+          onClose={() => setIsReviewOpen(false)} 
+          reviewId={reviewTarget.reviewId} 
+          cpId={reviewTarget.cpId} 
+          pdName={reviewTarget.pdName}
+          isEdit={reviewTarget.isEdit}
+          existingReview={reviewTarget.existingReview}
+        />
       </div>
     </div>
   );

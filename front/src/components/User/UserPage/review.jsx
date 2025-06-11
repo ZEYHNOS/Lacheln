@@ -251,7 +251,7 @@ const Review = (props) => {
                         <button
                             className="px-6 py-2 rounded-md bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition-colors"
                             type="button"
-                            onClick={() => navigate(-1)}
+                            onClick={props.onClose}
                         >
                             취소
                         </button>
@@ -267,7 +267,7 @@ const ReviewModal = ({ isOpen, onClose, ...props }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
             <div className="relative bg-white rounded-xl shadow-lg p-0 w-full max-w-4xl">
-                <Review {...props} />
+                <Review {...props} onClose={onClose} />
             </div>
         </div>
     );

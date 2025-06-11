@@ -122,26 +122,23 @@ const PaymentAndReview = () => {
     try {
       const res = await apiClient.get(`${baseUrl}/payment/user/list`);
       if (res.status === 200 && res.data.result?.resultCode === 200) {
-        const transformed = res.data.data.map(p => {
-          const paid = convertArrayToDate(p.paidAt);
-          const sched = convertArrayToDate(p.scheduleAt);
-          return {
-            id: p.payDetailId,
-            orderNumber: `PAY${p.payDetailId}`,
-            date: formatDate(paid),
-            scheduleAt: sched ? formatDate(sched) : null,
-            productName: p.pdName || '상품명 정보 없음',
-            instructor: p.cpId ? `업체 ID: ${p.cpId}` : '정보 없음',
-            price: p.payCost ? Number(p.payCost) : 0,
-            status: getPaymentStatusText(p.status),
-            reviewWritten: false,
-            couponName: p.couponName,
-            category: getCategoryText(p.category),
-            refundPrice: p.refundPrice ? Number(p.refundPrice) : 0,
-            options: p.options || [],
-            userName: p.userName
-          };
-        });
+        const transformed = res.data.data.map(p => ({
+          payDetailId: p.payDetailId,
+          cpId: p.cpId,
+          pdName: p.pdName,
+          price: p.payCost ? Number(p.payCost) : 0,
+          refundPrice: p.refundPrice ? Number(p.refundPrice) : 0,
+          status: getPaymentStatusText(p.status),
+          reviewWritten: false,
+          couponName: p.couponName,
+          category: getCategoryText(p.category),
+          options: p.options || [],
+          userName: p.userName,
+          date: formatDate(convertArrayToDate(p.paidAt)),
+          scheduleAt: p.scheduleAt ? formatDate(convertArrayToDate(p.scheduleAt)) : null,
+          orderNumber: `PAY${p.payDetailId}`,
+          instructor: p.cpId ? `업체 ID: ${p.cpId}` : '정보 없음',
+        }));
         setOrderList(transformed);
       }
     } catch (err) {
@@ -208,55 +205,57 @@ const PaymentAndReview = () => {
               <div className="py-12 text-center text-gray-500">결제내역을 불러오는 중...</div>
             ) : orderList.length === 0 ? (
               <div className="py-12 text-center text-gray-500">결제내역이 없습니다.</div>
-            ) : orderList.map(o => (
-              <div key={o.id} className="border p-6 rounded-lg hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <div className="text-sm text-gray-500">결제번호: {o.orderNumber}</div>
-                    <div className="text-sm text-gray-500">결제일: {o.date}</div>
-                    {o.scheduleAt && <div className="text-sm text-gray-500">예약일: {o.scheduleAt}</div>}
-                    {o.userName && <div className="text-sm text-gray-500">주문자: {o.userName}</div>}
+            ) : orderList.map(o => {
+              return (
+                <div key={o.payDetailId} className="border p-6 rounded-lg hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <div className="text-sm text-gray-500">결제번호: {o.orderNumber}</div>
+                      <div className="text-sm text-gray-500">결제일: {o.date}</div>
+                      {o.scheduleAt && <div className="text-sm text-gray-500">예약일: {o.scheduleAt}</div>}
+                      {o.userName && <div className="text-sm text-gray-500">주문자: {o.userName}</div>}
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-sm ${getOrderStatusColor(o.status)}`}>{o.status}</span>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm ${getOrderStatusColor(o.status)}`}>{o.status}</span>
-                </div>
-              
-                <div className="mb-4">
-                  <h4 className="font-medium text-pp">{o.productName}</h4>
-                  <p className="text-gray-600">{o.instructor}</p>
-                  {o.couponName && <p className="text-sm text-blue-600">쿠폰: {o.couponName}</p>}
-                  <p className="text-sm text-gray-500">카테고리: {o.category}</p>
-                </div>
-
-                {o.options.length > 0 && (
+                
                   <div className="mb-4">
-                    <p className="text-sm text-gray-600 mb-2">선택 옵션:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {o.options.map((opt, i) => (
-                        <span key={i} className="px-2 py-1 text-xs bg-gray-100 rounded">{opt.name || `옵션 ${i+1}`}</span>
-                      ))}
+                    <h4 className="font-medium text-pp">{o.pdName}</h4>
+                    <p className="text-gray-600">{o.instructor}</p>
+                    {o.couponName && <p className="text-sm text-blue-600">쿠폰: {o.couponName}</p>}
+                    <p className="text-sm text-gray-500">카테고리: {o.category}</p>
+                  </div>
+
+                  {o.options.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-sm text-gray-600 mb-2">선택 옵션:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {o.options.map((opt, i) => (
+                          <span key={i} className="px-2 py-1 text-xs bg-gray-100 rounded">{opt.name || `옵션 ${i+1}`}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="text-lg font-bold text-pp">{o.price.toLocaleString()}원</div>
+                      {o.refundPrice > 0 && <div className="text-sm text-red-600">환불금액: {o.refundPrice.toLocaleString()}원</div>}
+                    </div>
+                    <div className="flex gap-2">
+                      {(o.status === '완료' || o.status === '결제완료') && !o.reviewWritten ? (
+                        <button className="px-4 py-2 bg-purple-600 text-white rounded-lg" onClick={() => {
+                          setReviewTarget({ reviewId: o.payDetailId, cpId: o.cpId, pdName: o.pdName });
+                          setIsReviewOpen(true);
+                        }}>리뷰 작성</button>
+                      ) : (
+                        <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">리뷰 작성완료</span>
+                      )}
+                      <button className="px-4 py-2 border border-gray-300 rounded-lg">상세보기</button>
                     </div>
                   </div>
-                )}
-
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="text-lg font-bold text-pp">{o.price.toLocaleString()}원</div>
-                    {o.refundPrice > 0 && <div className="text-sm text-red-600">환불금액: {o.refundPrice.toLocaleString()}원</div>}
-                  </div>
-                  <div className="flex gap-2">
-                    {(o.status === '완료' || o.status === '결제완료') && !o.reviewWritten ? (
-                      <button className="px-4 py-2 bg-purple-600 text-white rounded-lg" onClick={() => {
-                        setReviewTarget({ reviewId: o.id, cpId: o.cpId, pdName: o.productName });
-                        setIsReviewOpen(true);
-                      }}>리뷰 작성</button>
-                    ) : (
-                      <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">리뷰 작성완료</span>
-                    )}
-                    <button className="px-4 py-2 border border-gray-300 rounded-lg">상세보기</button>
-                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="px-8 space-y-4">

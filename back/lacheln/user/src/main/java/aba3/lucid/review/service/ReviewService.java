@@ -13,7 +13,6 @@ import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.entity.ReviewImageEntity;
 import aba3.lucid.domain.review.repository.ReviewRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
-import aba3.lucid.payment.service.PayDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -28,7 +27,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewService {
 
-    private final PayDetailService payDetailService;
     private final ReviewRepository reviewRepository;
 
     private final ReviewImageConverter reviewImageConverter;
@@ -36,76 +34,71 @@ public class ReviewService {
     private final RabbitTemplate rabbitTemplate;
 
     // 리뷰 생성(리뷰 작성 상태 X)
-    public void create(List<PayDetailEntity> payDetailEntityList) {
+    public void initBaseReview(List<PayDetailEntity> payDetailEntityList) {
         List<ReviewEntity> reviewEntityList = new ArrayList<>();
 
-        payDetailEntityList.forEach(
-                it -> {
-                    reviewEntityList.add(ReviewEntity.builder()
-                            .productId(it.getPdId())
-                            .productName(it.getProductName())
-                            .companyId(it.getCpId())
-                            .payDetailEntity(it)
-                            .rvStatus(ReviewStatus.REPLY_NEEDED)
-                            .build())
-                    ;
-
-                    rabbitTemplate.convertAndSend("company.exchange", "company", "리뷰 알림");
-                }
-        );
+        payDetailEntityList.forEach(this::createBaseReview);
+        payDetailEntityList.forEach(it -> rabbitTemplate.convertAndSend("company.exchange", "company", "리뷰 알림"));
 
         reviewRepository.saveAll(reviewEntityList);
     }
 
     // 리뷰 작성(사용자가 리뷰 작성하기) -> 답글 생성하기
-    public ReviewEntity writeReview(ReviewEntity review, ReviewCreateRequest request, String userId) {
-        if (!review.getRvStatus().equals(ReviewStatus.REPLY_NEEDED)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
-        }
-
-        // UserId 검사 TODO 리팩토링
-        if (!review.getPayDetailEntity().getPayManagement().getUser().getUserId().equals(userId)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
-        }
-
-        // 결제된 상태가 아닐 때(취소, 환불 등등)
-        if (!review.getPayDetailEntity().getPayManagement().getPayStatus().equals(PaymentStatus.PAID)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
-        }
+    public ReviewEntity writeReview(ReviewEntity review, ReviewCreateRequest request, UsersEntity user) {
+        // 리뷰 작성 전 검증 로직
+        verifyWriteReview(user, review);
 
         review.updateField(request);
         review.updateImageList(reviewImageConverter.toEntityList(request.getImageUrlList(), review));
 
-        // 업체 답글 생성
-        ReviewCommentEventDto dto = new ReviewCommentEventDto(review.getReviewId(), review.getPayDetailEntity().getCpId(), userId);
+        // 업체 base 답글 생성
+        ReviewCommentEventDto dto = new ReviewCommentEventDto(review.getReviewId(), review.getPayDetailEntity().getCpId(), user.getUserId());
         rabbitTemplate.convertAndSend("review.comment.exchange", "review.comment.queue", dto);
 
         return reviewRepository.save(review);
     }
 
+    @Transactional
+    public ReviewEntity updateReview(UsersEntity user, ReviewEntity review, ReviewUpdateRequest request) {
+        verifyUpdateReview(user, review);
+
+        List<ReviewImageEntity> reviewImageEntityList = reviewImageConverter.toEntityList(request.getReviewImageUrl(), review);
+
+        review.updateField(request);
+        review.updateImageList(reviewImageEntityList);
+        return review;
+    }
+
     // 리뷰 삭제(리뷰 삭제하기)
     @Transactional
-    public void delete(String userId, ReviewEntity review) {
-        if (!review.getUser().getUserId().equals(userId)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
-        }
+    public void delete(UsersEntity user, ReviewEntity review) {
+        throwIfNotOwnerWriting(user, review);
         reviewRepository.delete(review);
 
         // 답글 삭제 요청 보내기
         rabbitTemplate.convertAndSend("review.comment.exchange", "comment.delete.queue", review.getReviewId());
     }
 
+    // 상품에 등록된 리뷰 조회(REGISTERED, UPDATED 상태만)
     public List<ReviewEntity> getReviewEntityListByProductId(Long productId) {
-        return reviewRepository.findAllByProductId(productId);
+        return reviewRepository.findAllByProductId(productId).stream()
+                .filter(this::isRegistered)
+                .toList()
+                ;
     }
 
+    // 업체에 등록된 리뷰 조회(REGISTERED, UPDATED 상태만)
     public List<ReviewEntity> getReviewEntityListByCompanyId(Long companyId) {
-        return reviewRepository.findAllByCompanyId(companyId);
+        return reviewRepository.findAllByCompanyId(companyId).stream()
+                .filter(this::isRegistered)
+                .toList()
+                ;
     }
 
     // TODO 나중에 리팩토링(Join 너무 많음)
+    // 유저 리뷰 조회
     public List<ReviewEntity> getReviewEntityListByUser(UsersEntity user) {
-        return reviewRepository.findAllByPayDetailEntity_PayManagement_User(user);
+        return reviewRepository.findAllByUser(user);
     }
 
 
@@ -114,20 +107,68 @@ public class ReviewService {
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
-    @Transactional
-    public ReviewEntity updateReview(UsersEntity user, ReviewEntity review, ReviewUpdateRequest request) {
+    private ReviewEntity createBaseReview(PayDetailEntity payDetail) {
+        return ReviewEntity.builder()
+                .productId(payDetail.getPdId())
+                .productName(payDetail.getProductName())
+                .companyId(payDetail.getCpId())
+                .payDetailEntity(payDetail)
+                .rvStatus(ReviewStatus.REPLY_NEEDED)
+                .build()
+                ;
+    }
+
+    // 등록, 수정 상태 리뷰만 true
+    private boolean isRegistered(ReviewEntity review) {
+        return review.getRvStatus().equals(ReviewStatus.REGISTERED)
+                || review.getRvStatus().equals(ReviewStatus.UPDATED);
+    }
+
+
+    // 리뷰 작성 전 검증
+    private void verifyWriteReview(UsersEntity user, ReviewEntity review) {
+        throwIfNotStatusReplyNeeded(review); // 리뷰 작성 필요 상태가 아닐 경우
+        throwIfNotOwnerWriting(user, review); // 본인이 쓴 글이 아닐 경우
+        throwIfNotPaid(review); // 결제된 상태가 아닐 때(취소, 환불 등등)
+    }
+
+    // 리뷰 수정 전 검증
+    private void verifyUpdateReview(UsersEntity user, ReviewEntity review) {
+        throwIfNotOwnerWriting(user, review); // 리뷰 작성 본인 검사
+        throwIfStatusDeleteOrReplyNeeded(review); // 삭제하거나 리뷰 작성 필요(잘못된 요청) 상태일 때
+    }
+
+    // ReplyNeeded 상태가 아닐 때
+    private void throwIfNotStatusReplyNeeded(ReviewEntity review) {
+        if (!review.getRvStatus().equals(ReviewStatus.REPLY_NEEDED)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+    }
+
+    private void throwIfStatusDeleteOrReplyNeeded(ReviewEntity review) {
+        // 삭제 404
+        if (review.getRvStatus().equals(ReviewStatus.DELETED)) {
+            throw new ApiException(ErrorCode.NOT_FOUND);
+        }
+
+        // 잘못된 요청
+        if (review.getRvStatus().equals(ReviewStatus.REPLY_NEEDED)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+    }
+
+    // 결제된 상태가 아닐 때(취소, 환불 등등)
+    private void throwIfNotPaid(ReviewEntity review) {
+        if (!review.getPayDetailEntity().getPayManagement().getPayStatus().equals(PaymentStatus.PAID)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+    }
+
+    // 리뷰 작성자가 아닐 경우
+    private void throwIfNotOwnerWriting(UsersEntity user, ReviewEntity review) {
         if (!review.getUser().equals(user)) {
             throw new ApiException(ErrorCode.BAD_REQUEST);
         }
-
-        if (review.getRvStatus().equals(ReviewStatus.DELETED) || review.getRvStatus().equals(ReviewStatus.REPLY_NEEDED)) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
-        }
-
-        List<ReviewImageEntity> reviewImageEntityList = reviewImageConverter.toEntityList(request.getReviewImageUrl(), review);
-
-        review.updateField(request);
-        review.updateImageList(reviewImageEntityList);
-        return review;
     }
+
 }

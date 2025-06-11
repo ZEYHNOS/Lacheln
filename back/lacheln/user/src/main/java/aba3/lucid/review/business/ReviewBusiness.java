@@ -25,16 +25,17 @@ public class ReviewBusiness {
 
     public ReviewResponse writeReview(ReviewCreateRequest request, String userId) {
         ReviewEntity review = reviewService.findByIdWithThrow(request.getReviewId());
-
-        ReviewEntity writeReview = reviewService.writeReview(review ,request, userId);
+        UsersEntity user = userService.findByIdWithThrow(userId);
+        ReviewEntity writeReview = reviewService.writeReview(review ,request, user);
 
         return reviewConvertor.toResponse(writeReview);
     }
 
     public void deleteReview(String userId, Long reviewId) {
         ReviewEntity review = reviewService.findByIdWithThrow(reviewId);
+        UsersEntity user = userService.findByIdWithThrow(userId);
 
-        reviewService.delete(userId, review);
+        reviewService.delete(user, review);
 
     }
 

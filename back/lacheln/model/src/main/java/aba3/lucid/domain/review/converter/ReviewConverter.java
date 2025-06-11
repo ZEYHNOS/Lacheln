@@ -17,6 +17,7 @@ public class ReviewConverter {
 
     public ReviewResponse toResponse(ReviewEntity review) {
         return ReviewResponse.builder()
+                .reviewId(review.getReviewId())
                 .nickname(review.getUser().getUserNickName())
                 .content(review.getRvContent())
                 .score(review.getRvScore())

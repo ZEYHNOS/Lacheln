@@ -18,6 +18,8 @@ import java.util.List;
 @ToString
 public class ReviewResponse {
 
+    private Long reviewId;
+
     private String nickname;                // 작성자 닉네임
 
     private Long productId;

@@ -6,6 +6,7 @@ import aba3.lucid.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class UserScheduler {
 //          "0 0 9-17 * * MON-FRI" = 오전 9시부터 오후 5시까지 주중(월~금)에 실행한다.
 //          "0 0 0 25 12 ?" = every Christmas Day at midnight
 
+    @Transactional
     @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
     public void createReview() {
         List<PayDetailEntity> payDetailEntityList = payDetailService.replyNeedUserList();

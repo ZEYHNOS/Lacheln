@@ -1,82 +1,74 @@
 package aba3.lucid.comment.business;
 
 
+import aba3.lucid.comment.service.ReviewCommentService;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
-import aba3.lucid.common.validate.Validator;
+import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.review.converter.ReviewCommentConverter;
+import aba3.lucid.domain.review.dto.ReviewCommentEventDto;
 import aba3.lucid.domain.review.dto.ReviewCommentRequest;
 import aba3.lucid.domain.review.dto.ReviewCommentResponse;
 import aba3.lucid.domain.review.entity.ReviewCommentEntity;
-import aba3.lucid.domain.review.entity.ReviewEntity;
-import aba3.lucid.domain.review.repository.ReviewCommentRepository;
-import aba3.lucid.comment.service.ReviewCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.AccessDeniedException;
-import java.util.Optional;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class ReviewCommentBusiness {
+
+
     private final ReviewCommentConverter reviewCommentConverter;
-    private final ReviewCommentRepository reviewCommentRepository;
     private final ReviewCommentService reviewCommentService;
-
-    /**
-     * 리뷰가 실제 존재하는지
-     *  이 실제로 리뷰대상(상품・서비스를 제공한) 업체인지 검증
-     * 그 회사와 로그인된 회사가 같은지
-    */
-
-    public void validateCanReply(ReviewEntity review, CompanyEntity company) throws AccessDeniedException {
-        Validator.throwIfNull(review, "리뷰가 없습니다");
-        Validator.throwIfNull(company,  "업체 정보가 없습니다");
-
-        PayDetailEntity detail = review.getPayDetailEntity();
-        if(detail == null) {
-            throw new IllegalStateException("리뷰에 연결된 결제 상세 정보가 없습니다");
-        }
+    private final CompanyService companyService;
 
 
-        long targetCompany = detail.getCpId();
-        //작성 권한(업체 일치) 확인
-        if(targetCompany != company.getCpId()) {
-            throw  new AccessDeniedException("본인 업체에 달린 리뷰에만 답글을 작성할 수 있습니다");
-        }
-
+    // ReviewComment Base 생성하기(내용, 생성일 Null)
+    public void initBaseReviewComment(ReviewCommentEventDto eventDto) {
+        CompanyEntity company = companyService.findByIdWithThrow(eventDto.getCpId());
+        ReviewCommentEntity reviewCommentEntity = reviewCommentConverter.toEntity(eventDto, company);
+        reviewCommentService.initBaseReviewComment(reviewCommentEntity);
     }
 
-    public ReviewCommentResponse addComment(ReviewEntity review, CompanyEntity company, ReviewCommentRequest request) throws AccessDeniedException {
-        Validator.throwIfNull(review);
-        Validator.throwIfNull(company);
+    // 리뷰 답글 작성
+    @Transactional
+    public ReviewCommentResponse writeReviewComment(Long rvCommentId, ReviewCommentRequest request, Long cpId) {
+        ReviewCommentEntity reviewComment = reviewCommentService.findByIdWithThrow(rvCommentId);
+        CompanyEntity company = companyService.findByIdWithThrow(cpId);
 
-        validateCanReply(review,company);
+        if (!company.equals(reviewComment.getCompany())) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
 
-        ReviewCommentEntity entity = reviewCommentConverter.toEntity(
-               company, review, request
-        );
-        ReviewCommentEntity savedEntity = reviewCommentService.addComment(entity);
-        return reviewCommentConverter.toResponse(savedEntity);
-
+        ReviewCommentEntity savedReviewComment = reviewCommentService.writeReviewComment(reviewComment, request);
+        return reviewCommentConverter.toResponse(savedReviewComment);
     }
 
+    // 리뷰 답글 삭제
     public void deleteReviewComment(Long reviewCommentId) {
-        ReviewCommentEntity reviewComment = reviewCommentRepository.findById(reviewCommentId).orElse(null);
-        reviewCommentService.deleteComment(reviewComment);
+        ReviewCommentEntity reviewComment = reviewCommentService.findByReviewId(reviewCommentId);
+        reviewCommentService.deleteReviewComment(reviewComment);
     }
 
-    public ReviewCommentResponse getReviewComment(Long reviewCommentId) {
-        Optional<ReviewCommentEntity> commentOpt = reviewCommentRepository.findById(reviewCommentId);
-        if(commentOpt.isPresent()) {
-            ReviewCommentEntity reviewComment = commentOpt.get();
-            return reviewCommentConverter.toResponse(reviewComment);
-        }else {
-            throw  new ApiException(ErrorCode.NOT_FOUND, " 답글을 찾을 수 없습니다");
-        }
+    // 리뷰가 삭제 되었을 때 삭제
+    public void deleteReviewCommentByReviewId(Long reviewId) {
+        reviewCommentService.deleteByReviewId(reviewId);
+    }
+
+    // 리뷰 ID를 통해 리뷰 답글 조회하기
+    public ReviewCommentResponse findByReviewId(Long reviewId) {
+        ReviewCommentEntity entity = reviewCommentService.findByReviewId(reviewId);
+        return reviewCommentConverter.toResponse(entity);
+    }
+
+    // 리뷰 ID 리스트를 통해 리뷰 답글들을 조회하기
+    public List<ReviewCommentResponse> findByReviewIdList(List<Long> reviewIdList) {
+        List<ReviewCommentEntity> reviewCommentEntityList = reviewCommentService.findByReviewIdList(reviewIdList);
+        return reviewCommentConverter.toResponseList(reviewCommentEntityList);
     }
 
 }

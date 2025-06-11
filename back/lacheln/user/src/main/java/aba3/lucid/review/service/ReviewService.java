@@ -48,7 +48,7 @@ public class ReviewService {
         review.updateImageList(reviewImageConverter.toEntityList(request.getImageUrlList(), review));
 
         // 업체 base 답글 생성
-        ReviewCommentEventDto dto = new ReviewCommentEventDto(review.getReviewId(), review.getPayDetailEntity().getCpId(), user.getUserId());
+        ReviewCommentEventDto dto = ReviewCommentEventDto.createBaseReviewCommentRequest(review.getCompanyId(), review.getReviewId(), user.getUserId());
         rabbitTemplate.convertAndSend("review.comment.exchange", "review.comment.queue", dto);
 
         return reviewRepository.save(review);
@@ -72,7 +72,8 @@ public class ReviewService {
         reviewRepository.delete(review);
 
         // 답글 삭제 요청 보내기
-        rabbitTemplate.convertAndSend("review.comment.exchange", "comment.delete.queue", review.getReviewId());
+        ReviewCommentEventDto dto = ReviewCommentEventDto.deleteRequest(review.getReviewId());
+        rabbitTemplate.convertAndSend("review.comment.exchange", "comment.delete.queue", dto);
     }
 
     // 상품에 등록된 리뷰 조회(REGISTERED, UPDATED 상태만)

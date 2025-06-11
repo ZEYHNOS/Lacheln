@@ -94,7 +94,4 @@ public class ReviewController {
         List<ReviewResponse> reviewResponseList = reviewBusiness.getProductReviewList(id);
         return API.OK(reviewResponseList);
     }
-
-
-
 }

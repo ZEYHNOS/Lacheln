@@ -19,6 +19,7 @@ public class ReviewConverter {
         return ReviewResponse.builder()
                 .reviewId(review.getReviewId())
                 .payDtId(review.getPayDetailEntity().getPayDetailId())
+                .userId(review.getUser().getUserId())
                 .nickname(review.getUser().getUserNickName())
                 .content(review.getRvContent())
                 .score(review.getRvScore())

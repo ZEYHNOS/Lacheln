@@ -1,16 +1,11 @@
 package aba3.lucid.listener;
 
 import aba3.lucid.alert.service.CompanyAlertService;
-import aba3.lucid.domain.alert.entity.CompanyAlertEntity;
-import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.company.repository.CompanyRepository;
-import aba3.lucid.domain.product.enums.CommentStatus;
-import aba3.lucid.domain.review.dto.ReviewCommentEventDto;
-import aba3.lucid.domain.review.entity.ReviewCommentEntity;
-import aba3.lucid.domain.review.entity.ReviewEntity;
-import aba3.lucid.domain.review.repository.ReviewCommentRepository;
-import aba3.lucid.domain.review.repository.ReviewRepository;
 import aba3.lucid.comment.business.ReviewCommentBusiness;
+import aba3.lucid.comment.service.ReviewCommentService;
+import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.domain.alert.entity.CompanyAlertEntity;
+import aba3.lucid.domain.review.dto.ReviewCommentEventDto;
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,18 +15,15 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDate;
 
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class ReviewCommentListener {
-    private final ReviewCommentRepository reviewCommentRepository;
-    private final ReviewRepository reviewRepository;
-    private final CompanyRepository companyRepository;
-    private final ReviewCommentBusiness reviewCommentBusiness;
+
     private final CompanyAlertService companyAlertService;
+    private final ReviewCommentBusiness reviewCommentBusiness;
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -40,21 +32,7 @@ public class ReviewCommentListener {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
             ReviewCommentEventDto eventDto = (ReviewCommentEventDto) rabbitTemplate.getMessageConverter().fromMessage(message);
-            ReviewEntity review = reviewRepository.findById(eventDto.getReviewId()).orElseThrow();
-            CompanyEntity company = companyRepository.findById(eventDto.getCpId()).orElseThrow();
-            ReviewCommentEntity comment = ReviewCommentEntity.builder()
-                    .reviewId(eventDto.getReviewId())
-                    .company(company)
-                    .rvcContent("")
-                    .rvcCreate(null)
-                    .rvcStatus(CommentStatus.REPLY_NEEDED)
-                    .build();
-            reviewCommentRepository.save(comment);
-
-            //알림 엔티티 생성
-            CompanyAlertEntity alertEntity = CompanyAlertEntity.createReviewAlert(company, eventDto.getUserId());
-            sendCompanyAlert(alertEntity);
-
+            reviewCommentBusiness.initBaseReviewComment(eventDto);
             channel.basicAck(deliveryTag, false);
         }catch (Exception e) {
             log.error("review_comment 오류 {}", e.getMessage(), e);
@@ -63,16 +41,13 @@ public class ReviewCommentListener {
         }
     }
 
-    public void sendCompanyAlert(CompanyAlertEntity alertEntity) {
-        companyAlertService.alertRegister(alertEntity);
-    }
-
     @RabbitListener(queues = "comment.delete.queue")
-    public void delete(ReviewCommentEventDto eventDto, Message message, Channel channel) throws IOException {
+    public void delete(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
+            ReviewCommentEventDto eventDto = (ReviewCommentEventDto) rabbitTemplate.getMessageConverter().fromMessage(message);
             Long reviewId = eventDto.getReviewId();
-            reviewCommentBusiness.deleteReviewComment(reviewId);
+            reviewCommentBusiness.deleteReviewCommentByReviewId(reviewId);
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
             log.error("review-comment 삭제 오류 {}",e.getMessage(), e);

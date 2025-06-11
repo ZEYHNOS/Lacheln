@@ -1,34 +1,20 @@
 package aba3.lucid.domain.review.converter;
 
 
+import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.review.dto.ReviewCommentRequest;
+import aba3.lucid.domain.product.enums.ReviewStatus;
+import aba3.lucid.domain.review.dto.ReviewCommentEventDto;
 import aba3.lucid.domain.review.dto.ReviewCommentResponse;
 import aba3.lucid.domain.review.entity.ReviewCommentEntity;
-import aba3.lucid.domain.review.entity.ReviewEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.util.List;
 
 
-@Component
+@Converter
 @RequiredArgsConstructor
 public class ReviewCommentConverter {
-
-    public ReviewCommentEntity toEntity(CompanyEntity company, ReviewEntity reviewId, ReviewCommentRequest request){
-
-        ReviewCommentEntity comment = ReviewCommentEntity.builder()
-                .rvcContent(request.getContent())
-                .rvcStatus(request.getStatus())
-                .rvcCreate(LocalDate.now())
-                .company(company)
-                .reviewId(request.getReviewId())
-                .build();
-
-        return comment;
-
-    }
 
     public ReviewCommentResponse toResponse(ReviewCommentEntity entity) {
         return ReviewCommentResponse.builder()
@@ -41,6 +27,19 @@ public class ReviewCommentConverter {
                 .build();
     }
 
+    public ReviewCommentEntity toEntity(ReviewCommentEventDto dto, CompanyEntity company) {
+        return ReviewCommentEntity.builder()
+                .company(company)
+                .reviewId(dto.getReviewId())
+                .rvcStatus(ReviewStatus.REPLY_NEEDED)
+                .build()
+                ;
+    }
 
-
+    public List<ReviewCommentResponse> toResponseList(List<ReviewCommentEntity> reviewCommentEntityList) {
+        return reviewCommentEntityList.stream()
+                .map(this::toResponse)
+                .toList()
+                ;
+    }
 }

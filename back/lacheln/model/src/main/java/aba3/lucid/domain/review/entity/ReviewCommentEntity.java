@@ -1,8 +1,12 @@
 package aba3.lucid.domain.review.entity;
 
 
+import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.product.enums.CommentStatus;
+import aba3.lucid.domain.product.enums.ReviewStatus;
+import aba3.lucid.domain.review.dto.ReviewCommentRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -25,7 +30,7 @@ public class ReviewCommentEntity {
     private Long rvCommentId;
 
     // 리뷰
-    @JoinColumn(name = "review_id")
+    @Column(nullable = false, unique = true)
     private Long reviewId;
 
     // 업체
@@ -38,18 +43,13 @@ public class ReviewCommentEntity {
     private String rvcContent;  //답글 content
 
     // 작성일
-    @Column(name = "rvc_create", nullable = false)
-    private LocalDate rvcCreate;
+    @Column(name = "rvc_create")
+    private LocalDateTime rvcCreate;
 
     // 상태
     @Enumerated(EnumType.STRING)
     @Column(name = "rvc_status", columnDefinition = "char(20)", nullable = false)
-    private CommentStatus rvcStatus; // 답글  표시 숨기기 삭제
-
-    public void updateContent(String newContent) {
-        this.rvcContent = newContent;
-        this.rvcCreate = LocalDate.now(); // 수정 시점으로 다시 설정
-    }
+    private ReviewStatus rvcStatus; // 답글  표시 숨기기 삭제
 
     /**
      * 답글을 논리적으로 삭제 처리하는 메서드
@@ -59,6 +59,19 @@ public class ReviewCommentEntity {
      * - 추후 1개월 후 배치 또는 스케줄러를 통해 실제 삭제 가능
      */
     public void markAsDeleted() {
-        this.rvcStatus = CommentStatus.DELETED;
+        this.rvcStatus = ReviewStatus.DELETED;
+    }
+
+    public void writeReviewComment(ReviewCommentRequest request) {
+        this.rvcContent = request.getContent();
+        this.rvcCreate = LocalDateTime.now();
+    }
+
+    public void deleteRequest() {
+        if (this.getRvcStatus().equals(ReviewStatus.DELETED)) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+
+        this.rvcStatus = ReviewStatus.DELETED;
     }
 }

@@ -26,4 +26,16 @@ public class UserAlertDto {
 
     private String accessUrl;
 
+    public static UserAlertDto reviewCommentAlert(String userId) {
+        return UserAlertDto.builder()
+                .userId(userId)
+                .title("리뷰 답글 작성")
+                .content("리뷰 답글이 작성되었습니다.")
+                .sentTime(LocalDateTime.now())
+                .isRead(BinaryChoice.N)
+                .accessUrl(null)
+                .build()
+                ;
+    }
+
 }

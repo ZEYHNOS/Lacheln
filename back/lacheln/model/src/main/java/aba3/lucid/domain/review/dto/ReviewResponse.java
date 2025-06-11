@@ -24,6 +24,8 @@ public class ReviewResponse {
 
     private String nickname;                // 작성자 닉네임
 
+    private String userId;  // 알림을 보내기 위해 userId 필요
+
     private Long productId;
 
     private String productName;

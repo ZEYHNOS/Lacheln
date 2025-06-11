@@ -20,7 +20,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-    @RequestMapping("/review")
+@RequestMapping("/review")
 @RequiredArgsConstructor
 @Tag(name = "Review Controller", description = "리뷰 컨트롤러")
 public class ReviewController {
@@ -40,11 +40,11 @@ public class ReviewController {
 
     @PutMapping("/update/{id}")
     public API<ReviewResponse> updateReview(
-            @PathVariable Long reviewId,
+            @PathVariable Long id,
             @RequestBody ReviewUpdateRequest request,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-        ReviewResponse response = reviewBusiness.updateReview(request, user.getUserId(), reviewId);
+        ReviewResponse response = reviewBusiness.updateReview(request, user.getUserId(), id);
         return API.OK(response);
     }
 

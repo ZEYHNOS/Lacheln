@@ -4,6 +4,7 @@ import apiClient from "../../../../lib/apiClient";
 import ReviewModal from '../../UserPage/review';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const baseImageUrl = 'http://localhost:5050';
 
 const PaymentAndReview = () => {
   const [userInfo, setUserInfo] = useState({ userId: "", name: "", nickname: "", email: "", phone: "", tier: "", notification: "", gender: "", mileage: 0, language: "", currency: "", profileImageUrl: "" });
@@ -25,9 +26,28 @@ const PaymentAndReview = () => {
 
   useEffect(() => {
     getUserProfile();
-    getOrderList();
-    getReviewList();
+    // 리뷰를 먼저 받아온 후 결제내역을 받아오도록 순서 변경
+    loadReviewsAndOrders();
   }, []);
+
+  useEffect(() => {
+
+  }, [reviewList]);
+
+  // 리뷰와 주문내역을 순차적으로 로드하는 함수 (수정됨)
+  const loadReviewsAndOrders = async () => {
+    setLoading(true);
+    try {
+      // 1. 리뷰 데이터를 먼저 받아옴
+      const reviewData = await getReviewList();
+      // 2. 리뷰 데이터를 getOrderList에 전달
+      await getOrderList(reviewData);
+    } catch (err) {
+      console.error("데이터 로딩 실패:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getUserProfile = async () => {
     try {
@@ -119,9 +139,9 @@ const PaymentAndReview = () => {
     ));
   };
 
-  // 리뷰 상태 확인 함수
-  const getReviewStatusForOrder = (payDetailId) => {
-    const review = reviewList.find(r => r.payDtId === payDetailId);
+  // 리뷰 상태 확인 함수 (수정됨 - 매개변수로 reviewData 받음)
+  const getReviewStatusForOrder = (payDetailId, reviewData = reviewList) => {
+    const review = reviewData.find(r => r.payDtId === payDetailId);
     if (!review) return { hasReview: false, status: null };
     return { hasReview: true, status: review.status };
   };
@@ -131,50 +151,57 @@ const PaymentAndReview = () => {
     return reviewList.filter(r => r.status === 'REGISTERED');
   };
 
-  const getOrderList = async () => {
-    setLoading(true);
+  // getOrderList 함수 수정 - reviewData를 매개변수로 받음
+  const getOrderList = async (reviewData = []) => {
     try {
       const res = await apiClient.get(`${baseUrl}/payment/user/list`);
       if (res.status === 200 && res.data.result?.resultCode === 200) {
-        const transformed = res.data.data.map(p => ({
-          payDetailId: p.payDetailId,
-          cpId: p.cpId,
-          pdName: p.pdName,
-          price: p.payCost ? Number(p.payCost) : 0,
-          refundPrice: p.refundPrice ? Number(p.refundPrice) : 0,
-          status: getPaymentStatusText(p.status),
-          couponName: p.couponName,
-          category: getCategoryText(p.category),
-          options: p.options || [],
-          userName: p.userName,
-          date: formatDate(convertArrayToDate(p.paidAt)),
-          scheduleAt: p.scheduleAt ? formatDate(convertArrayToDate(p.scheduleAt)) : null,
-          orderNumber: `PAY${p.payDetailId}`,
-          instructor: p.cpId ? `업체 ID: ${p.cpId}` : '정보 없음',
-        }));
+        const transformed = res.data.data.map(p => {
+          // 전달받은 reviewData에서 매칭되는 리뷰 찾기
+          const matchingReview = reviewData.find(review => review.payDtId === p.payDetailId);
+          
+          return {
+            payDetailId: p.payDetailId,
+            cpId: p.cpId,
+            pdName: p.pdName,
+            price: p.payCost ? Number(p.payCost) : 0,
+            refundPrice: p.refundPrice ? Number(p.refundPrice) : 0,
+            status: getPaymentStatusText(p.status),
+            couponName: p.couponName,
+            category: getCategoryText(p.category),
+            options: p.options || [],
+            userName: p.userName,
+            date: formatDate(convertArrayToDate(p.paidAt)),
+            scheduleAt: p.scheduleAt ? formatDate(convertArrayToDate(p.scheduleAt)) : null,
+            orderNumber: `PAY${p.payDetailId}`,
+            instructor: p.cpId ? `업체 ID: ${p.cpId}` : '정보 없음',
+            // 매칭되는 리뷰가 있으면 reviewId 추가
+            reviewId: matchingReview ? matchingReview.reviewId : null,
+          };
+        });
         setOrderList(transformed);
+        console.log("결제내역에 reviewId 추가 완료:", transformed);
       }
     } catch (err) {
       console.error("주문내역 로딩 실패 :", err);
-    } finally {
-      setLoading(false);
     }
   };
 
+  // getReviewList 함수 수정 - 데이터를 반환하도록 변경
   const getReviewList = async () => {
-    setLoading(true);
     try {
       const res = await apiClient.get(`${baseUrl}/review/user`);
       if (res.status === 200 && res.data.result?.resultCode === 200) {
-        setReviewList(res.data.data || []);
+        const reviewData = res.data.data || [];
+        setReviewList(reviewData);
         setPagination(res.data.pagination || {});
+        console.log("리뷰 데이터 로드 완료:", reviewData);
+        return reviewData; // 데이터를 반환
       }
-      console.log(res.data);
-      console.log(reviewList.length);
+      return []; // 실패시 빈 배열 반환
     } catch (err) {
       console.error("리뷰 로딩 실패 :", err);
-    } finally {
-      setLoading(false);
+      return []; // 에러시 빈 배열 반환
     }
   };
 
@@ -193,6 +220,18 @@ const PaymentAndReview = () => {
     });
     setIsReviewOpen(true);
   };
+
+  // 리뷰 삭제
+  const handleDeleteReview = async (reviewId) =>  {
+    try {
+      const res = await apiClient.delete(`${baseUrl}/review/${reviewId}`);
+      if(res.status === 200)  {
+        console.log("리뷰 데이터 삭제 완료");
+      }
+    } catch (err) {
+      console.error("리뷰 삭제 실패 :", err);
+    }
+  }
 
   // 표시할 리뷰 목록
   const displayReviews = getDisplayReviews();
@@ -243,6 +282,8 @@ const PaymentAndReview = () => {
                       <div className="text-sm text-gray-500">결제일: {o.date}</div>
                       {o.scheduleAt && <div className="text-sm text-gray-500">예약일: {o.scheduleAt}</div>}
                       {o.userName && <div className="text-sm text-gray-500">주문자: {o.userName}</div>}
+                      {/* reviewId가 있으면 표시 (디버깅용) */}
+                      {o.reviewId && <div className="text-sm text-blue-500">리뷰 ID: {o.reviewId}</div>}
                     </div>
                     <span className={`px-3 py-1 rounded-full text-sm ${getOrderStatusColor(o.status)}`}>{o.status}</span>
                   </div>
@@ -352,12 +393,13 @@ const PaymentAndReview = () => {
                     {r.imageUrlList.map((u, i) => (
                       <img 
                         key={i} 
-                        src={u} 
-                        alt={`리뷰 이미지 ${i+1}`} 
+                        src={baseImageUrl + u} 
+                        alt={`${baseImageUrl + u}`} 
                         className="w-20 h-20 object-cover rounded-lg border" 
                         onError={e => e.currentTarget.style.display = 'none'} 
                       />
                     ))}
+
                   </div>
                 )}
 
@@ -367,12 +409,8 @@ const PaymentAndReview = () => {
                   {r.status === 'REGISTERED' && (
                     <div className="flex gap-2">
                       <button 
-                        className="px-3 py-1 border rounded text-sm hover:bg-gray-50"
-                        onClick={() => handleEditReview(r)}
-                      >
-                        수정
-                      </button>
-                      <button className="px-3 py-1 border rounded text-sm hover:bg-gray-50">삭제</button>
+                        className="px-3 py-1 border rounded text-sm bg-red-400 hover:bg-red-600 text-white"
+                        onClick={() => handleDeleteReview(r.reviewId)}>삭제</button>
                     </div>
                   )}
                 </div>

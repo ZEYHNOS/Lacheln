@@ -9,6 +9,7 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.review.service.ReviewService;
 import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserImageService {
@@ -31,12 +33,19 @@ public class UserImageService {
         ReviewEntity review = reviewService.findByIdWithThrow(reviewId);
 
         for (MultipartFile image : imageList) {
-            if (image.getContentType() == null || image.getContentType().startsWith("image/")) {
+            if (image.getContentType() == null || !image.getContentType().startsWith("image/")) {
                 throw new ApiException(ErrorCode.BAD_REQUEST, "image 아닙니다.");
             }
         }
 
+        log.info("imageConfig.getDir() : {}", imageConfig.getDir());
+        log.info("user.getUserId() : {}", user.getUserId());
+        log.info("type.getType() : {}", type.getType());
+
         String dir = imageConfig.getDir() + "\\" + user.getUserId() + "\\" + type.getType();
+
+        log.info("save Image directory : {}", dir);
+
         File fileDir = new File(dir);
         if (!fileDir.exists()) {
             fileDir.mkdirs();

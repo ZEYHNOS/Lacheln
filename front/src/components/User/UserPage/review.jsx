@@ -56,6 +56,7 @@ const Review = (props) => {
     }, [cpId]);
 
     useEffect(() => {
+        console.log(props.reviewId);
         if (props.pdName) {
             setProductName(props.pdName);
         } else {
@@ -83,6 +84,7 @@ const Review = (props) => {
                 const existingImages = review.imageUrlList.map((url, index) => ({
                     file: null, // 기존 이미지는 파일이 없음
                     previewUrl: url,
+                    actualUrl: url, // 기존 이미지는 실제 URL이 있음
                     isExisting: true // 기존 이미지임을 표시
                 }));
                 setImages(existingImages);
@@ -102,6 +104,7 @@ const Review = (props) => {
         const newImages = Array.from(files).map(file => ({
             file,
             previewUrl: URL.createObjectURL(file),
+            actualUrl: null, // 아직 업로드되지 않음
             isExisting: false
         }));
 
@@ -168,9 +171,11 @@ const Review = (props) => {
 
         const formData = new FormData();
         newImages.forEach((img) => formData.append("imageList", img.file)); 
+
+        console.log("reviewId : ", reviewId);
         
         try {
-            const res = await apiClient.post(`${baseUrl}/image/${reviewId}`, formData, {
+            const res = await apiClient.post(`${baseUrl}/review/image/${reviewId}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             console.log("🟢 이미지 업로드 응답:", res.data);
@@ -194,41 +199,50 @@ const Review = (props) => {
         }
 
         setIsSubmitting(true);
+
+        console.log('현재 이미지 상태:', images);
         
         try {
-            // 1. 리뷰 등록/수정
+            let allImageUrls = [];
+            
+            // 1. 먼저 새 이미지들을 업로드
+            const newImages = images.filter(img => !img.isExisting && img.file);
+            if (newImages.length > 0) {
+                console.log('새 이미지 업로드 중...');
+                const uploadedImageUrls = await uploadImages(props.reviewId);
+                console.log("🟢 업로드된 이미지 URLs:", uploadedImageUrls);
+                allImageUrls.push(...uploadedImageUrls);
+            }
+            
+            // 2. 기존 이미지 URL들도 포함
+            const existingImageUrls = images
+                .filter(img => img.isExisting && img.actualUrl)
+                .map(img => img.actualUrl);
+            
+            console.log('기존 이미지 URLs:', existingImageUrls);
+            allImageUrls.push(...existingImageUrls);
+            
+            console.log('최종 이미지 URLs:', allImageUrls);
+            
+            // 3. 리뷰 등록(실제 이미지 URL로)
             const reviewData = {
                 reviewId: props.reviewId,
-                cpId: props.cpId,
                 rvContent: reviewText,
                 rvScore: rating,
-                imageUrlList: images.map(img => img.previewUrl) // 현재는 임시로 previewUrl 사용
+                imageUrlList: allImageUrls // 실제 업로드된 URL들 사용
             };
 
+            console.log('전송할 리뷰 데이터:', reviewData);
+
             let reviewResponse;
-            if (props.isEdit) {
-                // 수정 API 호출 (실제 API 엔드포인트에 맞게 수정 필요)
-                reviewResponse = await apiClient.put(`${baseUrl}/review/update`, reviewData);
-            } else {
-                // 등록 API 호출
-                reviewResponse = await apiClient.post(`${baseUrl}/review/write`, reviewData);
-            }
+            // 등록 API 호출
+            reviewResponse = await apiClient.post(`${baseUrl}/review/write`, reviewData);
 
             console.log("🟢 리뷰 등록/수정 응답:", reviewResponse.data);
             
-            // 2. 이미지 업로드 (새로운 이미지가 있는 경우)
-            if (images.some(img => !img.isExisting && img.file)) {
-                try {
-                    const uploadedImageUrls = await uploadImages(props.reviewId);
-                    console.log("🟢 업로드된 이미지 URLs:", uploadedImageUrls);
-                } catch (imageError) {
-                    console.warn("이미지 업로드 실패했지만 리뷰는 등록됨:", imageError);
-                }
-            }
-
             alert(props.isEdit ? '리뷰가 수정되었습니다!' : '리뷰가 등록되었습니다!');
             
-            // 3. 모달 닫기 및 페이지 새로고침
+            // 4. 모달 닫기 및 페이지 새로고침
             props.onClose();
             
             // 페이지 새로고침으로 업데이트된 데이터 반영

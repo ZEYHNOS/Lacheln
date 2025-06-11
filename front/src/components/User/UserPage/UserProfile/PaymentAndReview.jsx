@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from "../../../../lib/apiClient";
+import ReviewModal from '../../UserPage/review';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -11,6 +12,8 @@ const PaymentAndReview = () => {
   const [pagination, setPagination] = useState({ curPage: 0, curElement: 0, size: 0, totalPage: 0, totalElement: 0, order: "" });
   const [loading, setLoading] = useState(false);
   const [currentView, setCurrentView] = useState('orders');
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [reviewTarget, setReviewTarget] = useState({ reviewId: null, cpId: null, pdName: '' });
   const navigate = useNavigate();
 
   const tabs = [
@@ -242,7 +245,10 @@ const PaymentAndReview = () => {
                   </div>
                   <div className="flex gap-2">
                     {(o.status === '완료' || o.status === '결제완료') && !o.reviewWritten ? (
-                      <button className="px-4 py-2 bg-purple-600 text-white rounded-lg">리뷰 작성</button>
+                      <button className="px-4 py-2 bg-purple-600 text-white rounded-lg" onClick={() => {
+                        setReviewTarget({ reviewId: o.id, cpId: o.cpId, pdName: o.productName });
+                        setIsReviewOpen(true);
+                      }}>리뷰 작성</button>
                     ) : (
                       <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">리뷰 작성완료</span>
                     )}
@@ -309,6 +315,7 @@ const PaymentAndReview = () => {
         <div className="px-8 mt-8 mb-8">
           <button className="w-full py-3 bg-pp text-white rounded-lg font-medium" onClick={() => navigate('/')}>메인 페이지</button>
         </div>
+        <ReviewModal isOpen={isReviewOpen} onClose={() => setIsReviewOpen(false)} reviewId={reviewTarget.reviewId} cpId={reviewTarget.cpId} pdName={reviewTarget.pdName} />
       </div>
     </div>
   );

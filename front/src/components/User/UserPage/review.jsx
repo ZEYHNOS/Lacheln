@@ -21,7 +21,7 @@ const Star = ({ type = 'empty', ...props }) => {
     }
 };
 
-const Review = () => {
+const Review = (props) => {
     const [images, setImages] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -29,11 +29,14 @@ const Review = () => {
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const starRefs = useRef([]);
-    const reviewId = 1; // 실제로는 props 등에서 받아와야 함
-    const cpId = 1; // 실제로는 props 등에서 받아와야 함
+    const reviewId = props.reviewId || 1; // 실제로는 props 등에서 받아와야 함
+    const cpId = props.cpId || 1; // 실제로는 props 등에서 받아와야 함
     const [companyName, setCompanyName] = useState('');
     const [companyImage, setCompanyImage] = useState('');
+    const [productName, setProductName] = useState(props.pdName || '');
     const navigate = useNavigate();
+
+    console.log('ReviewModal props:', { reviewId: props.reviewId, cpId: props.cpId });
 
     useEffect(() => {
         const fetchCompanyInfo = async () => {
@@ -42,12 +45,28 @@ const Review = () => {
                 setCompanyName(res.data.data.name || '');
                 setCompanyImage(res.data.data.profileImageUrl || '');
             } catch (err) {
-                setCompanyName('회사명');
+                setCompanyName('');
                 setCompanyImage('');
             }
         };
         fetchCompanyInfo();
     }, [cpId]);
+
+    useEffect(() => {
+        if (props.pdName) {
+            setProductName(props.pdName);
+        } else {
+            const fetchProductInfo = async () => {
+                try {
+                    const res = await apiClient.get(`/product/info/${props.reviewId || 1}`); // 실제 API 경로에 맞게 수정
+                    setProductName(res.data.data.name || '');
+                } catch (err) {
+                    setProductName('상품명');
+                }
+            };
+            fetchProductInfo();
+        }
+    }, [props.pdName, props.reviewId]);
 
     const handleImageUpload = (e) => {
         const files = e.dataTransfer ? e.dataTransfer.files : e.target.files;
@@ -125,14 +144,15 @@ const Review = () => {
             // 1. 이미지 업로드
             let imageUrls = [];
             if (images.length > 0) {
-                imageUrls = await uploadImages();
+                // imageUrls = await uploadImages();
             }
             // 2. 리뷰 등록
-            await apiClient.post('/review/register', {
-                reviewId, // 실제 id 변수명에 맞게!
-                content: reviewText,
-                rating,
-                imageUrlList: imageUrls
+            await apiClient.post('/review/write', {
+                reviewId : props.reviewId,
+                cpId : props.cpId,
+                rvContent: reviewText,
+                rvScore: rating,
+                imageUrlList: ["imageUrls"]
             });
             alert('리뷰가 등록되었습니다!');
             // 필요시 페이지 이동/초기화 등
@@ -144,20 +164,28 @@ const Review = () => {
 
     return (
         <div className="w-full max-w-4xl mx-auto bg-[#f7f7fa] border border-gray-200 rounded-xl p-8 flex flex-col gap-8 items-start">
-            {/* 상단: 회사 프로필, 회사명, 별점 */}
-            <div className="w-full flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                    {/* 회사 프로필 이미지 */}
-                    <img src={companyImage || 'https://via.placeholder.com/56x56.png?text=Logo'} alt="회사 프로필" className="w-14 h-14 rounded-full border object-cover bg-white" />
-                    {/* 회사명 */}
-                    <span className="text-xl font-semibold text-[#845EC2]">{companyName || '회사명'}</span>
+            {/* 상단: 좌측 리뷰작성/상품명, 우측 회사정보/평점 */}
+            <div className="w-full flex flex-row justify-between items-start mb-8">
+                {/* 왼쪽: 리뷰작성, 상품명 */}
+                <div className="flex flex-col items-start">
+                    <span className="text-2xl font-bold text-[#845EC2] mb-8">리뷰작성</span>
+                    <span className="text-xl text-gray-700">상품 : {productName || '상품명'}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <span className="ml-2 text-lg text-[#845EC2] font-bold">평점</span>
-                    {/* 별점 */}
-                    <div className="flex items-center">{renderStars()}</div>
-                    {/* 별점 숫자 표시 */}
-                    <span className="ml-2 text-lg text-[#845EC2] font-bold">{rating.toFixed(1)}</span>
+                {/* 오른쪽: 회사 정보, 평점 */}
+                <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-2 mb-2">
+                        <img
+                            src={companyImage || 'https://via.placeholder.com/56x56.png?text=Logo'}
+                            alt="회사 프로필"
+                            className="w-14 h-14 rounded-full border object-cover bg-white"
+                        />
+                        <span className="text-xl font-semibold text-[#845EC2]">{companyName || '회사명'}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-lg text-[#845EC2] font-bold">평점</span>
+                        <div className="flex items-center">{renderStars()}</div>
+                        <span className="text-lg text-[#845EC2] font-bold">{rating.toFixed(1)}</span>
+                    </div>
                 </div>
             </div>
 
@@ -234,4 +262,15 @@ const Review = () => {
     );
 };
 
-export default Review;
+const ReviewModal = ({ isOpen, onClose, ...props }) => {
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="relative bg-white rounded-xl shadow-lg p-0 w-full max-w-4xl">
+                <Review {...props} />
+            </div>
+        </div>
+    );
+};
+
+export default ReviewModal;

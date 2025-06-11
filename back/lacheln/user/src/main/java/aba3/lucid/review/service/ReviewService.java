@@ -33,6 +33,7 @@ public class ReviewService {
 
     private final RabbitTemplate rabbitTemplate;
 
+    @Transactional
     // 리뷰 생성(리뷰 작성 상태 X)
     public void initBaseReview(List<PayDetailEntity> payDetailEntityList) {
         reviewRepository.saveAll(payDetailEntityList.stream().map(this::createBaseReview).toList());
@@ -102,6 +103,8 @@ public class ReviewService {
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
+
+    @Transactional
     private ReviewEntity createBaseReview(PayDetailEntity payDetail) {
         return ReviewEntity.builder()
                 .productId(payDetail.getPdId())

@@ -24,6 +24,7 @@ public class ReviewBusiness {
     private final ReviewConverter reviewConvertor;
 
     public ReviewResponse writeReview(ReviewCreateRequest request, String userId) {
+        log.info("request : {}", request);
         ReviewEntity review = reviewService.findByIdWithThrow(request.getReviewId());
         UsersEntity user = userService.findByIdWithThrow(userId);
         ReviewEntity writeReview = reviewService.writeReview(review ,request, user);

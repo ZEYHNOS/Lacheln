@@ -67,6 +67,7 @@ public class PayDetailConverter {
         return PayDetailResponse.builder()
                 .payDetailId(entity.getPayDetailId())
                 .userId(entity.getPayManagement().getUser().getUserId())
+                .pdId(entity.getPdId())
                 .userName(entity.getPayManagement().getUser().getUserName())
                 .cpId(entity.getCpId())
                 .couponName(entity.getCouponName())

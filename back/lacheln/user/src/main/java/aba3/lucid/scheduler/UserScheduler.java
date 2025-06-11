@@ -24,7 +24,7 @@ public class UserScheduler {
 //          "0 0 9-17 * * MON-FRI" = 오전 9시부터 오후 5시까지 주중(월~금)에 실행한다.
 //          "0 0 0 25 12 ?" = every Christmas Day at midnight
 
-    @Scheduled(cron = "1 0 0 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
     public void createReview() {
         List<PayDetailEntity> payDetailEntityList = payDetailService.replyNeedUserList();
         reviewService.initBaseReview(payDetailEntityList);

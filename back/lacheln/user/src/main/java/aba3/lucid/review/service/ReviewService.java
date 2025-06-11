@@ -35,12 +35,7 @@ public class ReviewService {
 
     // 리뷰 생성(리뷰 작성 상태 X)
     public void initBaseReview(List<PayDetailEntity> payDetailEntityList) {
-        List<ReviewEntity> reviewEntityList = new ArrayList<>();
-
-        payDetailEntityList.forEach(this::createBaseReview);
-        payDetailEntityList.forEach(it -> rabbitTemplate.convertAndSend("company.exchange", "company", "리뷰 알림"));
-
-        reviewRepository.saveAll(reviewEntityList);
+        reviewRepository.saveAll(payDetailEntityList.stream().map(this::createBaseReview).toList());
     }
 
     // 리뷰 작성(사용자가 리뷰 작성하기) -> 답글 생성하기
@@ -110,6 +105,7 @@ public class ReviewService {
     private ReviewEntity createBaseReview(PayDetailEntity payDetail) {
         return ReviewEntity.builder()
                 .productId(payDetail.getPdId())
+                .user(payDetail.getPayManagement().getUser())
                 .productName(payDetail.getProductName())
                 .companyId(payDetail.getCpId())
                 .payDetailEntity(payDetail)

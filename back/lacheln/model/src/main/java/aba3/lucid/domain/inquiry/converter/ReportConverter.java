@@ -26,6 +26,8 @@ public class ReportConverter {
                 .reportContent(request.getReportContent())
                 .reportCategory(request.getReportCategory())
                 .reportTitle(request.getReportTitle())
+                 .reporterName(request.getReporterName())
+                 .targetName(request.getTargetName())
                 .company(company)
                 .user(user)
                 .build();
@@ -45,28 +47,20 @@ public class ReportConverter {
 
     public ReportResponse toReportResponse(ReportEntity reportEntity) {
         return ReportResponse.builder()
+                .userId(reportEntity.getUser().getUserId())
+                .cpId(reportEntity.getCompany().getCpId())
+                .reporterName(reportEntity.getReporterName())
+                .targetName(reportEntity.getTargetName())
                 .reportId(reportEntity.getReportId())
                 .reportContent(reportEntity.getReportContent())
                 .reportTitle(reportEntity.getReportTitle())
                 .reportCategory(reportEntity.getReportCategory())
                 .createdAt(reportEntity.getReportCreatedAt())
+                .reportStatus(reportEntity.getReportStatus())
                 .build();
 
     }
 
-
-//    ReportImageRequest 리스트 +  ReportEntity를
-//      ReportImageEntity 리스트로 바꿔줌
-//    public List<ReportImageEntity> toImagesEntities(List<ReportImageRequest> imageRequests, ReportEntity report) {
-//        if(imageRequests == null) return Collections.emptyList();
-//        return imageRequests.stream()
-//                .map(r-> ReportImageEntity.builder()
-//                        .report(report)
-//                        .reportImageUrl(r.getUrl())
-//                        .build())
-//                .collect(Collectors.toList());
-//
-//    }
 
     public List<ReportImageEntity> toImageEntities(
             List<String> imageUrls,
@@ -85,20 +79,7 @@ public class ReportConverter {
     }
 
 
-//    ?  ReportEntity에 연결된 엔티티 리스트를 이미지 응답 DTO로 변환
-//     */
 
-//    public List<ReportImageResponse> toImageResponses(
-//            List<ReportImageEntity> imageEntities
-//    ) {
-//        if (imageEntities == null) return Collections.emptyList();
-//        return imageEntities.stream()
-//                .map(e -> ReportImageResponse.builder()
-//                        .imageId(e.getReportImageId())
-//                        .url(e.getReportImageUrl())
-//                        .build())
-//                .collect(Collectors.toList());
-//    }
 
     public ReportImageResponse toImageResponse(ReportImageEntity reportImageEntity) {
         return ReportImageResponse.builder()

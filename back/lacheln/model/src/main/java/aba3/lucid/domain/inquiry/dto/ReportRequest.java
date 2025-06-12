@@ -1,20 +1,16 @@
 package aba3.lucid.domain.inquiry.dto;
 
-import aba3.lucid.domain.inquiry.entity.ReportImageEntity;
 import aba3.lucid.domain.inquiry.enums.ReportCategory;
-import aba3.lucid.domain.inquiry.enums.ReportStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Setter
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportRequest {
@@ -27,6 +23,11 @@ public class ReportRequest {
     @NotNull
     private ReportCategory reportCategory;
 
+    @NotNull
+    private String targetName;
+
+    @NotNull
+    private String reporterName;
 
     @NotBlank
     @JsonProperty("reportTarget")

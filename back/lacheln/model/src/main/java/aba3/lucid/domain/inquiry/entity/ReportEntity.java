@@ -43,7 +43,6 @@ public class ReportEntity {
     @Column(name = "report_target", columnDefinition = "char(1)", nullable = false)
     private String reportTarget;
 
-
     @Enumerated(EnumType.STRING)
     @Column(name = "report_category", columnDefinition = "char(50)", nullable = false)
     private ReportCategory reportCategory;
@@ -57,7 +56,6 @@ public class ReportEntity {
     @Builder.Default
     private ReportStatus reportStatus = ReportStatus.NEW;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cp_id")
     private CompanyEntity company;
@@ -65,4 +63,10 @@ public class ReportEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UsersEntity user;
+
+    @Column(name = "target_name", columnDefinition = "char(50)")
+    private String targetName;
+
+    @Column(name = "reporter_name", columnDefinition = "char(50)")
+    private String reporterName;
 }

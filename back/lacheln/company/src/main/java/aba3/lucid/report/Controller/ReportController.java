@@ -91,23 +91,18 @@ public class ReportController {
         return API.OK(count);
     }
 
-    @GetMapping("/admin/unread")
-    public API<List<ReportResponse>> getUnreadReports() {
-        List<ReportResponse> responses = reportBusiness.getUnreadReports();
-        return API.OK(responses);
-    }
-
     @GetMapping("/admin/{reportId}")
     public API<ReportResponse> getReportDetail(@PathVariable Long reportId) {
         ReportResponse reportDetail = reportBusiness.getReportDetail(reportId);
         return API.OK(reportDetail);
     }
 
-    @PatchMapping("/admin/{reportId}/check")
-    public API<Void> checkReport(@PathVariable Long reportId) {
-        reportBusiness.checkReport(reportId);
-        return API.OK();
+    @GetMapping("/admin")
+    public API<List<ReportResponse>> getAllReports() {
+        List<ReportResponse> responses = reportBusiness.getAllReports();
+        return API.OK(responses);
     }
+
 
 
 

@@ -41,9 +41,10 @@ public class InquiryBusiness {
     // 문의 목록 조회
     public List<InquiryListResponse> getMyInquiries() {
         String userId = AuthUtil.getUserId();
-        return inquiryService.findInquiriesByUserId(userId).stream()
-                .map(InquiryConvertor::toListResponse)
-                .toList();
+        log.info("📥 현재 로그인한 사용자 ID: {}", userId); // ✅ 로그 추가
+        List<InquiryEntity> list = inquiryService.findInquiriesByUserId(userId);
+        log.info("📦 해당 사용자의 문의 개수: {}", list.size()); // ✅ 로그 추가
+        return list.stream().map(InquiryConvertor::toListResponse).toList();
     }
 
     // 문의 상세 조회
@@ -51,7 +52,6 @@ public class InquiryBusiness {
         String userId = AuthUtil.getUserId();
         InquiryEntity inquiry = inquiryService.findByIdWithThrow(inquiryId);
 
-        // 보안: 본인 문의만 조회 가능하도록 체크
         if (!inquiry.getUsers().getUserId().equals(userId)) {
             throw new ApiException(ErrorCode.FORBIDDEN);
         }

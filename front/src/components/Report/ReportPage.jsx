@@ -32,6 +32,10 @@ export default function ReportPage() {
   const [content,    setContent]    = useState("");
   const [files,      setFiles]      = useState([]);
   const [imageUrls,  setImageUrls]  = useState([]);
+  const [targetName, setTargetName] = useState(""); //대상 아름름
+ const [reporterName, setReporterName] = useState("");
+
+
 
   const canNext1 = Boolean(reportedId);
   const canNext2 = Boolean(category && title.trim() && content.trim());
@@ -115,11 +119,15 @@ export default function ReportPage() {
   const handleSubmit = async () => {
   const reportPayload = {
     reportTitle: title,
-    reportTarget: targetType === "USER" ? "U" : "C",
+    reportContent: content,
     reportCategory: category,
-    ...(targetType === "COMPANY" ? { cpId: Number(cpId) } : { userId: reportedId }),
-    reportContent: content
-  };
+    reportTarget: targetType === "USER" ? "U" : "C",
+    targetName,
+    reporterName,
+    ...(targetType === "COMPANY"
+        ? { cpId: Number(cpId) }
+        : { userId: reportedId}),
+  }
   const endpoint = targetType === "USER"
     ? `${BASE_URL}/report/company`
     : `${BASE_URL}/report/user`;
@@ -184,6 +192,27 @@ export default function ReportPage() {
       {/* STEP 1 */}
       {step===1 && (
         <div className="space-y-4">
+          <label className="block font-medium mt-4">신고 대상 이름</label>
+          <input
+            type="text"
+            placeholder="신고 대상 이름을 입력하세요"
+            className="w-full bg-white border px-3 py-2 rounded text-gray-900"
+            value={targetName}
+            onChange={e => setTargetName(e.target.value)}
+          />
+            
+        
+          <label className="block font-medium mt-4">신고자 이름</label>
+          <input
+            type="text"
+            placeholder="신고자 이름을 입력하세요"
+            className="w-full bg-white border px-3 py-2 rounded text-gray-900"
+            value={reporterName}
+            onChange={e => setReporterName(e.target.value)}
+            
+          />
+          
+
           <label className="block font-medium">누구를 신고하나요?</label>
           <div className="flex gap-4">
             {["USER","COMPANY"].map(t => (
@@ -241,6 +270,14 @@ export default function ReportPage() {
       {/* STEP 2 */}
       {step===2 && (
         <div className="space-y-4">
+          {/* <label className="block font-medium mt-4">신고 대상 이름</label>
+            <input
+              type="text"
+              placeholder="신고 대상 이름을 입력하세요"
+              className="w-full bg-white border px-3 py-2 rounded text-gray-900"
+              value={reportedName}
+              onChange={e => setReportedName(e.target.value)}
+            /> */}
           <label className="block font-medium">카테고리</label>
           <select
             className="w-full bg-white border px-3 py-2 rounded text-gray-900"

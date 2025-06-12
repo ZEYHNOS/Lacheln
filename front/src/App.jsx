@@ -58,6 +58,13 @@ import MyPage from "./components/User/UserPage/UserProfile/MyPage";
 import MyPageUpdate from "./components/User/UserPage/UserProfile/MyPageUpdate.jsx";
 import PaymentAndReview from "./components/User/UserPage/UserProfile/PaymentAndReview.jsx";
 import Review from "./components/User/UserPage/review.jsx";
+import AdminReportPage from "./components/Admin/AdminReportPage.jsx";
+import AdminReportDetailPage from "./components/Admin/AdminReportDetailPage.jsx";
+import AdminReportListPage from "./components/Admin/AdminReportListPage.jsx";
+import AdminMemberPage from "./components/Admin/AdminMemberPage.jsx";
+
+
+
 
 // `CompanyLayout`을 따로 분리하여 회사 관련 페이지를 그룹화
 function CompanyLayout({ children }) {
@@ -288,6 +295,15 @@ function App() {
                                 <AdminDashboard />
                     </AdminLayout>
                 }/>
+                <Route path="/admin/report" 
+                element={<AdminLayout><AdminReportPage /></AdminLayout>} />
+
+                <Route path="/admin/report/:reportId" 
+                element={<AdminLayout><AdminReportDetailPage /></AdminLayout>} />
+                <Route path="/admin/report/:reportId" 
+                element={<AdminLayout><AdminReportListPage/></AdminLayout>} />
+                <Route path="/admin/members" element={<AdminLayout><AdminMemberPage/></AdminLayout>} />
+                
             </Routes>
         </Router>
     );

@@ -70,11 +70,11 @@ public class ReviewService {
     @Transactional
     public void delete(UsersEntity user, ReviewEntity review) {
         throwIfNotOwnerWriting(user, review);
-        reviewRepository.delete(review);
+        review.deleteRequest();
         
         // 답글 삭제 요청 보내기
         ReviewCommentEventDto dto = ReviewCommentEventDto.deleteRequest(review.getReviewId());
-        rabbitTemplate.convertAndSend("review.comment.exchange", "comment.delete.queue", dto);
+        rabbitTemplate.convertAndSend("comment.delete.exchange", "comment.delete.queue", dto);
     }
 
     // 상품에 등록된 리뷰 조회(REGISTERED, UPDATED 상태만)

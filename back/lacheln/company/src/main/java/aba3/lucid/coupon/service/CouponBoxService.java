@@ -27,6 +27,10 @@ public class CouponBoxService {
 
     private final CouponVerificationService couponVerificationService;
 
+    // 유저가 소유한 쿠폰 전부 가져오기
+    public List<CouponBoxEntity> getAllCouponBox(String userId) {
+        return couponBoxRepository.findAllByUserId(userId);
+    }
 
     // 유저가 업체 쿠폰 등록하기
     public void claimCoupon(String userId, CouponEntity coupon) {

@@ -18,5 +18,9 @@ public class ReportResponse {
     private String reportContent;
     private ReportCategory reportCategory;
     private ReportStatus reportStatus;
+    private String userId;
+    private Long cpId;
+    private String targetName;
+    private String reporterName;
     private List<String> imageUrls;
 }

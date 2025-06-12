@@ -29,7 +29,7 @@ public class ReviewEntity {
     private Long reviewId;
 
     // 결제 상세 정보 (1:1)
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     private PayDetailEntity payDetailEntity;
 
     // 리뷰 작성자 (1:1)
@@ -59,7 +59,7 @@ public class ReviewEntity {
 
     // 평점 (0.0 ~ 5.0)
     @Column(name = "rv_score")
-    private double rvScore;
+    private Double rvScore;
 
     // 리뷰 이미지 리스트 (1:N)
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
@@ -68,14 +68,6 @@ public class ReviewEntity {
     @Column(name = "product_name")
     private String productName;
 
-    // 리뷰 논리 삭제 시각 (nullable)
-    @Column(name = "rv_deleted_at")
-    private LocalDateTime rvDeletedAt;
-
-    public void markAsDeleted() {
-        this.rvStatus = ReviewStatus.DELETED;
-        this.rvDeletedAt = LocalDateTime.now();
-    }
 
     public void updateField(ReviewCreateRequest request) {
         this.rvStatus = ReviewStatus.REGISTERED;
@@ -99,5 +91,13 @@ public class ReviewEntity {
         this.imageList.clear();
 
         imageList.addAll(reviewImageEntityList);
+    }
+
+    public void deleteRequest() {
+        this.rvStatus = ReviewStatus.REPLY_NEEDED;
+        this.rvContent = null;
+        this.rvCreate = null;
+        this.rvScore = null;
+        this.imageList.clear(); // TODO 리팩토링(이미지를 먼저 지우고<상태 변환하거나> CLEAR 할 것
     }
 }

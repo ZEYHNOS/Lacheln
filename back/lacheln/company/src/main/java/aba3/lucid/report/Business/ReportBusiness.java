@@ -12,6 +12,7 @@ import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.inquiry.converter.ReportConverter;
+import aba3.lucid.domain.inquiry.dto.AdminReportResponse;
 import aba3.lucid.domain.inquiry.dto.ReportImageResponse;
 import aba3.lucid.domain.inquiry.dto.ReportRequest;
 import aba3.lucid.domain.inquiry.dto.ReportResponse;
@@ -53,12 +54,13 @@ public class ReportBusiness {
 
     //신고 상세 리스트
     public List<ReportResponse> getUnreadReports() {
-        List<ReportEntity> reports = reportRepository.findByReportStatus(ReportStatus.NEW);
+        List<ReportEntity> reports = reportRepository.findAll();
         return reports.stream()
                 .map(reportConverter::toReportResponse)
                 .collect(Collectors.toList());
+        }
 
-    }
+
 
     //신고 상세 조회 (ID로)
     public ReportResponse getReportDetail(Long reportId) {
@@ -75,6 +77,14 @@ public class ReportBusiness {
         report.setReportStatus(ReportStatus.NEW);
         reportRepository.save(report);
     }
+
+    public List<ReportResponse> getAllReports() {
+        List<ReportEntity> reports = reportRepository.findAll();
+        return reports.stream()
+                .map(reportConverter::toReportResponse)
+                .collect(Collectors.toList());
+    }
+
 
     //업체 -->> 유저를 신고하기
     public ReportResponse reportUserByCompany(ReportRequest req, CustomUserDetails company) {

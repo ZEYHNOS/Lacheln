@@ -1,6 +1,7 @@
 package aba3.lucid.coupon.business;
 
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.coupon.service.CouponBoxService;
@@ -13,6 +14,8 @@ import aba3.lucid.domain.coupon.entity.CouponBoxEntity;
 import aba3.lucid.domain.coupon.entity.CouponEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Slf4j
 @Business

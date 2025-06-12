@@ -59,7 +59,7 @@ public class ReviewEntity {
 
     // 평점 (0.0 ~ 5.0)
     @Column(name = "rv_score")
-    private double rvScore;
+    private Double rvScore;
 
     // 리뷰 이미지 리스트 (1:N)
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
@@ -68,14 +68,6 @@ public class ReviewEntity {
     @Column(name = "product_name")
     private String productName;
 
-    // 리뷰 논리 삭제 시각 (nullable)
-    @Column(name = "rv_deleted_at")
-    private LocalDateTime rvDeletedAt;
-
-    public void markAsDeleted() {
-        this.rvStatus = ReviewStatus.DELETED;
-        this.rvDeletedAt = LocalDateTime.now();
-    }
 
     public void updateField(ReviewCreateRequest request) {
         this.rvStatus = ReviewStatus.REGISTERED;
@@ -99,5 +91,12 @@ public class ReviewEntity {
         this.imageList.clear();
 
         imageList.addAll(reviewImageEntityList);
+    }
+
+    public void deleteRequest() {
+        this.rvStatus = ReviewStatus.REPLY_NEEDED;
+        this.rvContent = null;
+        this.rvCreate = null;
+        this.rvScore = null;
     }
 }

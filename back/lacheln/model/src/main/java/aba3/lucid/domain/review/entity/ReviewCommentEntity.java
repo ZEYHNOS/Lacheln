@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 public class ReviewCommentEntity {
     // 답글 ID
     @Id
-    @Column(name = "rv_comment_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rvCommentId;
 
     // 리뷰
@@ -39,7 +39,7 @@ public class ReviewCommentEntity {
     private CompanyEntity company;
     
     // 내용
-    @Column(name = "rvc_content", columnDefinition = "char(255)", nullable = false)
+    @Column(name = "rvc_content", columnDefinition = "char(255)")
     private String rvcContent;  //답글 content
 
     // 작성일

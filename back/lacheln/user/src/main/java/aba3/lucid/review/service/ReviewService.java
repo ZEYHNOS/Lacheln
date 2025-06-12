@@ -70,7 +70,7 @@ public class ReviewService {
     @Transactional
     public void delete(UsersEntity user, ReviewEntity review) {
         throwIfNotOwnerWriting(user, review);
-        reviewRepository.delete(review);
+        review.deleteRequest();
         
         // 답글 삭제 요청 보내기
         ReviewCommentEventDto dto = ReviewCommentEventDto.deleteRequest(review.getReviewId());

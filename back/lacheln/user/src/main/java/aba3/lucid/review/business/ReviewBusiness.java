@@ -63,4 +63,9 @@ public class ReviewBusiness {
         ReviewEntity updatedReview = reviewService.updateReview(user, review, request);
         return reviewConvertor.toResponse(updatedReview);
     }
+
+    public ReviewResponse getReviewInfo(Long id) {
+        ReviewEntity review = reviewService.findByIdWithThrow(id);
+        return reviewConvertor.toResponse(review);
+    }
 }

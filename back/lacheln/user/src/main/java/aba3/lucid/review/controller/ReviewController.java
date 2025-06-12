@@ -94,4 +94,12 @@ public class ReviewController {
         List<ReviewResponse> reviewResponseList = reviewBusiness.getProductReviewList(id);
         return API.OK(reviewResponseList);
     }
+
+    @GetMapping("/info/{id}")
+    public API<ReviewResponse> getReviewInfo(
+            @PathVariable Long id
+    ){
+        ReviewResponse response = reviewBusiness.getReviewInfo(id);
+        return API.OK(response);
+    }
 }

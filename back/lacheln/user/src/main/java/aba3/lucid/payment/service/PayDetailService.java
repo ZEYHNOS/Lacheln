@@ -62,7 +62,7 @@ public class PayDetailService {
     // 리뷰를 적어야 하는 유저 리스트
     public List<PayDetailEntity> replyNeedUserList() {
         return payDetailRepository.findAllByStartDatetimeBetweenAndPayManagement_PayStatus(
-                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().minusMinutes(1),
                 LocalDateTime.now(),
                 PaymentStatus.PAID
         );

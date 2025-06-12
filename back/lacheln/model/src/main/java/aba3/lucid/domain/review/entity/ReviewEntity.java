@@ -98,5 +98,6 @@ public class ReviewEntity {
         this.rvContent = null;
         this.rvCreate = null;
         this.rvScore = null;
+        this.imageList.clear(); // TODO 리팩토링(이미지를 먼저 지우고<상태 변환하거나> CLEAR 할 것
     }
 }

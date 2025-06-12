@@ -19,7 +19,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -97,7 +96,7 @@ public class ReviewService {
     // TODO 나중에 리팩토링(Join 너무 많음)
     // 유저 리뷰 조회
     public List<ReviewEntity> getReviewEntityListByUser(UsersEntity user) {
-        return reviewRepository.findAllByUser(user);
+        return reviewRepository.findAllByUser_UserId(user.getUserId());
     }
 
 

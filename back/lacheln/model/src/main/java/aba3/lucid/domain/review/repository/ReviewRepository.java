@@ -14,5 +14,5 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 
     List<ReviewEntity> findAllByCompanyId(Long companyId);
 
-    List<ReviewEntity> findAllByUser(UsersEntity user);
+    List<ReviewEntity> findAllByUser_UserId(String userId);
 }

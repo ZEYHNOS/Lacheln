@@ -19,7 +19,8 @@ import ModifyInfo from "./components/Company/Companyinfo/Modifyinfo";
 import Statistics from "./components/Company/Companyinfo/Statistics";
 import ProductManagement from "./components/Company/Management/Product/Product";
 import OrderManagement from "./components/Company/Management/Order";
-import ReviewManagement from "./components/Company/Management/Review";
+import ReviewManagement from "./components/Company/Management/ReviewComments/Review.jsx";
+import Comments from "./components/Company/Management/ReviewComments/Comments.jsx";
 import Collaboration from "./components/Company/Work/Collaboration/Collaboration.jsx";
 import Setproduct from "./components/Company/Work/Collaboration/AddPackage/Setproduct.jsx";
 import Setpackage from "./components/Company/Work/Collaboration/AddPackage/Setpackage.jsx";
@@ -224,6 +225,12 @@ function App() {
                 <Route path="/company/review" element={
                     <CompanyProtectedRoute>
                         <CompanyLayout><ReviewManagement /></CompanyLayout>
+                    </CompanyProtectedRoute>
+                } />
+                {/* 리뷰 답변 페이지 */}
+                <Route path="/company/review/comments/:reviewId" element={
+                    <CompanyProtectedRoute>
+                        <CompanyLayout><Comments /></CompanyLayout>
                     </CompanyProtectedRoute>
                 } />
                 {/* 협업(패키지리스트) 페이지 */}

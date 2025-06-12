@@ -80,7 +80,6 @@ const ProductDetail = () => {
                     thiscate: data.category,
                     color: data.color,
                     image_url_list: data.productImageUrl ? data.productImageUrl.map(img => baseUrl + img.url.replace(/\\/g, '/')) : [],
-                    // 기타 필요한 필드
                 });
             })
             .catch((err) => {
@@ -219,7 +218,7 @@ const ProductDetail = () => {
                             </div>
                         )}
 
-                        {/* 옵션 창창 */}
+                        {/* 옵션 창 */}
                         <div className="space-y-4">
                             {(product.optionList || product.option_list || []).map((opt, i) => {
                                 const optionDetails = opt.optionDtList || opt.option_dt_list || [];

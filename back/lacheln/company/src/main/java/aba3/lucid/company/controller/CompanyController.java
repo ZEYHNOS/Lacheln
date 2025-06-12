@@ -81,5 +81,12 @@ public class CompanyController {
         return API.OK(response);
     }
 
+    @GetMapping("/me")
+    public Long getCompanyId(
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        return user.getCompanyId();
+    }
+
 
 }

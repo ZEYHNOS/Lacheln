@@ -12,11 +12,13 @@ import aba3.lucid.domain.review.dto.ReviewCommentRequest;
 import aba3.lucid.domain.review.dto.ReviewCommentResponse;
 import aba3.lucid.domain.review.entity.ReviewCommentEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ReviewCommentBusiness {
@@ -56,6 +58,7 @@ public class ReviewCommentBusiness {
 
     // 리뷰가 삭제 되었을 때 삭제
     public void deleteReviewCommentByReviewId(Long reviewId) {
+        log.info("will Delete reviewId : {}", reviewId);
         reviewCommentService.deleteByReviewId(reviewId);
     }
 

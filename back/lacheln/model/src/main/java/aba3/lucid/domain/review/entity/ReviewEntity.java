@@ -29,7 +29,7 @@ public class ReviewEntity {
     private Long reviewId;
 
     // 결제 상세 정보 (1:1)
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     private PayDetailEntity payDetailEntity;
 
     // 리뷰 작성자 (1:1)

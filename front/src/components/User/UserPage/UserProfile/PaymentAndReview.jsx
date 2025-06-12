@@ -318,17 +318,8 @@ const PaymentAndReview = () => {
                           {!reviewStatus.hasReview && (
                             <button 
                               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700" 
-                              onClick={() => {
-                                setReviewTarget({ 
-                                  reviewId: o.reviewId, 
-                                  cpId: o.cpId, 
-                                  pdName: o.pdName,
-                                  isEdit: false
-                                });
-                                setIsReviewOpen(true);
-                              }}
                             >
-                              리뷰 작성
+                              리뷰 생성중...
                             </button>
                           )}
                           {reviewStatus.hasReview && reviewStatus.status === 'REGISTERED' && (

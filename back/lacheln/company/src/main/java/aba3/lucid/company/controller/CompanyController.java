@@ -4,7 +4,9 @@ package aba3.lucid.company.controller;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.company.business.CompanyBusiness;
+import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.dto.*;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -20,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class CompanyController {
     private final CompanyBusiness companyBusiness;
+    private final CompanyService companyService;
 
 
     @PostMapping("/signup")
@@ -71,6 +76,14 @@ public class CompanyController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         return companyBusiness.getCategory(customUserDetails.getCompanyId());
+    }
+
+    @GetMapping("/allMembers")
+    @Operation(summary = "회원 정버를 가져오기")
+    public List<CompanyResponse> getMembers (
+
+    ) {
+        return  companyService.findAllCompanies();
     }
 
 

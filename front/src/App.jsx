@@ -54,6 +54,11 @@ import PostDetailPage from "./components/User/CommunityPage/PostDetailPage";
 import EditPostPage from "./components/User/CommunityPage/EditPostPage";
 import AdminLayout from "./components/Admin/AdminLayout";
 import AdminDashboard from "./components/Admin/AdminDashboard";
+import AdminReportPage from "./components/Admin/AdminReportPage.jsx";
+import AdminReportDetailPage from "./components/Admin/AdminReportDetailPage.jsx";
+import AdminReportListPage from "./components/Admin/AdminReportListPage.jsx";
+import AdminMemberPage from "./components/Admin/AdminMemberPage.jsx";
+
 
 
 
@@ -272,6 +277,15 @@ function App() {
                                 <AdminDashboard />
                     </AdminLayout>
                 }/>
+                <Route path="/admin/report" 
+                element={<AdminLayout><AdminReportPage /></AdminLayout>} />
+
+                <Route path="/admin/report/:reportId" 
+                element={<AdminLayout><AdminReportDetailPage /></AdminLayout>} />
+                <Route path="/admin/report/:reportId" 
+                element={<AdminLayout><AdminReportListPage/></AdminLayout>} />
+                <Route path="/admin/members" element={<AdminLayout><AdminMemberPage/></AdminLayout>} />
+                
             </Routes>
         </Router>
     );

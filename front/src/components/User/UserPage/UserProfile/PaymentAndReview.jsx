@@ -151,6 +151,24 @@ const PaymentAndReview = () => {
     return reviewList.filter(r => r.status === 'REGISTERED');
   };
 
+  // 옵션 텍스트 포맷팅 함수 추가
+  const formatOptionText = (option) => {
+    const optionName = option.payOpName || '옵션';
+    const optionValue = option.payOpDtName || '';
+    const quantity = option.payDtQuantity || 1;
+    const plusCost = option.payOpPlusCost || 0;
+    
+    let text = `${optionName}: ${optionValue} -> ${quantity}EA`;
+    if (quantity > 1) {
+      text += ` (수량: ${quantity})`;
+    }
+    if (plusCost > 0) {
+      text += ` (+${plusCost.toLocaleString()}원)`;
+    }
+    
+    return text;
+  };
+
   // getOrderList 함수 수정 - reviewData를 매개변수로 받음
   const getOrderList = async (reviewData = []) => {
     try {
@@ -295,12 +313,22 @@ const PaymentAndReview = () => {
                     <p className="text-sm text-gray-500">카테고리: {o.category}</p>
                   </div>
 
-                  {o.options.length > 0 && (
+                  {/* 옵션 표시 부분 수정 */}
+                  {o.options && o.options.length > 0 && (
                     <div className="mb-4">
                       <p className="text-sm text-gray-600 mb-2">선택 옵션:</p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="space-y-1">
                         {o.options.map((opt, i) => (
-                          <span key={i} className="px-2 py-1 text-xs bg-gray-100 rounded">{opt.name || `옵션 ${i+1}`}</span>
+                          <div key={i} className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg">
+                            <span className="text-sm text-gray-700">
+                              {formatOptionText(opt)}
+                            </span>
+                            {opt.payOpPlusCost > 0 && (
+                              <span className="text-sm font-medium text-purple-600">
+                                +{opt.payOpPlusCost.toLocaleString()}원
+                              </span>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>

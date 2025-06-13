@@ -47,7 +47,6 @@ public class ReviewService {
 
         reviewImageRepository.deleteAll(review.getImageList());
 
-
         review.updateField(request);
         review.updateImageList(reviewImageConverter.toEntityList(request.getImageUrlList(), review));
 
@@ -76,6 +75,8 @@ public class ReviewService {
     public void delete(UsersEntity user, ReviewEntity review) {
         throwIfNotOwnerWriting(user, review);
         review.deleteRequest();
+
+        reviewImageRepository.deleteAllByReview_ReviewId(review.getReviewId());
         
         // 답글 삭제 요청 보내기
         ReviewCommentEventDto dto = ReviewCommentEventDto.deleteRequest(review.getReviewId());

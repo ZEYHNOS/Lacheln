@@ -134,4 +134,14 @@ public class PostService {
     public boolean hasLiked(Long postId, String userId) {
         return postLikeRepository.existsByPostPostIdAndUsersUserId(postId, userId);
     }
+
+    @Transactional(readOnly = true)
+    public Page<PostEntity> searchByBoardId(Long boardId, String type, String keyword, Pageable pageable) {
+        return postRepository.searchByBoardId(boardId, type, keyword, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PostEntity> searchAllBoards(String type, String keyword, Pageable pageable) {
+        return postRepository.searchAllBoards(type, keyword, pageable);
+    }
 }

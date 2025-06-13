@@ -64,4 +64,35 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             @Param("boardNames") List<String> boardNames,
             Pageable pageable
     );
+
+    @Query("""
+    SELECT p FROM PostEntity p
+    WHERE p.board.boardId = :boardId AND p.deleted = false
+    AND (
+        (:type = 'title' AND p.postTitle LIKE %:keyword%) OR
+        (:type = 'title_content' AND (p.postTitle LIKE %:keyword% OR p.postContent LIKE %:keyword%))
+    )
+    ORDER BY p.postCreate DESC
+""")
+    Page<PostEntity> searchByBoardId(
+            @Param("boardId") Long boardId,
+            @Param("type") String type,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
+
+    @Query("""
+    SELECT p FROM PostEntity p
+    WHERE p.deleted = false
+    AND (
+        (:type = 'title' AND p.postTitle LIKE %:keyword%) OR
+        (:type = 'title_content' AND (p.postTitle LIKE %:keyword% OR p.postContent LIKE %:keyword%))
+    )
+    ORDER BY p.postCreate DESC
+""")
+    Page<PostEntity> searchAllBoards(
+            @Param("type") String type,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 }

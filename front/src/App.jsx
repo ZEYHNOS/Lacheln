@@ -309,6 +309,9 @@ function App() {
                 element={<AdminLayout><AdminReportListPage/></AdminLayout>} />
                 <Route path="/admin/members" element={<AdminLayout><AdminMemberPage/></AdminLayout>} />
                 
+                <Route path="/admin/inquiry" element={<AdminLayout><AdminInquiryListPage /></AdminLayout>} />
+                <Route path="/admin/inquiry/:inquiryId" element={<AdminLayout><AdminInquiryDetailPage /></AdminLayout>} />
+
             </Routes>
         </Router>
     );

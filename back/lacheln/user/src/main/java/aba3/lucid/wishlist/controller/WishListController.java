@@ -5,6 +5,7 @@ import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.user.dto.WishListAddRequest;
 import aba3.lucid.domain.user.dto.WishListDeleteRequest;
+import aba3.lucid.domain.user.dto.WishListResponse;
 import aba3.lucid.wishlist.business.WishListBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,11 +27,12 @@ public class WishListController {
     private final WishListBusiness wishListBusiness;
 
     // 세션에 존재하는 유저의 찜 목록 조회하여 찜한 상품들의 ID를 가져오는 Controller
-    @GetMapping("/search/{userId}")
+    @GetMapping("/search")
     @Operation(summary = "상품 찜 목록 조회", description = "해당하는 소비자의 찜 목록을 조회합니다.")
-    public API<List<Long>> findAll(@PathVariable String userId) {
-        List<Long> list = wishListBusiness.findByUser(userId);
-        return API.OK(list);
+    public API<List<WishListResponse>> findAll(
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        return wishListBusiness.findByUser(user.getUserId());
     }
 
     // 특정 상품을 찜 목록에 추가
@@ -43,11 +45,11 @@ public class WishListController {
     }
     
     // 찜 목록에 있는 상품 제거
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{wishId}")
     @Operation(summary = "상품 찜 목록 제거", description = "해당하는 소비자의 찜 목록을 제거합니다.")
     public API<String> delete(
-            @RequestBody WishListDeleteRequest wishListDeleteRequest,
+            @PathVariable Long wishId,
             @AuthenticationPrincipal CustomUserDetails user) {
-        return wishListBusiness.deleteWishList(user.getUserId(), wishListDeleteRequest);
+        return wishListBusiness.deleteWishList(user.getUserId(), wishId);
     }
 }

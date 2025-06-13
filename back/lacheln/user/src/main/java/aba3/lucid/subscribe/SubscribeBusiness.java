@@ -8,6 +8,7 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Business
@@ -17,13 +18,17 @@ public class SubscribeBusiness {
     private final UserService userService;
 
     // 구독 목록 조회
-    public API<SubscribeSearchResponse> searchSubscribe(String userId)  {
+    public API<List<SubscribeSearchResponse>> searchSubscribe(String userId)  {
         List<SubscribeEntity> subList = subscribeService.searchSubscribes(userId);
-        List<Long> cpIds = subList
-                .stream()
-                .map(SubscribeEntity::getCompanyId)
-                .toList();
-        return API.OK(SubscribeSearchResponse.builder().cpIds(cpIds).build());
+        List<SubscribeSearchResponse> responseList = new ArrayList<>();
+        for (SubscribeEntity sub : subList) {
+            SubscribeSearchResponse res = SubscribeSearchResponse.builder()
+                    .subscribeId(sub.getSubscribeId())
+                    .cpIds(sub.getCompanyId())
+                    .build();
+            responseList.add(res);
+        }
+        return API.OK(responseList);
     }
 
     // 구독 추가 로직
@@ -41,11 +46,9 @@ public class SubscribeBusiness {
     }
     
     // 구독 취소 로직
-    public API<String> deleteSubscribe(String userId, List<Long> cpIds) {
+    public API<String> deleteSubscribe(String userId, Long cpId) {
         UsersEntity user = userService.findByIdWithThrow(userId);
-        for(Long cpId : cpIds) {
-            subscribeService.deleteSubscribe(user, cpId);
-        }
+        subscribeService.deleteSubscribe(user, cpId);
         return API.OK("구독 삭제 완료");
     }
 }

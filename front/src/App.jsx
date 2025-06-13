@@ -66,7 +66,7 @@ import AdminMemberPage from "./components/Admin/AdminMemberPage.jsx";
 import Coupons from "./components/User/UserPage/UserProfile/Coupons.jsx";
 import AdminInquiryListPage from "./components/Admin/AdminInquiryListPage";
 import AdminInquiryDetailPage from "./components/Admin/AdminInquiryDetailPage";
-
+import WishlistSubscribePage from "./components/User/UserPage/UserProfile/WishlistSubscribePage.jsx";
 
 
 
@@ -129,6 +129,8 @@ function App() {
                 {/* 내 정보 수정 페이지 */}
                 <Route path="/user/update" element={<Layout><MyPageUpdate /></Layout>}/>
                 <Route path="/user/review" element={<Layout><PaymentAndReview /></Layout>}/>
+                <Route path="/user/coupons" element={<Layout><Coupons /></Layout>}/>
+                <Route path="/user/wishsub" element={<Layout><WishlistSubscribePage /></Layout>}/>
 
                 {/* 로그인창 */}
                 <Route path="/login" element={<Layout><LoginPage /></Layout>} />

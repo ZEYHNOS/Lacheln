@@ -8,5 +8,6 @@ import java.util.List;
 @Getter
 @Builder
 public class SubscribeSearchResponse {
-    private List<Long> cpIds;
+    private Long cpIds;
+    private Long subscribeId;
 }

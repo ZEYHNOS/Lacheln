@@ -240,14 +240,33 @@ const PaymentAndReview = () => {
   };
 
   // 리뷰 삭제
-  const handleDeleteReview = async (reviewId) =>  {
-    try {
-      const res = await apiClient.delete(`${baseUrl}/review/${reviewId}`);
-      if(res.status === 200)  {
-        console.log("리뷰 데이터 삭제 완료");
+  const handleDeleteReview = async (reviewId) => {
+
+    const confirmed = window.confirm("리뷰를 정말 삭제하시겠습니까?");
+
+    if(confirmed) {
+      try {
+        const res = await apiClient.delete(`${baseUrl}/review/${reviewId}`);
+        if(res.status === 200) {
+          console.log("리뷰 데이터 삭제 완료");
+          
+          // ✅ 로컬 상태에서 해당 리뷰 제거
+          setReviewList(prevList => 
+            prevList.filter(review => review.reviewId !== reviewId)
+          );
+          
+          // 선택사항: 주문내역도 업데이트 (reviewId 제거)
+          setOrderList(prevOrders => 
+            prevOrders.map(order => 
+              order.reviewId === reviewId 
+                ? { ...order, reviewId: null }
+                : order
+            )
+          );
+        }
+      } catch (err) {
+        console.error("리뷰 삭제 실패 :", err);
       }
-    } catch (err) {
-      console.error("리뷰 삭제 실패 :", err);
     }
   }
 
@@ -343,13 +362,6 @@ const PaymentAndReview = () => {
                       {/* 리뷰 작성/상태 버튼 로직 */}
                       {(o.status === '완료' || o.status === '결제완료') && (
                         <>
-                          {!reviewStatus.hasReview && (
-                            <button 
-                              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700" 
-                            >
-                              리뷰 생성중...
-                            </button>
-                          )}
                           {reviewStatus.hasReview && reviewStatus.status === 'REGISTERED' && (
                             <span className="px-4 py-2 bg-green-100 text-green-600 rounded-lg text-sm">
                               리뷰 작성완료

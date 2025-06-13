@@ -420,17 +420,24 @@ const PaymentAndReview = () => {
                 <p className="text-gray-700 leading-relaxed mb-4">{r.content}</p>
 
                 {r.imageUrlList?.length > 0 && (
-                  <div className="flex gap-2 mb-4">
+                  <div className="flex gap-4 mb-4">
                     {r.imageUrlList.map((u, i) => (
                       <img 
-                        key={i} 
+                        key={`${r.reviewId}-${i}-${u}`} // ✅ 고유한 key 생성
                         src={baseImageUrl + u} 
-                        alt={`${baseImageUrl + u}`} 
+                        alt={`리뷰 이미지 ${i + 1}`} // ✅ 간단한 alt 텍스트
                         className="w-20 h-20 object-cover rounded-lg border" 
-                        onError={e => e.currentTarget.style.display = 'none'} 
+                        onError={(e) => {
+                          console.log(`이미지 로딩 실패: ${baseImageUrl + u}`);
+                          e.currentTarget.src = '/placeholder-image.png'; // ✅ 플레이스홀더 이미지로 대체
+                          // 또는 완전히 제거하려면:
+                          // e.currentTarget.style.display = 'none';
+                        }}
+                        onLoad={() => {
+                          console.log(`이미지 로딩 성공: ${baseImageUrl + u}`);
+                        }}
                       />
                     ))}
-
                   </div>
                 )}
 

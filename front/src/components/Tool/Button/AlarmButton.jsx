@@ -2,19 +2,62 @@ import { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import apiClient from "../../../lib/apiClient";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
     const [notifications, setNotifications] = useState([]);
+    const eventSourceRef = useRef(null);
 
     useEffect(() => {
-        if (!isLoggedIn) return;
-        apiClient.get("/user/sse/subscribe").then((res) => {
-            console.log(res);
-            if (res.data.status == 200) {
-                setNotifications(res.data.data);
-                console.log(notifications);
-            }
-        });
-    }, [isLoggedIn]);
+            const connectSSE = () => {
+                if (eventSourceRef.current) {
+                    eventSourceRef.current.close(); // 기존 연결 닫기
+                }
+    
+                const eventSource = new EventSource(`${baseUrl}/user/sse/subscribe`, { withCredentials: true });
+                eventSourceRef.current = eventSource;
+    
+                eventSource.onopen = (e) => {
+                    console.log("✅ SSE 연결됨:", e);
+                };
+    
+                eventSource.addEventListener("connect", (e) => {
+                    console.log("🔌 connect 이벤트 수신:", e.data);
+                });
+    
+                eventSource.addEventListener("alert", (e) => {
+                    console.log("📩 alert 이벤트 수신:", e.data);
+                    try {
+                        const newNotification = JSON.parse(e.data);
+                        setNotifications((prev) => [newNotification, ...prev]);
+                        setUnreadCount((prev) => prev + 1); // 읽지 않은 알림 개수 증가
+                    } catch (err) {
+                        console.error("❗ JSON 파싱 실패", err);
+                    }
+                });
+    
+                eventSource.onerror = (e) => {
+                    console.error("❌ SSE 에러 발생:", e);
+                    console.log("🛰️ readyState:", eventSource.readyState);
+    
+                    eventSource.close();
+                    eventSourceRef.current = null;
+    
+                    setTimeout(() => {
+                        console.log("🔄 SSE 재연결 시도 중...");
+                        connectSSE();
+                    }, retryDelay);
+                };
+            };
+    
+            connectSSE();
+    
+            return () => {
+                if (eventSourceRef.current) {
+                    eventSourceRef.current.close();
+                }
+            };
+        }, []);
 
     const handleAlertHistoryClick = () => {
         onClick(); // 드롭다운 닫기

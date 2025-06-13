@@ -21,8 +21,6 @@ import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -128,7 +126,7 @@ public class CompanyBusiness {
         CompanyUpdateResponse data = CompanyUpdateResponse.builder()
                 .id(loadCompany.getCpId())
                 .address(loadCompany.getCpAddress())
-                .profile(loadCompany.getCpProfile())
+                .profileUrl(loadCompany.getCpProfile())
                 .build();
         return API.OK(data);
 
@@ -169,6 +167,17 @@ public class CompanyBusiness {
     public CompanyResponse getCompanyInfo(Long id) {
         CompanyEntity company = findByIdWithThrow(id);
         return companyConverter.toResponse(company);
+    }
+
+    public CompanyUpdateResponse getUrlList(Long companyId) {
+        Validator.throwIfInvalidId(companyId);
+        CompanyEntity company = companyService.findByIdWithThrow(companyId);
+        CompanyUpdateResponse data = CompanyUpdateResponse.builder()
+                .id(company.getCpId())
+                .address(company.getCpAddress())
+                .profileUrl(company.getCpProfile())   // 이미지 URL 반환!
+                .build();
+        return data;
     }
 
 

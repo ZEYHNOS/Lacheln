@@ -114,5 +114,13 @@ public class CompanyController {
         return API.OK(companyPasswordUpdateResponse);
     }
 
+    @GetMapping("/list")
+    public API<CompanyUpdateResponse> getCompanyList (
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+       CompanyUpdateResponse response = companyBusiness.getUrlList(customUserDetails.getCompanyId());
+       return API.OK(response);
+    }
+
 
 }

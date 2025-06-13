@@ -40,7 +40,8 @@ export default function Support() {
   const menuItems = [
     { label: "고객지원", path: "/support" },
     { label: "챗봇", path: "/chatbot" },
-    { label: "건의함", path: "/suggestion" }
+    { label: "건의함", path: "/suggestion" },
+    { label: "신고", path: "/report" }
   ];
 
   return (
@@ -49,20 +50,23 @@ export default function Support() {
       <ul className="flex list-none m-0 p-0 border-b border-[#e1c2ff33]">
         {menuItems.map((item) => (
           <li
-            key={item.label}
-            className="flex-1 text-center h-[60px] border-r last:border-r-0 border-[#e1c2ff33]"
-          >
-            <Link
-              to={item.path}
-              className={`flex items-center justify-center w-full h-full text-[18px] font-semibold ${
-                item.label === "고객지원"
-                  ? "bg-[#E2C5EE] text-black"
-                  : "text-[#615e5e] hover:bg-[#E2C5EE] hover:text-black"
-              }`}
+              key={item.label}
+              className={`flex items-center justify-center flex-1 border border-[#e1c2ff33] h-[65px]
+                ${idx === 0 ? "border-l-0" : ""} ${idx === menuItems.length - 1 ? "border-r-0" : ""}
+                ${item.label === "신고" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]" }
+              `}
             >
-              {item.label}
-            </Link>
-          </li>
+              <Link
+                to={item.path}
+                className={`w-full h-full flex items-center justify-center text-[20px] font-semibold
+                  ${item.label === "고객지원" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]"},
+                  ${item.label === "신고" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]" }
+                  hover:bg-[#E2C5EE] hover:text-black hover:underline
+                `}
+              >
+                {item.label}
+              </Link>
+            </li>
         ))}
       </ul>
 

@@ -11,6 +11,8 @@ import aba3.lucid.domain.company.enums.CompanyCategory;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,9 +99,19 @@ public class CompanyController {
     @GetMapping("/allMembers")
     @Operation(summary = "회원 정버를 가져오기")
     public List<CompanyResponse> getMembers (
+            @PageableDefault(size =20)Pageable pageable
 
+            ) {
+        return  companyService.findAllCompanies(pageable);
+    }
+
+    @PutMapping("/password/change")
+    public API<CompanyPasswordUpdateResponse> newPassword (
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody CompanyPasswordUpdateRequest request
     ) {
-        return  companyService.findAllCompanies();
+        CompanyPasswordUpdateResponse companyPasswordUpdateResponse =companyBusiness.updatePassword(request,customUserDetails.getCompanyId());
+        return API.OK(companyPasswordUpdateResponse);
     }
 
 

@@ -10,8 +10,12 @@ import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +59,6 @@ public class CompanyService {
 
 
 
-
     public CompanyEntity saveByCompany(CompanyEntity companyEntity) {
         return companyRepository.save(companyEntity);
     }
@@ -68,7 +71,8 @@ public class CompanyService {
 
     //업체 회원 목록 리스트 가져오기
 
-    public List<CompanyResponse> findAllCompanies() {
+    public List<CompanyResponse> findAllCompanies(Pageable pageable) {
+        Page<CompanyEntity> companyPage = companyRepository.findAll(pageable);
         List<CompanyEntity> companyEntityList = companyRepository.findAll();
         List<CompanyResponse> companyResponseList = new ArrayList<>();
         for (CompanyEntity companyEntity : companyEntityList) {

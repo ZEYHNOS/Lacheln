@@ -10,6 +10,7 @@ import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.converter.CompanyConverter;
+import aba3.lucid.domain.company.converter.CompanyPasswordConverter;
 import aba3.lucid.domain.company.converter.CompanySetConverter;
 import aba3.lucid.domain.company.converter.CompanyUpdateConverter;
 import aba3.lucid.domain.company.dto.*;
@@ -21,6 +22,7 @@ import aba3.lucid.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +39,8 @@ public class CompanyBusiness {
     private final CompanyConverter companyConverter;
     private final CompanyUpdateConverter companyUpdateConverter;
     private final ImageService imageService;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final CompanyPasswordConverter companyPasswordConverter;
 
     private String serviceKey;
 
@@ -110,7 +114,6 @@ public class CompanyBusiness {
             throw new ApiException(ErrorCode.NOT_FOUND, "요청에 대한 정보가 없ㅅ습니다");
         }
         CompanyEntity loadCompany = companyService.findByIdWithThrow(AuthUtil.getCompanyId());
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String oldProfilePath = loadCompany.getCpProfile();
         if(profileImgFile != null && !profileImgFile.isEmpty()) {
             //기존 이미지를 있다면 파일 삭제
@@ -120,15 +123,34 @@ public class CompanyBusiness {
             String updatedProfileImageUrl = imageService.savedProfileImages(companyId,profileImgFile,ImageType.PROFILE);
             loadCompany.setCpProfile(updatedProfileImageUrl);
         }
-        loadCompany.updateCompany(companyUpdateRequest,bCryptPasswordEncoder);
+        loadCompany.updateCompany(companyUpdateRequest);
         companyService.saveByCompany(loadCompany);
         CompanyUpdateResponse data = CompanyUpdateResponse.builder()
+                .id(loadCompany.getCpId())
                 .address(loadCompany.getCpAddress())
                 .profile(loadCompany.getCpProfile())
                 .build();
         return API.OK(data);
 
     }
+
+    public CompanyPasswordUpdateResponse updatePassword(CompanyPasswordUpdateRequest request, Long cpId) {
+        Validator.throwIfInvalidId(cpId);
+        Validator.throwIfNull(request);
+
+        CompanyEntity company = companyService.findByIdWithThrow(cpId);
+        if (!passwordEncoder.matches(request.getCurrentPassword(), company.getCpPassword())) {
+            throw new ApiException(ErrorCode.NOT_FOUND , "이전 비밀번호는 맞지 않습니다");
+        }
+        company.setCpPassword(passwordEncoder.encode(request.getCurrentPassword()));
+        CompanyEntity updated = companyRepository.save(company);
+        return companyPasswordConverter.toResponse(updated);
+
+
+
+    }
+
+
 
     public CompanyResponse searchCompany(String email) {
         Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(email);

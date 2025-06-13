@@ -1,31 +1,96 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import apiClient from "../../../lib/apiClient";
+import Addphoto from "../../../image/Company/addimage.png";
+import ProfileModify from "./ModifyPage/ProfileModify";
+import PasswordModify from "./ModifyPage/PasswordModify";
+import OfficehoursModify from "./ModifyPage/OfficehoursModify";
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function Modifyinfo() {
     const [tab, setTab] = useState("profile");
+    const [company, setCompany] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [pendingImageFile, setPendingImageFile] = useState(null);
+    const [previewImageUrl, setPreviewImageUrl] = useState("");
+
+    useEffect(() => {
+        const fetchCompany = async () => {
+            try {
+                setLoading(true);
+                // 회사 ID 받아오기
+                const companyIdRes = await apiClient.get("/company/me");
+                const companyId = companyIdRes.data;
+                // 회사 정보 받아오기
+                const res = await apiClient.get(`/company/info/${companyId}`);
+                setCompany(res.data.data);
+            } catch (err) {
+                setError("회사 정보를 불러오지 못했습니다.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCompany();
+    }, []);
+
+    if (loading) return <div className="text-center p-4">로딩중...</div>;
+    if (error) return <div className="text-red-500 p-4">{error}</div>;
+
+    // 이미지 URL 처리
+    const imageUrl = company?.profileImageUrl
+        ? company.profileImageUrl.startsWith("http")
+            ? company.profileImageUrl
+            : `${baseUrl}${company.profileImageUrl.replace(/\\/g, "/")}`
+        : "/default/images/company.png";
+
+    // 탭 버튼 스타일 클래스
+    const tabBtn =
+        "font-bold bg-white text-base pb-1 border-b-2 transition-all duration-150 text-[#845EC2] focus:outline-none focus:ring-0 active:outline-none active:ring-0";
+    const tabBtnActive = "border-[#845EC2]";
+    const tabBtnInactive = "border-transparent";
+
+    // 이미지 업로드 핸들러
+    const handleProfileImageUpload = async (file) => {
+        if (!file) return;
+        // 미리보기
+        setCompany((prev) => ({ ...prev, profileImageUrl: URL.createObjectURL(file) }));
+        // 서버 업로드
+        const formData = new FormData();
+        formData.append("images", file);
+        try {
+            const res = await apiClient.post("/company/profile/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+            if (res.data?.data?.[0]) {
+                setCompany((prev) => ({ ...prev, profileImageUrl: res.data.data[0] }));
+            }
+        } catch {
+            alert("이미지 업로드 실패");
+        }
+    };
 
     return (
         <div className="text-black w-full bg-white">
             {/* 상단 탭 버튼 */}
             <div className="flex space-x-4 items-center px-2 pt-2 bg-white">
                 <button
-                    className={`font-bold bg-white text-base pb-1 border-b-2 transition-all duration-150 text-[#845EC2] focus:outline-none focus:ring-0 active:outline-none active:ring-0 ${tab === "profile" ? "border-[#845EC2]" : "border-transparent"}`}
-                    style={{ boxShadow: "none" }}
+                    className={`${tabBtn} ${tab === "profile" ? tabBtnActive : tabBtnInactive}`}
                     onClick={() => setTab("profile")}
                     tabIndex={0}
                 >
                     프로필설정
                 </button>
                 <button
-                    className={`font-bold bg-white text-base pb-1 border-b-2 transition-all duration-150 text-[#845EC2] focus:outline-none focus:ring-0 active:outline-none active:ring-0 ${tab === "security" ? "border-[#845EC2]" : "border-transparent"}`}
-                    style={{ boxShadow: "none" }}
+                    className={`${tabBtn} ${tab === "security" ? tabBtnActive : tabBtnInactive}`}
                     onClick={() => setTab("security")}
                     tabIndex={0}
                 >
                     비밀번호변경
                 </button>
                 <button
-                    className={`font-bold bg-white text-base pb-1 border-b-2 transition-all duration-150 text-[#845EC2] focus:outline-none focus:ring-0 active:outline-none active:ring-0 ${tab === "work" ? "border-[#845EC2]" : "border-transparent"}`}
-                    style={{ boxShadow: "none" }}
+                    className={`${tabBtn} ${tab === "work" ? tabBtnActive : tabBtnInactive}`}
                     onClick={() => setTab("work")}
                     tabIndex={0}
                 >
@@ -36,33 +101,27 @@ function Modifyinfo() {
             {/* 탭별 내용 */}
             <div className="mt-6">
                 {tab === "profile" && (
-                    <div>
-                        <h1 className="mb-4">프로필설정</h1>
-                        <p>프로필 정보 수정 화면입니다.</p>
-                    </div>
+                    <ProfileModify
+                        company={company}
+                        setCompany={setCompany}
+                        isDragging={isDragging}
+                        setIsDragging={setIsDragging}
+                        pendingImageFile={pendingImageFile}
+                        setPendingImageFile={setPendingImageFile}
+                        previewImageUrl={previewImageUrl}
+                        setPreviewImageUrl={setPreviewImageUrl}
+                        baseUrl={baseUrl}
+                        Addphoto={Addphoto}
+                        apiClient={apiClient}
+                    />
                 )}
                 {tab === "security" && (
-                    <div>
-                        <h1 className="mb-4">비밀번호변경</h1>
-                        <p>비밀번호 재설정 화면입니다.</p>
-                    </div>
+                    <PasswordModify/>
                 )}
                 {tab === "work" && (
-                    <div>
-                        <h1 className="mb-4">업무시간설정</h1>
-                        <p>근무 관리 및 출퇴근 기록 화면입니다.</p>
-                    </div>
+                    <OfficehoursModify/>
                 )}
             </div>
-            <style>{`
-                button:focus, button:active, button:hover {
-                    outline: none !important;
-                    box-shadow: none !important;
-                    border-color: inherit !important;
-                    color: #845EC2 !important;
-                    background: white !important;
-                }
-            `}</style>
         </div>
     );
 }

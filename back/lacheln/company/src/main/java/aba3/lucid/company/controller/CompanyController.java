@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -43,10 +44,11 @@ public class CompanyController {
     @PostMapping("/{companyId}/profile")
     public API<CompanyProfileSetResponse> setCompanyProfile(
             @AuthenticationPrincipal CustomUserDetails company,
-            @RequestPart MultipartFile profileImgFile,
-            @RequestBody CompanyProfileSetRequest request
+            @RequestBody CompanyProfileSetRequest request,
+            @RequestPart MultipartFile profileImgFile
 
-    ) {
+
+    ) throws IOException {
           CompanyProfileSetResponse response = companyBusiness.setCompanyProfile(company.getCompanyId(),request,profileImgFile);
           log.debug("Update CompanyProfileSetResponse: {}", response);
           return API.OK(response);
@@ -59,8 +61,9 @@ public class CompanyController {
             @RequestPart MultipartFile updatedProfileImgFile,
             @RequestBody CompanyUpdateRequest companyUpdateRequest
 
-    ){
-        return companyBusiness.updateCompany(companyUpdateRequest, company.getCompanyId(),updatedProfileImgFile);
+    ) throws IOException {
+        CompanyUpdateResponse updateResponse = companyBusiness.updateCompany(company.getCompanyId(), updatedProfileImgFile,companyUpdateRequest);
+        return API.OK(updateResponse);
     }
 
     @GetMapping("/search/{email}")

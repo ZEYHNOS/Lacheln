@@ -28,7 +28,7 @@ public class UserMessageConsumer {
     private final AlertConverter alertConverter;
     private final UserSseService sseService;
 
-    @RabbitListener(queues = "user.queue")
+    @RabbitListener(queues = "user")
     public void receiveMessage(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {

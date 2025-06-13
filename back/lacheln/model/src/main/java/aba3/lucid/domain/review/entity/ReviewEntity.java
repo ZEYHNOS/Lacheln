@@ -29,6 +29,7 @@ public class ReviewEntity {
     private Long reviewId;
 
     // 결제 상세 정보 (1:1)
+    @ToString.Exclude
     @OneToOne(cascade = CascadeType.REMOVE)
     private PayDetailEntity payDetailEntity;
 
@@ -63,6 +64,7 @@ public class ReviewEntity {
 
     // 리뷰 이미지 리스트 (1:N)
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<ReviewImageEntity> imageList;
 
     @Column(name = "product_name")

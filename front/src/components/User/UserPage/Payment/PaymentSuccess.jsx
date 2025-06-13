@@ -14,7 +14,7 @@ export default function PaymentSuccess() {
 
                 <Link to="/">
                 <button className="w-full mt-6 bg-[#845EC2] text-white p-3 rounded-md">
-                    메인 페이지로 이동하기기
+                    메인 페이지로 이동하기
                 </button>
                 </Link>
             </div>

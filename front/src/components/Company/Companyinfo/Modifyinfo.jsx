@@ -13,7 +13,7 @@ function Modifyinfo() {
                     onClick={() => setTab("profile")}
                     tabIndex={0}
                 >
-                    내프로필
+                    프로필설정
                 </button>
                 <button
                     className={`font-bold bg-white text-base pb-1 border-b-2 transition-all duration-150 text-[#845EC2] focus:outline-none focus:ring-0 active:outline-none active:ring-0 ${tab === "security" ? "border-[#845EC2]" : "border-transparent"}`}
@@ -21,7 +21,7 @@ function Modifyinfo() {
                     onClick={() => setTab("security")}
                     tabIndex={0}
                 >
-                    보안설정
+                    비밀번호변경
                 </button>
                 <button
                     className={`font-bold bg-white text-base pb-1 border-b-2 transition-all duration-150 text-[#845EC2] focus:outline-none focus:ring-0 active:outline-none active:ring-0 ${tab === "work" ? "border-[#845EC2]" : "border-transparent"}`}
@@ -29,7 +29,7 @@ function Modifyinfo() {
                     onClick={() => setTab("work")}
                     tabIndex={0}
                 >
-                    근무관리
+                    업무시간설정
                 </button>
             </div>
 
@@ -37,19 +37,19 @@ function Modifyinfo() {
             <div className="mt-6">
                 {tab === "profile" && (
                     <div>
-                        <h1 className="mb-4">내 프로필</h1>
+                        <h1 className="mb-4">프로필설정</h1>
                         <p>프로필 정보 수정 화면입니다.</p>
                     </div>
                 )}
                 {tab === "security" && (
                     <div>
-                        <h1 className="mb-4">보안설정</h1>
-                        <p>비밀번호, 2차 인증 등 보안 설정 화면입니다.</p>
+                        <h1 className="mb-4">비밀번호변경</h1>
+                        <p>비밀번호 재설정 화면입니다.</p>
                     </div>
                 )}
                 {tab === "work" && (
                     <div>
-                        <h1 className="mb-4">근무관리</h1>
+                        <h1 className="mb-4">업무시간설정</h1>
                         <p>근무 관리 및 출퇴근 기록 화면입니다.</p>
                     </div>
                 )}

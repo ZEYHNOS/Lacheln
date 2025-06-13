@@ -2,6 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import apiClient from "../../../../lib/apiClient";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+// createdAt 배열을 YYYY-MM-DD로 변환하는 함수
+const formatDate = (createdAtArr) => {
+    if (!Array.isArray(createdAtArr) || createdAtArr.length < 3) return '';
+    const [year, month, day] = createdAtArr;
+    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+};
+
 // 별점 표시용 컴포넌트
 const StarRating = ({ score }) => {
     if (!score && score !== 0) return null;
@@ -54,9 +63,11 @@ function Comments() {
                 setLoading(true);
                 const response = await apiClient.get(`/review/info/${reviewId}`);
                 console.log('리뷰 상세 데이터:', response.data);
-                setReview(response.data.data);
-                if (response.data.data.imageUrlList && response.data.data.imageUrlList.length > 0) {
-                    setSelectedImage(response.data.data.imageUrlList[0]);
+                if (response.data?.data) {
+                    setReview(response.data.data);
+                    if (response.data.data.imageUrlList && response.data.data.imageUrlList.length > 0) {
+                        setSelectedImage(response.data.data.imageUrlList[0]);
+                    }
                 }
             } catch (err) {
                 console.error('리뷰 상세 조회 에러:', err);
@@ -66,31 +77,68 @@ function Comments() {
             }
         };
 
+        const fetchComment = async () => {
+            try {
+                const response = await apiClient.get(`/comment/${reviewId}`);
+                console.log('답글 데이터:', response.data);
+                if (response.data?.data) {
+                    const commentData = response.data.data;
+                    setReply({
+                        id: commentData.commentId,
+                        content: commentData.content,
+                        date: formatDate(commentData.createdAt)
+                    });
+                }
+            } catch (err) {
+                console.error('답글 조회 에러:', err);
+                // 답글이 없는 경우는 에러가 아닐 수 있으므로 에러 상태는 설정하지 않음
+            }
+        };
+
         fetchReviewDetail();
+        fetchComment();
     }, [reviewId]);
 
     if (loading) return <div className="text-center p-4">로딩중...</div>;
     if (error) return <div className="text-red-500 p-4">{error}</div>;
     if (!review) return <div className="text-center p-4">리뷰를 찾을 수 없습니다.</div>;
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!input.trim()) return;
-        setIsSubmitting(true);
-        setTimeout(() => {
-            setReply({
-                id: 1,
-                author: "운영자",
-                content: input,
-                date: new Date().toISOString().slice(0, 10)
-            });
-            setInput("");
+        
+        try {
+            setIsSubmitting(true);
+            
+            const requestData = {
+                userId: review.userId,
+                content: input.trim()
+            };
+            
+            console.log('답글 등록 요청 데이터:', requestData);
+            
+            const response = await apiClient.post(`/comment/${reviewId}`, requestData);
+
+            if (response.data?.data) {
+                const commentData = response.data.data;
+                setReply({
+                    id: commentData.commentId,
+                    content: input.trim(),
+                    date: formatDate(commentData.createdAt)
+                });
+                setInput("");
+            }
+        } catch (err) {
+            console.error('답글 등록 에러:', err);
+            alert('답글 등록에 실패했습니다. 다시 시도해주세요.');
+        } finally {
             setIsSubmitting(false);
-        }, 500);
+        }
     };
 
     return (
         <div className="w-full px-12 py-8">
+            <h1 className="text-3xl font-extrabold text-[#845EC2] mb-6 border-b pb-3">답글 작성</h1>
             {/* 리뷰 상세 */}
             <div className="bg-white rounded-xl shadow p-8 mb-8">
                 <div className="flex flex-col md:flex-row md:items-start md:gap-8 gap-8">
@@ -99,7 +147,11 @@ function Comments() {
                         {/* 대표 이미지 */}
                         <div className="border rounded-lg overflow-hidden bg-gray-100 w-72 h-96 flex items-center justify-center mb-4 relative">
                             {selectedImage ? (
-                                <img src={selectedImage} alt="대표 이미지" className="w-full h-full object-cover" />
+                                <img 
+                                    src={selectedImage ? `${baseUrl}${selectedImage.replace(/\\/g, '/')}` : '/default/images/product.png'} 
+                                    alt="대표 이미지" 
+                                    className="w-full h-full object-cover" 
+                                />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                                     No image
@@ -111,7 +163,7 @@ function Comments() {
                             {review.imageUrlList && review.imageUrlList.map((img, index) => (
                                 <div key={index} className="relative flex-shrink-0">
                                     <img
-                                        src={img}
+                                        src={img ? `${baseUrl}${img.replace(/\\/g, '/')}` : '/default/images/product.png'}
                                         alt={`업로드된 이미지 ${index}`}
                                         className={`w-12 h-12 object-cover rounded-md cursor-pointer border-2 ${selectedImage === img ? 'border-[#845EC2]' : 'border-transparent'} hover:border-[#845EC2]`}
                                         onClick={() => setSelectedImage(img)}
@@ -124,15 +176,15 @@ function Comments() {
                     <div className="flex-1">
                         <div className="flex gap-4 items-center mb-2">
                             <span className="text-[#845EC2] font-bold">결제번호</span>
-                            <span>{review.orderNo}</span>
+                            <span className="text-gray-700">{review.payDtId ?? review.reviewId}</span>
                             <span className="text-[#845EC2] font-bold ml-6">작성자</span>
-                            <span>{review.user}</span>
+                            <span className="text-gray-700">{review.nickname}</span>
                             <span className="text-[#845EC2] font-bold ml-6">작성일</span>
-                            <span>{review.date}</span>
+                            <span className="text-gray-700">{formatDate(review.createdAt)}</span>
                         </div>
                         <div className="flex gap-4 items-center mb-2">
                             <span className="text-[#845EC2] font-bold">상품명</span>
-                            <span>{review.product}</span>
+                            <span className="text-gray-700">{review.productName}</span>
                             <span className="text-[#845EC2] font-bold ml-6">평점</span>
                             <StarRating score={review.score} />
                         </div>
@@ -148,35 +200,34 @@ function Comments() {
                 {reply && (
                     <div className="border-b pb-2">
                         <div className="flex gap-2 items-center mb-1">
-                            <span className="font-semibold text-[#845EC2]">{reply.author}</span>
                             <span className="text-xs text-gray-400">{reply.date}</span>
                         </div>
                         <div className="text-gray-800 text-sm">{reply.content}</div>
                     </div>
                 )}
-            </div>
-            {/* 답글 작성 (답글이 없을 때만) */}
-            {!reply && (
-                <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-8 flex flex-col gap-4">
-                    <textarea
-                        className="w-full bg-white border border-gray-300 rounded-md p-3 resize-none focus:outline-none focus:border-[#845EC2] text-base"
-                        rows={3}
-                        placeholder="답글을 입력하세요..."
-                        value={input}
-                        onChange={e => setInput(e.target.value)}
-                        disabled={isSubmitting}
-                    />
-                    <div className="flex justify-end">
-                        <button
-                            type="submit"
-                            className={`px-6 py-2 rounded-md font-semibold transition-colors ${isSubmitting ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'bg-pp text-white hover:bg-[#6b40b5]'}`}
+                {/* 답글 작성 (답글이 없을 때만) */}
+                {!reply && (
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                        <textarea
+                            className="w-full bg-white text-black border border-gray-300 rounded-md p-3 resize-none focus:outline-none focus:border-[#845EC2] text-base"
+                            rows={3}
+                            placeholder="답글을 입력하세요..."
+                            value={input}
+                            onChange={e => setInput(e.target.value)}
                             disabled={isSubmitting}
-                        >
-                            {isSubmitting ? '등록중...' : '답글 등록'}
-                        </button>
-                    </div>
-                </form>
-            )}
+                        />
+                        <div className="flex justify-end">
+                            <button
+                                type="submit"
+                                className={`px-6 py-2 rounded-md font-semibold transition-colors ${isSubmitting ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'bg-pp text-white hover:bg-[#6b40b5]'}`}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? '등록중...' : '답글 등록'}
+                            </button>
+                        </div>
+                    </form>
+                )}
+            </div>
         </div>
     );
 }

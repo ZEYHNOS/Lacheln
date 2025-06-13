@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../../../lib/apiClient";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 // 별점 표시용 컴포넌트
 const StarRating = ({ score }) => {
     const fullStars = Math.floor(score);
@@ -76,7 +77,7 @@ function Review() {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-6">리뷰 관리</h1>
+            <h1 className="text-3xl font-extrabold text-[#845EC2] mb-6 border-b pb-3">리뷰 관리</h1>
             
             {reviews.length === 0 ? (
                 <p className="text-gray-500">등록된 리뷰가 없습니다.</p>
@@ -106,9 +107,10 @@ function Review() {
                                     {review.imageUrlList.map((imageUrl, index) => (
                                         <img 
                                             key={index}
-                                            src={imageUrl}
+                                            src={imageUrl ? `${baseUrl}${imageUrl.replace(/\\/g, '/')}` : '/default/images/product.png'} 
                                             alt={`리뷰 이미지 ${index + 1}`}
                                             className="w-20 h-20 object-cover rounded"
+                                            onClick={() => handleImageClick(imageUrl)}
                                         />
                                     ))}
                                 </div>

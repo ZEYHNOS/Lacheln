@@ -11,6 +11,7 @@ import aba3.lucid.domain.review.dto.ReviewCreateRequest;
 import aba3.lucid.domain.review.dto.ReviewUpdateRequest;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.review.entity.ReviewImageEntity;
+import aba3.lucid.domain.review.repository.ReviewImageRepository;
 import aba3.lucid.domain.review.repository.ReviewRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.List;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final ReviewImageRepository reviewImageRepository;
 
     private final ReviewImageConverter reviewImageConverter;
 
@@ -42,6 +44,9 @@ public class ReviewService {
     public ReviewEntity writeReview(ReviewEntity review, ReviewCreateRequest request, UsersEntity user) {
         // 리뷰 작성 전 검증 로직
         verifyWriteReview(user, review);
+
+        reviewImageRepository.deleteAll(review.getImageList());
+
 
         review.updateField(request);
         review.updateImageList(reviewImageConverter.toEntityList(request.getImageUrlList(), review));

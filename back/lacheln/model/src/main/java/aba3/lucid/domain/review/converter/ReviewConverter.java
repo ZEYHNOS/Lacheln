@@ -14,7 +14,6 @@ public class ReviewConverter {
 
     private final ReviewImageConverter reviewImageConverter;
 
-
     public ReviewResponse toResponse(ReviewEntity review) {
         return ReviewResponse.builder()
                 .reviewId(review.getReviewId())

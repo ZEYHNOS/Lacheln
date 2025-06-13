@@ -175,7 +175,7 @@ const Review = (props) => {
         console.log("reviewId : ", reviewId);
         
         try {
-            const res = await apiClient.post(`${baseUrl}/review/image/1`, formData, {
+            const res = await apiClient.post(`${baseUrl}/review/image/${reviewId}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             console.log("🟢 이미지 업로드 응답:", res.data);
@@ -226,7 +226,7 @@ const Review = (props) => {
             
             // 3. 리뷰 등록(실제 이미지 URL로)
             const reviewData = {
-                reviewId: 1,
+                reviewId: reviewId,
                 rvContent: reviewText,
                 rvScore: rating,
                 imageUrlList: allImageUrls // 실제 업로드된 URL들 사용

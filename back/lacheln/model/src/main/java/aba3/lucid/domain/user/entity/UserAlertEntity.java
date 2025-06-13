@@ -41,4 +41,8 @@ public class UserAlertEntity {
 
     @Column(name = "user_alert_url", length = 255, nullable = false)
     private String userAlertUrl; //접속URL
+
+    public void readAlert() {
+        this.userAlertRead = BinaryChoice.Y;
+    }
 }

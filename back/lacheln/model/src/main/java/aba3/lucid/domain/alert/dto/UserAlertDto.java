@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 public class UserAlertDto {
 
+    private Long alertId;
+
     private String userId;
 
     private String title;
@@ -33,9 +35,19 @@ public class UserAlertDto {
                 .content("리뷰 답글이 작성되었습니다.")
                 .sentTime(LocalDateTime.now())
                 .isRead(BinaryChoice.N)
-                .accessUrl(null)
+                .accessUrl("어디로 가나유?")
                 .build()
                 ;
     }
 
+    public static UserAlertDto upgradeRankUp() {
+        return UserAlertDto.builder()
+                .title("Tier Up")
+                .content("티어가 올라갔습니다.")
+                .sentTime(LocalDateTime.now())
+                .accessUrl("어디 감?")
+                .isRead(BinaryChoice.N)
+                .build()
+                ;
+    }
 }

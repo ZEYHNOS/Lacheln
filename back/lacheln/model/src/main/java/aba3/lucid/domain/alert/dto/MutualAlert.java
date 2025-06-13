@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 public class MutualAlert {
 
+    private Long alertId;
+
     private Long companyId;
 
     private String userId;

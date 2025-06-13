@@ -180,4 +180,13 @@ public class UsersEntity {
     public void addMileage(BigInteger payTotalPrice) {
         this.userMileage = this.userMileage.add(payTotalPrice.divide(new BigInteger("10")));
     }
+
+    public boolean upgradeTierAfterPayment(TierEnum tierEnum) {
+        if (this.userTier.getRank() >= tierEnum.getRank()) {
+            return false;
+        }
+
+        this.userTier = tierEnum;
+        return true;
+    }
 }

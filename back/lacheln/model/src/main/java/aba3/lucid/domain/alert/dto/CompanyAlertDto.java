@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 @Builder
 public class CompanyAlertDto implements Serializable {
 
+    private Long alertId;
+
     private Long companyId;
 
     private String type;

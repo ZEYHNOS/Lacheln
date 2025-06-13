@@ -9,6 +9,8 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.user.entity.UserAlertEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
 
+import java.util.List;
+
 @Converter
 public class AlertConverter {
 
@@ -50,6 +52,7 @@ public class AlertConverter {
 
     public MutualAlert toDto(CompanyAlertEntity entity) {
         return MutualAlert.builder()
+                .alertId(entity.getCpAlertId())
                 .type(entity.getCpAlertType())
                 .text(entity.getCpAlertText())
                 .sentTime(entity.getCpAlertSendTime())
@@ -59,4 +62,22 @@ public class AlertConverter {
                 ;
     }
 
+    public UserAlertDto toDto(UserAlertEntity entity) {
+        return UserAlertDto.builder()
+                .alertId(entity.getUserAlertId())
+                .title(entity.getUserAlertTitle())
+                .content(entity.getUserAlertContent())
+                .accessUrl(entity.getUserAlertUrl())
+                .isRead(entity.getUserAlertRead())
+                .sentTime(entity.getUserAlertSendtime())
+                .build()
+                ;
+    }
+
+    public List<UserAlertDto> toDtoList(List<UserAlertEntity> userAlertEntityList) {
+        return userAlertEntityList.stream()
+                .map(this::toDto)
+                .toList()
+                ;
+    }
 }

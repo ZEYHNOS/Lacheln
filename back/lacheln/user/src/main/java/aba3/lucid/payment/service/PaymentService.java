@@ -1,8 +1,11 @@
 package aba3.lucid.payment.service;
 
+import aba3.lucid.alert.UserAlertBusiness;
+import aba3.lucid.alert.UserAlertService;
 import aba3.lucid.cart.service.CartService;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.domain.alert.dto.UserAlertDto;
 import aba3.lucid.domain.calendar.dto.CalendarReservation;
 import aba3.lucid.domain.cart.entity.CartDetailEntity;
 import aba3.lucid.domain.cart.entity.CartEntity;
@@ -16,6 +19,7 @@ import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.payment.repository.PayManagementRepository;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
 import aba3.lucid.domain.user.entity.UsersEntity;
+import aba3.lucid.domain.user.enums.TierEnum;
 import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +43,7 @@ public class PaymentService {
     private final CartService cartService;
     private final UserService userService;
     private final PayDetailService payDetailService;
+    private final UserAlertBusiness userAlertBusiness;
 
     private final PayManagementRepository payManagementRepository;
 
@@ -60,7 +65,9 @@ public class PaymentService {
         // 마일리지 추가하기
         UsersEntity user = entity.getUser();
         user.addMileage(entity.getPayTotalPrice());
-
+        if (user.upgradeTierAfterPayment(TierEnum.PROFESSIONAL)) {
+            userAlertBusiness.sentAlert(UserAlertDto.upgradeRankUp(), user);
+        }
 
         // 장바구니에서 삭제하기
         cartService.removeCart(cartIdList);

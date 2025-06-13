@@ -23,7 +23,7 @@ export default function CommentItem({
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) return;
     try {
-      await apiClient.post("/comment", {
+      await apiClient.post("/board/comment", {
         postId: Number(postId),
         parentCmtId: comment.cmtId,
         cmtContent: replyContent,
@@ -39,7 +39,7 @@ export default function CommentItem({
   const handleCommentDelete = async () => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
-      await apiClient.delete(`/comment/${comment.cmtId}`);
+      await apiClient.delete(`/board/comment/${comment.cmtId}`);
       fetchComments();
     } catch {
       alert("삭제 실패");
@@ -66,7 +66,6 @@ export default function CommentItem({
   return (
     <div className="mb-3" style={{ marginLeft: `${depth * 24}px` }}>
       <div className="border border-gray-300 rounded overflow-hidden">
-        {/* 상단 정보 바 */}
         <div className="bg-[#f5f5f5] px-3 py-2 flex justify-between items-center text-sm">
           <span className="font-semibold">{comment.userNickName}</span>
           <div className="text-xs text-gray-500 flex items-center gap-2">
@@ -102,7 +101,6 @@ export default function CommentItem({
           </div>
         </div>
 
-        {/* 본문 내용 */}
         <div className="bg-white px-3 py-2 text-sm text-gray-800 whitespace-pre-wrap">
           {comment.cmtContent}
 
@@ -127,7 +125,6 @@ export default function CommentItem({
         </div>
       </div>
 
-      {/* 자식 댓글 렌더링 */}
       {comment.children?.length > 0 && (
         <div className="mt-3">
           {comment.children.map((child) => (

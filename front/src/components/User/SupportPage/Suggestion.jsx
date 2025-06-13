@@ -70,10 +70,10 @@ function Suggestion() {
               <div className="w-2/5">{item.title}</div>
               <div
                 className={`w-1/5 font-bold ${
-                  item.status === "DONE" ? "text-blue-600" : "text-red-500"
+                  item.status === "COMPLETED" ? "text-blue-600" : "text-red-500"
                 }`}
               >
-                {item.status === "DONE" ? "완료" : "접수중"}
+                {item.status === "COMPLETED" ? "완료" : "진행중"}
               </div>
               <div className="w-2/5">
                 {Array.isArray(item.createdAt)

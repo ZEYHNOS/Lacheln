@@ -43,7 +43,7 @@ public class InquiryEntity {
     @Column(name = "inquiry_status", columnDefinition = "CHAR(20)", nullable = false)
     private InquiryStatus inquiryStatus; //상태 접수, 진행중, 완료
 
-    @Column(name = "inquiry_answer", length = 255)
+    @Column(name = "inquiry_answer", columnDefinition = "TEXT")
     private String inquiryAnswer; //답변
 
     // 문의 작성일시를 저장하는 필드
@@ -58,5 +58,14 @@ public class InquiryEntity {
     @PrePersist
     protected void onCreate() {
         this.inquiryCreatedAt = LocalDateTime.now();
+    }
+
+    // ✅ 관리자 답변 등록용 setter
+    public void setInquiryAnswer(String answer) {
+        this.inquiryAnswer = answer;
+    }
+
+    public void setInquiryStatus(InquiryStatus status) {
+        this.inquiryStatus = status;
     }
 }

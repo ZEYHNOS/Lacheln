@@ -16,4 +16,7 @@ public class InquiryListResponse {
     private String title;
     private InquiryStatus status;
     private LocalDateTime createdAt;
+
+    // 관리자 전용: 일반 사용자에겐 null 처리 가능
+    private String userEmail;
 }

@@ -64,6 +64,9 @@ import AdminReportDetailPage from "./components/Admin/AdminReportDetailPage.jsx"
 import AdminReportListPage from "./components/Admin/AdminReportListPage.jsx";
 import AdminMemberPage from "./components/Admin/AdminMemberPage.jsx";
 import Coupons from "./components/User/UserPage/UserProfile/Coupons.jsx";
+import AdminInquiryListPage from "./components/Admin/AdminInquiryListPage";
+import AdminInquiryDetailPage from "./components/Admin/AdminInquiryDetailPage";
+
 
 
 
@@ -126,7 +129,6 @@ function App() {
                 {/* 내 정보 수정 페이지 */}
                 <Route path="/user/update" element={<Layout><MyPageUpdate /></Layout>}/>
                 <Route path="/user/review" element={<Layout><PaymentAndReview /></Layout>}/>
-                <Route path="/user/coupons" element={<Layout><Coupons /></Layout>}/>
 
                 {/* 로그인창 */}
                 <Route path="/login" element={<Layout><LoginPage /></Layout>} />

@@ -15,48 +15,50 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 @Converter
 public class InquiryConvertor {
 
-    /**
-     * InquiryCreateRequest → InquiryEntity 변환
-     * @param user 현재 로그인한 사용자
-     * @param request 사용자가 입력한 문의 작성 요청 DTO
-     * @return DB 저장용 InquiryEntity 객체
-     */
+    // 문의 생성용 Entity 변환
     public static InquiryEntity toEntity(UsersEntity user, InquiryCreateRequest request) {
         return InquiryEntity.builder()
                 .users(user)
                 .inquiryTitle(request.getInquiryTitle())
                 .inquiryCategory(request.getInquiryCategory())
                 .inquiryContent(request.getInquiryContent())
-                .inquiryStatus(InquiryStatus.IN_PROGRESS)  // 기본 상태는 '접수'
+                .inquiryStatus(InquiryStatus.IN_PROGRESS)
                 .build();
     }
 
-    /**
-     * 내역 리스트 조회
-     */
-    public static InquiryListResponse toListResponse(InquiryEntity inquiry) {
+    // ✅ 일반 사용자용 리스트 응답 변환
+    public static InquiryListResponse toListResponseForUser(InquiryEntity inquiry) {
         return InquiryListResponse.builder()
                 .inquiryId(inquiry.getInquiryId())
                 .title(inquiry.getInquiryTitle())
                 .status(inquiry.getInquiryStatus())
                 .createdAt(inquiry.getInquiryCreatedAt())
+                .userEmail(null) // 사용자용: 이메일 미포함
                 .build();
     }
 
-    /**
-     * InquiryEntity → InquiryResponse 변환
-     * 내역 상세 조회
-     * @param inquiry DB에 저장된 문의 엔티티
-     * @return 클라이언트 응답용 DTO
-     */
+    // ✅ 관리자용 리스트 응답 변환
+    public static InquiryListResponse toListResponseForAdmin(InquiryEntity inquiry) {
+        return InquiryListResponse.builder()
+                .inquiryId(inquiry.getInquiryId())
+                .title(inquiry.getInquiryTitle())
+                .status(inquiry.getInquiryStatus())
+                .createdAt(inquiry.getInquiryCreatedAt())
+                .userEmail(inquiry.getUsers().getUserEmail()) // 관리자용
+                .build();
+    }
+
+    // ✅ 상세 조회 응답 (관리자/사용자 공통)
     public static InquiryDetailResponse toResponse(InquiryEntity inquiry) {
         return InquiryDetailResponse.builder()
                 .inquiryId(inquiry.getInquiryId())
                 .title(inquiry.getInquiryTitle())
-                .category(inquiry.getInquiryCategory())
+                .category(inquiry.getInquiryCategory().name())
                 .content(inquiry.getInquiryContent())
-                .status(inquiry.getInquiryStatus())
-                .createdAt(inquiry.getInquiryCreatedAt())
+                .status(inquiry.getInquiryStatus().name())
+                .answer(inquiry.getInquiryAnswer())
+                .createdAt(inquiry.getInquiryCreatedAt().toString())
+                .userEmail(inquiry.getUsers().getUserEmail()) // 관리자에서만 사용
                 .build();
     }
 }

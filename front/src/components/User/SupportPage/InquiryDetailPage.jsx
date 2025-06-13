@@ -20,10 +20,20 @@ export default function InquiryDetailPage() {
     COMPLETED: "완료"
   };
 
-  const formatCreatedAt = (arr) => {
-    if (!Array.isArray(arr)) return "날짜 없음";
-    const [y, m, d, h = 0, min = 0] = arr;
-    return `${y}.${String(m).padStart(2, '0')}.${String(d).padStart(2, '0')} ${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+  // ✅ createdAt이 배열 또는 문자열 모두 지원
+  const formatCreatedAt = (value) => {
+    if (Array.isArray(value)) {
+      const [y, m, d, h = 0, min = 0] = value;
+      return `${y}.${String(m).padStart(2, '0')}.${String(d).padStart(2, '0')} ${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+    }
+
+    if (typeof value === "string") {
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return "날짜 오류";
+      return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    }
+
+    return "날짜 없음";
   };
 
   useEffect(() => {
@@ -71,7 +81,7 @@ export default function InquiryDetailPage() {
           📅 작성일: {formatCreatedAt(inquiry.createdAt)}
         </p>
         <p className="text-sm text-gray-600 mb-2">
-          📂 카테고리: {categoryLabelMap[inquiry.category] || inquiry.category} /
+          📂 카테고리: {categoryLabelMap[inquiry.category] || inquiry.category} /{" "}
           📌 상태: {statusLabelMap[inquiry.status] || inquiry.status}
         </p>
 
@@ -81,14 +91,18 @@ export default function InquiryDetailPage() {
           className="text-gray-800 whitespace-pre-wrap"
           dangerouslySetInnerHTML={{ __html: inquiry.content }}
         />
-      </div>
 
-      {/* 디버깅용 JSON */}
-      <div className="mt-6">
-        <h3 className="text-sm font-semibold text-gray-500">[디버깅용 JSON]</h3>
-        <pre className="bg-gray-100 text-xs p-3 border rounded text-gray-700 overflow-auto">
-          {JSON.stringify(inquiry, null, 2)}
-        </pre>
+        {/* ✅ 답변 영역 */}
+        <div className="mt-6">
+          <h3 className="text-md font-semibold mb-2">📬 답변</h3>
+          {inquiry.answer ? (
+            <div className="bg-purple-100 p-3 rounded text-gray-800 whitespace-pre-line">
+              {inquiry.answer}
+            </div>
+          ) : (
+            <p className="text-gray-500">아직 답변이 등록되지 않았습니다.</p>
+          )}
+        </div>
       </div>
     </div>
   );

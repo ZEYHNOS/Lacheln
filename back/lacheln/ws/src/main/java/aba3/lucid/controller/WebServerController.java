@@ -180,6 +180,7 @@ public class WebServerController {
                             if(role.equals("USER") || role.equals("ADMIN")) {
                                 name = authService.getUserNickName(getEmail);
                                 tier = authService.getUserTier(getEmail);
+                                if (role.equals("USER")) map.put("userId", contextUser.getUserId());
                             } else  {
                                 name = authService.getCompanyName(getEmail);
                                 tier = null;

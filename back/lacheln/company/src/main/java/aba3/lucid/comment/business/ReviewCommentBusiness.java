@@ -38,8 +38,8 @@ public class ReviewCommentBusiness {
 
     // 리뷰 답글 작성
     @Transactional
-    public ReviewCommentResponse writeReviewComment(Long rvCommentId, ReviewCommentRequest request, Long cpId) {
-        ReviewCommentEntity reviewComment = reviewCommentService.findByIdWithThrow(rvCommentId);
+    public ReviewCommentResponse writeReviewComment(Long reviewId, ReviewCommentRequest request, Long cpId) {
+        ReviewCommentEntity reviewComment = reviewCommentService.findByReviewIdWithThrow(reviewId);
         CompanyEntity company = companyService.findByIdWithThrow(cpId);
 
         if (!company.equals(reviewComment.getCompany())) {

@@ -29,6 +29,11 @@ public class ReviewCommentService {
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 
+    public ReviewCommentEntity findByReviewIdWithThrow(Long reviewId) {
+        return reviewCommentRepository.findByReviewId(reviewId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
+    }
+
     @Transactional
     public void deleteReviewComment(ReviewCommentEntity entity) {
         entity.deleteRequest();

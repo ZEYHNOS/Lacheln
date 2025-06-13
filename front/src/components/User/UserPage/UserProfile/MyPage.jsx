@@ -25,7 +25,7 @@ const MyPage = () => {
   const tabs = [
     { name: '내 정보', path: '/user' },
     { name: '내 쿠폰', path: '/user/coupons' },
-    { name: '찜 & 구독', path: '/user/wishlist' },
+    { name: '찜 & 구독', path: '/user/wishsub' },
     { name: '주문내역 & 리뷰', path: '/user/review' }
   ];
 
@@ -156,7 +156,7 @@ const MyPage = () => {
                         <img 
                             src={userInfo.profileImageUrl && userInfo.profileImageUrl !== 'default.jpg' 
                             ? userInfo.profileImageUrl 
-                            : "src\\image\\userprofile\\레오나르도펩카프리오.PNG"} 
+                            : "src\\image\\userprofile\\luxuary.jpg"} 
                             alt="프로필 이미지" 
                             className="w-full h-full object-cover justify-center"
                         />

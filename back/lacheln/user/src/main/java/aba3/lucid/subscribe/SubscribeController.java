@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/subscribe")
@@ -20,10 +22,12 @@ public class SubscribeController {
     private final SubscribeBusiness subscribeBusiness;
 
     // 현재 세션 사용자 구독 목록 조회
-    @GetMapping("/search/{userId}")
+    @GetMapping("/search")
     @Operation(summary = "사용자 구독 목록 조회", description = "해당하는 소비자의 구독 목록을 조회합니다.")
-    public API<SubscribeSearchResponse> searchSubscribe(@PathVariable String userId)   {
-        return subscribeBusiness.searchSubscribe(userId);
+    public API<List<SubscribeSearchResponse>> searchSubscribe(
+            @AuthenticationPrincipal CustomUserDetails user
+    )   {
+        return subscribeBusiness.searchSubscribe(user.getUserId());
     }
 
     // 현재 세션 사용자 구독 목록 추가
@@ -36,11 +40,11 @@ public class SubscribeController {
     }
 
     // 현재 세션 사용자 구독 목록 제거
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{companyId}")
     @Operation(summary = "사용자 구독 취소", description = "해당하는 소비자의 구독 목록을 제거합니다.")
     public API<String> deleteSubscribe(
-            @RequestBody SubscribeDeleteRequest deleteRequest,
+            @PathVariable Long companyId,
             @AuthenticationPrincipal CustomUserDetails user) {
-        return subscribeBusiness.deleteSubscribe(user.getUserId(), deleteRequest.getCpIds());
+        return subscribeBusiness.deleteSubscribe(user.getUserId(), companyId);
     }
 }

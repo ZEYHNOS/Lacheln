@@ -1,6 +1,7 @@
 package aba3.lucid.product.business;
 
 import aba3.lucid.common.annotation.Business;
+import aba3.lucid.common.api.API;
 import aba3.lucid.common.api.Pagination;
 import aba3.lucid.common.api.PaginationConverter;
 import aba3.lucid.common.exception.ApiException;
@@ -111,5 +112,16 @@ public class ProductBusiness {
         ProductEntity activateProduct = productService.updateStatus(company, product, ProductStatus.ACTIVE);
 
         return productConverter.toResponse(activateProduct);
+    }
+
+    public API<ProductResponse> getProductById(Long productId) {
+        Validator.throwIfInvalidId(productId);
+
+        ProductEntity product = productService.findByIdWithThrow(productId);
+        CompanyEntity company = companyService.findByIdWithThrow(product.getCompany().getCpId());
+
+        ProductResponse response = productConverter.toResponse(product, company);
+
+        return API.OK(response);
     }
 }

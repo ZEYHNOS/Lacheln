@@ -82,4 +82,12 @@ public class ProductController {
 
         return API.OK(response);
     }
+
+    @GetMapping("/{productId}")
+    @Operation(summary = "상품 ID로 조회", description = "상품 ID로 상품 정보를 조회합니다.")
+    public API<ProductResponse> getProduct(
+            @PathVariable Long productId
+    )   {
+        return productBusiness.getProductById(productId);
+    }
 }

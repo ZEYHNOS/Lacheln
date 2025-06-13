@@ -21,7 +21,7 @@ const PaymentAndReview = () => {
   const tabs = [
     { name: '내 정보', path: '/user' },
     { name: '내 쿠폰', path: '/user/coupons' },
-    { name: '찜 & 구독', path: '/user/wishlist' },
+    { name: '찜 & 구독', path: '/user/wishsub' },
     { name: '주문내역 & 리뷰', path: '/user/review' }
   ];
 

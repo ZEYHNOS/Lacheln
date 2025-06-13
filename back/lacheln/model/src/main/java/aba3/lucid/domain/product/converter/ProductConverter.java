@@ -4,6 +4,7 @@ import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
+import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
@@ -51,5 +52,16 @@ public class ProductConverter {
         return productEntityPage
                 .map(this::toResponse)
                 ;
+    }
+
+    public ProductResponse toResponse(ProductEntity product, CompanyEntity company) {
+        return ProductResponse.builder()
+                .productId(product.getPdId())
+                .productName(product.getPdName())
+                .price(product.getPdPrice())
+                .status(product.getPdStatus())
+                .companyName(company.getCpName())
+                .imageUrl(product.getImageList().get(0).getPdImageUrl())
+                .build();
     }
 }

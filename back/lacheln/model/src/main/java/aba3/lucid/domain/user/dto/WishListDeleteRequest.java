@@ -14,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WishListDeleteRequest {
-    private List<Long> ids;
+    private Long ids;
 }

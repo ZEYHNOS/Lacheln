@@ -11,6 +11,7 @@ export function Support() {
     { label: "고객지원", path: "/support" },
     { label: "챗봇", path: "/chatbot" },
     { label: "건의함", path: "/suggestion" },
+    { label: "신고", path: "/report" },
   ];
 
   const faqList = [
@@ -37,7 +38,8 @@ export function Support() {
                 to={item.path}
                 className={`w-full h-full flex items-center justify-center text-[20px] font-semibold
                   ${item.label === "고객지원" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]"}
-                  hover:bg-[#E2C5EE] hover:text-black hover:underline
+                  ${item.label === "신고" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]" }
+          
                 `}
               >
                 {item.label}

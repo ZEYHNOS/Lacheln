@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/company")
@@ -33,5 +35,10 @@ public class TemporaryHolidayController {
     ) {
         TemporaryHolidayResponse response = temporaryHolidayBusiness.updateTemporaryHoliday(request, thId,company.getCompanyId());
         return API.OK(response);
+    }
+
+    @GetMapping("/all/temporaryHoliday")
+    public List<TemporaryHolidayResponse> getAllTemporaryHoliday() {
+        return temporaryHolidayBusiness.findALlHolidays();
     }
 }

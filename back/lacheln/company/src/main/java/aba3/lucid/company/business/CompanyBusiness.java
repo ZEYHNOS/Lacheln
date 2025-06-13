@@ -152,6 +152,8 @@ public class CompanyBusiness {
     }
 
 
+
+
 //    public Map<String, Object> checkBusinessStatus(String bNo) {
 //        // bNo: 조회할 사업자등록번호
 //        if (bNo == null || bNo.trim().isEmpty()) {

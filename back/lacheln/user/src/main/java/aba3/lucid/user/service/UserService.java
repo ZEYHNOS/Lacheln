@@ -8,6 +8,8 @@ import aba3.lucid.domain.user.repository.UsersRepository;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -61,8 +63,7 @@ public class UserService {
         usersRepository.save(user);
     }
 
-    // 마일리지 추가하기
-    public void addMileage(UsersEntity user, BigInteger mileage) {
-
+    public Page<UsersEntity> findAll(Pageable page) {
+        return usersRepository.findAll(page);
     }
 }

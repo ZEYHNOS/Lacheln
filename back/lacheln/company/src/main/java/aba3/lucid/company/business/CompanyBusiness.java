@@ -139,18 +139,16 @@ public class CompanyBusiness {
         Validator.throwIfNull(request);
 
         CompanyEntity company = companyService.findByIdWithThrow(cpId);
+        // 1. 현재 비밀번호 일치 확인
         if (!passwordEncoder.matches(request.getCurrentPassword(), company.getCpPassword())) {
             throw new ApiException(ErrorCode.NOT_FOUND , "이전 비밀번호는 맞지 않습니다");
         }
-        company.setCpPassword(passwordEncoder.encode(request.getCurrentPassword()));
+        // 2. 새 비밀번호로 업데이트
+        company.setCpPassword(passwordEncoder.encode(request.getNewPassword()));
         CompanyEntity updated = companyRepository.save(company);
         return companyPasswordConverter.toResponse(updated);
 
-
-
     }
-
-
 
     public CompanyResponse searchCompany(String email) {
         Optional<CompanyEntity> companyOpt = companyRepository.findByCpEmail(email);

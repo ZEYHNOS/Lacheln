@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CompanyPasswordUpdateResponse {
-    private String password;
-    private String passwordConfirm;
+    private boolean success;
+    private String message;
 }

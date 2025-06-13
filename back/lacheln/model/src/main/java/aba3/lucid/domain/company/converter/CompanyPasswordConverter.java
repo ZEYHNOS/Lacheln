@@ -26,8 +26,8 @@ public class CompanyPasswordConverter {
             return null;
         }
         return CompanyPasswordUpdateResponse.builder()
-                .password(companyEntity.getCpPassword())
-                .passwordConfirm(companyEntity.getCpPassword())
+                .success(true)
+                .message("비밀번호가 성공적으로 변경되었습니다.")
                 .build();
     }
 }

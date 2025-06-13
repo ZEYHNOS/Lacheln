@@ -196,4 +196,17 @@ public class PostBusiness {
         UsersEntity user = userService.findByIdWithThrow(userId);
         return user.getUserTier() == TierEnum.ADMIN;
     }
+
+    public PagedResponse<PostListResponse> searchPostList(Long boardId, int page, int size, String type, String keyword) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<PostEntity> result;
+
+        if (boardId != null) {
+            result = postService.searchByBoardId(boardId, type, keyword, pageable);
+        } else {
+            result = postService.searchAllBoards(type, keyword, pageable);
+        }
+
+        return toPagedResponse(result);
+    }
 }

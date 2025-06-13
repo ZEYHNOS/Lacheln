@@ -1,19 +1,42 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Help from "../../../image/Support/help.png";
 import Call from "../../../image/Support/call.png";
+import apiClient from "../../../lib/apiClient";
 
 export default function Support() {
-  // FAQ 하드코딩 리스트 (추후 백엔드 연동 가능)
+  const navigate = useNavigate();
+  const [tierValue, setTierValue] = useState(""); // ✅ 상태 이름 변경
+
+  useEffect(() => {
+    apiClient
+      .get("/auth/me")
+      .then((res) => {
+        const rawTier = res.data?.data?.tier;
+        console.log("✅ tier:", rawTier);
+        setTierValue(rawTier?.toUpperCase() || "");
+      })
+      .catch(() => setTierValue(""));
+  }, []);
+
+  const canInquire = [
+    "AMATEUR",
+    "SEMI_PRO",
+    "PROFESSIONAL",
+    "WORLD_CLASS",
+    "CHALLENGER",
+    "ADMIN"
+  ].includes(tierValue);
+
   const faqList = [
-    { tag: "이용 방법", question: "로그인 비밀번호를 잊어버렸어요." },
-    { tag: "결제 방법", question: "이메일 인증이 되지 않아요." },
-    { tag: "정보", question: "결제 내역을 확인하고 싶어요." },
-    { tag: "이용 방법", question: "휴면 계정을 복구하고 싶어요." },
-    { tag: "이용 방법", question: "회원 탈퇴는 어떻게 하나요?" }
+    { tag: "계정", question: "로그인 비밀번호를 잊어버렸어요." },
+    { tag: "결제", question: "카드 인증이 되지 않아요." },
+    { tag: "결제", question: "결제 내역을 확인하고 싶어요." },
+    { tag: "계정", question: "휴면 계정을 복구하고 싶어요." },
+    { tag: "광고", question: "광고 신청은 어떻게 하나요?" },
+    { tag: "이벤트", question: "이벤트 당첨 내역은 어떻게 확인하나요?" }
   ];
 
-  // 탭 메뉴 항목
   const menuItems = [
     { label: "고객지원", path: "/support" },
     { label: "챗봇", path: "/chatbot" },
@@ -24,10 +47,10 @@ export default function Support() {
     <div className="mx-auto w-full font-semibold border border-[#845EC2] bg-white">
       {/* 탭 메뉴 */}
       <ul className="flex list-none m-0 p-0 border-b border-[#e1c2ff33]">
-        {menuItems.map((item, idx) => (
+        {menuItems.map((item) => (
           <li
             key={item.label}
-            className={`flex-1 text-center h-[60px] border-r last:border-r-0 border-[#e1c2ff33]`}
+            className="flex-1 text-center h-[60px] border-r last:border-r-0 border-[#e1c2ff33]"
           >
             <Link
               to={item.path}
@@ -61,11 +84,21 @@ export default function Support() {
 
         {/* 문의하기 버튼 */}
         <div className="mt-6">
-          <Link to="/inquiry">
-            <button className="bg-[#845EC2] text-white px-5 py-2 rounded hover:bg-[#6d44a5] transition">
-              문의하기
+          {canInquire ? (
+            <Link to="/inquiry">
+              <button className="bg-[#845EC2] text-white px-5 py-2 rounded hover:bg-[#6d44a5] transition">
+                문의하기
+              </button>
+            </Link>
+          ) : (
+            <button
+              disabled
+              onClick={() => navigate("/login")}
+              className="bg-gray-300 text-white px-5 py-2 rounded cursor-not-allowed opacity-50"
+            >
+              로그인 후 이용 가능
             </button>
-          </Link>
+          )}
         </div>
       </div>
 

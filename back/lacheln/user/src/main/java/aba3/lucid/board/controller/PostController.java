@@ -148,4 +148,23 @@ public class PostController {
             @RequestParam(defaultValue = "30") int size) {
         return API.OK(postBusiness.getPopularPostPage(page, size));
     }
+
+    /**
+     * 게시글 검색 조회 API (boardId는 선택 가능)
+     */
+    @GetMapping("/search")
+    @Operation(
+            summary = "게시글 검색 조회",
+            description = "게시글을 제목 또는 제목+내용 기준으로 검색합니다. 게시판 ID는 선택이며 전체 검색도 가능합니다.",
+            responses = {@ApiResponse(responseCode = "200", description = "검색 성공")}
+    )
+    public API<PagedResponse<PostListResponse>> searchPostList(
+            @RequestParam(required = false) Long boardId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "30") int size,
+            @RequestParam String type,       // "title", "title_content"
+            @RequestParam String keyword
+    ) {
+        return API.OK(postBusiness.searchPostList(boardId, page, size, type, keyword));
+    }
 } 

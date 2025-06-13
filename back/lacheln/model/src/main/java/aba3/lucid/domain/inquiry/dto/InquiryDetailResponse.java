@@ -15,8 +15,10 @@ public class InquiryDetailResponse {
 
     private Long inquiryId;
     private String title;
-    private InquiryCategory category;
     private String content;
-    private InquiryStatus status;
-    private LocalDateTime createdAt;
+    private String category;
+    private String status;
+    private String answer;
+    private String createdAt;
+    private String userEmail;  // 관리자용
 }

@@ -63,6 +63,8 @@ import AdminReportPage from "./components/Admin/AdminReportPage.jsx";
 import AdminReportDetailPage from "./components/Admin/AdminReportDetailPage.jsx";
 import AdminReportListPage from "./components/Admin/AdminReportListPage.jsx";
 import AdminMemberPage from "./components/Admin/AdminMemberPage.jsx";
+import AdminInquiryListPage from "./components/Admin/AdminInquiryListPage";
+import AdminInquiryDetailPage from "./components/Admin/AdminInquiryDetailPage";
 
 
 
@@ -306,6 +308,9 @@ function App() {
                 element={<AdminLayout><AdminReportListPage/></AdminLayout>} />
                 <Route path="/admin/members" element={<AdminLayout><AdminMemberPage/></AdminLayout>} />
                 
+                <Route path="/admin/inquiry" element={<AdminLayout><AdminInquiryListPage /></AdminLayout>} />
+                <Route path="/admin/inquiry/:inquiryId" element={<AdminLayout><AdminInquiryDetailPage /></AdminLayout>} />
+
             </Routes>
         </Router>
     );

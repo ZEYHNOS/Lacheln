@@ -15,7 +15,6 @@ export default function PostDetailPage() {
   const [hasLiked, setHasLiked] = useState(false);
   const [error, setError] = useState("");
 
-  // ✅ 전체 댓글(답글 포함) 개수 계산 함수
   const countAllComments = (comments) => {
     let count = 0;
     for (const comment of comments) {
@@ -49,7 +48,7 @@ export default function PostDetailPage() {
 
   const fetchComments = async () => {
     try {
-      const res = await apiClient.get(`/comment/list?postId=${postId}`);
+      const res = await apiClient.get(`/board/comment/list?postId=${postId}`);
       setComments(res.data.data);
     } catch (err) {
       console.error("댓글 조회 실패", err);
@@ -59,7 +58,7 @@ export default function PostDetailPage() {
   const handleCommentSubmit = async () => {
     if (!commentContent.trim()) return;
     try {
-      await apiClient.post("/comment", {
+      await apiClient.post("/board/comment", {
         postId: Number(postId),
         cmtContent: commentContent,
       });
@@ -126,21 +125,17 @@ export default function PostDetailPage() {
 
   return (
     <div className="p-4 max-w-[900px] mx-auto mt-6 mb-20 bg-[#F9F9F9]">
-      {/* 게시글 박스 */}
       <div className="bg-white border border-gray-300 rounded px-5 py-4 mb-6 shadow-sm">
         <h1 className="text-xl font-bold border-b border-gray-300 pb-2 mb-3">{post.postTitle}</h1>
-
         <div className="flex justify-between text-sm text-gray-500 mb-4">
           <span className="font-bold">{post.userNickName}</span>
           <span className="font-bold">{formatDateTime(post.postCreate)}</span>
         </div>
-
         <div
           className="mb-6 text-[15px] leading-relaxed whitespace-pre-wrap rounded px-4 py-3 bg-white"
           style={{ minHeight: "150px" }}
           dangerouslySetInnerHTML={{ __html: post.postContent }}
         />
-
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
             <button
@@ -157,7 +152,6 @@ export default function PostDetailPage() {
               추천 수: <span className="font-bold text-[#845EC2]">{post.likeCount}개</span>
             </div>
           </div>
-
           {isWriterOrAdmin() && (
             <div className="space-x-2">
               <button
@@ -179,11 +173,9 @@ export default function PostDetailPage() {
 
       {/* 댓글 박스 */}
       <div ref={commentRef} className="bg-white border border-gray-300 rounded px-5 py-4">
-        {/* ✅ 전체 댓글 수 반영 */}
         <h3 className="text-lg font-semibold border-b border-gray-200 pb-2 mb-4">
           댓글 [{countAllComments(comments)}]
         </h3>
-
         <div className="space-y-4 mb-6">
           {comments.length === 0 ? (
             <p className="text-sm text-gray-500">댓글이 없습니다.</p>
@@ -200,7 +192,6 @@ export default function PostDetailPage() {
             ))
           )}
         </div>
-
         <textarea
           disabled={!isSemiProOrHigher()}
           placeholder={

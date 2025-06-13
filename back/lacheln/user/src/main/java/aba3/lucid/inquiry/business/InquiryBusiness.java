@@ -38,13 +38,15 @@ public class InquiryBusiness {
         return InquiryConvertor.toResponse(saved);
     }
 
-    // 문의 목록 조회
+    // 문의 목록 조회 (사용자 전용)
     public List<InquiryListResponse> getMyInquiries() {
         String userId = AuthUtil.getUserId();
-        log.info("📥 현재 로그인한 사용자 ID: {}", userId); // ✅ 로그 추가
+        log.info("📥 현재 로그인한 사용자 ID: {}", userId);
         List<InquiryEntity> list = inquiryService.findInquiriesByUserId(userId);
-        log.info("📦 해당 사용자의 문의 개수: {}", list.size()); // ✅ 로그 추가
-        return list.stream().map(InquiryConvertor::toListResponse).toList();
+        log.info("📦 해당 사용자의 문의 개수: {}", list.size());
+        return list.stream()
+                .map(InquiryConvertor::toListResponseForUser) // ✅ 사용자용 리스트 응답 변환
+                .toList();
     }
 
     // 문의 상세 조회

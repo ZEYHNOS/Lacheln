@@ -18,7 +18,7 @@ import java.util.List;
 @Tag(name = "Comment Controller", description = "댓글/답글 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/comment")
+@RequestMapping("/board/comment")
 public class CommentController {
 
     private final CommentBusiness commentBusiness;

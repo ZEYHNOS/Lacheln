@@ -25,7 +25,7 @@ public class CompanyUpdateConverter {
         }
         return CompanyUpdateResponse.builder()
                 .address(companyEntity.getCpAddress())
-                .profile(companyEntity.getCpProfile())
+                .profileUrl(companyEntity.getCpProfile())
                 .build();
     }
 }

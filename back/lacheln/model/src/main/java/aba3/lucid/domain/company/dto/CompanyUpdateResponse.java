@@ -13,5 +13,5 @@ import java.io.Serializable;
 public class CompanyUpdateResponse implements Serializable {
     private Long id;
     private String address;
-    private String profile;
+    private String profileUrl;
 }

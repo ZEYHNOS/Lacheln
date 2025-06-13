@@ -14,6 +14,7 @@ const PaymentAndReview = () => {
   const [loading, setLoading] = useState(false);
   const [currentView, setCurrentView] = useState('orders');
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('주문내역 & 리뷰');
   const [reviewTarget, setReviewTarget] = useState({ reviewId: null, cpId: null, pdName: '' });
   const navigate = useNavigate();
 
@@ -224,6 +225,7 @@ const PaymentAndReview = () => {
   };
 
   const handleTabClick = (tab) => {
+    setActiveTab(tab.name);
     navigate(tab.path);
   };
 
@@ -281,7 +283,11 @@ const PaymentAndReview = () => {
             <button
               key={tab.name}
               onClick={() => handleTabClick(tab)}
-              className={`flex-1 text-center py-4 px-4 font-medium border-b-2 ${location.pathname === tab.path ? 'border-purple-600 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+              className={`flex-1 text-center py-4 px-4 font-medium border-b-2 
+                ${location.pathname === tab.path 
+                  ? 'border-purple-600 text-purple-600 bg-pp text-white text-md'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
             >
               {tab.name}
             </button>

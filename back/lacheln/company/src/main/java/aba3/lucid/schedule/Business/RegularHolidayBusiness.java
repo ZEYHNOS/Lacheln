@@ -9,9 +9,13 @@ import aba3.lucid.domain.schedule.converter.RegularHolidayConverter;
 import aba3.lucid.domain.schedule.dto.RegularHolidayRequest;
 import aba3.lucid.domain.schedule.dto.RegularHolidayResponse;
 import aba3.lucid.domain.schedule.entity.RegularHolidayEntity;
+import aba3.lucid.domain.schedule.repository.RegularHolidayRepository;
 import aba3.lucid.schedule.Service.RegularHolidayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Business
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ public class RegularHolidayBusiness {
     private final RegularHolidayConverter regularHolidayConverter;
     private final CompanyService companyService;
     private final RegularHolidayService regularHolidayService;
+    private final RegularHolidayRepository regularHolidayRepository;
 
 
     public RegularHolidayResponse createHoliday(RegularHolidayRequest request,Long cpId) {
@@ -44,6 +49,15 @@ public class RegularHolidayBusiness {
         RegularHolidayEntity updatedEntity = regularHolidayService.updateRegularHoliday(request, regHolidayId);
         return regularHolidayConverter.toResponse(updatedEntity);
 
+    }
+
+    public List<RegularHolidayResponse> findALlHolidays() {
+        List<RegularHolidayEntity> entityList = regularHolidayRepository.findAll();
+        List<RegularHolidayResponse> regularResponseList = new ArrayList<>();
+        for(RegularHolidayEntity entity : entityList) {
+            regularResponseList.add(regularHolidayConverter.toResponse(entity));
+        }
+        return  regularResponseList;
     }
 
 

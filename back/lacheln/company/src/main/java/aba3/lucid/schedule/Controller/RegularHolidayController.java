@@ -12,12 +12,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/company")
 @RequiredArgsConstructor
 public class RegularHolidayController {
     private  final RegularHolidayRepository repository;
     private final RegularHolidayBusiness regularHolidayBusiness;
+
+
 
     @PostMapping("/regular")
     public API<RegularHolidayResponse> createRegular(
@@ -36,6 +40,12 @@ public class RegularHolidayController {
     ){
         RegularHolidayResponse response = regularHolidayBusiness.updateHoliday (company.getCompanyId(), regId, regularHolidayRequest);
         return API.OK(response);
+    }
+
+    @GetMapping("/allRegularHoliday")
+    public List<RegularHolidayResponse> getAllRegular() {
+        return regularHolidayBusiness.findALlHolidays();
+
     }
 
 

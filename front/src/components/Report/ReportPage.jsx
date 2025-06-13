@@ -158,7 +158,7 @@ export default function ReportPage() {
     }
 
     alert("신고가 정상적으로 접수되었습니다.");
-    navigate(-1);
+    navigate("/support");
   } catch (err) {
     console.error(err);
     alert("신고 처리 중 오류가 발생했습니다.");

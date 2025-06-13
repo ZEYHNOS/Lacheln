@@ -28,13 +28,14 @@ public class UserMessageConsumer {
     private final AlertConverter alertConverter;
     private final UserSseService sseService;
 
-    @RabbitListener(queues = "${rabbitmq.queue.company_queue}")
+    @RabbitListener(queues = "user.queue")
     public void receiveMessage(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
             // JSON 변환 직접 수행
             UserAlertDto dto = (UserAlertDto) rabbitTemplate.getMessageConverter().fromMessage(message);
 
+            log.info("dto : {}", dto);
             UsersEntity user = userService.findByIdWithThrow(dto.getUserId());
             UserAlertEntity userAlertEntity = alertConverter.toEntity(dto, user);
 

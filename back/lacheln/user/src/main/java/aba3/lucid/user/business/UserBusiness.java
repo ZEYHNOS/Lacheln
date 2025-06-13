@@ -11,7 +11,13 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Business
@@ -124,5 +130,27 @@ public class UserBusiness {
         } else {
             throw new ApiException(ErrorCode.BAD_REQUEST, "잘못된 요청입니다.");
         }
+    }
+
+    // 모든 소비자 정보
+    public API<UserAllResponse<UserInfoDto>> getAllUsers(Integer pageNum) {
+        Pageable page = PageRequest.of(pageNum, 10);
+        Page<UsersEntity> users = userService.findAll(page);
+
+        List<UserInfoDto> userInfoDtos = users.getContent()
+                .stream()
+                .map(userConvertor::entityToInfoDto)
+                .toList();
+
+        UserAllResponse<UserInfoDto> responses = UserAllResponse.<UserInfoDto>builder()
+                .users(userInfoDtos)
+                .last(users.isLast())
+                .size(users.getSize())
+                .totalElements(users.getTotalElements())
+                .totalPages(users.getTotalPages())
+                .page(users.getNumber())
+                .build();
+
+        return API.OK(responses);
     }
 }

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -73,5 +75,14 @@ public class UserController {
     @Operation(summary = "소비자 타입 조회", description = "소비자가 소셜, 로컬 로그인인지 정보를 반환합니다.")
     public API<String> getSocial(@PathVariable String userId)   {
         return userBusiness.getUserSocial(userId);
+    }
+
+    // 소비자 전체 불러오기
+    @GetMapping("/all/{page}")
+    @Operation(summary = "모든 소비자 조회", description = "모든 소비자의 정보를 반환합니다.")
+    public API<UserAllResponse<UserInfoDto>> getAllUser(
+            @PathVariable Integer page
+    )   {
+        return userBusiness.getAllUsers(page);
     }
 }

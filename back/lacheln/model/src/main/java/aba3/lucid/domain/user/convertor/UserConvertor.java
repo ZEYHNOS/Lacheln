@@ -2,6 +2,7 @@ package aba3.lucid.domain.user.convertor;
 
 import aba3.lucid.domain.user.dto.UserCheckResponse;
 import aba3.lucid.domain.user.dto.UserDto;
+import aba3.lucid.domain.user.dto.UserInfoDto;
 import aba3.lucid.domain.user.dto.UserSignupRequest;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.enums.*;
@@ -75,6 +76,20 @@ public class UserConvertor {
                 .notification(user.getUserAdsNotification())
                 .language(user.getUserLanguage())
                 .profileImageUrl(user.getUserProfile())
+                .build();
+    }
+
+    public UserInfoDto entityToInfoDto(UsersEntity user) {
+        return UserInfoDto.builder()
+                .id(user.getUserId())
+                .name(user.getUserName())
+                .email(user.getUserEmail())
+                .joinDate(user.getUserJoinDate())
+                .phone(user.getUserPhone())
+                .nickname(user.getUserNickName())
+                .status(user.getUserAccountStatus())
+                .gender(user.getUserGender())
+                .tier(user.getUserTier())
                 .build();
     }
 }

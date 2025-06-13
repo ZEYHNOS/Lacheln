@@ -47,7 +47,7 @@ export default function AdminReportPage() {
                         <th className="p-3 text-[#845EC2]">신고자 이름</th>
                         <th className="p-3 text-[#845EC2]">신고 대상</th>
                         <th className="p-3 text-[#845EC2]">제목</th>
-                        <th className="p-3 text-[#845EC2]">상태태</th>
+                        <th className="p-3 text-[#845EC2]">상태</th>
 
                     </tr>
                 </thead>
@@ -56,21 +56,13 @@ export default function AdminReportPage() {
                         <tr
                             key={r.reportId}
                             className="border-b border-[#E0CFFD] hover:bg-[#E0CFFD] cursor-pointer transition"
-                            onClick={() => setSelectedReportId(r.reportId)}
+                            onClick={() => navigate(`/admin/report/${r.reportId}`)}
                         >
                             <td className="p-3 text-[#845EC2] font-semibold">{r.reportId}</td>
                             <td className="p-3 text-[#845EC2] font-semibold">{r.reporterName}</td>
                             <td className="text-[#845EC2] font-semibold">{r.targetName}</td>
                             <td className="text-[#845EC2] font-semibold">{r.reportTitle}</td>
                             <td className="text-[#845EC2] font-semibold">{r.reportStatus}</td>
-                            <td>
-                                <button
-                                    className="px-3 py-1 rounded bg-[#845EC2] text-white"
-                                    onClick={() => navigate(`/admin/report/${r.reportId}`)}
-                                >
-                                    상세 보기
-                                </button>
-                            </td>
                         </tr>
                     ))}
                 </tbody>

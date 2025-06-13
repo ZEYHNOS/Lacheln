@@ -2,17 +2,14 @@ package aba3.lucid.domain.company.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CompanyUpdateRequest{
-
-    private String profileImg;
-
-    private String address;
+public class CompanyPasswordUpdateResponse {
+    private String password;
+    private String passwordConfirm;
 }

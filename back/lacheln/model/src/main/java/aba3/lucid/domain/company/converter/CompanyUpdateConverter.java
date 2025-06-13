@@ -14,9 +14,8 @@ public class CompanyUpdateConverter {
             return null;
         }
         return CompanyEntity.builder()
-                .cpPassword(updateRequest.getPassword())
                 .cpAddress(updateRequest.getAddress())
-                .cpProfile(updateRequest.getProfile())
+                .cpProfile(updateRequest.getProfileImg())
                 .build();
     }
 

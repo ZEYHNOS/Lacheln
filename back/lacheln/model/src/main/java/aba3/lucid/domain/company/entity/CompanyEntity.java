@@ -101,9 +101,7 @@ public class CompanyEntity {
     @Column(name = "company_role", nullable = false, columnDefinition = "CHAR(7)")
     private String cpRole = "COMPANY";
 
-    public void updateCompany(CompanyUpdateRequest companyUpdateRequest, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        updateCpPassword(bCryptPasswordEncoder.encode(companyUpdateRequest.getPassword()));
-//        updateCpMainContact(request.getMainContact());
+    public void updateCompany(CompanyUpdateRequest companyUpdateRequest) {
         updateCpAddress(companyUpdateRequest.getAddress());
         
     }
@@ -117,25 +115,18 @@ public class CompanyEntity {
 
     }
 
-//    public void updateCpMainContact(@NotBlank(message = "대표자 전화번호는 필수 입력값입니다.") String cpMainContact) {
-//        if(!cpMainContact.matches("^\\d{10,11}$")) {
-//            throw new ApiException(ErrorCode.INVALID_PARAMETER, " 대표자 전화번호는 10~11자리 숫자만 가능합니다.");
+
+
+
+//    public  void updateCpPassword(@Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해야 합니다.")
+//                                  String cpPassword) {
+//        if(cpPassword == null || cpPassword.trim().isEmpty()) {
+//            throw new ApiException(ErrorCode.INVALID_PARAMETER, "비밀번호는 필수 입력값입니다.");
 //        }
-//        this.cpMainContact = cpMainContact;
+//        this.cpPassword = cpPassword;
+//        ///확실하게 안 했음
 //
 //    }
-
-
-
-    public  void updateCpPassword(@Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해야 합니다.")
-                                  String cpPassword) {
-        if(cpPassword == null || cpPassword.trim().isEmpty()) {
-            throw new ApiException(ErrorCode.INVALID_PARAMETER, "비밀번호는 필수 입력값입니다.");
-        }
-        this.cpPassword = cpPassword;
-        ///확실하게 안 했음
-        
-    }
 
 //    private String hashPassword(String password) {
 //        return password;

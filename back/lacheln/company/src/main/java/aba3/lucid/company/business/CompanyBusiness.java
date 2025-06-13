@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 
@@ -71,11 +72,11 @@ public class CompanyBusiness {
         return companyConverter.toResponse(savedEntity);
     }
 
-    public CompanyProfileSetResponse setCompanyProfile(Long companyId,  CompanyProfileSetRequest request,MultipartFile profileImgFile) {
+    public CompanyProfileSetResponse setCompanyProfile(Long companyId,  CompanyProfileSetRequest request,MultipartFile profileImgFile) throws IOException {
         CompanyEntity entity = findByIdWithThrow(companyId);
 
         if(profileImgFile != null && !profileImgFile.isEmpty()) {
-            String profileImageUrl  = imageService.savedProfileImages(companyId,profileImgFile,ImageType.PROFILE);
+            String profileImageUrl  = imageService.profileImageUpload(entity,profileImgFile, ImageType.PROFILE);
             entity.setCpProfile(profileImageUrl);
         }
 
@@ -106,31 +107,39 @@ public class CompanyBusiness {
 
 
 
-    public API<CompanyUpdateResponse> updateCompany(CompanyUpdateRequest companyUpdateRequest, Long companyId,MultipartFile profileImgFile) {
+    public CompanyUpdateResponse updateCompany( Long companyId,MultipartFile profileImgFile, CompanyUpdateRequest companyUpdateRequest) throws IOException {
 
         if(companyUpdateRequest == null) {
             throw new ApiException(ErrorCode.NOT_FOUND, "요청에 대한 정보가 없ㅅ습니다");
         }
         CompanyEntity loadCompany = companyService.findByIdWithThrow(AuthUtil.getCompanyId());
-        String oldProfilePath = loadCompany.getCpProfile();
-        if(profileImgFile != null && !profileImgFile.isEmpty()) {
-            //기존 이미지를 있다면 파일 삭제
-            if(oldProfilePath != null && !oldProfilePath.isBlank()) {
-                imageService.deleteProfileImage(oldProfilePath);
-            }
-            String updatedProfileImageUrl = imageService.savedProfileImages(companyId,profileImgFile,ImageType.PROFILE);
-            loadCompany.setCpProfile(updatedProfileImageUrl);
-        }
-        loadCompany.updateCompany(companyUpdateRequest);
+        handleProfileImage(loadCompany,companyId,profileImgFile);
+        loadCompany.setCpAddress(companyUpdateRequest.getAddress());
+        loadCompany.setCpProfile(companyUpdateRequest.getProfileImg());
         companyService.saveByCompany(loadCompany);
         CompanyUpdateResponse data = CompanyUpdateResponse.builder()
                 .id(loadCompany.getCpId())
                 .address(loadCompany.getCpAddress())
                 .profileUrl(loadCompany.getCpProfile())
                 .build();
-        return API.OK(data);
+        return  data;
 
     }
+
+
+    private void handleProfileImage(CompanyEntity company, Long companyId, MultipartFile profileImgFile) throws IOException {
+        String oldProfilePath = company.getCpProfile();
+        if (profileImgFile != null && !profileImgFile.isEmpty()) {
+            // 기존 이미지 삭제
+            if (oldProfilePath != null && !oldProfilePath.isBlank()) {
+                imageService.deleteProfileImage(oldProfilePath);
+            }
+            // 새 이미지 저장
+            String updatedProfileImageUrl = imageService.profileImageUpload(company, profileImgFile, ImageType.PROFILE);
+            company.setCpProfile(updatedProfileImageUrl);
+        }
+    }
+
 
     public CompanyPasswordUpdateResponse updatePassword(CompanyPasswordUpdateRequest request, Long cpId) {
         Validator.throwIfInvalidId(cpId);

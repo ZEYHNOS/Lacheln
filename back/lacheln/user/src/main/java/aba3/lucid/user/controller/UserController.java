@@ -3,6 +3,7 @@ package aba3.lucid.user.controller;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomUserDetails;
+import aba3.lucid.common.image.ImageType;
 import aba3.lucid.domain.user.dto.*;
 import aba3.lucid.image.UserImageService;
 import aba3.lucid.user.business.UserBusiness;

@@ -75,6 +75,7 @@ public class PostEntity {
     }
 
     // 논리 삭제를 위한 플래그
+    @Builder.Default
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false; // true면 삭제된 게시글로 간주
 

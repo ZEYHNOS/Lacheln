@@ -64,7 +64,7 @@ public class ReviewController {
             @PathVariable Long reviewId,
             @AuthenticationPrincipal CustomUserDetails user
     ) throws IOException {
-        List<String> imageUrl = userImageService.imageUpload(imageList, reviewId, user.getUserId(), ImageType.REVIEW);
+        List<String> imageUrl = userImageService.reviewImageUpload(imageList, reviewId, user.getUserId(), ImageType.REVIEW);
         return API.OK(imageUrl);
     }
 

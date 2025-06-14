@@ -17,7 +17,8 @@ const MyPage = () => {
     mileage: 0,
     language: "",
     currency: "",
-    profileImageUrl: ""
+    image: "",
+    social: ""
   });
   const [activeTab, setActiveTab] = useState('내 정보');
   const navigate = useNavigate();
@@ -38,12 +39,11 @@ const MyPage = () => {
       const res = await apiClient.get(`${baseUrl}/user/profile`, {
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
-        console.log(res.data.data);
+        console.log("User Profile Data : ", res.data.data);
         if(res.status === 200)  {
             setUserInfo(res.data.data);
         }
       });
-      console.log(res);
       if(res.status === 200)    {
         setUserInfo(res.data.data);
       }
@@ -65,7 +65,11 @@ const MyPage = () => {
 
   // 내 정보 수정 페이지
   const handleChangeProfile = () => {
-    navigate("/user/update");
+    if (userInfo.tier === 'AMATEUR' || userInfo.social !== 'L') {
+      navigate("/user/update");
+    } else {
+      navigate("/user/verify");
+    }
   }
 
   // 등급 표시 함수
@@ -154,9 +158,7 @@ const MyPage = () => {
                     <div className="text-pp font-bold text-center mb-2">프로필 이미지</div>
                     <div className="w-56 h-56 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center">
                         <img 
-                            src={userInfo.profileImageUrl && userInfo.profileImageUrl !== 'default.jpg' 
-                            ? userInfo.profileImageUrl 
-                            : "src\\image\\userprofile\\luxuary.jpg"} 
+                            src={`${baseUrl}${userInfo.image || "/images/default.png"}`}
                             alt="프로필 이미지" 
                             className="w-full h-full object-cover justify-center"
                         />

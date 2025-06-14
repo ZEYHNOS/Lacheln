@@ -3,6 +3,7 @@ package aba3.lucid.user.business;
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
+import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.user.convertor.UserConvertor;
@@ -54,15 +55,15 @@ public class UserBusiness {
     }
 
     // 유저 업데이트 비즈니스 로직(컨버팅)
-    public API<UserUpdateResponse> update(UserUpdateRequest userUpdateRequest) {
+    public API<UserUpdateResponse> update(UserUpdateRequest userUpdateRequest, CustomUserDetails user) {
         // 업데이터 정보 확인
         if(userUpdateRequest == null)   {
             throw new ApiException(ErrorCode.GONE, "요청에 대한 데이터가 없습니다.");
         }
         
         // 현재 유저 세션정보 추출 및 소셜 여부 확인
-        UsersEntity loadUser = userService.findByIdWithThrow(AuthUtil.getUserId());
-        if(!loadUser.getUserSocial().getSocialCode().equals("LOCAL") && userUpdateRequest.getPassword() != null)   {
+        UsersEntity loadUser = userService.findByIdWithThrow(user.getUserId());
+        if(!loadUser.getUserSocial().getSocialCode().equals("LOCAL") && !userUpdateRequest.getPassword().equals("NULL"))   {
             throw new ApiException(ErrorCode.BAD_REQUEST, "소셜계정은 비밀번호 변경이 불가합니다.");
         }
         

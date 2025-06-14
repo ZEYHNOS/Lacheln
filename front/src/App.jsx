@@ -67,6 +67,7 @@ import Coupons from "./components/User/UserPage/UserProfile/Coupons.jsx";
 import AdminInquiryListPage from "./components/Admin/AdminInquiryListPage";
 import AdminInquiryDetailPage from "./components/Admin/AdminInquiryDetailPage";
 import WishlistSubscribePage from "./components/User/UserPage/UserProfile/WishlistSubscribePage.jsx";
+import UserVerifyPage from "./components/User/UserPage/UserProfile/UserVerify.jsx";
 
 
 
@@ -131,6 +132,7 @@ function App() {
                 <Route path="/user/review" element={<Layout><PaymentAndReview /></Layout>}/>
                 <Route path="/user/coupons" element={<Layout><Coupons /></Layout>}/>
                 <Route path="/user/wishsub" element={<Layout><WishlistSubscribePage /></Layout>}/>
+                <Route path="/user/verify" element={<Layout><UserVerifyPage /></Layout>}/>
 
                 {/* 로그인창 */}
                 <Route path="/login" element={<Layout><LoginPage /></Layout>} />

@@ -28,7 +28,7 @@ public class UserImageService {
     private final UserService userService;
     private final ReviewService reviewService;
 
-    public List<String> imageUpload(List<MultipartFile> imageList, Long reviewId, String userId, ImageType type) throws IOException {
+    public List<String> reviewImageUpload(List<MultipartFile> imageList, Long reviewId, String userId, ImageType type) throws IOException {
         UsersEntity user = userService.findByIdWithThrow(userId);
         ReviewEntity review = reviewService.findByIdWithThrow(reviewId);
 
@@ -69,4 +69,36 @@ public class UserImageService {
         return filePathList;
     }
 
+    public String profileImageUpload(MultipartFile image, String userId, ImageType type) throws IOException {
+        UsersEntity user = userService.findByIdWithThrow(userId);
+
+        if (image.getContentType() == null || !image.getContentType().startsWith("image/")) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "image 아닙니다.");
+        }
+
+        log.info("imageConfig.getDir() : {}", imageConfig.getDir());
+        log.info("user.getUserId() : {}", user.getUserId());
+        log.info("type.getType() : {}", type.getType());
+
+        String dir = imageConfig.getDir() + "\\" + user.getUserId() + "\\" + type.getType();
+
+        log.info("save Image directory : {}", dir);
+
+        File fileDir = new File(dir);
+        if (!fileDir.exists()) {
+            fileDir.mkdirs();
+        }
+
+        String originalName = image.getOriginalFilename();
+        if (originalName == null) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "이미지 이름 존재 X");
+        }
+        String uuid = UUID.randomUUID().toString();
+        String savedName = "\\" + uuid + "_" + originalName;
+
+        File destination = new File(fileDir, savedName);
+        image.transferTo(destination);
+
+        return "\\" + user.getUserId() + "\\" + type.getType() + savedName;
+    }
 }

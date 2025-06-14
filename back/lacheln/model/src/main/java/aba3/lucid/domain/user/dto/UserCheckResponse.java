@@ -15,10 +15,11 @@ public class UserCheckResponse {
     private String email;
     private String phone;
     private TierEnum tier;
+    private SocialEnum social;
     private NotificationEnum notification;
     private GenderEnum gender;
     private BigInteger mileage;
     private LanguageEnum language;
     private CurrencyEnum currency;
-    private String profileImageUrl;
+    private String image;
 }

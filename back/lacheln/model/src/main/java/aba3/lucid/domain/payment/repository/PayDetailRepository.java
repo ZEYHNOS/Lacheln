@@ -3,6 +3,7 @@ package aba3.lucid.domain.payment.repository;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.user.entity.UsersEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -41,4 +42,20 @@ public interface PayDetailRepository extends JpaRepository<PayDetailEntity, Long
     List<PayDetailEntity> findAllByStartDatetimeBetweenAndPayManagement_PayStatus(LocalDateTime start, LocalDateTime end, PaymentStatus status);
 
     List<PayDetailEntity> findAllByPayManagement_User(UsersEntity user);
+
+
+    @Query(value = """
+            SELECT pd_id
+            FROM pay_detail d
+            JOIN pay_management m ON d.pay_id = m.pay_id
+            WHERE d.start_datetime BETWEEN :start AND :end
+            AND d.pay_status = 'PAID'
+            GROUP BY pd_id
+            ORDER BY COUNT(pd_id) DESC
+            LIMIT 10
+            """, nativeQuery = true)
+    List<PayDetailEntity> findTop10BestSellingPdIds(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end);
+
 }

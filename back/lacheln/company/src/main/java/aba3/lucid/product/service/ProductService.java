@@ -4,25 +4,30 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.company.enums.CompanyCategory;
+import aba3.lucid.domain.payment.dto.PopularDto;
+import aba3.lucid.domain.product.dto.PopularResponse;
 import aba3.lucid.domain.product.dto.ProductSearchRecord;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
 import aba3.lucid.domain.product.dto.option.OptionSnapshot;
 import aba3.lucid.domain.product.entity.OptionDetailEntity;
 import aba3.lucid.domain.product.entity.OptionEntity;
+import aba3.lucid.domain.product.entity.PopularEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.enums.ProductSortBy;
 import aba3.lucid.domain.product.enums.ProductStatus;
+import aba3.lucid.domain.product.repository.PopularRepository;
 import aba3.lucid.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +38,7 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final PopularRepository popularRepository;
 
     // 특정 업체 상품 리스트
     public List<ProductEntity> getCompanyProductList(Long companyId, ProductStatus status) {
@@ -144,5 +150,39 @@ public class ProductService {
                 productSearchRecord.maximum(),
                 productSearchRecord.minimum()
         );
+    }
+
+    // 인기 상품 랭킹 생성
+    @Transactional
+    public void createPopularProduct(List<PopularEntity> list) {
+        popularRepository.deleteAll();
+        popularRepository.saveAll(list);
+    }
+
+    public List<PopularResponse> getPopularProductList() {
+        List<PopularEntity> popularEntityList = popularRepository.findAll();
+        List<Long> productIdList = popularEntityList.stream().map(PopularEntity::getProductId).toList();
+        List<ProductEntity> productEntityList = productRepository.findAllById(productIdList);
+
+        Map<Long, PopularResponse> map = new HashMap<>();
+        for (ProductEntity product : productEntityList) {
+            map.put(product.getPdId(), PopularResponse.builder()
+                            .productImageUrl(product.getImageList().isEmpty() ? "/image/default/" : product.getImageList().get(0).getPdImageUrl())
+                            .productName(product.getPdName())
+                            .productId(product.getPdId())
+                            .companyId(product.getCompany().getCpId())
+                            .companyName(product.getCompany().getCpName())
+                            .category(product.getCompany().getCpCategory())
+                    .build());
+        }
+
+        List<PopularResponse> result = new ArrayList<>();
+        for (PopularEntity popular : popularEntityList) {
+            PopularResponse response = map.get(popular.getProductId());
+            response.setRank(popular.getPopularRank());
+            result.add(response);
+        }
+
+        return result;
     }
 }

@@ -4,21 +4,28 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.cart.dto.CartAddProductRequest;
 import aba3.lucid.domain.cart.dto.CartOptionDetail;
+import aba3.lucid.domain.payment.dto.PopularDto;
 import aba3.lucid.domain.payment.entity.PayDetailEntity;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
 import aba3.lucid.domain.payment.repository.PayDetailRepository;
+import aba3.lucid.domain.product.entity.PopularEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PayDetailService {
 
+    private final RabbitTemplate rabbitTemplate;
     private final PayDetailRepository payDetailRepository;
 
     public List<PayDetailEntity> getPayDetailList(Long companyId) {
@@ -66,5 +73,25 @@ public class PayDetailService {
                 LocalDateTime.now(),
                 PaymentStatus.PAID
         );
+    }
+
+    public void createPopularProductList() throws JsonProcessingException {
+        LocalDateTime start = LocalDateTime.now().minusDays(7);
+        LocalDateTime end = LocalDateTime.now();
+        List<PayDetailEntity> popularPaymentList = payDetailRepository.findTop10BestSellingPdIds(start, end);
+        List<PopularDto> dtoList = new ArrayList<>();
+        for (int i = 1; i <= popularPaymentList.size(); i++) {
+            PayDetailEntity payDetail = popularPaymentList.get(i-1);
+            dtoList.add(PopularDto.builder()
+                    .productId(payDetail.getPdId())
+                    .companyId(payDetail.getCpId())
+                    .rank(i)
+                    .build()
+            );
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(dtoList);
+        rabbitTemplate.convertAndSend("product.exchange", "popular", json);
     }
 }

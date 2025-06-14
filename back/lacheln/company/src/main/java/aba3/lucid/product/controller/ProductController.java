@@ -3,6 +3,7 @@ package aba3.lucid.product.controller;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
+import aba3.lucid.domain.product.dto.PopularResponse;
 import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.enums.ProductStatus;
@@ -89,5 +90,11 @@ public class ProductController {
             @PathVariable Long productId
     )   {
         return productBusiness.getProductById(productId);
+    }
+
+    @GetMapping("/popular")
+    public API<List<PopularResponse>> getPopularProductList() {
+        List<PopularResponse> result = productBusiness.getPopularList();
+        return API.OK(result);
     }
 }

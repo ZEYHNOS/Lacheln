@@ -19,6 +19,9 @@ public class ProductResponse {
     // 상품 이름
     private String productName;
 
+    // 업체 id
+    private Long companyId;
+
     // 업체 이름
     private String companyName;
 

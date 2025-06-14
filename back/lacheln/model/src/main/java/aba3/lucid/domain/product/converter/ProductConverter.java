@@ -7,7 +7,10 @@ import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
+import aba3.lucid.domain.payment.dto.PopularDto;
+import aba3.lucid.domain.product.dto.PopularResponse;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
+import aba3.lucid.domain.product.entity.PopularEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import org.springframework.data.domain.Page;
 
@@ -64,4 +67,21 @@ public class ProductConverter {
                 .imageUrl(product.getImageList().get(0).getPdImageUrl())
                 .build();
     }
+
+    public List<PopularEntity> toEntityList(List<PopularDto> list) {
+        return list.stream()
+                .map(this::toEntity)
+                .toList()
+                ;
+    }
+
+    public PopularEntity toEntity(PopularDto dto) {
+        return PopularEntity.builder()
+                .companyId(dto.getCompanyId())
+                .productId(dto.getProductId())
+                .popularRank(dto.getRank())
+                .build()
+                ;
+    }
+
 }

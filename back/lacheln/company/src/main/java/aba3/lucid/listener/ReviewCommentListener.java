@@ -54,12 +54,4 @@ public class ReviewCommentListener {
             channel.basicAck(deliveryTag, false);
         }
     }
-
-
-
-
-
-
-
-
 }

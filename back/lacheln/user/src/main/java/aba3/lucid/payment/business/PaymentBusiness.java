@@ -20,6 +20,7 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.payment.service.PayDetailService;
 import aba3.lucid.payment.service.PaymentService;
 import aba3.lucid.user.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -151,5 +152,9 @@ public class PaymentBusiness {
         }
 
         return payDetailConverter.toBlockResponseList(payManagementEntityList);
+    }
+
+    public void createPopularProductList() throws JsonProcessingException {
+        payDetailService.createPopularProductList();
     }
 }

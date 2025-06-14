@@ -18,6 +18,21 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     @Bean
+    public Queue popularQueue() {
+        return new Queue("popular.queue");
+    }
+
+    @Bean
+    public Exchange productExchange() {
+        return new DirectExchange("product.exchange");
+    }
+
+    @Bean
+    public Binding productBinding(Queue popularQueue, DirectExchange productExchange) {
+        return BindingBuilder.bind(popularQueue).to(productExchange).with("popular");
+    }
+
+    @Bean
     public Jackson2JsonMessageConverter jsonConvertor() {
         return new Jackson2JsonMessageConverter();
     }

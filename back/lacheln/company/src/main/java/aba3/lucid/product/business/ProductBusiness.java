@@ -2,27 +2,28 @@ package aba3.lucid.product.business;
 
 import aba3.lucid.common.annotation.Business;
 import aba3.lucid.common.api.API;
-import aba3.lucid.common.api.Pagination;
 import aba3.lucid.common.api.PaginationConverter;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.image.ImageType;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.company.service.CompanyService;
-import aba3.lucid.domain.product.dto.ProductDetailResponse;
-import aba3.lucid.domain.product.dto.ProductSearchRecord;
-import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
-import aba3.lucid.image.service.ImageService;
 import aba3.lucid.domain.company.entity.CompanyEntity;
-import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.packages.converter.PackageToProductConverter;
 import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
 import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
+import aba3.lucid.domain.payment.dto.PopularDto;
 import aba3.lucid.domain.product.converter.ProductConverter;
+import aba3.lucid.domain.product.dto.PopularResponse;
+import aba3.lucid.domain.product.dto.ProductSearchRecord;
+import aba3.lucid.domain.product.dto.ProductSnapshot;
+import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
+import aba3.lucid.domain.product.entity.PopularEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.enums.ProductStatus;
+import aba3.lucid.image.service.ImageService;
 import aba3.lucid.packages.service.PackageService;
 import aba3.lucid.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -124,4 +125,18 @@ public class ProductBusiness {
 
         return API.OK(response);
     }
+
+    public void verifySnapshotListMatch(List<ProductSnapshot> productSnapshotList) {
+        productService.verifySnapshotListMatch(productSnapshotList);
+    }
+
+    public void createPopularProduct(List<PopularDto> list) {
+        List<PopularEntity> popularEntityList = productConverter.toEntityList(list);
+        productService.createPopularProduct(popularEntityList);
+    }
+
+    public List<PopularResponse> getPopularList() {
+        return productService.getPopularProductList();
+    }
+
 }

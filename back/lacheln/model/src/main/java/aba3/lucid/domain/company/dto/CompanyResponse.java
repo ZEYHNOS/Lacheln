@@ -4,12 +4,16 @@ package aba3.lucid.domain.company.dto;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -41,5 +45,7 @@ public class CompanyResponse implements Serializable {
     private CompanyCategory category;
 
     private String profileImageUrl;
+
+    private LocalDateTime companyJoinDate;
 
 }

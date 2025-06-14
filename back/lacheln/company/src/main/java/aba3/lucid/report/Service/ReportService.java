@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -49,6 +51,13 @@ public class ReportService {
         if(reportedId.equals(reporterId)) {
             throw new ApiException(ErrorCode.CANNOT_REPORT_YOURSELF);
         }
+    }
+    public long getTodayReportCount() {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().plusDays(1).atStartOfDay();  // 다음날 00:00:00
+
+        long todayReportCount = reportRepository.countByReportCreatedAtBetween(startOfDay, endOfDay);
+        return todayReportCount;
     }
 
 

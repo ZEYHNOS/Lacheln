@@ -9,9 +9,11 @@ const menu = [
     { icon: <FaChartBar />, text: "통계 대시보드", path: "/admin" },
     { icon: <FaFlag />, text: "신고 관리", path: "/admin/report" },
     { icon: <FaQuestionCircle />, text: "문의 관리", path: "/admin/inquiry" },
-    { icon: <FaUser />, text: "회원 조회(업체)", path: "/admin/members" }, // 라우터와 일치!
+    { icon: <FaUser />, text: "회원 조회(업체)", path: "/admin/members/company" },
+    { icon: <FaUser />, text: "회원 조회(유저)", path: "/admin/members/user" },
     { icon: <FaCog />, text: "설정", path: "/admin/setting" }
 ];
+
 
 export default function AdminSidebar() {
     const location = useLocation();

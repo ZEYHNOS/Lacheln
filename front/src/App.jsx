@@ -67,6 +67,7 @@ import Coupons from "./components/User/UserPage/UserProfile/Coupons.jsx";
 import AdminInquiryListPage from "./components/Admin/AdminInquiryListPage";
 import AdminInquiryDetailPage from "./components/Admin/AdminInquiryDetailPage";
 import WishlistSubscribePage from "./components/User/UserPage/UserProfile/WishlistSubscribePage.jsx";
+import UserMemberDetail from "./components/Admin/UserMemberDetail.jsx";
 
 
 
@@ -309,7 +310,8 @@ function App() {
                 element={<AdminLayout><AdminReportDetailPage /></AdminLayout>} />
                 <Route path="/admin/report/:reportId" 
                 element={<AdminLayout><AdminReportListPage/></AdminLayout>} />
-                <Route path="/admin/members" element={<AdminLayout><AdminMemberPage/></AdminLayout>} />
+                <Route path="/admin/members/company" element={<AdminLayout><AdminMemberPage/></AdminLayout>} />
+                <Route path="/admin/members/user" element={<AdminLayout><UserMemberDetail/></AdminLayout>} />
                 
                 <Route path="/admin/inquiry" element={<AdminLayout><AdminInquiryListPage /></AdminLayout>} />
                 <Route path="/admin/inquiry/:inquiryId" element={<AdminLayout><AdminInquiryDetailPage /></AdminLayout>} />

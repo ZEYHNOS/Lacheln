@@ -3,6 +3,7 @@ package aba3.lucid.user.controller;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomUserDetails;
+import aba3.lucid.domain.company.dto.DashboardResponse;
 import aba3.lucid.domain.user.dto.*;
 import aba3.lucid.user.business.UserBusiness;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -84,5 +87,24 @@ public class UserController {
             @PathVariable Integer page
     )   {
         return userBusiness.getAllUsers(page);
+    }
+
+
+
+    @GetMapping("/today_new_users")
+    public API<Map<String, Object>> getTodayNewUsers() {
+        long newUsers = userBusiness.getTodayNewUserCount();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("newUsers", newUsers);
+        response.put("totalNewMembers", newUsers);
+
+        return API.OK(response);
+    }
+
+    @GetMapping("/month_users")
+    public API<List<Object[]>> getMonthUsers() {
+        List<Object[]> stats = userBusiness.getMonthlyJoinStats();
+        return API.OK(stats);
     }
 }

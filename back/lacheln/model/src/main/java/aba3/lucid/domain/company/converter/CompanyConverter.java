@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 @RequiredArgsConstructor
 public class CompanyConverter {
@@ -46,6 +48,7 @@ public class CompanyConverter {
 
         return CompanyResponse.builder()
                 .id(entity.getCpId())
+                .companyJoinDate(entity.getCompanyJoinDate())
                 .email(entity.getCpEmail())
                 .name(entity.getCpName())
                 .address(entity.getCpAddress())

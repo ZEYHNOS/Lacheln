@@ -9,7 +9,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -96,6 +100,10 @@ public class CompanyEntity {
     // 팩스 번호
     @Column(name = "cp_fax", columnDefinition = "CHAR(20)")
     private String cpFax;
+
+    @CreationTimestamp
+    @Column(name = "company_join_date", nullable = false)
+    private LocalDateTime companyJoinDate; //가입일
 
     // 업체 권한
     @Column(name = "company_role", nullable = false, columnDefinition = "CHAR(7)")

@@ -18,13 +18,20 @@ import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.enums.CompanyStatus;
 import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.domain.user.dto.UserAllResponse;
+import aba3.lucid.domain.user.dto.UserInfoDto;
+import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -189,62 +196,40 @@ public class CompanyBusiness {
         return data;
     }
 
+    //모든 업체 정보
+    public API<CompanyAllResponse<CompanyResponse>> getAllCompanies(Integer pageNum) {
+        Pageable page = PageRequest.of(pageNum, 10);
+        Page<CompanyEntity> companies = companyService.findAll(page);
+
+        List<CompanyResponse> companyResponseList = companies.getContent()
+                .stream()
+                .map(companyConverter:: toResponse)
+                .toList();
+
+        CompanyAllResponse<CompanyResponse> responses = CompanyAllResponse.<CompanyResponse>builder()
+                .companies(companyResponseList)
+                .last(companies.isLast())
+                .size(companies.getSize())
+                .totalElements(companies.getTotalElements())
+                .totalPages(companies.getTotalPages())
+                .page(companies.getNumber())
+                .build();
+
+        return API.OK(responses);
+    }
+
+    // CompanyBusiness
+    public API<Long> getTodayNewCompanyCount() {
+        long count = companyService.getTodayNewCompanyCount();
+        return API.OK(count);
+    }
+
+    public API<List<Object[]>> getMonthlyJoinStats() {
+        List<Object[]> stats = companyService.getMonthlyJoinCount();
+        return API.OK(stats);
+    }
 
 
-
-//    public Map<String, Object> checkBusinessStatus(String bNo) {
-//        // bNo: 조회할 사업자등록번호
-//        if (bNo == null || bNo.trim().isEmpty()) {
-//            throw new ApiException(ErrorCode.BAD_REQUEST, "사업자등록번호가 유효하지 않습니다.");
-//        }
-//
-//        Map<String, Object> result = new HashMap<>();
-//        try {
-//            // 1) RestTemplate 생성
-//            RestTemplate restTemplate = new RestTemplate();
-//
-//            // 2) serviceKey 디코딩 (중복 인코딩 방지)
-//            String decodedServiceKey = URLDecoder.decode(serviceKey, StandardCharsets.UTF_8.name());
-//
-//            // 3) API 요청 URL
-//            //    serviceKey는 query param으로 전달
-//            String url = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=" + decodedServiceKey;
-//
-//            // 4) HTTP Header 세팅
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.APPLICATION_JSON);
-//            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//
-//            // 5) 요청 Body(b_no 배열 형태)
-//            Map<String, Object> requestBody = new HashMap<>();
-//            requestBody.put("b_no", Collections.singletonList(bNo));
-//
-//            // 6) HttpEntity 생성
-//            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-//
-//            // 7) API 호출 (POST)
-//            ResponseEntity<Map> response = restTemplate.exchange(
-//                    url,
-//                    HttpMethod.POST,
-//                    entity,
-//                    Map.class
-//            );
-//
-//            // 8) 응답 파싱
-//            result = response.getBody(); // JSON -> Map 형태로 매핑됨
-//            if (result == null) {
-//                throw new ApiException(ErrorCode.NOT_FOUND, "OpenAPI 응답이 비어있습니다.");
-//            }
-//
-//            return result;
-//
-//        } catch (HttpClientErrorException e) {
-//            // 4xx, 5xx 에러 등
-//            throw new ApiException(ErrorCode.NOT_FOUND, "OpenAPI 호출 중 오류: " + e.getResponseBodyAsString());
-//        } catch (UnsupportedEncodingException e) {
-//            throw new ApiException(ErrorCode.NOT_FOUND, "serviceKey 디코딩 오류: " + e.getMessage());
-//        }
-//    }
 
 
 

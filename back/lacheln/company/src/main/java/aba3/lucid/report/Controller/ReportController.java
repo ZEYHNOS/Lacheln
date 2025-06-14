@@ -3,6 +3,7 @@ package aba3.lucid.report.Controller;
 
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
+import aba3.lucid.domain.company.dto.DashboardResponse;
 import aba3.lucid.domain.inquiry.dto.ReportImageRequest;
 import aba3.lucid.domain.inquiry.dto.ReportImageResponse;
 import aba3.lucid.domain.inquiry.dto.ReportRequest;
@@ -101,6 +102,18 @@ public class ReportController {
     public API<List<ReportResponse>> getAllReports() {
         List<ReportResponse> responses = reportBusiness.getAllReports();
         return API.OK(responses);
+    }
+
+    @GetMapping("/today_reports")
+    public API<DashboardResponse> getTodayNewMembers() {
+        long newReports = reportBusiness.getTodayNewReport().getData();
+//        long newUsers = userBusiness.getTodayNewUserCount().getData(); // User도 구현 필요
+
+        DashboardResponse response = DashboardResponse.builder()
+                .todayReports(newReports)
+                .build();
+
+        return API.OK(response);
     }
 
 

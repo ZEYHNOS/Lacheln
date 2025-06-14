@@ -8,6 +8,7 @@ import aba3.lucid.domain.company.dto.CompanyResponse;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import aba3.lucid.domain.company.repository.CompanyRepository;
+import aba3.lucid.domain.user.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,7 +83,20 @@ public class CompanyService {
         }
         return companyResponseList;
     }
+    public Page<CompanyEntity> findAll(Pageable page) {
+        return companyRepository.findAll(page);
+    }
 
+    public long getTodayNewCompanyCount() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(23, 59, 59);
 
+        return companyRepository.countByCompanyJoinDateBetween(startOfDay, endOfDay);
+    }
 
+    // 월별 가입자 수 (기존 메서드 활용)
+    public List<Object[]> getMonthlyJoinCount() {
+        return companyRepository.countMonthlyJoin();
+    }
 }

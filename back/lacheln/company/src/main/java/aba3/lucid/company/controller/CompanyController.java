@@ -6,13 +6,10 @@ import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.company.business.CompanyBusiness;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.dto.*;
-import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,14 +96,27 @@ public class CompanyController {
         return user.getCompanyId();
     }
 
-    @GetMapping("/allMembers")
+    @GetMapping("/all/{pages}")
     @Operation(summary = "회원 정버를 가져오기")
-    public List<CompanyResponse> getMembers (
-            @PageableDefault(size =20)Pageable pageable
+    public API<CompanyAllResponse<CompanyResponse>> getAllCompanyMembers (
+            @PathVariable Integer pages
 
             ) {
-        return  companyService.findAllCompanies(pageable);
+        return companyBusiness.getAllCompanies(pages);
     }
+
+//    @GetMapping("/all/{page}")
+//    @Operation(summary = "회원 정버를 가져오기")
+//    public API<CompanyAllResponse<CompanyResponse>> getAllCompanyMembers (
+//            @PathVariable Integer page
+//    ) {
+//        CompanyAllResponse<CompanyResponse> responses = companyBusiness.getAllCompanies(page);
+//        log.debug("CompanyAllResponse(실제 타입): {}", responses.getClass());
+//        log.debug("CompanyAllResponse(내용): {}", responses);
+//        API<CompanyAllResponse<CompanyResponse>> apiResult = API.OK(responses);
+//        log.debug("API 결과(내용): {}", apiResult);
+//        return apiResult;
+//    }
 
     @PutMapping("/password/change")
     public API<CompanyPasswordUpdateResponse> newPassword (
@@ -124,6 +134,28 @@ public class CompanyController {
        CompanyUpdateResponse response = companyBusiness.getUrlList(customUserDetails.getCompanyId());
        return API.OK(response);
     }
+
+    @GetMapping("/today_new_members")
+    public API<DashboardResponse> getTodayNewMembers() {
+        long newCompanies = companyBusiness.getTodayNewCompanyCount().getData();
+
+        DashboardResponse response = DashboardResponse.builder()
+                .newCompanies(newCompanies)
+                .totalNewMembers(newCompanies)
+                .build();
+
+        return API.OK(response);
+    }
+
+    @GetMapping("/month_members")
+    public API<List<Object[]>> getMonthMembers () {
+        return companyBusiness.getMonthlyJoinStats();
+    }
+
+//    @GetMapping("/today-reports")
+//    public API<Long> getTodayReports() {
+//        return reportBusiness.getTodayReportCount(); // Report 구현 필요
+//    }
 
 
 }

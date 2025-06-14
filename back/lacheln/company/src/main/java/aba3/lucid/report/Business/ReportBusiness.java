@@ -187,6 +187,13 @@ public class ReportBusiness {
 
     }
 
+    public API<Long> getTodayNewReport(){
+        long count = reportService.getTodayReportCount();
+        return API.OK(count);
+    }
+
+
+
 
 
 }

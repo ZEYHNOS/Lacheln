@@ -153,4 +153,15 @@ public class UserBusiness {
 
         return API.OK(responses);
     }
+
+
+
+    public long getTodayNewUserCount() {
+        return userService.getTodayNewUserCount();
+    }
+
+    // 월별 가입자 수 조회 - API 래퍼 제거
+    public List<Object[]> getMonthlyJoinStats() {
+        return userService.getMonthlyJoinCount();
+    }
 }

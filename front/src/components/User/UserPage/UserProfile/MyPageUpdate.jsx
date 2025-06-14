@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import apiClient from '../../../../lib/apiClient';
 
-const baseUrl = 'http://localhost:5050';
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // 국가 및 언어 설정
 const COUNTRY_OPTIONS = [

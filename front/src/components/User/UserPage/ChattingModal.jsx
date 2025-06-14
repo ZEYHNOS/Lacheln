@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function ChatRoomModal({ companyId, onClose }) {
   const [messages, setMessages] = useState([]);
   const [sender, setSender] = useState({});
@@ -30,7 +32,7 @@ export default function ChatRoomModal({ companyId, onClose }) {
   const joinRoom = async (companyId) => {
     const isUserSender = true;
 
-    const msgRes = await fetch(`http://localhost:5050/chatroom/addroom/${companyId}`, {
+    const msgRes = await fetch(`${baseUrl}/chatroom/addroom/${companyId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include"
@@ -55,7 +57,7 @@ export default function ChatRoomModal({ companyId, onClose }) {
 
     setMessages(roomData.messages || []);
 
-    const socket = new SockJS("http://localhost:5050/ws/chat");
+    const socket = new SockJS(`${baseUrl}/ws/chat`);
     const client = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../../../lib/apiClient';
 
-const baseUrl = 'http://localhost:5050';
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const UserVerifyPage = () => {
   const [password, setPassword] = useState('');

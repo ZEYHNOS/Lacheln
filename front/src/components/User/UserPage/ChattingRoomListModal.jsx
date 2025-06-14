@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ChatRoomModal from "./ChatRoomModal";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function ChatRoomListModal({ showModal, onClose }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -11,7 +13,7 @@ export default function ChatRoomListModal({ showModal, onClose }) {
 
   const loadChatRooms = async () => {
     try {
-      const res = await fetch("http://localhost:5050/chatroom/list", {
+      const res = await fetch(`${baseUrl}/chatroom/list`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include"

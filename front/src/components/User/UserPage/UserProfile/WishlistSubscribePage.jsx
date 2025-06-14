@@ -3,7 +3,7 @@ import { Heart, Store, Trash2, Eye } from 'lucide-react';
 import apiClient from '../../../../lib/apiClient';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-const baseUrl = 'http://localhost:5050'; // Mock base URL
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const WishlistSubscribePage = () => {
   const [userInfo, setUserInfo] = useState({ 

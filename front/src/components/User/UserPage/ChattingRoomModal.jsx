@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function ChattingRoomModal({ showModal, onClose }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [messagesByRoom, setMessagesByRoom] = useState({});
@@ -42,7 +44,7 @@ export default function ChattingRoomModal({ showModal, onClose }) {
 
   const fetchChatRooms = async () => {
     try {
-      const res = await fetch("http://localhost:5050/chatroom/list", {
+      const res = await fetch(`${baseUrl}/chatroom/list`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -61,7 +63,7 @@ export default function ChattingRoomModal({ showModal, onClose }) {
       stompClient.current.deactivate();
     }
 
-    const socket = new SockJS("http://localhost:5050/ws/chat");
+    const socket = new SockJS(`${baseUrl}/ws/chat`);
     const client = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
@@ -119,7 +121,7 @@ export default function ChattingRoomModal({ showModal, onClose }) {
     if (!messagesByRoom[roomId]) {
       try {
         const res = await fetch(
-          `http://localhost:5050/chatroom/messages/${roomId}`,
+          `${baseUrl}/chatroom/messages/${roomId}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },

@@ -4,7 +4,7 @@ import apiClient from "../../../../lib/apiClient";
 import ReviewModal from '../../UserPage/review';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
-const baseImageUrl = 'http://localhost:5050';
+const baseImageUrl = import.meta.env.VITE_API_BASE_URL;
 
 const PaymentAndReview = () => {
   const [userInfo, setUserInfo] = useState({ userId: "", name: "", nickname: "", email: "", phone: "", tier: "", notification: "", gender: "", mileage: 0, language: "", currency: "", profileImageUrl: "" });

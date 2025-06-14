@@ -75,7 +75,8 @@ public class UserConvertor {
                 .nickname(user.getUserNickName())
                 .notification(user.getUserAdsNotification())
                 .language(user.getUserLanguage())
-                .profileImageUrl(user.getUserProfile())
+                .image(user.getUserProfile())
+                .social(user.getUserSocial())
                 .build();
     }
 

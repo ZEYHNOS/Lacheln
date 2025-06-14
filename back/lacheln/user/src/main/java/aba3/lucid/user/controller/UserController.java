@@ -3,8 +3,8 @@ package aba3.lucid.user.controller;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.auth.CustomUserDetails;
-import aba3.lucid.domain.company.dto.DashboardResponse;
 import aba3.lucid.domain.user.dto.*;
+import aba3.lucid.image.UserImageService;
 import aba3.lucid.user.business.UserBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +17,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.Principal;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserBusiness userBusiness;
+    private final UserImageService userImageService;
 
     // 유저 회원가입 컨트롤러
     @PostMapping("/signup")
@@ -45,8 +48,9 @@ public class UserController {
     @PutMapping("/update")
     @Operation(summary = "소비자 갱신", description = "소비자 정보를 수정합니다.")
     public API<UserUpdateResponse> updateUser(
+            @AuthenticationPrincipal CustomUserDetails user,
             @RequestBody UserUpdateRequest userUpdateRequest)   {
-        return userBusiness.update(userUpdateRequest);
+        return userBusiness.update(userUpdateRequest, user);
     }
 
     // 유저 프로필 조회
@@ -106,5 +110,15 @@ public class UserController {
     public API<List<Object[]>> getMonthUsers() {
         List<Object[]> stats = userBusiness.getMonthlyJoinStats();
         return API.OK(stats);
+    }
+
+    // 이미지 업로드
+    @PostMapping("/image")
+    public API<String> profileImage(
+            @RequestParam("image") MultipartFile image,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) throws IOException {
+        String response = userImageService.profileImageUpload(image, user.getUserId(), ImageType.PROFILE);
+        return API.OK(response);
     }
 }

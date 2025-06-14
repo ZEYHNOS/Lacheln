@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -17,6 +18,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Slf4j
 @Entity
 @Getter
 @Table(name="users")
@@ -118,9 +120,6 @@ public class UsersEntity {
 
     // 연락처 변경
     public void updatePhone(String newPhone)    {
-        if(newPhone == null) {
-            throw new ApiException(UserCode.CANNOT_FIND_DATA, "연락처를 입력해주세요.");
-        }
         this.userPhone = newPhone;
     }
 
@@ -140,22 +139,51 @@ public class UsersEntity {
         this.userCurrency = newCurrency;
     }
 
-    // 푸쉬알람여부 변경
+    // 푸쉬 알람 여부 변경
     public void updateAdsNotification(NotificationEnum newAdsNotification) {
+
         if(newAdsNotification == null) {
-            throw new ApiException(UserCode.CANNOT_FIND_DATA, "");
+            throw new ApiException(UserCode.CANNOT_FIND_DATA, "푸쉬 알람 여부가 null 입니다.");
         }
         this.userAdsNotification = newAdsNotification;
     }
 
+    public void updateProfileImage(String newProfileImage) {
+        if(newProfileImage == null) {
+            this.userProfile = "default.jpg";
+            return;
+        }
+        this.userProfile = newProfileImage;
+    }
+
+    public void updateUserName(String newUserName) {
+        if(newUserName == null) {
+            throw new ApiException(UserCode.CANNOT_FIND_DATA, "이름은 필수 입력 사항입니다.");
+        }
+        this.userName = newUserName;
+    }
+
+    public void updateGender(GenderEnum newGender) {
+        if(newGender == null) {
+            throw new ApiException(UserCode.CANNOT_FIND_DATA, "성별을 필수 입력사항 입니다.");
+        }
+        this.userGender = newGender;
+    }
+
     // 유저정보 업데이트
     public void updateUser(UserUpdateRequest userUpdateRequest, BCryptPasswordEncoder bCryptPasswordEncoder)    {
-        updatePassword(bCryptPasswordEncoder.encode(userUpdateRequest.getPassword()));
+        log.info("UserUpdateRequest: {}", userUpdateRequest.getGender());
+        if(userUpdateRequest.getPassword().equals("NULL")) {
+            updatePassword(bCryptPasswordEncoder.encode(userUpdateRequest.getPassword()));
+        }
+        updateUserName(userUpdateRequest.getName());
         updateNickName(userUpdateRequest.getNickname());
         updatePhone(userUpdateRequest.getPhone());
         updateLanguage(userUpdateRequest.getLanguage());
         updateCurrency(userUpdateRequest.getCurrency());
-        updateAdsNotification(userUpdateRequest.getAdsNotification());
+        updateAdsNotification(userUpdateRequest.getNotification());
+        updateProfileImage(userUpdateRequest.getImage());
+        updateGender(userUpdateRequest.getGender());
     }
 
     /*

@@ -1,5 +1,6 @@
 package aba3.lucid.domain.user.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

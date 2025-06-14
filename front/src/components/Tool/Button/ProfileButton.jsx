@@ -30,7 +30,18 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
     };
 
     const handleReview = () => {
+        onClick();
         navigate("/user/review");
+    }
+
+    const handleSubscribe = () => {
+        onClick();
+        navigate("/user/wishsub");
+    }
+
+    const handleCoupons = () => {
+        onClick();
+        navigate("/user/coupons");
     }
 
     const handleLogout = async () => {
@@ -95,8 +106,8 @@ export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout 
                             <ul className="text-black text-sm">
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleMyPage}>😊 내 정보</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleReview}>📦 주문 & 리뷰</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">❤️ 구독내역</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">🎟 내 쿠폰</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleSubscribe}>❤️ 구독내역</li>
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={handleCoupons}>🎟 내 쿠폰</li>
                                 <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={openMessageModal}>
                                     📩 내 메시지
                                 </li>

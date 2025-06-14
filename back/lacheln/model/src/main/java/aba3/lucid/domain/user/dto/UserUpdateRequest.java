@@ -1,6 +1,7 @@
 package aba3.lucid.domain.user.dto;
 
 import aba3.lucid.domain.user.enums.CurrencyEnum;
+import aba3.lucid.domain.user.enums.GenderEnum;
 import aba3.lucid.domain.user.enums.LanguageEnum;
 import aba3.lucid.domain.user.enums.NotificationEnum;
 import jakarta.validation.constraints.NotBlank;
@@ -17,8 +18,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserUpdateRequest {
 
-    @NotBlank(message = "비밀번호는 필수 입력값 입니다")
-    @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하로 입력해야 합니다.")
+    private String name;
+
     private String password;
 
     @NotBlank(message = "닉네임은 필수 입력값 입니다.")
@@ -32,5 +33,9 @@ public class UserUpdateRequest {
 
     private CurrencyEnum currency;
 
-    private NotificationEnum adsNotification;
+    private String image;
+
+    private NotificationEnum notification;
+
+    private GenderEnum gender;
 }

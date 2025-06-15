@@ -76,21 +76,30 @@ function Modifyinfo() {
             {/* 상단 탭 버튼 */}
             <div className="flex space-x-4 items-center px-2 pt-2 bg-white">
                 <button
-                    className={`${tabBtn} ${tab === "profile" ? tabBtnActive : tabBtnInactive}`}
+                    className={`px-4 py-2 rounded-none bg-transparent border-none shadow-none outline-none
+                        ${tab === "profile" ? "text-purple-700 font-bold" : "text-purple-300"}
+                        hover:bg-transparent focus:outline-none focus:ring-0 active:outline-none active:ring-0 focus-visible:outline-none focus-visible:ring-0`}
+                    style={{ border: 'none', boxShadow: 'none' }}
                     onClick={() => setTab("profile")}
                     tabIndex={0}
                 >
                     프로필설정
                 </button>
                 <button
-                    className={`${tabBtn} ${tab === "security" ? tabBtnActive : tabBtnInactive}`}
+                    className={`px-4 py-2 rounded-none bg-transparent border-none shadow-none outline-none
+                        ${tab === "security" ? "text-purple-700 font-bold" : "text-purple-300"}
+                        hover:bg-transparent focus:outline-none focus:ring-0 active:outline-none active:ring-0 focus-visible:outline-none focus-visible:ring-0`}
+                    style={{ border: 'none', boxShadow: 'none' }}
                     onClick={() => setTab("security")}
                     tabIndex={0}
                 >
                     비밀번호변경
                 </button>
                 <button
-                    className={`${tabBtn} ${tab === "work" ? tabBtnActive : tabBtnInactive}`}
+                    className={`px-4 py-2 rounded-none bg-transparent border-none shadow-none outline-none
+                        ${tab === "work" ? "text-purple-700 font-bold" : "text-purple-300"}
+                        hover:bg-transparent focus:outline-none focus:ring-0 active:outline-none active:ring-0 focus-visible:outline-none focus-visible:ring-0`}
+                    style={{ border: 'none', boxShadow: 'none' }}
                     onClick={() => setTab("work")}
                     tabIndex={0}
                 >

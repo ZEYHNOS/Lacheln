@@ -93,7 +93,15 @@ function Review() {
                                 <div>
                                     <h3 className="font-semibold text-black">{review.nickname} 님의 리뷰!</h3>
                                     <p className="text-sm text-gray-500">
-                                        {new Date(...review.createdAt).toLocaleDateString()}
+                                        {new Date(
+                                            review.createdAt[0],
+                                            review.createdAt[1] - 1,
+                                            review.createdAt[2],
+                                            review.createdAt[3] || 0,
+                                            review.createdAt[4] || 0,
+                                            review.createdAt[5] || 0,
+                                            review.createdAt[6] || 0
+                                        ).toLocaleDateString()}
                                     </p>
                                     <p className="text-sm text-gray-600 mt-1">
                                         상품: {review.productName}

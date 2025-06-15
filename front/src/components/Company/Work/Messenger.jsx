@@ -189,10 +189,16 @@ export default function Chatting() {
     <div className="flex w-full h-full">
       {/* 채팅방 목록 - 스크롤바 스타일 개선 */}
       <div className="w-[500px] border-r p-4 flex flex-col">
-        <h2 className="text-xl font-bold mb-4 text-pp">채팅방 목록</h2>
-        <button onClick={fetchChatRooms} className="w-full mb-4 px-3 py-1 bg-purple-300 text-white rounded hover:bg-purple-400">
-          새로고침
-        </button>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-pp">채팅방 목록</h2>
+          <button onClick={fetchChatRooms} className="p-2 bg-purple-300 text-white rounded hover:bg-purple-400 flex items-center justify-center" aria-label="새로고침">
+            <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <path d="M21 2v6h-6" />
+              <path d="M3 12a9 9 0 0 1 15-7.7L21 8" />
+              <path d="M3 12a9 9 0 0 0 15 7.7L21 16" />
+            </svg>
+          </button>
+        </div>
         <div className="flex-1 overflow-y-scroll space-y-2" style={{
           scrollbarWidth: 'thin',
           scrollbarColor: '#a78bfa #f3f4f6'

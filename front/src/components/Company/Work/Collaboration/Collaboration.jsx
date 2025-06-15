@@ -114,19 +114,17 @@ function Collaboration() {
                         패키지 추가
                     </button>
                 </div>
-                {/* absolute 밑줄 */}
-                <div className="absolute left-0 right-0 border-b border-purple-300" style={{top: '44px', height: 0}} />
             </div>
 
             {/* 탭 내용 */}
             {currentTab === 'product' ? (
-                <div className="grid grid-cols-5 gap-4">
+                <div className="grid grid-cols-7 gap-2">
                     {packages.filter(item => item.status === 'ACTIVE' || item.status === 'INACTIVE').map((item, i) => {
                         const { originalPrice, discountedPrice } = calculateDiscountedPrice(item);
                         return (
                             <div
                                 key={i}
-                                className="text-center border p-2 rounded bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                                className="text-center border max-w-[250px] p-2 rounded bg-white shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                                 onClick={() => navigate(`/company/collaboration/package/${item.packageId || item.id}`)}
                             >
                                 <img
@@ -177,10 +175,10 @@ function Collaboration() {
                             {myCategory !== 'S' && (
                                 <div>
                                     <h3 className="text-xl font-semibold text-purple-700 mb-4">스튜디오</h3>
-                                    <div className="grid grid-cols-5 gap-4">
+                                    <div className="grid grid-cols-7 gap-2">
                                         {getUniqueCompaniesByCategory('S').length > 0 ? (
                                             getUniqueCompaniesByCategory('S').map((studio, i) => (
-                                                <div key={studio.id} className="text-center border p-2 rounded">
+                                                <div key={studio.id} className="text-center border max-w-[250px] p-2 rounded">
                                                     <img
                                                         src={studio.profileImageUrl ? `${baseUrl}${studio.profileImageUrl.replace(/\\/g, '/')}` : '/default/images/company.png'}
                                                         className="w-full aspect-[3/4] object-cover rounded-md mb-2"
@@ -192,7 +190,7 @@ function Collaboration() {
                                                 </div>
                                             ))
                                         ) : (
-                                            <div className="col-span-5 text-center text-gray-400 py-12">협업 중인 스튜디오가 없습니다.</div>
+                                            <div className="col-span-7 text-center text-gray-400 py-12">협업 중인 스튜디오가 없습니다.</div>
                                         )}
                                     </div>
                                 </div>
@@ -202,10 +200,10 @@ function Collaboration() {
                             {myCategory !== 'D' && (
                                 <div>
                                     <h3 className="text-xl font-semibold text-purple-700 mb-4">드레스</h3>
-                                    <div className="grid grid-cols-5 gap-4">
+                                    <div className="grid grid-cols-7 gap-2">
                                         {getUniqueCompaniesByCategory('D').length > 0 ? (
                                             getUniqueCompaniesByCategory('D').map((dress, i) => (
-                                                <div key={dress.id} className="text-center border p-2 rounded">
+                                                <div key={dress.id} className="text-center border max-w-[250px] p-2 rounded">
                                                     <img
                                                         src={dress.profileImageUrl ? `${baseUrl}${dress.profileImageUrl.replace(/\\/g, '/')}` : '/default/images/company.png'}
                                                         className="w-full aspect-[3/4] object-cover rounded-md mb-2"
@@ -217,7 +215,7 @@ function Collaboration() {
                                                 </div>
                                             ))
                                         ) : (
-                                            <div className="col-span-5 text-center text-gray-400 py-12">협업 중인 드레스 업체가 없습니다.</div>
+                                            <div className="col-span-7 text-center text-gray-400 py-12">협업 중인 드레스 업체가 없습니다.</div>
                                         )}
                                     </div>
                                 </div>
@@ -227,10 +225,10 @@ function Collaboration() {
                             {myCategory !== 'M' && (
                                 <div>
                                     <h3 className="text-xl font-semibold text-purple-700 mb-4">메이크업</h3>
-                                    <div className="grid grid-cols-5 gap-4">
+                                    <div className="grid grid-cols-7 gap-2">
                                         {getUniqueCompaniesByCategory('M').length > 0 ? (
                                             getUniqueCompaniesByCategory('M').map((makeup, i) => (
-                                                <div key={makeup.id} className="text-center border p-2 rounded">
+                                                <div key={makeup.id} className="text-center border max-w-[250px] p-2 rounded">
                                                     <img
                                                         src={makeup.profileImageUrl ? `${baseUrl}${makeup.profileImageUrl.replace(/\\/g, '/')}` : '/default/images/company.png'}
                                                         className="w-full aspect-[3/4] object-cover rounded-md mb-2"
@@ -242,7 +240,7 @@ function Collaboration() {
                                                 </div>
                                             ))
                                         ) : (
-                                            <div className="col-span-5 text-center text-gray-400 py-12">협업 중인 메이크업 업체가 없습니다.</div>
+                                            <div className="col-span-7 text-center text-gray-400 py-12">협업 중인 메이크업 업체가 없습니다.</div>
                                         )}
                                     </div>
                                 </div>

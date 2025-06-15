@@ -22,7 +22,7 @@ function ProfileModify({
             const formData = new FormData();
             formData.append("images", pendingImageFile);
             try {
-                const res = await apiClient.post("/company/profile/upload", formData, {
+                const res = await apiClient.post("/product/image/upload", formData, {
                     headers: { "Content-Type": "multipart/form-data" }
                 });
                 if (res.data?.data?.[0]) {
@@ -36,7 +36,7 @@ function ProfileModify({
         }
 
         try {
-            await apiClient.patch(`/company/info/${company.id}`, {
+            await apiClient.put(`/company/info/${company.id}`, {
                 address: company.address,
                 profileImageUrl: imageUrl
             });
@@ -48,7 +48,7 @@ function ProfileModify({
     };
 
     return (
-        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow p-8 flex gap-8">
+        <div className="max-w-4xl mx-auto bg-white rounded-lg p-8 flex gap-8">
             {/* 왼쪽: 이미지 업로드/미리보기 */}
             <div className="w-1/3 flex flex-col items-center">
                 <div className="border rounded-lg overflow-hidden bg-gray-100 w-full h-96 aspect-[3/4] flex items-center justify-center">

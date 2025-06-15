@@ -39,7 +39,7 @@ function OfficehoursModify({ onCancel, onSubmit }) {
     };
 
     return (
-        <div className="max-w-2xl mx-auto bg-white rounded-lg p-8 shadow">
+        <div className="max-w-2xl mx-auto bg-white rounded-lg p-8">
             <h1 className="text-2xl font-bold mb-1 text-black">업무시간 설정</h1>
             <p className="mb-6 text-sm text-gray-500">업무시간 설정 및 휴무일을 관리할 수 있습니다.</p>
             <div className="space-y-3">

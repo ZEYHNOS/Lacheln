@@ -56,20 +56,23 @@ function Product() {
                 {/* 상품 카테고리 필터 버튼 */}
                 <div className="flex justify-between mb-4 bg-white p-2 rounded-md">
                     <div>
-                        {["전체보기", "개별상품", "패키지상품"].map((category) => (
-                            <button
-                                key={category}
-                                className={`category-btn px-4 py-2 rounded-md transition-colors duration-200 bg-transparent 
-                                    ${selected === category ? "text-[#845EC2] font-bold border border-[#845EC2]" : "text-[#B39CD0]"}
-                                    focus:ring-0 focus:outline-none`}
-                                onClick={() => {
-                                    setSelected(category);
-                                    setCurrentPage(1); 
-                                }}
-                            >
-                                {category}
-                            </button>
-                        ))}
+                        <div className="flex space-x-4">
+                            {['전체보기', '개별상품', '패키지상품'].map((category) => (
+                                <button
+                                    key={category}
+                                    className={`px-4 py-2 rounded-none bg-transparent border-none shadow-none outline-none
+                                        ${selected === category ? 'text-purple-700 font-bold' : 'text-purple-300'}
+                                        hover:bg-transparent focus:outline-none focus:ring-0 active:outline-none active:ring-0 focus-visible:outline-none focus-visible:ring-0`}
+                                    style={{ border: 'none', boxShadow: 'none' }}
+                                    onClick={() => {
+                                        setSelected(category);
+                                        setCurrentPage(1);
+                                    }}
+                                >
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                     <button
                         className="bg-[#845EC2] text-white px-8 py-2 rounded hover:bg-purple-500 transition-colors duration-200"
@@ -80,14 +83,14 @@ function Product() {
                 </div>
 
                 {/* 상품 리스트 */}
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse border border-gray-300">
+                <div className="overflow-x-auto min-h-[400px]">
+                    <table className="w-full border-collapse border border-gray-300 table-fixed">
                         <thead>
                             <tr className="bg-gray-100 text-center">
-                                <th className="border border-gray-300 p-2">이미지</th>
-                                <th className="border border-gray-300 p-2">상품명</th>
-                                <th className="border border-gray-300 p-2">상태</th>
-                                <th className="border border-gray-300 p-2">가격</th>
+                                <th className="border border-gray-300 p-2" style={{width: '20%'}}>이미지</th>
+                                <th className="border border-gray-300 p-2" style={{width: '40%'}}>상품명</th>
+                                <th className="border border-gray-300 p-2" style={{width: '20%'}}>상태</th>
+                                <th className="border border-gray-300 p-2" style={{width: '20%'}}>가격</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -97,17 +100,17 @@ function Product() {
                                     className="text-center cursor-pointer hover:bg-gray-100 transition-colors duration-200"
                                     onClick={() => navigate(`/company/product/${product.productId}`)}
                                 >
-                                    <td className="border border-gray-300 p-2">
-                                    <img 
-                                        src={product.imageUrl ? `${baseUrl}${product.imageUrl.replace(/\\/g, '/')}` : '/default/images/product.png'} 
-                                        alt="상품 이미지" 
-                                        className="mx-auto w-12 h-12 object-cover rounded"
-                                        onError={e => e.currentTarget.src = '/default/images/product.png'}
-                                    />
+                                    <td className="border border-gray-300 p-2" style={{width: '20%'}}>
+                                        <img 
+                                            src={product.imageUrl ? `${baseUrl}${product.imageUrl.replace(/\\/g, '/')}` : '/default/images/product.png'} 
+                                            alt="상품 이미지" 
+                                            className="mx-auto w-12 h-12 object-cover rounded"
+                                            onError={e => e.currentTarget.src = '/default/images/product.png'}
+                                        />
                                     </td>
-                                    <td className="border border-gray-300 p-2">{product.productName}</td>
-                                    <td className="border border-gray-300 p-2">{product.status ? (product.status === "ACTIVE" ? "판매중" : product.status === "INACTIVE" ? "판매 대기중" : product.status === "PACKAGE" ? "패키지상품 판매중" : product.status) : "-"}</td>
-                                    <td className="border border-gray-300 p-2">{product.price.toLocaleString()}￦</td>
+                                    <td className="border border-gray-300 p-2" style={{width: '40%'}}>{product.productName}</td>
+                                    <td className="border border-gray-300 p-2" style={{width: '20%'}}>{product.status ? (product.status === "ACTIVE" ? "판매중" : product.status === "INACTIVE" ? "판매 대기중" : product.status === "PACKAGE" ? "패키지상품 판매중" : product.status) : "-"}</td>
+                                    <td className="border border-gray-300 p-2" style={{width: '20%'}}>{product.price.toLocaleString()}￦</td>
                                 </tr>
                             ))}
                         </tbody>

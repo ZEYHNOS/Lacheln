@@ -6,7 +6,7 @@ function PasswordModify({ onCancel, onSubmit }) {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     return (
-        <div className="max-w-md mx-auto bg-white rounded-lg p-8 shadow">
+        <div className="max-w-md mx-auto bg-white rounded-lg p-8">
             <h1 className="text-2xl font-bold mb-2 text-black">비밀번호 변경</h1>
             <p className="mb-1 text-sm">
                 <span className="text-[#845EC2] cursor-pointer">안전한 비밀번호로 내정보를 보호</span>하세요

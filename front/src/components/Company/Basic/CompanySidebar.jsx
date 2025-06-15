@@ -73,7 +73,7 @@ function CompanySidebar() {
                                         key={item.path}
                                         to={`${BASE_PATH}/${item.path}`}
                                         className={`flex items-center text-pp cursor-pointer rounded-md transition-all 
-                                        ${isActive ? "bg-green-200 text-pp font-bold" : "hover:text-blue-600"}`}
+                                        ${isActive ? "bg-purple-200 text-pp font-bold" : "hover:text-blue-600"}`}
                                     >
                                         <img src={item.icon} alt={item.label} className="w-7 h-7 mr-2" />
                                         {item.label}

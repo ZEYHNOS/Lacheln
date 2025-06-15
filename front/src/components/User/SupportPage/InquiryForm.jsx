@@ -7,7 +7,6 @@ import { FaPaperPlane } from "react-icons/fa";
 function InquiryForm() {
     const menuItems = [
         { label: "고객지원", path: "/support" },
-        { label: "상담신청", path: "/consult" },
         { label: "챗봇", path: "/chatbot" },
         { label: "건의함", path: "/suggestion" },
     ];

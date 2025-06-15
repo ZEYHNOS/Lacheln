@@ -26,7 +26,6 @@ function Chatbot() {
     const [error, setError] = useState(null);
     const [parentId, setParentId] = useState(null);
 
-
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === "Escape") {
@@ -261,6 +260,17 @@ function Chatbot() {
 
                                     {/* 메시지 영역 */}
                                     <div className="flex-1 overflow-y-auto px-4 py-2 pb-28 flex flex-col gap-2">
+                                        {loading && (
+                                            <div className="text-center text-gray-500 italic mb-2">
+                                                로딩 중입니다...
+                                            </div>
+                                        )}
+
+                                        {error && (
+                                            <div className="text-center text-red-600 font-semibold mb-2">
+                                                {error}
+                                            </div>
+                                        )}
                                         {messages.map((msg, idx) => (
                                             <div
                                                 key={idx}

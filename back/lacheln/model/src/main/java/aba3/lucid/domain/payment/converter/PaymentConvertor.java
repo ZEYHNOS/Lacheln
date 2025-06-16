@@ -10,6 +10,8 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +27,7 @@ public class PaymentConvertor {
                 .user(user)
                 .payTool(request.getPayTool())
                 .payTotalPrice(request.getPayTotalPrice())
-                .payDcPrice(request.getPayDcPrice())
+                .payDcPrice(BigDecimal.ZERO)
                 .payStatus(request.getPayStatus())
                 .payMileage(request.getPayMileage())
                 .payImpUid(request.getPayImpUid())

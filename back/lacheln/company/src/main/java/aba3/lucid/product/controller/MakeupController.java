@@ -7,6 +7,7 @@ import aba3.lucid.domain.product.makeup.dto.MakeupRequest;
 import aba3.lucid.product.business.MakeupBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,12 +25,10 @@ public class MakeupController {
     @PostMapping("/register")
     @Operation(summary = "메이크업 등록", description = "새로운 메이크업 상품을 등록")
     public API<MakeUpResponse> registerMakeup(
-            @RequestBody MakeupRequest req,
+            @Valid @RequestBody MakeupRequest req,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         MakeUpResponse res = makeupBusiness.registerProduct(customUserDetails.getCompanyId(), req);
-        log.debug("Register MakeupResponse : {}", res);
-
         return API.OK(res);
     }
 
@@ -37,12 +36,10 @@ public class MakeupController {
     @Operation(summary = "메이크업 수정", description = "메이크업 엔터티 수정")
     public API<MakeUpResponse> updateMakeup(
             @PathVariable Long productId,
-            @RequestBody MakeupRequest request,
+            @Valid @RequestBody MakeupRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         MakeUpResponse response = makeupBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
-        log.debug("Update MakeupResponse : {}", response);
-
         return API.OK(response);
     }
 
@@ -62,7 +59,6 @@ public class MakeupController {
             @PathVariable Long productId
     ) {
         MakeUpResponse makeUpResponse = makeupBusiness.getProductDetailInfo(productId);
-
         return API.OK(makeUpResponse);
     }
 }

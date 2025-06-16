@@ -26,7 +26,7 @@ public enum AlertType {
     REVIEW(
             "REVIEW",
             "%s님이 리뷰를 작성하셨습니다.",
-            "/review 주소 어디인가요/%s")
+            "/company/review")
 
 
 

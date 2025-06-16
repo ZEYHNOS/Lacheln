@@ -10,6 +10,7 @@ import aba3.lucid.domain.product.enums.ProductStatus;
 import aba3.lucid.product.business.ProductBusiness;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -65,7 +66,7 @@ public class ProductController {
     @PostMapping("/status")
     @Operation(summary = "상품 상태 변경")
     public API<String> updateStatus(
-            @RequestBody ProductStatusUpdateRequest request,
+            @Valid @RequestBody ProductStatusUpdateRequest request,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         productBusiness.updateStatus(user.getCompanyId(), request);
@@ -96,5 +97,14 @@ public class ProductController {
     public API<List<PopularResponse>> getPopularProductList() {
         List<PopularResponse> result = productBusiness.getPopularList();
         return API.OK(result);
+    }
+
+
+    @DeleteMapping("/{opId}")
+    public void deleteOption(
+            @PathVariable Long opId,
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        productBusiness.deleteOption(opId, user.getCompanyId());
     }
 }

@@ -20,6 +20,7 @@ import aba3.lucid.domain.product.dto.ProductSearchRecord;
 import aba3.lucid.domain.product.dto.ProductSnapshot;
 import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
+import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.PopularEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.enums.ProductStatus;
@@ -139,4 +140,10 @@ public class ProductBusiness {
         return productService.getPopularProductList();
     }
 
+    public void deleteOption(Long opId, Long companyId) {
+        CompanyEntity company = companyService.findByIdWithThrow(companyId);
+        OptionEntity option = productService.findByOptionIdWithThrow(opId);
+
+        productService.deleteOption(company, option);
+    }
 }

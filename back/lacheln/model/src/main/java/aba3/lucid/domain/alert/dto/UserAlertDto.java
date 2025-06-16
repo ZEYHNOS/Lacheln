@@ -35,7 +35,7 @@ public class UserAlertDto {
                 .content("리뷰 답글이 작성되었습니다.")
                 .sentTime(LocalDateTime.now())
                 .isRead(BinaryChoice.N)
-                .accessUrl("어디로 가나유?")
+                .accessUrl("/user/review")
                 .build()
                 ;
     }
@@ -45,7 +45,7 @@ public class UserAlertDto {
                 .title("Tier Up")
                 .content("티어가 올라갔습니다.")
                 .sentTime(LocalDateTime.now())
-                .accessUrl("어디 감?")
+                .accessUrl("/user")
                 .isRead(BinaryChoice.N)
                 .build()
                 ;

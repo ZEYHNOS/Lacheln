@@ -41,7 +41,7 @@ export default function Support() {
     { label: "고객지원", path: "/support" },
     { label: "챗봇", path: "/chatbot" },
     { label: "건의함", path: "/suggestion" },
-    { label: "신고", path: "/report" }
+    { label: "신고", path: "/report" },
   ];
 
   return (
@@ -53,15 +53,15 @@ export default function Support() {
             key={item.label}
             className="flex-1 text-center h-[60px] border-r last:border-r-0 border-[#e1c2ff33]"
           >
-          <Link
-            to={item.path}
-            className={`flex items-center justify-center w-full h-full text-[18px] font-semibold
+            <Link
+              to={item.path}
+              className={`flex items-center justify-center w-full h-full text-[18px] font-semibold
               ${item.label === "고객지원" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]"}
               ${item.label === "신고" ? "bg-black-100 text-black-500" : ""}
               hover:bg-[#E2C5EE] hover:text-black`}
-          >
-            {item.label}
-          </Link>
+            >
+              {item.label}
+            </Link>
           </li>
         ))}
       </ul>

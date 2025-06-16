@@ -206,6 +206,25 @@ function AddProduct() {
                 stock: parseInt(d.stock || 0),
                 plusCost: parseInt(d.extraPrice || 0),
             }));
+            data.optionList = options.slice(1).map((opt) => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                optionDtList: opt.details.map((dt) => {
+                    // 분을 시간 형식으로 변환 (예: 30분 -> 00:30:00)
+                    const minutes = parseInt(dt.extraTime || 0);
+                    const hours = Math.floor(minutes / 60);
+                    const remainingMinutes = minutes % 60;
+                    const extraTime = `${hours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}:00`;
+                    
+                    return {
+                        opDtName: dt.name,
+                        plusCost: parseInt(dt.extraPrice || 0),
+                        plusTime: extraTime,
+                    };
+                }),
+            }));
         } else if (categoryCode === "S") {
             // 스튜디오 전용 필드
             data.inAvailable = indoor ? "Y" : "N";
@@ -224,35 +243,10 @@ function AddProduct() {
         let postUrl = "";
         if (categoryCode === "D") {
             postUrl = "/product/dress/register";
-            data.optionList = options.slice(1).map((opt) => ({
-                name: opt.title,
-                overlap: opt.isMultiSelect ? "Y" : "N",
-                essential: opt.isRequired ? "Y" : "N",
-                status: "ACTIVE",
-                optionDtList: opt.details.map((dt) => ({
-                    opDtName: dt.name,
-                    plusCost: parseInt(dt.extraPrice || 0),
-                    plusTime: parseInt(dt.extraTime || 0),
-                })),
-            }));
         } else if (categoryCode === "S") {
             postUrl = "/product/studio/register";
         } else if (categoryCode === "M") {
             postUrl = "/product/makeup/register";
-        }
-    
-        if (categoryCode !== "D") {
-            data.optionList = options.map((opt) => ({
-                name: opt.title,
-                overlap: opt.isMultiSelect ? "Y" : "N",
-                essential: opt.isRequired ? "Y" : "N",
-                status: "ACTIVE",
-                optionDtList: opt.details.map((dt) => ({
-                    opDtName: dt.name,
-                    plusCost: parseInt(dt.extraPrice || 0),
-                    plusTime: parseInt(dt.extraTime || 0),
-                    })),
-                }));
         }
     
         try {

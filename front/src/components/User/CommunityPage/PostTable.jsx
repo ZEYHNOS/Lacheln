@@ -25,7 +25,7 @@ const formatDate = (dateArr) => {
 export default function PostTable({ posts }) {
   return (
     <div className="w-full max-w-[1280px] mx-auto px-4">
-      <table className="w-full text-center border border-gray-300 text-sm">
+      <table className="w-full text-center border border-gray-300 text-sm bg-white text-black">
         <thead className="bg-[#845EC2] text-white">
           <tr>
             <th className="p-2 border w-12 text-center">번호</th>
@@ -40,13 +40,13 @@ export default function PostTable({ posts }) {
         <tbody>
           {posts.length === 0 ? (
             <tr>
-              <td colSpan="7" className="p-4 text-gray-500 text-center">
+              <td colSpan="7" className="p-4 text-gray-500 text-center bg-white">
                 게시글이 없습니다.
               </td>
             </tr>
           ) : (
             posts.map((post) => (
-              <tr key={post.postId} className="hover:bg-gray-50 h-8">
+              <tr key={post.postId} className="hover:bg-purple-50 bg-white text-black h-8">
                 <td className="border px-2 py-1 text-center">{post.postId}</td>
                 <td className="border px-2 py-1 text-purple-700 font-semibold text-center">
                   [{getPrefix(post.category)}]
@@ -55,7 +55,7 @@ export default function PostTable({ posts }) {
                   <Link to={`/post/${post.postId}`} className="text-black">
                     {post.postTitle}
                     {typeof post.commentCount === "number" && post.commentCount > 0 && (
-                      <span className="ml-1 text-gray-500">[{post.commentCount}]</span>
+                      <span className="ml-1 text-gray-600">[{post.commentCount}]</span>
                     )}
                   </Link>
                 </td>

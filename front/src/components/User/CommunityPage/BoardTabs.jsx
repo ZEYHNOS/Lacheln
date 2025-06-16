@@ -1,4 +1,3 @@
-// components/User/CommunityPage/BoardTabs.jsx
 import React from "react";
 
 export default function BoardTabs({ boards, selectedBoardId, onSelect }) {
@@ -10,7 +9,7 @@ export default function BoardTabs({ boards, selectedBoardId, onSelect }) {
     `text-sm font-medium py-1 px-3 rounded-full border transition-all ${
       active
         ? "bg-[#845EC2] text-white border-[#845EC2]"
-        : "text-gray-600 border-gray-300 hover:border-[#845EC2] hover:text-[#845EC2]"
+        : "bg-white text-black border-gray-300 hover:border-[#845EC2] hover:text-[#845EC2]"
     }`;
 
   return (

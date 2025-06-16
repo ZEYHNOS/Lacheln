@@ -90,6 +90,8 @@ export default function BoardPage() {
     fetchPosts();
   };
 
+  // 생략된 import 및 상태 선언 등은 그대로 유지
+
   return (
     <div className="p-6">
       <div className="w-full max-w-[1280px] mx-auto px-4">
@@ -129,7 +131,7 @@ export default function BoardPage() {
           <select
             value={searchType}
             onChange={(e) => setSearchType(e.target.value)}
-            className="border px-2 py-1 rounded text-sm"
+            className="border border-gray-300 bg-white text-black px-2 py-1 rounded text-sm"
           >
             <option value="title">제목</option>
             <option value="title_content">제목+내용</option>
@@ -140,11 +142,11 @@ export default function BoardPage() {
             onChange={(e) => setKeyword(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="검색어 입력"
-            className="border px-2 py-1 rounded flex-1 text-sm"
+            className="border border-gray-300 bg-white text-black px-2 py-1 rounded flex-1 text-sm"
           />
           <button
             onClick={handleSearch}
-            className="bg-[#845EC2] text-white px-4 py-1 rounded text-sm"
+            className="bg-[#845EC2] text-white px-4 py-1 rounded text-sm hover:bg-purple-700"
           >
             검색
           </button>

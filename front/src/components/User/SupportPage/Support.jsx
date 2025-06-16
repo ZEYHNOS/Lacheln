@@ -56,9 +56,9 @@ export default function Support() {
             <Link
               to={item.path}
               className={`flex items-center justify-center w-full h-full text-[18px] font-semibold
-              ${item.label === "고객지원" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]"}
+              ${item.label === "고객지원" ? "bg-purple-400 text-white" : "text-black"}
               ${item.label === "신고" ? "bg-black-100 text-black-500" : ""}
-              hover:bg-[#E2C5EE] hover:text-black`}
+              hover:bg-purple-400 hover:text-black`}
             >
               {item.label}
             </Link>
@@ -103,7 +103,7 @@ export default function Support() {
       </div>
 
       {/* 하단 고객센터 안내 */}
-      <div className="w-full border-t-2 border-[#845EC2] bg-[#e1c2ff66] text-center py-5">
+      <div className="w-full border-t-2 border-[#845EC2] bg-purple-400 text-center py-5">
         <div className="text-[20px] font-bold">고객센터 이용안내</div>
         <div className="flex items-center justify-center gap-2 text-[16px] font-bold mt-1">
           <img src={Call} alt="Call Icon" className="w-6 h-6" />

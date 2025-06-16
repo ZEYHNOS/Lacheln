@@ -1,7 +1,7 @@
 // src/components/Report/ReportPage.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Call from "../../image/Support/call.png";
+import Call from "../../../image/Support/call.png";
 import axios from "axios";
 import AsyncSelect from "react-select/async";
 import { useAuth } from "../../../hooks/useAuth";
@@ -27,7 +27,7 @@ export default function ReportPage() {
   const [userId, setUserId] = useState("");
   const [step, setStep] = useState(1);
   const [targetType, setTargetType] = useState("");   // "USER" or "COMPANY"
-  const [reportedId, setReportedId] = useState("");   // the ID you’re reporting
+  const [reportedId, setReportedId] = useState("");   // the ID you're reporting
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -91,7 +91,7 @@ export default function ReportPage() {
   //   const chosen = Array.from(e.target.files || []);
   //   setFiles(chosen);
   //   setImageUrls([]);
-  //   // **use the actor’s ID** in the path, _not_ `reportedId`:
+  //   // **use the actor's ID** in the path, _not_ `reportedId`:
   //   const uploadUrl =
   //     targetType === "USER"
   //       ? `${BASE_URL}/report/company/image/upload`
@@ -189,9 +189,9 @@ export default function ReportPage() {
             <Link
               to={item.path}
               className={`flex items-center justify-center w-full h-full text-[18px] font-semibold
-                              ${item.label === "신고" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]"}
+                              ${item.label === "신고" ? "bg-purple-400 text-white" : "text-black"}
                               ${item.label === "신고" ? "bg-black-100 text-black-500" : ""}
-                              hover:bg-[#E2C5EE] hover:text-black`}
+                              hover:bg-purple-400 hover:text-black`}
             >
               {item.label}
             </Link>
@@ -199,7 +199,7 @@ export default function ReportPage() {
         ))}
       </ul>
 
-      <div className="max-w-lg mx-auto p-6 bg-white rounded shadow-md">
+      <div className="max-w-2xl mx-auto p-6 bg-white rounded shadow-2xl min-h-[600px]">
 
         <h1 className="text-2xl font-bold mb-6">신고하기</h1>
 
@@ -412,7 +412,7 @@ export default function ReportPage() {
         )}
       </div>
       {/* 하단 고객센터 안내 */}
-      <div className="w-full border-t-2 border-[#845EC2] bg-[#e1c2ff66] text-center py-5">
+      <div className="w-full border-t-2 border-[#845EC2] bg-purple-400 text-center py-5">
         <div className="text-[20px] font-bold">고객센터 이용안내</div>
         <div className="flex items-center justify-center gap-2 text-[16px] font-bold mt-1">
           <img src={Call} alt="Call Icon" className="w-6 h-6" />

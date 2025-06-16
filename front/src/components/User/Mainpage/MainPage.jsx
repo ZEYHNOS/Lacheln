@@ -21,6 +21,7 @@ function MainPage() {
     const [current, setCurrent] = useState(0);
     const timeoutRef = useRef(null);
     const [popularProducts, setPopularProducts] = useState([]);
+    const [postList, setPostList] = useState([]);
 
     useEffect(() => {
         // 이미 토스트를 표시했다면 더 이상 실행하지 않음
@@ -75,6 +76,19 @@ function MainPage() {
             });
     }, []);
 
+    useEffect(() => {
+        // 게시글 5개 불러오기
+        apiClient.get("/post/all?page=1&size=5")
+            .then(res => {
+                if (res.data && res.data.data && res.data.data.content) {
+                    setPostList(res.data.data.content);
+                }
+            })
+            .catch(err => {
+                console.error("게시글 불러오기 실패:", err);
+            });
+    }, []);
+
     // 자동 슬라이드
     useEffect(() => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -115,6 +129,32 @@ function MainPage() {
             <div className="w-full max-w-6xl px-8 mt-16 mb-32">
                 <h2 className="text-2xl font-bold mb-6 text-[#845EC2]">인기 상품</h2>
                 <EllipseCarousel items={popularProducts.slice(0, 10)} />
+            </div>
+
+            {/* 리뷰/게시글 리스트 영역 */}
+            <div className="flex gap-8 justify-between w-full my-12 pl-10 pr-10">
+                {/* 리뷰 리스트 */}
+                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2">
+                    <div className="text-[#3CB4AC] text-lg font-semibold my-2">리뷰</div>
+                    <ul className="w-full">
+                        {["리뷰 1", "리뷰 2", "리뷰 3", "리뷰 4", "리뷰 5"].map((review, idx) => (
+                            <li key={idx} className="py-2 px-4 border-b last:border-b-0 text-center">{review}</li>
+                        ))}
+                    </ul>
+                </div>
+                {/* 게시글 리스트 */}
+                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2">
+                    <div className="text-[#3CB4AC] text-lg font-semibold my-2">게시글</div>
+                    <ul className="w-full">
+                        {postList.length === 0
+                            ? [1,2,3,4,5].map(idx => (
+                                <li key={idx} className="py-2 px-4 border-b last:border-b-0 text-center text-gray-400">게시글 없음</li>
+                            ))
+                            : postList.map((post, idx) => (
+                                <li key={post.postId || idx} className="py-2 px-4 border-b last:border-b-0 text-center">{post.title}</li>
+                            ))}
+                    </ul>
+                </div>
             </div>
         </div>
     );

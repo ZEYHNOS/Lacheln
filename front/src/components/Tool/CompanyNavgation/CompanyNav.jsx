@@ -308,13 +308,13 @@ export function Location() {
 }
 
 // 회사 네비게이션
-export default function CompanyNav() {
+export default function CompanyNav({ vertical }) {
     return (
-        <div className="flex space-x-4">
-            <a href="/about">회사소개</a>
-            <a href="/terms">이용약관</a>
-            <a href="/privacy">개인정보처리방침</a>
-            <a href="/location">오시는 길</a>
+        <div className={vertical ? "flex flex-col gap-2 w-full text-center" : "flex space-x-4"}>
+            <a href="/about" className="py-1 hover:underline">회사소개</a>
+            <a href="/terms" className="py-1 hover:underline">이용약관</a>
+            <a href="/privacy" className="py-1 hover:underline">개인정보처리방침</a>
+            <a href="/location" className="py-1 hover:underline">오시는 길</a>
         </div>
     );
 }

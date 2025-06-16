@@ -6,7 +6,7 @@ import "./App.css";
 import Header from "./components/Tool/Header";
 import Footer from "./components/Tool/Footer";
 import LoginPage from "./components/Login/LoginPage";
-import ReportPage from "./components/Report/ReportPage";
+import ReportPage from "./components/Tool/Report/ReportPage";
 import UserRegisterPage from "./components/Login/Register/UserRegisterPage";
 import UserRegisterForm from "./components/Login/Register/UserRegisterForm";
 import CompanyRegisterPage from "./components/Login/Register/CompanyRegisterPage";

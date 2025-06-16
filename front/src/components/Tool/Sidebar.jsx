@@ -42,9 +42,8 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
     return (
         <div
-            className={`fixed top-0 left-0 h-full bg-white w-80 shadow-md transform ${
-                isOpen ? "translate-x-0" : "-translate-x-full"
-            } transition-transform duration-300 ease-in-out flex flex-col`}
+            className={`fixed top-0 left-0 h-full bg-white w-80 shadow-md transform ${isOpen ? "translate-x-0" : "-translate-x-full"
+                } transition-transform duration-300 ease-in-out flex flex-col z-50`}
         >
             {/* 사이드바 상단 */}
             <div className="flex justify-between items-center p-4 border-b border-gray-200">
@@ -52,7 +51,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <h1 className="text-4xl font-inknut font-semibold text-[#845EC2]">Lächeln</h1>
                     <p className="text-xs text-[#845EC2]">스튜디오 드레스 메이크업</p>
                 </div>
-    
+
                 {/* 닫기 버튼 */}
                 <button
                     className="text-xl text-[#845EC2] p-2 bg-white transition focus:outline-none focus:ring-0"
@@ -61,7 +60,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     <FaChevronLeft />
                 </button>
             </div>
-    
+
             {/* 메뉴 목록 */}
             <nav className="mt-4 flex-1 overflow-y-auto">
                 <ul className="space-y-4 px-6 text-lg text-[#845EC2]">
@@ -76,7 +75,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                                     <span>{menu}</span>
                                 </div>
                             </div>
-    
+
                             {/* 페이지 바로가기 목록*/}
                             {openMenu === menu && (
                                 <ul className="mt-2 space-y-2 pl-6 text-base">
@@ -91,12 +90,19 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     ))}
                 </ul>
             </nav>
-    
+
             {/* 회사 네비게이션 */}
             <div className="p-6 text-lg text-[#845EC2] space-y-2 flex flex-col sidebar-nav mt-auto">
-                <CompanyNav />
+                <nav>
+                    <ul className="space-y-4 px-2 text-lg text-[#845EC2]">
+                        <li><a href="/about" className="flex items-center hover:underline">회사소개</a></li>
+                        <li><a href="/terms" className="flex items-center hover:underline">이용약관</a></li>
+                        <li><a href="/privacy" className="flex items-center hover:underline">개인정보처리방침</a></li>
+                        <li><a href="/location" className="flex items-center hover:underline">오시는 길</a></li>
+                    </ul>
+                </nav>
             </div>
-    
+
             <style>
                 {`
                     .sidebar-nav a {

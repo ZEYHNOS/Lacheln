@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import googleLogo from "../../image/SocialLogin/google-logo.png";
@@ -15,6 +15,11 @@ export default function LoginPage() {
     const [showPopup, setShowPopup] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        setVisible(true);
+    }, []);
 
     const handleLogin = async () => {
         if (!email) {
@@ -122,7 +127,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <div className="w-[900px] p-10 bg-white shadow-lg rounded-2xl">
+            <div className={`w-[900px] p-10 bg-white shadow-lg rounded-2xl transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                 <Link to="/" className="block text-center">
                     <h1 className="text-5xl font-inknut font-bold text-[#845ec2]">Lächeln</h1>
                     <p className="text-[#845ec2] mb-6">스튜디오 드레스 메이크업</p>
@@ -173,7 +178,7 @@ export default function LoginPage() {
                             placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-3 border-2 border-[#845EC2] rounded-lg bg-white text-black focus:ring-1 focus:ring-purple-400 outline-none"/>
+                            className="w-full px-4 py-3 border-2 border-[#845EC2] rounded-lg bg-white text-black focus:border-[#845EC2] focus:ring-1 focus:ring-purple-400 outline-none"/>
                     </div>
                     <div>
                         <label className="block text-gray-700 font-semibold">비밀번호</label>
@@ -183,7 +188,7 @@ export default function LoginPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             onKeyDown={(e) => { if(e.key === "Enter") handleLogin(); }}
-                            className="w-full px-4 py-3 border-2 border-[#845EC2] rounded-lg bg-white text-black focus:ring-1 focus:ring-purple-400 outline-none"/>
+                            className="w-full px-4 py-3 border-2 border-[#845EC2] rounded-lg bg-white text-black focus:border-[#845EC2] focus:ring-1 focus:ring-purple-400 outline-none"/>
                     </div>
 
                     {/* 아이디 저장 & 비밀번호 찾기 */}

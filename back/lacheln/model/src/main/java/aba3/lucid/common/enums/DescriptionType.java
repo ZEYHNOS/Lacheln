@@ -9,6 +9,7 @@ public enum DescriptionType {
 
     IMAGE,
     TEXT,
-    YOUTUBE
+    YOUTUBE,
+    LINK
 
 }

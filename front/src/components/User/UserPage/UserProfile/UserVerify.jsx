@@ -50,7 +50,7 @@ const UserVerifyPage = () => {
 
   const handleCancel = () => {
     alert('취소되었습니다. 이전 페이지로 돌아갑니다.');
-    // navigate('/user');
+    navigate('/user');
   };
 
   const handleKeyPress = (e) => {

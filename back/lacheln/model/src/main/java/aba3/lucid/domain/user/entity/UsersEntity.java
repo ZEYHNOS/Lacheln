@@ -173,7 +173,7 @@ public class UsersEntity {
     // 유저정보 업데이트
     public void updateUser(UserUpdateRequest userUpdateRequest, BCryptPasswordEncoder bCryptPasswordEncoder)    {
         log.info("UserUpdateRequest: {}", userUpdateRequest.getGender());
-        if(userUpdateRequest.getPassword().equals("NULL")) {
+        if(!userUpdateRequest.getPassword().equals("NULL")) {
             updatePassword(bCryptPasswordEncoder.encode(userUpdateRequest.getPassword()));
         }
         updateUserName(userUpdateRequest.getName());

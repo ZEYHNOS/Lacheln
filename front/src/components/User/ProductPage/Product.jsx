@@ -56,7 +56,7 @@ function Product() {
             try {
                 let url;
                 if (isFirstLoad) {
-                    url = "/api/product/list";
+                    url = "/api/product/list?category=D";
                 } else {
                     url = selected === "드레스"
                         ? `/api/product/list?page=${currentPage - 1}`
@@ -64,6 +64,7 @@ function Product() {
                     if (minPrice) url += `&minimum=${minPrice}`;
                     if (maxPrice) url += `&maximum=${maxPrice}`;
                 }
+                console.log("url : ", url);
                 const response = await apiClient.get(url);
                 if (response.data && response.data.data) {
                     setProductList(response.data.data);

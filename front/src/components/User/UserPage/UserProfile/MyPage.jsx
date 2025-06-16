@@ -44,9 +44,6 @@ const MyPage = () => {
             setUserInfo(res.data.data);
         }
       });
-      if(res.status === 200)    {
-        setUserInfo(res.data.data);
-      }
     } catch (err) {
       console.error("User 정보 로딩 실패 :", err);
     }

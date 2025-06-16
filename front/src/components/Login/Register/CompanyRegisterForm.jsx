@@ -5,8 +5,8 @@ import { toast } from "react-toastify";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 export default function CompanyRegisterForm() {
   const navigate = useNavigate();
-  const [isVerifiedBusiness, setIsVerifiedBusiness] = useState(false);
-  const [isVerifiedSales, setIsVerifiedSales] = useState(false);
+  const [isVerifiedBusiness, setIsVerifiedBusiness] = useState(true);
+  const [isVerifiedSales, setIsVerifiedSales] = useState(true);
   const [businessAuthMessage, setBusinessAuthMessage] = useState("");
   const [salesAuthMessage, setSalesAuthMessage] = useState("");
   const [isVerifiedPhone, setIsVerifiedPhone] = useState(false);
@@ -37,7 +37,7 @@ export default function CompanyRegisterForm() {
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [emailTimer, setEmailTimer] = useState(0);
   const emailTimerRef = useRef(null);
-  const [selectedCategory, setSelectedCategory] = useState('드레스');
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
     validateForm();
@@ -47,13 +47,13 @@ export default function CompanyRegisterForm() {
     isVerifiedPhone, isVerifiedBusiness, isVerifiedSales,
     isEmailVerified
   ]);
-  
+
   // 이메일 인증번호 타이머
   useEffect(() => {
     if (emailTimer > 0) {
       emailTimerRef.current = setTimeout(() => setEmailTimer(emailTimer - 1), 1000);
     }
-  
+
     return () => clearTimeout(emailTimerRef.current);
   }, [emailTimer]);
 
@@ -98,18 +98,20 @@ export default function CompanyRegisterForm() {
     } else if (!isEmailVerified) {
       newErrors.email = "이메일 인증을 완료해주세요.";
     }
-    
+
     if (!password.trim()) newErrors.password = "비밀번호를 입력해주세요.";
     if (!passwordConfirm.trim()) newErrors.passwordConfirm = "비밀번호 확인을 입력해주세요.";
     if (password !== passwordConfirm) newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
     if (!mainContact.trim()) newErrors.mainContact = "대표자 전화번호를 입력해주세요.";
     if (!isVerifiedPhone) newErrors.authCode = "전화번호 인증을 완료해주세요.";
-    if (!bnRegNo.trim()) newErrors.bnRegNo = "사업자등록번호를 입력해주세요.";
-    if (!isVerifiedBusiness) newErrors.bnRegNo = "사업자등록번호 인증을 완료해주세요.";
-    if (!isSalesNumberValid) newErrors.mos = "통신판매업 신고 번호를 올바르게 입력해주세요.";
-    if (!isVerifiedSales) newErrors.mos = "통신판매업 신고 번호 인증을 완료해주세요.";
+    // if (!bnRegNo.trim()) newErrors.bnRegNo = "사업자등록번호를 입력해주세요.";
+    // if (!isVerifiedBusiness) newErrors.bnRegNo = "사업자등록번호 인증을 완료해주세요.";
+    // if (!isSalesNumberValid) newErrors.mos = "통신판매업 신고 번호를 올바르게 입력해주세요.";
+    // if (!isVerifiedSales) newErrors.mos = "통신판매업 신고 번호 인증을 완료해주세요.";
     if (!address.trim() || !postalCode.trim() || !detailAddress.trim()) newErrors.address = "주소를 입력해주세요.";
     setErrors(newErrors);
+    console.log("newErrors : ", Object.keys(newErrors).length);
+    console.log("newErrors : ", Object.keys(newErrors));
     setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
@@ -120,53 +122,54 @@ export default function CompanyRegisterForm() {
   };
 
   const categories = Object.keys(categoryMap);
-  
+
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     const categoryCode = categoryMap[category];
   };
 
   const handleRegister = async () => {
+    console.log("isFormValid : ", isFormValid);
     if (!isFormValid) {
-        alert("모든 필수 항목을 올바르게 입력해주세요.");
-        return;
+      alert("모든 필수 항목을 올바르게 입력해주세요.");
+      return;
     }
     console.log("PassWordConfirm : {}", passwordConfirm);
     const requestData = {
-        email,
-        password,
-        password_confirm: passwordConfirm,
-        name,
-        repName,
-        mainContact,
-        bn_reg_no: bnRegNo,
-        mos: `${firstNum}-${koreanText}-${lastNum}`,
-        address,
-        postal_code: postalCode,
-        profile: "default-profile-image.jpg", // 기본 프로필 이미지 또는 파일 경로
-        category: selectedCategory,
-        status: "ACTIVATE",   // 기본 상태 값
-        role: "USER"        // 기본 역할 값
+      email,
+      password,
+      password_confirm: passwordConfirm,
+      name,
+      repName,
+      mainContact,
+      bn_reg_no: "000-00-00000",
+      mos: "2025-서울강남-00000",
+      address,
+      postal_code: postalCode,
+      profile: "default-profile-image.jpg", // 기본 프로필 이미지 또는 파일 경로
+      category: selectedCategory,
+      status: "ACTIVATE",   // 기본 상태 값
+      role: "USER"        // 기본 역할 값
     };
-    console.log("PasswordConfirm in RequestData : ", requestData.passwordConfirm);
-      try {
-          const response = await fetch(`${baseUrl}/company/signup`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(requestData)
-          });
-          if (response.ok) {
-              alert("회원가입이 성공적으로 완료되었습니다!");
-              navigate("/register/success");
-          } else {
-              const errorData = await response.json();
-              alert(`회원가입 실패: ${errorData.message}`);
-          }
-      } catch (error) {
-          alert("서버와의 통신 중 문제가 발생했습니다.");
+    console.log("PasswordConfirm in RequestData : ", requestData.password_confirm);
+    try {
+      const response = await fetch(`${baseUrl}/company/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData)
+      });
+      if (response.ok) {
+        alert("회원가입이 성공적으로 완료되었습니다!");
+        navigate("/register/success");
+      } else {
+        const errorData = await response.json();
+        alert(`회원가입 실패: ${errorData.message}`);
       }
-    };
-  
+    } catch (error) {
+      alert("서버와의 통신 중 문제가 발생했습니다.");
+    }
+  };
+
   // ✅ 이메일 인증번호 전송 요청
   const handleSendEmailCode = async () => {
     try {
@@ -180,18 +183,18 @@ export default function CompanyRegisterForm() {
       setIsEmailSent(true);
       if (data.result.resultCode === 200) {
         toast.success(data.data.message, {
-                        position: "top-center",
-                        autoClose: 750,
-                    });
+          position: "top-center",
+          autoClose: 750,
+        });
         setEmailAuthMessage(data.data.message);
         clearTimeout(emailTimerRef.current);
         setEmailTimer(300); // 5분
       } else {
         setIsEmailSent(false);
         toast.error(data.data.message, {
-                        position: "top-center",
-                        autoClose: 750,
-                    });
+          position: "top-center",
+          autoClose: 750,
+        });
       }
     } catch (err) {
       console.error("이메일 전송 실패:", err);
@@ -208,12 +211,12 @@ export default function CompanyRegisterForm() {
         body: JSON.stringify({ email, code: emailAuthCode }),
       });
       const data = await res.json();
-      console.log("Email Verifing : ",data);
+      console.log("Email Verifing : ", data);
       if (data.result.resultCode === 200) {
         toast.success(data.data.message, {
-                        position: "top-center",
-                        autoClose: 750,
-                    });
+          position: "top-center",
+          autoClose: 750,
+        });
         setIsEmailVerified(true);
         setEmailAuthMessage(data.data.message);
         setErrors(prev => {
@@ -222,9 +225,9 @@ export default function CompanyRegisterForm() {
         });
       } else {
         toast.error(data.data.message, {
-                        position: "top-center",
-                        autoClose: 750,
-                    });
+          position: "top-center",
+          autoClose: 750,
+        });
         setEmailAuthMessage(data.data.message);
       }
     } catch (err) {
@@ -236,83 +239,83 @@ export default function CompanyRegisterForm() {
   // 핸드폰 인증 코드 전송 (더미 데이터)
   const handleSendAuthCode = async () => {
     const requestNumber = mainContact.replace(/-/g, "");
-      try {
-        const res = await fetch(`${baseUrl}/sms/send`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phoneNum: requestNumber }),
+    try {
+      const res = await fetch(`${baseUrl}/sms/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNum: requestNumber }),
+      });
+      const data = await res.json();
+      console.log("Phone Send : ", data);
+      console.log(data.result.resultCode);
+      console.log(data.description);
+      if (data.result.resultCode === 200) {
+        toast.success(data.description, {
+          position: "top-center",
+          autoClose: 750,
         });
-        const data = await res.json();
-        console.log("Phone Send : ",data);
-        console.log(data.result.resultCode);
-        console.log(data.description);
-        if(data.result.resultCode === 200)  {
-          toast.success(data.description, {
-                          position: "top-center",
-                          autoClose: 750,
-                      });
-        } else {
-          toast.error(data.description, {
-                          position: "top-center",
-                          autoClose: 750,
-                      });
-        }
-        setPhoneAuthMessage(data.data.description);
-      } catch (err) {
-        console.log(err);
+      } else {
+        toast.error(data.description, {
+          position: "top-center",
+          autoClose: 750,
+        });
       }
+      setPhoneAuthMessage(data.data.description);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleVerifyPhone = async () => {
     const requestNumber = mainContact.replace(/-/g, "");
-      try {
-        const res = await fetch(`${baseUrl}/sms/verify`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phoneNum: requestNumber, code: authCode }),
+    try {
+      const res = await fetch(`${baseUrl}/sms/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNum: requestNumber, code: authCode }),
+      });
+      const data = await res.json();
+      console.log("Phone Verifing : ", data);
+      if (data.data.verified === true) {
+        setIsVerifiedPhone(true);
+        setPhoneAuthMessage("✅ 전화번호 인증 완료");
+        toast.success(data.description, {
+          position: "top-center",
+          autoClose: 750,
         });
-        const data = await res.json();
-        console.log("Phone Verifing : ", data);
-        if(data.data.verified === true) {
-          setIsVerifiedPhone(true);
-          setPhoneAuthMessage("✅ 전화번호 인증 완료");
-          toast.success(data.description, {
-                          position: "top-center",
-                          autoClose: 750,
-                      });
-          setErrors((prevErrors) => ({ ...prevErrors, authCode: "" }));
-        } else {
-          toast.error(data.description, {
-                          position: "top-center",
-                          autoClose: 750,
-                      });
-        }
-      } catch (err) {
-        toast.error("전화번호 인증실패...", {
-                          position: "top-center",
-                          autoClose: 750,
-                      });
-        console.error("전화번호 인증코드 전송 실패:", err);
-        setPhoneAuthMessage("전화번호 인증번호 전송 중 에러발생");
+        setErrors((prevErrors) => ({ ...prevErrors, authCode: "" }));
+      } else {
+        toast.error(data.description, {
+          position: "top-center",
+          autoClose: 750,
+        });
       }
-      if (!authCode.trim()) {
-        setPhoneAuthMessage("❌ 인증 실패: 인증번호를 입력해주세요.");
-        return;
-      }
+    } catch (err) {
+      toast.error("전화번호 인증실패...", {
+        position: "top-center",
+        autoClose: 750,
+      });
+      console.error("전화번호 인증코드 전송 실패:", err);
+      setPhoneAuthMessage("전화번호 인증번호 전송 중 에러발생");
+    }
+    if (!authCode.trim()) {
+      setPhoneAuthMessage("❌ 인증 실패: 인증번호를 입력해주세요.");
+      return;
+    }
   };
 
   // 카카오 주소 검색 API 실행 함수
   const handleAddressSearch = () => {
     if (!window.daum || !window.daum.Postcode) {
-        console.error("카카오 주소 검색 API가 로드되지 않았습니다.");
-        return;
+      console.error("카카오 주소 검색 API가 로드되지 않았습니다.");
+      return;
     }
 
     new window.daum.Postcode({
-        oncomplete: function (data) {
-            setAddress(data.roadAddress);
-            setPostalCode(data.zonecode);
-        },
+      oncomplete: function (data) {
+        setAddress(data.roadAddress);
+        setPostalCode(data.zonecode);
+      },
     }).open();
   };
 
@@ -340,7 +343,7 @@ export default function CompanyRegisterForm() {
 
   const isSalesNumberValid =
     firstNum.length === 4 && koreanText.length > 0 && lastNum.length >= 1;
-  
+
   // 사업자 등록번호 인증 
   const handleVerifyBusinessNumber = () => {
     const formattedBusinessNumber = bnRegNo.replace(/-/g, "");
@@ -434,8 +437,8 @@ export default function CompanyRegisterForm() {
                     ${isEmailVerified
                       ? "bg-green-500 text-white"
                       : emailAuthCode
-                      ? "bg-[#845EC2] text-white"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                        ? "bg-[#845EC2] text-white"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
                   disabled={!emailAuthCode || isEmailVerified}
                   onClick={handleVerifyEmailCode}
                 >
@@ -472,26 +475,25 @@ export default function CompanyRegisterForm() {
               {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
           ))}
-          
+
           {/* 카테고리 선택창 */}
-        <div className="mt-4 space-y-4">
-          <h3 className="text-lg font-semibold">카테고리 선택</h3>
-          <div className="flex space-x-4">
-            {categories.map((category) => (
-              <button
-                key={category}
-                className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  selectedCategory === category
-                    ? 'bg-purple-500 text-white border border-purple-500 focus:outline-none'
-                    : 'bg-white text-black border border-gray-300 hover:bg-blue-500 hover:text-white focus:outline-none'
-                }`}
-                onClick={() => handleCategorySelect(category)}
-              >
-                {category}
-              </button>
-            ))}
+          <div className="mt-4 space-y-4">
+            <h3 className="text-lg font-semibold">카테고리 선택</h3>
+            <div className="flex space-x-4">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  className={`px-4 py-2 rounded-lg transition-colors duration-200 ${selectedCategory === category
+                      ? 'bg-purple-500 text-white border border-purple-500 focus:outline-none'
+                      : 'bg-white text-black border border-gray-300 hover:bg-blue-500 hover:text-white focus:outline-none'
+                    }`}
+                  onClick={() => handleCategorySelect(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
           {/* 전화번호 버튼  */}
           <div>
@@ -546,8 +548,8 @@ export default function CompanyRegisterForm() {
                       ${isVerifiedPhone
                         ? "bg-green-500 text-white"
                         : authCode
-                        ? "bg-[#845EC2] text-white"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                          ? "bg-[#845EC2] text-white"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
                     disabled={!authCode || isVerifiedPhone}
                     onClick={handleVerifyPhone}
                   >
@@ -596,8 +598,8 @@ export default function CompanyRegisterForm() {
             />
           </div>
 
-         {/* 사업자 등록번호 입력 + 조회 버튼 */}
-          <div>
+          {/* 사업자 등록번호 입력 + 조회 버튼 */}
+          {/* <div>
             <label className="text-sm text-[#845EC2]">사업자 등록 번호</label>
             <div className="flex space-x-2">
               <input
@@ -615,66 +617,65 @@ export default function CompanyRegisterForm() {
               >
                 {isVerifiedBusiness ? "✅ 인증 완료" : "조회하기"}
               </button>
-              </div>
-          {businessAuthMessage && <p className="text-sm text-green-500">{businessAuthMessage}</p>}
+            </div>
+            {businessAuthMessage && <p className="text-sm text-green-500">{businessAuthMessage}</p>}
+          </div> */}
+
+          {/* 통신판매업 신고번호 입력 및 조회 버튼 */}
+          {/* <div className="mt-4">
+            <label className="text-sm text-[#845EC2]">통신 판매업 신고 번호</label>
+            <div className="flex space-x-2 items-center">
+              <input
+                type="text"
+                value={firstNum}
+                onChange={(e) => setFirstNum(e.target.value)}
+                className="w-30 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1"
+                placeholder="2025"
+                maxLength={4}
+                disabled={isVerifiedSales}
+              />
+              <span className="text-[#845EC2]">-</span>
+              <select
+                value={koreanText}
+                onChange={handleKoreanTextChange}
+                className="w-40 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1"
+                disabled={isVerifiedSales}
+              >
+                <option value="" disabled>지역 선택</option>
+                {koreanOptions.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+              <span className="text-[#845EC2]">-</span>
+              <input
+                type="text"
+                value={lastNum}
+                onChange={(e) => setLastNum(e.target.value)}
+                className="w-40 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1"
+                placeholder="00000"
+                maxLength={5}
+                disabled={isVerifiedSales}
+              />
+              <button
+                className="px-4 py-2 rounded-md bg-[#845EC2] text-white"
+                onClick={handleVerifySalesNumber}
+                disabled={isVerifiedSales}
+              >
+                {isVerifiedSales ? "✅ 인증 완료" : "조회하기"}
+              </button>
+            </div>
+            {salesAuthMessage && <p className="text-sm text-green-500">{salesAuthMessage}</p>}
+          </div> */}
         </div>
 
-        {/* 통신판매업 신고번호 입력 및 조회 버튼 */}
-        <div className="mt-4">
-          <label className="text-sm text-[#845EC2]">통신 판매업 신고 번호</label>
-          <div className="flex space-x-2 items-center">
-            <input
-              type="text"
-              value={firstNum}
-              onChange={(e) => setFirstNum(e.target.value)}
-              className="w-30 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1"
-              placeholder="2025"
-              maxLength={4}
-              disabled={isVerifiedSales}
-            />
-            <span className="text-[#845EC2]">-</span>
-            <select
-              value={koreanText}
-              onChange={handleKoreanTextChange}
-              className="w-40 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1"
-              disabled={isVerifiedSales}
-            >
-              <option value="" disabled>지역 선택</option>
-              {koreanOptions.map((option) => (
-                <option key={option} value={option}>{option}</option>
-              ))}
-            </select>
-            <span className="text-[#845EC2]">-</span>
-            <input
-              type="text"
-              value={lastNum}
-              onChange={(e) => setLastNum(e.target.value)}
-              className="w-40 p-2 border border-[#845EC2] bg-white text-black rounded-md mt-1"
-              placeholder="00000"
-              maxLength={5}
-              disabled={isVerifiedSales}
-            />
-            <button
-              className="px-4 py-2 rounded-md bg-[#845EC2] text-white"
-              onClick={handleVerifySalesNumber}
-              disabled={isVerifiedSales}
-            >
-              {isVerifiedSales ? "✅ 인증 완료" : "조회하기"}
-            </button>
-          </div>
-          {salesAuthMessage && <p className="text-sm text-green-500">{salesAuthMessage}</p>}
-        </div>
+        {/* 회원가입 버튼 */}
+        <button
+          className={`w-full p-3 rounded-md text-white mt-4 bg-[#845EC2]`}
+          onClick={handleRegister}
+        >
+          업체 회원가입 하기
+        </button>
       </div>
-
-          {/* 회원가입 버튼 */}
-          <button
-            className={`w-full p-3 rounded-md text-white mt-4 ${isFormValid ? "bg-[#845EC2]" : "bg-gray-300 cursor-not-allowed"}`}
-            onClick={handleRegister}
-            disabled={!isFormValid}
-          >
-            업체 회원가입 하기
-          </button>
-        </div>
-      </div>
+    </div>
   );
 }

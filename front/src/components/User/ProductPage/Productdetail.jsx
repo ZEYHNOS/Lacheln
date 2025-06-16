@@ -4,6 +4,7 @@ import apiClient from '../../../lib/apiClient';
 import { COLOR_MAP } from "../../../constants/colorMap.js";
 import AddWrite from '../../Tool/WriteForm/AddWrite.jsx';
 import ScheduleSelect from '../../Tool/Schedule/ScheduleSelect.jsx';
+import ChattingModal from '../../User/UserPage/ChattingModal.jsx';
 import { toast } from 'react-toastify';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -56,10 +57,11 @@ const ProductDetail = () => {
     const { category, productid } = useParams();
     const [product, setProduct] = useState(null);
     const navigate = useNavigate();
+    const [showChat, setShowChat] = useState(false);
 
     const [selectedOptions, setSelectedOptions] = useState({});
-    const [mainImageIndex, setMainImageIndex] = useState(0); 
-    const [selectedTab, setSelectedTab] = useState('detail'); 
+    const [mainImageIndex, setMainImageIndex] = useState(0);
+    const [selectedTab, setSelectedTab] = useState('detail');
     const [showSchedule, setShowSchedule] = useState(false);
 
     const writeRef = useRef();
@@ -88,7 +90,7 @@ const ProductDetail = () => {
                 navigate(-1);
             });
     }, [category, productid]);
-    
+
     // 오토 이미지 슬라이드
     useEffect(() => {
         if (!product?.image_url_list) return;
@@ -314,7 +316,12 @@ const ProductDetail = () => {
                         {!isAllEssentialSelected() && (
                             <div className="text-red-500 text-sm mt-2">필수 옵션을 모두 선택해주세요.</div>
                         )}
-                        <button className="bg-pink-400 text-white font-semibold py-3 rounded">1:1 채팅하기</button>
+                        <button 
+                            className="bg-pink-400 text-white font-semibold py-3 rounded"
+                            onClick={() => setShowChat(true)}
+                        >
+                            1:1 채팅하기
+                        </button>
                     </div>
                 </div>
             </div>
@@ -441,6 +448,14 @@ const ProductDetail = () => {
                         <button className="mt-4 w-full py-2 bg-gray-300 rounded" onClick={() => setShowSchedule(false)}>닫기</button>
                     </div>
                 </div>
+            )}
+
+            {/* ChattingModal */}
+            {showChat && (
+                <ChattingModal 
+                    companyId={product.cpId} 
+                    onClose={() => setShowChat(false)} 
+                />
             )}
         </div>
     );

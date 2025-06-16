@@ -20,7 +20,7 @@ const CATEGORY_OPTIONS = [
 
 export default function ReportPage() {
   const navigate = useNavigate();
-  const { currentId } = useAuth();   // your logged-in companyId or userId
+  const { currentId } = useAuth();   
 
   const [cpId, setCpId] = useState("");
   const [userId, setUserId] = useState("");
@@ -40,7 +40,6 @@ export default function ReportPage() {
   const canNext1 = Boolean(reportedId);
   const canNext2 = Boolean(category && title.trim() && content.trim());
 
-  // ─── type-ahead loaders ────────────────────────────────
   const loadCompanyOptions = async input => {
     if (!input) return [];
     try {
@@ -53,7 +52,7 @@ export default function ReportPage() {
       console.log("신고할 업체 이메일 : ",c.email);
       console.log("신고할 업체 id : ",c.id);
       setCpId(c.id);
-      return [{ value: String(c.cpId), label: c.cpName }];
+      return [{ value: String(c.cpId), label: c.name }];
     } catch {
       return [];
     }
@@ -74,41 +73,10 @@ export default function ReportPage() {
     setUserId(u.userId);
     return [{value: u.userId, label: u.name }];
   } catch (error) {
-    console.error(error); // Optional: for debugging
+    console.error(error); 
     return [];
     }
   };
-  // ────────────────────────────────────────────────────────
-
-  // immediately upload your selected files
-  // const handleFileChange = e => {
-  //   const chosen = Array.from(e.target.files || []);
-  //   setFiles(chosen);
-  //   setImageUrls([]);
-  //   // **use the actor’s ID** in the path, _not_ `reportedId`:
-  //   const uploadUrl =
-  //     targetType === "USER"
-  //       ? `${BASE_URL}/report/company/image/upload`
-  //       : `${BASE_URL}/report/user/image/upload`;
-
-  //   const uploaded = [];
-  //   for (let file of chosen) {
-  //     const form = new FormData();
-  //     form.append("images", file);
-  //     try {
-  //       const res =  axios.post(uploadUrl, form, {
-  //         headers: { "Content-Type": "multipart/form-data" }
-  //       });
-  //       // our API returns { data: [ ...urls ] }
-  //       uploaded.push(...res.data.data);
-  //     } catch (err) {
-  //       console.error("upload failed:", err);
-  //       alert(`${file.name} 업로드에 실패했습니다.`);
-  //     }
-  //   }
-  //   console.log("신고업체 ID", reportedId);
-  //   setImageUrls(uploaded);
-  // };
     const handleFileChange = e => {
   const chosen = Array.from(e.target.files || []);
   setFiles(chosen);       

@@ -1,28 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { FaChartBar, FaUser, FaFlag, FaQuestionCircle, FaCog } from "react-icons/fa";
+import { FaChartBar, FaUser, FaFlag, FaQuestionCircle } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
-import axios from "axios";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const menu = [
     { icon: <FaChartBar />, text: "통계 대시보드", path: "/admin" },
     { icon: <FaFlag />, text: "신고 관리", path: "/admin/report" },
     { icon: <FaQuestionCircle />, text: "문의 관리", path: "/admin/inquiry" },
     { icon: <FaUser />, text: "회원 조회(업체)", path: "/admin/members/company" },
-    { icon: <FaUser />, text: "회원 조회(유저)", path: "/admin/members/user" },
-    { icon: <FaCog />, text: "설정", path: "/admin/setting" }
+    { icon: <FaUser />, text: "회원 조회(유저)", path: "/admin/members/user" }
 ];
-
 
 export default function AdminSidebar() {
     const location = useLocation();
     const [reportCount, setReportCount] = useState(0);
 
     useEffect(() => {
-        axios.get(`${BASE_URL}/report/admin/unread/count`, { withCredentials: true })
-            .then(res => setReportCount(res.data.data))
-            .catch(() => setReportCount(0));
+        // 🔁 전체 신고 목록 가져오기
+        const reportsRaw = localStorage.getItem("allReports");
+        const readIds = JSON.parse(localStorage.getItem("readReportIds") || "[]");
+
+        try {
+            const allReports = JSON.parse(reportsRaw || "[]");
+            if (Array.isArray(allReports)) {
+                const unread = allReports.filter(r => !readIds.includes(r.reportId));
+                setReportCount(unread.length);
+            } else {
+                setReportCount(0);
+            }
+        } catch (e) {
+            console.error("⚠️ 신고 목록 파싱 실패:", e);
+            setReportCount(0);
+        }
     }, []);
 
     return (
@@ -42,7 +50,9 @@ export default function AdminSidebar() {
                                     <span className="text-xl mr-4 relative">
                                         {item.icon}
                                         {item.text === "신고 관리" && reportCount > 0 && (
-                                            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold">{reportCount}</span>
+                                            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold">
+                                                {reportCount}
+                                            </span>
                                         )}
                                     </span>
                                     <span>{item.text}</span>

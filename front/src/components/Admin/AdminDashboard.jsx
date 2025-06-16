@@ -205,16 +205,18 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h2 className="text-xl text-black">관리자 통계 대시보드</h2>
+      <h2 className="text-xl text-black"></h2>
+
+
       
       {/* 통계 카드들 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
         {stats.map((item, idx) => (
-          <div key={idx} className="flex items-center bg-[#F6F1FA] rounded-xl shadow p-6">
+          <div key={idx} className="flex items-center bg-[#DA70D6] rounded-xl shadow p-6">
             <div className="mr-6">{item.icon}</div>
             <div>
               <div className="text-lg font-medium text-gray-800">{item.label}</div>
-              <div className="text-2xl font-bold text-[#845EC2]">{item.value}</div>
+              <div className="text-2xl font-bold text-blue-800">{item.value}</div>
             </div>
           </div>
         ))}

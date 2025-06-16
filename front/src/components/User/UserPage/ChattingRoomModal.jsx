@@ -52,13 +52,12 @@ export default function ChattingRoomModal({ showModal, onClose }) {
       const result = await res.json();
       const rooms = result.data?.chatRooms || [];
       setChatRooms(rooms);
-      connectWebSocket(rooms);
     } catch (err) {
       console.error("채팅방 목록 불러오기 실패:", err);
     }
   };
 
-  const connectWebSocket = (rooms) => {
+  const connectWebSocket = (roomId) => {
     if (stompClient.current) {
       stompClient.current.deactivate();
     }
@@ -67,34 +66,51 @@ export default function ChattingRoomModal({ showModal, onClose }) {
     const client = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
-      debug: (str) => console.log(str),
+      debug: (str) => console.log("webSocket debug : ", str),
       onConnect: () => {
         console.log("WebSocket 연결 완료");
-        rooms.forEach((room) => {
-          const roomId = room.roomId;
-          if (subscribedRooms.current.has(roomId)) return;
 
-          client.subscribe(`/topic/chatroom.${roomId}`, (msg) => {
-            const received = JSON.parse(msg.body);
-            setMessagesByRoom((prev) => ({
+        client.subscribe(`/topic/chatroom.${roomId}`, (msg) => {
+          const received = JSON.parse(msg.body);
+          console.log("메시지 수신:", received);
+          
+          setMessagesByRoom(prev => {
+            const currentMessages = prev[roomId] || [];
+            
+            // 중복 메시지 체크 (messageId가 있으면 우선 체크, 없으면 내용과 시간으로 체크)
+            const exists = currentMessages.some(m => {
+              if (received.messageId && m.messageId) {
+                return m.messageId === received.messageId;
+              }
+              // messageId가 없는 경우 메시지 내용과 전송자, 시간으로 중복 체크
+              return m.message === received.message && 
+                     m.senderId === received.senderId && 
+                     Math.abs(new Date(m.sendAt) - new Date(received.sendAt)) < 1000; // 1초 이내
+            });
+            
+            if (exists) {
+              console.log("중복 메시지 무시:", received);
+              return prev;
+            }
+            
+            return {
               ...prev,
-              [roomId]: [...(prev[roomId] || []), received],
-            }));
+              [roomId]: [...currentMessages, received]
+            };
           });
+        });
 
-          client.subscribe(`/topic/read.${roomId}`, (msg) => {
-            const data = JSON.parse(msg.body);
-            setMessagesByRoom((prev) => ({
-              ...prev,
-              [roomId]: (prev[roomId] || []).map((m) =>
-                data.message_ids.includes(m.messageId)
-                  ? { ...m, read: "Y" }
-                  : m
-              ),
-            }));
-          });
-
-          subscribedRooms.current.add(roomId);
+        client.subscribe(`/topic/read.${roomId}`, (msg) => {
+          const data = JSON.parse(msg.body);
+          console.log("읽음 처리 수신:", data);
+          setMessagesByRoom((prev) => ({
+            ...prev,
+            [roomId]: (prev[roomId] || []).map((m) =>
+              data.message_ids.includes(m.messageId)
+                ? { ...m, read: "Y" }
+                : m
+            ),
+          }));
         });
       },
     });
@@ -138,6 +154,8 @@ export default function ChattingRoomModal({ showModal, onClose }) {
       }
     }
 
+    // 채팅방 선택 시 WebSocket 연결
+    connectWebSocket(roomId);
     fetchChatRooms();
   };
 
@@ -158,17 +176,12 @@ export default function ChattingRoomModal({ showModal, onClose }) {
       sendAt: new Date().toISOString()
     };
 
-    // WebSocket 전송
+    // WebSocket 전송만 하고 로컬 상태에 바로 추가하지 않음
+    // 서버에서 브로드캐스트된 메시지를 구독으로 받아서 표시
     stompClient.current.publish({
       destination: "/chat/send",
       body: JSON.stringify(msg),
     });
-
-    // 로컬 상태에 바로 반영
-    setMessagesByRoom(prev => ({
-      ...prev,
-      [currentRoomId]: [...(prev[currentRoomId] || []), msg],
-    }));
 
     // 입력창 비우기
     messageRef.current.value = "";

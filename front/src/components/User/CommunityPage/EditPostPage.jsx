@@ -12,7 +12,6 @@ export default function EditPostPage() {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
 
-  // 게시판 목록 불러오기
   useEffect(() => {
     const fetchBoards = async () => {
       try {
@@ -28,7 +27,6 @@ export default function EditPostPage() {
     fetchBoards();
   }, []);
 
-  // 게시글 불러오기
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -36,7 +34,7 @@ export default function EditPostPage() {
         const data = res.data.data;
         setTitle(data.postTitle);
         setContent(data.postContent);
-        setSelectedBoardId(data.boardId); // ✅ 게시판 초기값 설정
+        setSelectedBoardId(data.boardId);
       } catch (err) {
         console.error("게시글 조회 실패", err);
         setError("게시글을 불러오는 데 실패했습니다.");
@@ -45,7 +43,6 @@ export default function EditPostPage() {
     fetchPost();
   }, [postId]);
 
-  // 수정 요청
   const handleUpdate = async () => {
     if (!selectedBoardId || !title.trim() || !content.trim()) {
       setError("모든 필드를 입력해주세요.");
@@ -76,7 +73,7 @@ export default function EditPostPage() {
       <div className="mb-4">
         <label className="block mb-1 font-semibold">게시판</label>
         <select
-          className="w-full border border-[#9e5fdd] px-3 py-2 rounded"
+          className="w-full border border-[#9e5fdd] px-3 py-2 rounded bg-white text-black dark:bg-gray-800 dark:text-white"
           value={selectedBoardId}
           onChange={(e) => setSelectedBoardId(Number(e.target.value))}
         >
@@ -92,7 +89,7 @@ export default function EditPostPage() {
       <div className="mb-4">
         <label className="block mb-1 font-semibold">제목</label>
         <input
-          className="w-full border border-[#9e5fdd] px-3 py-2 rounded"
+          className="w-full border border-[#9e5fdd] px-3 py-2 rounded bg-white text-black dark:bg-gray-800 dark:text-white"
           type="text"
           placeholder="제목을 입력하세요"
           value={title}
@@ -104,7 +101,7 @@ export default function EditPostPage() {
       <div className="mb-4">
         <label className="block mb-1 font-semibold">내용</label>
         <textarea
-          className="w-full h-60 border border-[#9e5fdd] px-3 py-2 rounded resize-none"
+          className="w-full h-60 border border-[#9e5fdd] px-3 py-2 rounded resize-none bg-white text-black dark:bg-gray-800 dark:text-white"
           placeholder="내용을 입력하세요"
           value={content}
           onChange={(e) => setContent(e.target.value)}

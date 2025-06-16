@@ -12,6 +12,7 @@ function Suggestion() {
     { label: "고객지원", path: "/support" },
     { label: "챗봇", path: "/chatbot" },
     { label: "건의함", path: "/suggestion" },
+    { label: "신고", path: "/report" },
   ];
 
   useEffect(() => {
@@ -27,21 +28,18 @@ function Suggestion() {
   return (
     <div className="mx-auto w-full border-[1px] font-semibold border-[#845EC2]">
       {/* 탭 메뉴 */}
-      <ul className="flex w-full list-none p-0 m-0 border bg-white border-[#e1c2ff33]">
-        {menuItems.map((item, idx) => (
+      <ul className="flex list-none m-0 p-0 border-b border-[#e1c2ff33]">
+        {menuItems.map((item) => (
           <li
             key={item.label}
-            className={`flex items-center justify-center flex-1 border border-[#e1c2ff33] h-[65px]
-              ${idx === 0 ? "border-l-0" : ""} ${idx === menuItems.length - 1 ? "border-r-0" : ""}
-            `}
+            className="flex-1 text-center h-[60px] border-r last:border-r-0 border-[#e1c2ff33]"
           >
             <Link
               to={item.path}
-              className={`
-                w-full h-full flex items-center justify-center text-[20px] font-semibold
-                ${item.label === "건의함" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]"}
-                hover:bg-[#E2C5EE] hover:text-black hover:underline
-              `}
+              className={`flex items-center justify-center w-full h-full text-[18px] font-semibold
+                    ${item.label === "건의함" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]"}
+                    ${item.label === "신고" ? "bg-black-100 text-black-500" : ""}
+                    hover:bg-[#E2C5EE] hover:text-black`}
             >
               {item.label}
             </Link>
@@ -69,24 +67,23 @@ function Suggestion() {
             >
               <div className="w-2/5">{item.title}</div>
               <div
-                className={`w-1/5 font-bold ${
-                  item.status === "COMPLETED" ? "text-blue-600" : "text-red-500"
-                }`}
+                className={`w-1/5 font-bold ${item.status === "COMPLETED" ? "text-blue-600" : "text-red-500"
+                  }`}
               >
                 {item.status === "COMPLETED" ? "완료" : "진행중"}
               </div>
               <div className="w-2/5">
                 {Array.isArray(item.createdAt)
                   ? dayjs(
-                      new Date(
-                        item.createdAt[0],
-                        item.createdAt[1] - 1,
-                        item.createdAt[2],
-                        item.createdAt[3],
-                        item.createdAt[4],
-                        item.createdAt[5]
-                      )
-                    ).format("YYYY.MM.DD")
+                    new Date(
+                      item.createdAt[0],
+                      item.createdAt[1] - 1,
+                      item.createdAt[2],
+                      item.createdAt[3],
+                      item.createdAt[4],
+                      item.createdAt[5]
+                    )
+                  ).format("YYYY.MM.DD")
                   : "날짜 오류"}
               </div>
             </div>
@@ -94,14 +91,14 @@ function Suggestion() {
         )}
       </div>
 
-      {/* 하단 안내 */}
-      <div className="w-full border-t-2 border-[#845EC2] bg-[#e1c2ff66] text-center py-5 mt-10">
-        <div className="text-[24px] font-bold">고객센터 이용안내</div>
-        <div className="flex items-center justify-center gap-2 text-[18px] font-bold">
-          <img src={Call} alt="Call Icon" className="w-10 h-10" />
+      {/* 하단 고객센터 안내 */}
+      <div className="w-full border-t-2 border-[#845EC2] bg-[#e1c2ff66] text-center py-5">
+        <div className="text-[20px] font-bold">고객센터 이용안내</div>
+        <div className="flex items-center justify-center gap-2 text-[16px] font-bold mt-1">
+          <img src={Call} alt="Call Icon" className="w-6 h-6" />
           월~금 10:00~18:00
         </div>
-        <div className="mt-1 text-[16px] text-gray-600 font-bold">(점심 12:00~13:00)</div>
+        <div className="mt-1 text-[14px] text-gray-600 font-bold">(점심 12:00~13:00)</div>
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ function Chatbot() {
         { label: "고객지원", path: "/support" },
         { label: "챗봇", path: "/chatbot" },
         { label: "건의함", path: "/suggestion" },
+        { label: "신고", path: "/report" },
     ];
 
     const [messages, setMessages] = useState([
@@ -21,6 +22,10 @@ function Chatbot() {
     const [inputText, setInputText] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(""); // "chatbot", "notice", "faq"
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [parentId, setParentId] = useState(null);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -38,6 +43,35 @@ function Chatbot() {
         };
     }, [isModalOpen]);
 
+    // 🔹 챗봇 모달이 열릴 때, API 호출하여 메시지 불러오기
+    useEffect(() => {
+        const fetchChatbotMessages = async () => {
+            if (modalType === 'chatbot') {
+                setLoading(true);
+                setError(null);
+                try {
+                    const response = await axios.get(`/chat-bot/${parentId || 'root'}`);
+                    const data = response.data;
+
+                    // ✅ 응답 메시지 추가
+                    setMessages((prev) => [...prev, { type: 'bot', text: data.message }]);
+
+                    // ✅ 다음 요청을 위한 parentId 저장
+                    if (data.parentId) {
+                        setParentId(data.parentId);
+                    }
+
+                } catch (err) {
+                    setError('챗봇 응답 중 오류가 발생했습니다.');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchChatbotMessages();
+    }, [modalType]);
+
     const handleSend = () => {
         if (inputText.trim() === "") return;
         setMessages(prev => [...prev, { from: "user", text: inputText }]);
@@ -46,19 +80,19 @@ function Chatbot() {
 
     return (
         <div className="mx-auto w-full border font-semibold border-[#845EC2]">
-            {/* 네비게이션 바 */}
-            <ul className="flex w-full list-none p-0 m-0 border bg-white border-[#e1c2ff33]">
-                {menuItems.map((item, idx) => (
+            {/* 탭 메뉴 */}
+            <ul className="flex list-none m-0 p-0 border-b border-[#e1c2ff33]">
+                {menuItems.map((item) => (
                     <li
                         key={item.label}
-                        className={`flex items-center justify-center flex-1 border border-[#e1c2ff33] h-[65px]
-                            ${idx === 0 ? "border-l-0" : ""} ${idx === menuItems.length - 1 ? "border-r-0" : ""}`}
+                        className="flex-1 text-center h-[60px] border-r last:border-r-0 border-[#e1c2ff33]"
                     >
                         <Link
                             to={item.path}
-                            className={`w-full h-full flex items-center justify-center text-[20px] font-semibold
-                                ${item.label === "챗봇" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]"}
-                                hover:bg-[#E2C5EE] hover:text-black hover:underline`}
+                            className={`flex items-center justify-center w-full h-full text-[18px] font-semibold
+                         ${item.label === "챗봇" ? "bg-[#E2C5EE] text-black" : "text-[#615e5e]"}
+                         ${item.label === "신고" ? "bg-black-100 text-black-500" : ""}
+                         hover:bg-[#E2C5EE] hover:text-black`}
                         >
                             {item.label}
                         </Link>
@@ -66,37 +100,50 @@ function Chatbot() {
                 ))}
             </ul>
 
-            <div className="mt-6 mx-auto max-w-6xl flex flex-col md:flex-row gap-8 px-2">
-                {/* 인기 질문 섹션 */}
-                <div className="mt-10 mx-auto w-full md:w-1/2 px-4">
-                    <h2 className="text-xl font-bold text-[#845EC2] text-[35px] mb-4 text-left">자주 묻는 질문 TOP 3</h2>
-                    <ul className="space-y-3 text-left text-gray-800">
-                        <li className="border-l-4 border-[#AF128D] pl-4 text-md hover:underline cursor-pointer">배송은 얼마나 걸리나요?</li>
-                        <li className="border-l-4 border-[#AF128D] pl-4 text-md hover:underline cursor-pointer">회원가입은 어떻게 하나요?</li>
-                        <li className="border-l-4 border-[#AF128D] pl-4 text-md hover:underline cursor-pointer">결제 수단은 어떤 것이 있나요?</li>
-                    </ul>
-                </div>
+            <div className="mt-12 mx-auto max-w-6xl px-4 md:px-6">
+                {/* 상단 섹션 - FAQ + 사용가이드 */}
+                <div className="flex flex-col md:flex-row gap-10">
+                    {/* 자주 묻는 질문 */}
+                    <div className="w-full md:w-1/2">
+                        <h2 className="text-3xl font-semibold text-[#845EC2] mb-6">자주 묻는 질문 TOP 3</h2>
+                        <ul className="space-y-5 text-gray-800">
+                            {["배송은 얼마나 걸리나요?", "회원가입은 어떻게 하나요?", "결제 수단은 어떤 것이 있나요?"].map((question, index) => (
+                                <li key={index} className="flex items-start gap-3">
+                                    <div className="w-1.5 h-6 bg-[#AF128D] mt-1 rounded" />
+                                    <span className="text-base hover:underline cursor-pointer">{question}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-                {/* 사용 가이드 카드 */}
-                <div className="mt-6 mx-auto max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
-                    <div className="bg-[#f3eaff] p-4 rounded-lg shadow border border-[#D3A4F7]">
-                        <h3 className="text-lg font-bold text-[#845EC2] mb-2">챗봇 이용 방법</h3>
-                        <p className="text-sm text-gray-700">궁금한 점을 자연어로 입력해보세요. 예: "배송 조회하고 싶어요"</p>
-                    </div>
-                    <div className="bg-[#f3eaff] p-4 rounded-lg shadow border border-[#D3A4F7]">
-                        <h3 className="text-lg font-bold text-[#845EC2] mb-2">상담 연결</h3>
-                        <p className="text-sm text-gray-700">챗봇으로 해결이 어려운 경우, 실시간 상담원 연결도 가능합니다.</p>
-                    </div>
-                    <div className="bg-[#f3eaff] p-4 rounded-lg shadow border border-[#D3A4F7]">
-                        <h3 className="text-lg font-bold text-[#845EC2] mb-2">운영시간</h3>
-                        <p className="text-sm text-gray-700">평일 오전 9시부터 오후 6시까지 운영됩니다.</p>
+                    {/* 사용 가이드 */}
+                    <div className="mb-4 w-full md:w-1/2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-4">
+                        {[
+                            {
+                                title: "챗봇 이용 방법",
+                                text: "궁금한 점을 자연어로 입력해보세요. 예: \"배송 조회하고 싶어요\""
+                            },
+                            {
+                                title: "상담 연결",
+                                text: "챗봇으로 해결이 어려운 경우, 실시간 상담원 연결도 가능합니다."
+                            },
+                            {
+                                title: "운영시간",
+                                text: "평일 오전 9시부터 오후 6시까지 운영됩니다."
+                            }
+                        ].map((item, idx) => (
+                            <div key={idx} className="bg-white hover:shadow-md transition-shadow p-5 rounded-xl border border-[#E0D4F7]">
+                                <h3 className="text-lg font-semibold text-[#845EC2] mb-2">{item.title}</h3>
+                                <p className="text-sm text-gray-700">{item.text}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
             {/* 챗봇 시작 버튼 */}
             <div className="flex justify-center gap-20">
-                <div className="flex justify-center mt-10">
+                <div className="flex justify-center mb-6">
                     <button
                         onClick={() => {
                             setModalType("chatbot")
@@ -109,7 +156,7 @@ function Chatbot() {
                     </button>
                 </div>
 
-                <div className="flex justify-center mt-10">
+                <div className="flex justify-center mb-6">
                     <button
                         onClick={() => {
                             setModalType("notice");
@@ -122,7 +169,7 @@ function Chatbot() {
                     </button>
                 </div>
 
-                <div className="flex justify-center mt-10">
+                <div className="flex justify-center mb-6">
                     <button
                         onClick={() => {
                             setModalType("faq");
@@ -141,7 +188,7 @@ function Chatbot() {
                     <div className="bg-white rounded-xl shadow-lg w-full max-w-[900px] h-[700px] flex relative">
                         {/* 닫기 버튼 */}
                         <button
-                            className="absolute top-4 right-4 text-purple-700 hover:text-red-500 text-xl font-bold z-50"
+                            className="absolute top-4 right-4 w-10 h-10 bg-purple-200 text-purple-700 hover:bg-red-100 hover:text-red-500 text-xl font-bold z-10 px-2 py-1 rounded"
                             onClick={() => setIsModalOpen(false)}
                             aria-label="Close"
                         >
@@ -151,32 +198,43 @@ function Chatbot() {
                         {/* 챗봇 모달 */}
                         {modalType === "chatbot" && (
                             <div className="flex w-full h-full p-4 gap-4">
-                                {/* 좌측 사이드바 */}
-                                <div className="hidden md:flex flex-col w-[200px] gap-4">
-                                    <div className="bg-white border border-[#845EC2] p-4 rounded-lg shadow">
-                                        <h2 className="text-lg font-semibold text-[#845EC2] mb-2">운영시간</h2>
-                                        <p className="text-sm text-gray-700">평일: 09:00~18:00</p>
-                                        <p className="text-sm text-gray-700">점심: 12:00~13:00</p>
-                                        <p className="text-sm text-gray-700">주말/공휴일 휴무</p>
+                                <div className="hidden md:flex flex-col w-[220px] gap-4 text-sm text-gray-700">
+                                    {/* 운영시간 */}
+                                    <div className="bg-gradient-to-br from-white to-gray-50 border border-purple-300 p-4 rounded-xl shadow-sm">
+                                        <h2 className="text-base font-bold text-purple-800 mb-2">운영시간</h2>
+                                        <ul className="space-y-1">
+                                            <li>평일: 09:00~18:00</li>
+                                            <li>점심: 12:00~13:00</li>
+                                            <li>주말/공휴일 휴무</li>
+                                        </ul>
                                     </div>
-                                    <div className="bg-white border border-[#845EC2] p-4 rounded-lg shadow">
-                                        <h2 className="text-lg font-semibold text-[#845EC2] mb-2">빠른 메뉴</h2>
-                                        <ul className="text-sm text-gray-700 space-y-1">
-                                            <li>
-                                                <a href="/faq" className="hover:underline" title="자주 묻는 질문 페이지로 이동">
-                                                    • 자주 묻는 질문
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="/notice" className="hover:underline" title="공지사항 페이지로 이동">
-                                                    • 공지사항
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="/consult" className="hover:underline" title="상담 신청 페이지로 이동">
-                                                    • 상담 신청
-                                                </a>
-                                            </li>
+
+                                    {/* 빠른 메뉴 */}
+                                    <div className="bg-gradient-to-br from-white to-gray-50 border border-purple-300 p-4 rounded-xl shadow-sm">
+                                        <h2 className="text-base font-bold text-purple-800 mb-2">빠른 메뉴</h2>
+                                        <ul className="space-y-1 list-disc list-inside text-[13px] text-[#333]">
+                                            <button
+                                                className="mt-4 px-4 py-2 bg-white text-[#845EC2] rounded hover:bg-purple-100"
+                                                onClick={() => setModalType("faq")}
+                                            >
+                                                자주 묻는 질문
+                                            </button>
+                                            <button
+                                                className="mt-4 px-4 py-2 bg-white text-[#845EC2] rounded hover:bg-purple-100"
+                                                onClick={() => setModalType("notice")}
+                                            >
+                                                공지사항
+                                            </button>
+                                        </ul>
+                                    </div>
+
+                                    {/* 창 닫는 방법 */}
+                                    <div className="bg-gradient-to-br from-white to-gray-50 border border-purple-300 p-4 rounded-xl shadow-sm">
+                                        <h2 className="text-base font-bold text-purple-800 mb-2">창 닫는 방법</h2>
+                                        <ul className="space-y-1 text-[13px]">
+                                            <li>ESC키 누르기</li>
+                                            <li>왼쪽 화살표 아이콘 클릭</li>
+                                            <li>우측 상단 x버튼 클릭</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -189,13 +247,13 @@ function Chatbot() {
                                 </div>
 
                                 {/* 우측 채팅창 */}
-                                <div className="flex-1 relative flex flex-col bg-white border border-[#E0E0E0] rounded-lg">
+                                <div className="flex-1 relative flex flex-col bg-white border border-gray-300 rounded-lg">
                                     {/* 상단 타이틀 */}
                                     <div className="flex items-center border-b px-4 py-2">
                                         <img
                                             src={Arrowback}
                                             alt="닫기"
-                                            className="w-6 h-6 mr-2 cursor-pointer"
+                                            className="w-7 h-7 mr-2 cursor-pointer"
                                             onClick={() => setIsModalOpen(false)}
                                         />
                                         <span className="text-lg font-bold text-[#845EC2]">AI 상담사 루시드</span>
@@ -203,6 +261,17 @@ function Chatbot() {
 
                                     {/* 메시지 영역 */}
                                     <div className="flex-1 overflow-y-auto px-4 py-2 pb-28 flex flex-col gap-2">
+                                        {loading && (
+                                            <div className="text-center text-gray-500 italic mb-2">
+                                                로딩 중입니다...
+                                            </div>
+                                        )}
+
+                                        {error && (
+                                            <div className="text-center text-red-600 font-semibold mb-2">
+                                                {error}
+                                            </div>
+                                        )}
                                         {messages.map((msg, idx) => (
                                             <div
                                                 key={idx}
@@ -228,7 +297,7 @@ function Chatbot() {
                                     </div>
 
                                     {/* 입력창 */}
-                                    <div className="absolute bottom-0 left-0 right-0 bg-white p-2 flex items-center border-t">
+                                    <div className="absolute bottom-0 left-0 right-0 bg-white p-2 flex items-center border-t border-gray-300">
                                         <input
                                             type="text"
                                             placeholder="메시지를 입력하세요..."
@@ -318,89 +387,89 @@ function Chatbot() {
                             </div>
                         )}
 
-{/* FAQ */}
-{modalType === "faq" && (
-    <div className="p-4 overflow-y-auto w-full h-full">
-        {/* 상단 타이틀 */}
-        <div className="flex items-center border-b px-4 py-2">
-            <img
-                src={Arrowback}
-                alt="닫기"
-                className="w-6 h-6 mr-2 cursor-pointer"
-                onClick={() => setIsModalOpen(false)}
-            />
-            <span className="text-lg font-bold text-[#845EC2]">FAQ</span>
-        </div>
+                        {/* FAQ */}
+                        {modalType === "faq" && (
+                            <div className="p-4 overflow-y-auto w-full h-full">
+                                {/* 상단 타이틀 */}
+                                <div className="flex items-center border-b px-4 py-2">
+                                    <img
+                                        src={Arrowback}
+                                        alt="닫기"
+                                        className="w-6 h-6 mr-2 cursor-pointer"
+                                        onClick={() => setIsModalOpen(false)}
+                                    />
+                                    <span className="text-lg font-bold text-purple-900">FAQ</span>
+                                </div>
 
-        {/* FAQ 리스트 */}
-        <div className="mt-5 flex flex-col gap-4 text-[15px]">
+                                {/* FAQ 리스트 */}
+                                <div className="mt-5 flex flex-col gap-4 text-[15px]">
 
-            {/* Q1 */}
-            <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
-                <div className="font-semibold text-[#845EC2]">Q. 챗봇은 어떤 기능을 하나요?</div>
-                <div className="mt-1 text-gray-700">
-                    AI 상담사 ‘루시드’는 간단한 문의 응답, 자주 묻는 질문 안내, 서비스 이용 방법에 대한 설명 등을 제공합니다.<br></br>
-                    복잡한 상담은 실시간 상담 연결로 이어질 수 있습니다.
-                </div>
-            </div>
+                                    {/* Q1 */}
+                                    <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
+                                        <div className="font-semibold text-purple-800">Q. 챗봇은 어떤 기능을 하나요?</div>
+                                        <div className="mt-1 text-gray-700">
+                                            AI 상담사 ‘루시드’는 간단한 문의 응답, 자주 묻는 질문 안내, 서비스 이용 방법에 대한 설명 등을 제공합니다.<br></br>
+                                            복잡한 상담은 실시간 상담 연결로 이어질 수 있습니다.
+                                        </div>
+                                    </div>
 
-            {/* Q2 */}
-            <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
-                <div className="font-semibold text-[#845EC2]">Q. 실시간 상담 연결은 가능한가요?</div>
-                <div className="mt-1 text-gray-700">
-                    현재는 AI 상담을 중심으로 운영 중이며, 필요 시 상담 신청을 통해 담당자가 직접 연락드립니다.
-                </div>
-            </div>
+                                    {/* Q2 */}
+                                    <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
+                                        <div className="font-semibold text-purple-800">Q. 실시간 상담 연결은 가능한가요?</div>
+                                        <div className="mt-1 text-gray-700">
+                                            현재는 AI 상담을 중심으로 운영 중이며, 필요 시 상담 신청을 통해 담당자가 직접 연락드립니다.
+                                        </div>
+                                    </div>
 
-            {/* Q3 */}
-            <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
-                <div className="font-semibold text-[#845EC2]">Q. 상담 가능 시간은 언제인가요?</div>
-                <div className="mt-1 text-gray-700">
-                    평일: 09:00 ~ 18:00<br />
-                    점심시간: 12:00 ~ 13:00<br />
-                    주말 및 공휴일은 운영하지 않습니다.
-                </div>
-            </div>
+                                    {/* Q3 */}
+                                    <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
+                                        <div className="font-semibold text-purple-800">Q. 상담 가능 시간은 언제인가요?</div>
+                                        <div className="mt-1 text-gray-700">
+                                            평일: 09:00 ~ 18:00<br />
+                                            점심시간: 12:00 ~ 13:00<br />
+                                            주말 및 공휴일은 운영하지 않습니다.
+                                        </div>
+                                    </div>
 
-            {/* Q4 */}
-            <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
-                <div className="font-semibold text-[#845EC2]">Q. 답변이 만족스럽지 않아요. 어떻게 하나요?</div>
-                <div className="mt-1 text-gray-700">
-                    보다 정확한 상담을 위해 구체적인 질문을 해주시거나, 문의하기 메뉴를 통해 직접 접수해 주세요.
-                </div>
-            </div>
+                                    {/* Q4 */}
+                                    <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
+                                        <div className="font-semibold text-purple-800">Q. 답변이 만족스럽지 않아요. 어떻게 하나요?</div>
+                                        <div className="mt-1 text-gray-700">
+                                            보다 정확한 상담을 위해 구체적인 질문을 해주시거나, 문의하기 메뉴를 통해 직접 접수해 주세요.
+                                        </div>
+                                    </div>
 
-            {/* Q5 */}
-            <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
-                <div className="font-semibold text-[#845EC2]">Q. 개인정보는 안전하게 보호되나요?</div>
-                <div className="mt-1 text-gray-700">
-                    네. 고객님의 정보는 암호화 및 보안 정책에 따라 안전하게 관리됩니다. 개인정보 처리방침을 참고해 주세요.
-                </div>
-            </div>
+                                    {/* Q5 */}
+                                    <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
+                                        <div className="font-semibold text-purple-800">Q. 개인정보는 안전하게 보호되나요?</div>
+                                        <div className="mt-1 text-gray-700">
+                                            네. 고객님의 정보는 암호화 및 보안 정책에 따라 안전하게 관리됩니다. 개인정보 처리방침을 참고해 주세요.
+                                        </div>
+                                    </div>
 
-            {/* Q6 */}
-            <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
-                <div className="font-semibold text-[#845EC2]">Q. 챗봇 기록은 저장되나요?</div>
-                <div className="mt-1 text-gray-700">
-                    사용자와의 대화 내용은 서비스 개선 및 품질 관리를 위해 일정 기간 저장될 수 있으며,<br></br> 
-                    자세한 사항은 이용약관을 확인해 주세요.
-                </div>
-            </div>
-        </div>
-    </div>
-)}
+                                    {/* Q6 */}
+                                    <div className="bg-[#F5F5F5] p-4 rounded-lg shadow-sm">
+                                        <div className="font-semibold text-purple-800">Q. 챗봇 기록은 저장되나요?</div>
+                                        <div className="mt-1 text-gray-700">
+                                            사용자와의 대화 내용은 서비스 개선 및 품질 관리를 위해 일정 기간 저장될 수 있으며,<br></br>
+                                            자세한 사항은 이용약관을 확인해 주세요.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
 
-            {/* 하단 고객센터 안내 박스 */}
-            <div className="w-full border-t-2 border-[#845EC2] bg-[#e1c2ff66] text-center py-5 mt-6">
-                <div className="text-[24px] font-bold">고객센터 이용안내</div>
-                <div className="flex items-center justify-center gap-2 text-[18px] font-bold">
-                    <img src={Call} alt="Call Icon" className="w-10 h-10" />
+            {/* 하단 고객센터 안내 */}
+            <div className="w-full border-t-2 border-[#845EC2] bg-[#e1c2ff66] text-center py-5">
+                <div className="text-[20px] font-bold">고객센터 이용안내</div>
+                <div className="flex items-center justify-center gap-2 text-[16px] font-bold mt-1">
+                    <img src={Call} alt="Call Icon" className="w-6 h-6" />
                     월~금 10:00~18:00
                 </div>
-                <div className="mt-1 text-[16px] text-gray-600 font-bold">(점심 12:00~13:00)</div>
+                <div className="mt-1 text-[14px] text-gray-600 font-bold">(점심 12:00~13:00)</div>
             </div>
 
         </div>

@@ -124,15 +124,15 @@ export default function PostDetailPage() {
   if (!post) return <div className="p-6">로딩 중...</div>;
 
   return (
-    <div className="p-4 max-w-[900px] mx-auto mt-6 mb-20 bg-[#F9F9F9]">
+    <div className="p-4 max-w-[900px] mx-auto mt-6 mb-20 bg-white text-black">
       <div className="bg-white border border-gray-300 rounded px-5 py-4 mb-6 shadow-sm">
         <h1 className="text-xl font-bold border-b border-gray-300 pb-2 mb-3">{post.postTitle}</h1>
-        <div className="flex justify-between text-sm text-gray-500 mb-4">
+        <div className="flex justify-between text-sm text-gray-600 mb-4">
           <span className="font-bold">{post.userNickName}</span>
           <span className="font-bold">{formatDateTime(post.postCreate)}</span>
         </div>
         <div
-          className="mb-6 text-[15px] leading-relaxed whitespace-pre-wrap rounded px-4 py-3 bg-white"
+          className="mb-6 text-[15px] leading-relaxed whitespace-pre-wrap rounded px-4 py-3 bg-white text-black"
           style={{ minHeight: "150px" }}
           dangerouslySetInnerHTML={{ __html: post.postContent }}
         />
@@ -172,13 +172,13 @@ export default function PostDetailPage() {
       </div>
 
       {/* 댓글 박스 */}
-      <div ref={commentRef} className="bg-white border border-gray-300 rounded px-5 py-4">
+      <div ref={commentRef} className="bg-white text-black border border-gray-300 rounded px-5 py-4">
         <h3 className="text-lg font-semibold border-b border-gray-200 pb-2 mb-4">
           댓글 [{countAllComments(comments)}]
         </h3>
         <div className="space-y-4 mb-6">
           {comments.length === 0 ? (
-            <p className="text-sm text-gray-500">댓글이 없습니다.</p>
+            <p className="text-sm text-gray-600">댓글이 없습니다.</p>
           ) : (
             comments.map((comment) => (
               <CommentItem
@@ -201,7 +201,7 @@ export default function PostDetailPage() {
           }
           value={commentContent}
           onChange={(e) => setCommentContent(e.target.value)}
-          className="w-full h-24 border border-gray-300 px-3 py-2 rounded resize-none bg-white"
+          className="w-full h-24 border border-gray-300 px-3 py-2 rounded resize-none bg-white text-black"
         />
         <div className="text-right mt-2">
           <button

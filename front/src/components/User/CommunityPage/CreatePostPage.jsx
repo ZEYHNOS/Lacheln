@@ -71,9 +71,9 @@ export default function CreatePostPage() {
     <div className="p-6 max-w-[800px] mx-auto">
       {/* 게시판 선택 */}
       <div className="mb-4">
-        <label className="block mb-1 font-semibold">게시판</label>
+        <label className="block mb-1 font-semibold text-black">게시판</label>
         <select
-          className="w-full border border-[#9e5fdd] px-3 py-2 rounded"
+          className="w-full border border-[#9e5fdd] px-3 py-2 rounded bg-white text-black"
           value={selectedBoardId}
           onChange={(e) => setSelectedBoardId(Number(e.target.value))}
         >
@@ -87,9 +87,9 @@ export default function CreatePostPage() {
 
       {/* 제목 */}
       <div className="mb-4">
-        <label className="block mb-1 font-semibold">제목</label>
+        <label className="block mb-1 font-semibold text-black">제목</label>
         <input
-          className="w-full border border-[#9e5fdd] px-3 py-2 rounded"
+          className="w-full border border-[#9e5fdd] px-3 py-2 rounded bg-white text-black placeholder-gray-500"
           type="text"
           placeholder="제목을 입력하세요"
           value={title}
@@ -99,9 +99,9 @@ export default function CreatePostPage() {
 
       {/* 본문 */}
       <div className="mb-4">
-        <label className="block mb-1 font-semibold">내용</label>
+        <label className="block mb-1 font-semibold text-black">내용</label>
         <textarea
-          className="w-full h-60 border border-[#9e5fdd] px-3 py-2 rounded resize-none"
+          className="w-full h-60 border border-[#9e5fdd] px-3 py-2 rounded resize-none bg-white text-black placeholder-gray-500"
           placeholder="내용을 입력하세요"
           value={content}
           onChange={(e) => setContent(e.target.value)}

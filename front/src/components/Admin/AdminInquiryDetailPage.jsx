@@ -64,37 +64,48 @@ export default function AdminInquiryDetailPage() {
   if (!inquiry) return <div className="p-6">⏳ 로딩 중...</div>;
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">📄 문의 상세</h2>
-      <div className="border p-5 rounded shadow space-y-3 bg-white">
-        <p><strong>제목:</strong> {inquiry.title}</p>
-        <p><strong>카테고리:</strong> {categoryLabelMap[inquiry.category] || inquiry.category}</p>
-        <p><strong>상태:</strong> {statusLabelMap[inquiry.status] || inquiry.status}</p>
-        <p><strong>작성자:</strong> {inquiry.userEmail}</p>
-        <p><strong>작성일:</strong> {formatCreatedAt(inquiry.createdAt)}</p>
+    <div className="border p-6 rounded-xl shadow bg-[#F6F1FA] space-y-3">
+      <p>
+        <span className="font-semibold text-[#845EC2]">제목:</span>{" "}
+        <span className="text-black">{inquiry.title}</span>
+      </p>
+      <p>
+        <span className="font-semibold text-[#845EC2]">카테고리:</span>{" "}
+        <span className="text-black">{categoryLabelMap[inquiry.category]}</span>
+      </p>
+      <p>
+        <span className="font-semibold text-[#845EC2]">상태:</span>{" "}
+        <span className="text-black">{statusLabelMap[inquiry.status]}</span>
+      </p>
+      <p>
+        <span className="font-semibold text-[#845EC2]">작성자:</span>{" "}
+        <span className="text-black">{inquiry.userEmail}</span>
+      </p>
+      <p>
+        <span className="font-semibold text-[#845EC2]">작성일:</span>{" "}
+        <span className="text-black">{formatCreatedAt(inquiry.createdAt)}</span>
+      </p>
 
-        <div>
-          <strong>내용:</strong>
-          <div
-            className="p-3 bg-gray-100 rounded mt-1 text-gray-800 whitespace-pre-wrap"
-            dangerouslySetInnerHTML={{ __html: inquiry.content }}
-          />
+      <div>
+        <span className="font-semibold text-[#845EC2]">내용:</span>
+        <div className="p-3 bg-white rounded mt-1 text-black whitespace-pre-wrap border border-gray-200">
+          {inquiry.content}
         </div>
+      </div>
 
-        <div className="mt-6">
-          <label className="block font-semibold mb-1">답변</label>
-          <textarea
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            className="w-full border p-3 rounded h-32"
-          />
-          <button
-            onClick={handleSubmit}
-            className="mt-3 bg-[#845EC2] text-white px-4 py-2 rounded hover:bg-[#6c49a3]"
-          >
-            답변 등록
-          </button>
-        </div>
+      <div className="mt-6">
+        <label className="block font-semibold mb-1 text-[#845EC2]">답변</label>
+        <textarea
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          className="w-full border p-3 rounded h-32"
+        />
+        <button
+          onClick={handleSubmit}
+          className="mt-3 bg-[#845EC2] text-white px-4 py-2 rounded hover:bg-[#6c49a3]"
+        >
+          답변 등록
+        </button>
       </div>
     </div>
   );

@@ -56,6 +56,7 @@ function Comments() {
     const [input, setInput] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [status, setStatus] = useState(false);
 
     useEffect(() => {
         const fetchReviewDetail = async () => {
@@ -83,11 +84,15 @@ function Comments() {
                 console.log('답글 데이터:', response.data);
                 if (response.data?.data) {
                     const commentData = response.data.data;
-                    setReply({
-                        id: commentData.commentId,
-                        content: commentData.content,
-                        date: formatDate(commentData.createdAt)
-                    });
+                    console.log("CommentData.status : ", commentData.status);
+                    if(!((commentData.status === 'REPLY_NEEDED') || (commentData.status === 'DELETED')))  {
+                        setStatus(true);
+                        setReply({
+                            id: commentData.commentId,
+                            content: commentData.content,
+                            date: formatDate(commentData.createdAt)
+                        });
+                    }
                 }
             } catch (err) {
                 console.error('답글 조회 에러:', err);
@@ -97,7 +102,13 @@ function Comments() {
 
         fetchReviewDetail();
         fetchComment();
+
+
     }, [reviewId]);
+
+    useEffect(() => {
+        console.log("Comment Status : ", status);
+    }, [status]);
 
     if (loading) return <div className="text-center p-4">로딩중...</div>;
     if (error) return <div className="text-red-500 p-4">{error}</div>;
@@ -127,10 +138,37 @@ function Comments() {
                     date: formatDate(commentData.createdAt)
                 });
                 setInput("");
+                setStatus(true);  // 답글 등록 후 상태 업데이트
             }
         } catch (err) {
             console.error('답글 등록 에러:', err);
             alert('답글 등록에 실패했습니다. 다시 시도해주세요.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDelete = async (e) => {
+        e.preventDefault();
+
+        const deleteCommentId = reply.id;
+
+        try {
+            setIsSubmitting(true);
+            
+            console.log('답글 삭제 요청 ID :', deleteCommentId);
+            
+            const response = await apiClient.delete(`/comment/${deleteCommentId}`);
+
+            console.log('답글 삭제 요청 반환 데이터 :', response.data);
+            
+            // 삭제 후 상태 초기화
+            setReply(null);
+            setStatus(false);
+            
+        } catch (err) {
+            console.error('답글 삭제 에러:', err);
+            alert('답글 삭제에 실패했습니다. 다시 시도해주세요.');
         } finally {
             setIsSubmitting(false);
         }
@@ -197,16 +235,24 @@ function Comments() {
             {/* 답글 */}
             <div className="bg-white rounded-xl shadow p-8 mb-8">
                 <h2 className="text-lg font-bold text-[#845EC2] mb-4">답글</h2>
-                {reply && (
+                {status && (
                     <div className="border-b pb-2">
-                        <div className="flex gap-2 items-center mb-1">
-                            <span className="text-xs text-gray-400">{reply.date}</span>
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <div className="flex gap-2 items-center mb-1">
+                                    <span className="text-xs text-gray-400">{reply.date}</span>
+                                </div>
+                                <div className="text-gray-800 text-sm">{reply.content}</div>
+                            </div>
+                            <button 
+                                className="bg-red-600 text-white px-2 py-1 text-sm rounded"
+                                onClick={handleDelete}
+                                >삭제</button>
                         </div>
-                        <div className="text-gray-800 text-sm">{reply.content}</div>
                     </div>
                 )}
                 {/* 답글 작성 (답글이 없을 때만) */}
-                {!reply && (
+                {!status && (
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <textarea
                             className="w-full bg-white text-black border border-gray-300 rounded-md p-3 resize-none focus:outline-none focus:border-[#845EC2] text-base"

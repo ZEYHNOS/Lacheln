@@ -53,6 +53,11 @@ public class ReviewCommentService {
         return reviewCommentRepository.findByReviewId(reviewId).orElse(null);
     }
 
+    public ReviewCommentEntity findByCommentId(Long commentId) {
+        return reviewCommentRepository.findById(commentId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "답글을 찾을 수 없습니다."));
+    }
+
     // 삭제되지 않은 리뷰 답글 반환하기
     public List<ReviewCommentEntity> findByReviewIdList(List<Long> reviewIdList) {
         return reviewCommentRepository.findAllByReviewIdIn(reviewIdList).stream()

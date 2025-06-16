@@ -10,6 +10,7 @@ const PaymentAndReview = () => {
   const [userInfo, setUserInfo] = useState({ userId: "", name: "", nickname: "", email: "", phone: "", tier: "", notification: "", gender: "", mileage: 0, language: "", currency: "", profileImageUrl: "" });
   const [orderList, setOrderList] = useState([]);
   const [reviewList, setReviewList] = useState([]);
+  const [reviewComments, setReviewComments] = useState({});
   const [pagination, setPagination] = useState({ curPage: 0, curElement: 0, size: 0, totalPage: 0, totalElement: 0, order: "" });
   const [loading, setLoading] = useState(false);
   const [currentView, setCurrentView] = useState('orders');
@@ -206,7 +207,7 @@ const PaymentAndReview = () => {
     }
   };
 
-  // getReviewList 함수 수정 - 데이터를 반환하도록 변경
+  // getReviewList 함수 수정
   const getReviewList = async () => {
     try {
       const res = await apiClient.get(`${baseUrl}/review/user`);
@@ -214,13 +215,38 @@ const PaymentAndReview = () => {
         const reviewData = res.data.data || [];
         setReviewList(reviewData);
         setPagination(res.data.pagination || {});
+        
+        // 각 리뷰의 답글을 가져오기
+        const commentsPromises = reviewData.map(review => 
+          apiClient.get(`${baseUrl}/comment/${review.reviewId}`)
+            .then(response => {
+              if (response.data?.data) {
+                return { reviewId: review.reviewId, comment: response.data.data };
+              }
+              return null;
+            })
+            .catch(err => {
+              console.error(`리뷰 ${review.reviewId}의 답글 로딩 실패:`, err);
+              return null;
+            })
+        );
+
+        const commentsResults = await Promise.all(commentsPromises);
+        const commentsMap = {};
+        commentsResults.forEach(result => {
+          if (result) {
+            commentsMap[result.reviewId] = result.comment;
+          }
+        });
+        setReviewComments(commentsMap);
+        
         console.log("리뷰 데이터 로드 완료:", reviewData);
-        return reviewData; // 데이터를 반환
+        return reviewData;
       }
-      return []; // 실패시 빈 배열 반환
+      return [];
     } catch (err) {
       console.error("리뷰 로딩 실패 :", err);
-      return []; // 에러시 빈 배열 반환
+      return [];
     }
   };
 
@@ -391,7 +417,6 @@ const PaymentAndReview = () => {
                           )}
                         </>
                       )}
-                      <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">상세보기</button>
                     </div>
                   </div>
                 </div>
@@ -405,60 +430,73 @@ const PaymentAndReview = () => {
             ) : displayReviews.length === 0 ? (
               <div className="py-12 text-center text-gray-500">작성한 리뷰가 없습니다.</div>
             ) : displayReviews.map((r, idx) => (
-              <div key={idx} className="border p-6 rounded-lg hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <h4 className="font-medium text-pp">{r.productName}</h4>
-                      <span className={`px-2 py-1 rounded-full text-xs ${getReviewStatusColor(r.status)}`}>
-                        {getReviewStatusText(r.status)}
-                      </span>
+              <>
+                <div key={idx} className="border p-6 rounded-lg hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="font-medium text-pp">{r.productName}</h4>
+                        <span className={`px-2 py-1 rounded-full text-xs ${getReviewStatusColor(r.status)}`}>
+                          {getReviewStatusText(r.status)}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 mb-2">작성자: {r.nickname}</p>
+                      <div className="flex items-center gap-2">
+                        {renderStars(r.score)}
+                        <span className="text-sm text-gray-500">({r.score}/5)</span>
+                      </div>
                     </div>
-                    <p className="text-gray-600 mb-2">작성자: {r.nickname}</p>
-                    <div className="flex items-center gap-2">
-                      {renderStars(r.score)}
-                      <span className="text-sm text-gray-500">({r.score}/5)</span>
-                    </div>
+                    <div className="text-sm text-gray-500">{formatDate(r.createdAt)}</div>
                   </div>
-                  <div className="text-sm text-gray-500">{formatDate(r.createdAt)}</div>
-                </div>
-              
-                <p className="text-gray-700 leading-relaxed mb-4">{r.content}</p>
+                
+                  <p className="text-gray-700 leading-relaxed mb-4">{r.content}</p>
 
-                {r.imageUrlList?.length > 0 && (
-                  <div className="flex gap-4 mb-4">
-                    {r.imageUrlList.map((u, i) => (
-                      <img 
-                        key={`${r.reviewId}-${i}-${u}`} // ✅ 고유한 key 생성
-                        src={baseImageUrl + u} 
-                        alt={`리뷰 이미지 ${i + 1}`} // ✅ 간단한 alt 텍스트
-                        className="w-20 h-20 object-cover rounded-lg border" 
-                        onError={(e) => {
-                          console.log(`이미지 로딩 실패: ${baseImageUrl + u}`);
-                          e.currentTarget.src = '/placeholder-image.png'; // ✅ 플레이스홀더 이미지로 대체
-                          // 또는 완전히 제거하려면:
-                          // e.currentTarget.style.display = 'none';
-                        }}
-                        onLoad={() => {
-                          console.log(`이미지 로딩 성공: ${baseImageUrl + u}`);
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                <div className="flex justify-between items-center text-sm text-gray-500">
-                  <span>상품 ID: {r.productId}</span>
-                  <span>업체 ID: {r.companyId}</span>
-                  {r.status === 'REGISTERED' && (
-                    <div className="flex gap-2">
-                      <button 
-                        className="px-3 py-1 border rounded text-sm bg-red-400 hover:bg-red-600 text-white"
-                        onClick={() => handleDeleteReview(r.reviewId)}>삭제</button>
+                  {r.imageUrlList?.length > 0 && (
+                    <div className="flex gap-4 mb-4">
+                      {r.imageUrlList.map((u, i) => (
+                        <img 
+                          key={`${r.reviewId}-${i}-${u}`}
+                          src={baseImageUrl + u} 
+                          alt={`리뷰 이미지 ${i + 1}`}
+                          className="w-20 h-20 object-cover rounded-lg border" 
+                          onError={(e) => {
+                            console.log(`이미지 로딩 실패: ${baseImageUrl + u}`);
+                            e.currentTarget.src = '/placeholder-image.png';
+                          }}
+                        />
+                      ))}
                     </div>
                   )}
+
+                  <div className="flex justify-between items-center text-sm text-gray-500">
+                    <span>상품 ID: {r.productId}</span>
+                    <span>업체 ID: {r.companyId}</span>
+                    {r.status === 'REGISTERED' && (
+                      <div className="flex gap-2">
+                        <button 
+                          className="px-3 py-1 border rounded text-sm bg-red-400 hover:bg-red-600 text-white"
+                          onClick={() => handleDeleteReview(r.reviewId)}>삭제</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+                {/* 답글 표시 부분 추가 */}
+                {reviewComments[r.reviewId] && reviewComments[r.reviewId].content && (
+                  <div className="mt-2 ml-8">
+                    <div className="flex items-start gap-2">
+                      <span className="text-gray-400">ㄴ</span>
+                      <div className="flex-1">
+                        <div className="text-sm text-gray-500 mb-1">
+                          {formatDate(reviewComments[r.reviewId].createdAt)}
+                        </div>
+                        <div className="text-gray-800">
+                          {reviewComments[r.reviewId].content}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             ))}
 
             {pagination.totalPage > 1 && (

@@ -52,7 +52,7 @@ public class ReviewCommentBusiness {
 
     // 리뷰 답글 삭제
     public void deleteReviewComment(Long reviewCommentId) {
-        ReviewCommentEntity reviewComment = reviewCommentService.findByReviewId(reviewCommentId);
+        ReviewCommentEntity reviewComment = reviewCommentService.findByCommentId(reviewCommentId);
         reviewCommentService.deleteReviewComment(reviewComment);
     }
 

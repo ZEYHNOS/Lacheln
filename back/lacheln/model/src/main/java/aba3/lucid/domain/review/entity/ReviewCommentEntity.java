@@ -65,6 +65,7 @@ public class ReviewCommentEntity {
     public void writeReviewComment(ReviewCommentRequest request) {
         this.rvcContent = request.getContent();
         this.rvcCreate = LocalDateTime.now();
+        this.rvcStatus = ReviewStatus.REGISTERED;
     }
 
     public void deleteRequest() {

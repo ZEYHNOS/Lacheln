@@ -25,14 +25,10 @@ public class StudioController {
     @PostMapping("/register")
     @Operation(summary = "스튜디오 등록", description = "새로운 스튜디오 상품을 등록")
     public API<StudioResponse> registerStudio(
-//            @Valid
-            @RequestBody StudioRequest req,
+            @Valid @RequestBody StudioRequest req,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         StudioResponse res = studioBusiness.registerProduct(customUserDetails.getCompanyId(), req);
-//        StudioResponse res = studioBusiness.registerProduct(2L, req);
-        log.debug("Register StudioResponse : {}", res);
-
         return API.OK(res);
     }
 
@@ -40,14 +36,10 @@ public class StudioController {
     @Operation(summary = "스튜디오 수정", description = "스튜디오 엔터티 수정")
     public API<StudioResponse> updateStudio(
             @PathVariable Long productId,
-//            @Valid
-            @RequestBody StudioRequest request,
+            @Valid @RequestBody StudioRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         StudioResponse response = studioBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
-//        StudioResponse response = studioBusiness.updateProduct(2L, productId, request);
-        log.debug("Update StudioResponse : {}", response);
-
         return API.OK(response);
     }
 
@@ -59,7 +51,6 @@ public class StudioController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         studioBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
-//        studioBusiness.deleteProduct(2L, productId);
         return API.OK("상품이 삭제되었습니다.");
     }
 
@@ -70,7 +61,6 @@ public class StudioController {
             @PathVariable Long productId
     ) {
         StudioResponse studioResponse = studioBusiness.getProductDetailInfo(productId);
-
         return API.OK(studioResponse);
     }
 

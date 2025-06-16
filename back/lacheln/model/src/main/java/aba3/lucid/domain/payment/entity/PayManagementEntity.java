@@ -63,7 +63,7 @@ public class PayManagementEntity {
     private BigInteger payMileage;
 
     // 아임포트 UID (결제 대행사가 보내주는 ID)
-    @Column(name = "pay_imp_uid", columnDefinition = "VARCHAR(50)")
+    @Column(name = "pay_imp_uid", columnDefinition = "VARCHAR(50)", nullable = false)
     private String payImpUid;
 
     // 결제 일시

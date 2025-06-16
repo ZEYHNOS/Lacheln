@@ -1,6 +1,8 @@
 package aba3.lucid.product.service;
 
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.image.RepresentativeImage;
+import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.status_code.ProductErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -15,6 +17,7 @@ import aba3.lucid.domain.product.entity.PopularEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
 import aba3.lucid.domain.product.enums.ProductSortBy;
 import aba3.lucid.domain.product.enums.ProductStatus;
+import aba3.lucid.domain.product.repository.OptionRepository;
 import aba3.lucid.domain.product.repository.PopularRepository;
 import aba3.lucid.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +42,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final PopularRepository popularRepository;
+    private final OptionRepository optionRepository;
 
     // 특정 업체 상품 리스트
     public List<ProductEntity> getCompanyProductList(Long companyId, ProductStatus status) {
@@ -167,7 +171,7 @@ public class ProductService {
         Map<Long, PopularResponse> map = new HashMap<>();
         for (ProductEntity product : productEntityList) {
             map.put(product.getPdId(), PopularResponse.builder()
-                            .productImageUrl(product.getImageList().isEmpty() ? "/image/default/" : product.getImageList().get(0).getPdImageUrl())
+                            .productImageUrl(RepresentativeImage.getRepresentativeImage(product.getImageList()))
                             .productName(product.getPdName())
                             .productId(product.getPdId())
                             .companyId(product.getCompany().getCpId())
@@ -184,5 +188,19 @@ public class ProductService {
         }
 
         return result;
+    }
+
+    @Transactional
+    public void deleteOption(CompanyEntity company, OptionEntity option) {
+        if (!company.equals(option.getProduct().getCompany())) {
+            throw new ApiException(ErrorCode.BAD_REQUEST);
+        }
+
+        optionRepository.delete(option);
+    }
+
+    public OptionEntity findByOptionIdWithThrow(Long opId) {
+        return optionRepository.findById(opId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND));
     }
 }

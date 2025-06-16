@@ -27,9 +27,7 @@ public class PackageController {
     @PostMapping("/register")
     @Operation(summary = "패키지 등록", description = "패키지 등록 하기")
     public API<PackageResponse> packageRegister(
-            @Valid
-            @RequestBody
-            PackageRegisterRequest request,
+            @Valid @RequestBody PackageRegisterRequest request,
             @AuthenticationPrincipal CustomUserDetails user
     ) {
         PackageResponse response = packageBusiness.packageRegister(request, user.getCompanyId());
@@ -42,9 +40,7 @@ public class PackageController {
     @PutMapping("/update/{packageId}")
     @Operation(summary = "패키지 업데이트", description = "패키지 업데이트 하기")
     public API<PackageResponse> packageUpdate(
-            @Valid
-            @RequestBody
-            PackageUpdateRequest request,
+            @Valid @RequestBody PackageUpdateRequest request,
             @PathVariable Long packageId,
             @AuthenticationPrincipal CustomUserDetails user
     ) {

@@ -35,7 +35,6 @@ public class ProductRequest implements ProductRequestIfs {
 
     // 상품 가격
     @NotNull
-    @PositiveOrZero
     private BigInteger price;
 
     // 추천 상태

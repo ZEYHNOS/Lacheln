@@ -26,7 +26,7 @@ public class DressController {
     @PostMapping("/register")
     @Operation(summary = "드레스 등록", description = "새로운 드래스 상품을 등록")
     public API<DressResponse> registerDress(
-            @RequestBody DressRequest req,
+            @Valid @RequestBody DressRequest req,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
             ) {
         log.info("DressRequest : {}", req);
@@ -40,15 +40,11 @@ public class DressController {
     @Operation(summary = "드래스 수정", description = "드래스 엔터티 수정")
     public API<DressResponse> updateDress(
             @PathVariable Long productId,
-            @Valid
-            @RequestBody DressRequest request,
+            @Valid @RequestBody DressRequest request,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
 
         DressResponse response = dressBusiness.updateProduct(customUserDetails.getCompanyId(), productId, request);
-//        DressResponse response = dressBusiness.updateProduct(1L, productId, request);
-        log.debug("Update DressResponse : {}", response);
-
         return API.OK(response);
     }
 
@@ -59,7 +55,6 @@ public class DressController {
             @PathVariable Long productId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-//        dressBusiness.deleteProduct(1L, productId);
         dressBusiness.deleteProduct(customUserDetails.getCompanyId(), productId);
         return API.OK("상품이 삭제되었습니다.");
     }
@@ -71,8 +66,6 @@ public class DressController {
             @PathVariable Long productId
     ) {
         DressResponse dressResponse = dressBusiness.getProductDetailInfo(productId);
-
-        log.info("Dress TaskTime : {}", dressResponse.getTaskTime());
         return API.OK(dressResponse);
     }
 }

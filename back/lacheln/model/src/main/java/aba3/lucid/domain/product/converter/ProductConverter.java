@@ -2,6 +2,7 @@ package aba3.lucid.domain.product.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.common.exception.ApiException;
+import aba3.lucid.common.image.RepresentativeImage;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
 import aba3.lucid.domain.company.entity.CompanyEntity;
@@ -38,7 +39,7 @@ public class ProductConverter {
                 .productId(entity.getPdId())
                 .productName(entity.getPdName())
                 .price(entity.getPdPrice())
-                .imageUrl(entity.getImageList().get(0).getPdImageUrl())
+                .imageUrl(RepresentativeImage.getRepresentativeImage(entity.getImageList()))
                 .companyName(entity.getCompany().getCpName())
                 .status(entity.getPdStatus())
                 .build()
@@ -65,7 +66,7 @@ public class ProductConverter {
                 .price(product.getPdPrice())
                 .status(product.getPdStatus())
                 .companyName(company.getCpName())
-                .imageUrl(product.getImageList().get(0).getPdImageUrl())
+                .imageUrl(RepresentativeImage.getRepresentativeImage(product.getImageList()))
                 .build();
     }
 

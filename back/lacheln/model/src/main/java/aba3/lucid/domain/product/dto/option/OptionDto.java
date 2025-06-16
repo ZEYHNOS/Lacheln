@@ -67,7 +67,7 @@ public class OptionDto {
         private BigInteger plusCost;
 
         // 추가 시간
-        @Negative
+        @NotNull
         private LocalTime plusTime;
 
         @Negative

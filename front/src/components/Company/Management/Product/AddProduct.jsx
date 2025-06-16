@@ -512,58 +512,70 @@ function AddProduct() {
                             {/* 옵션 추가하기 */}
                             {options.map((option, optIdx) => (
                             <div key={optIdx} className="border rounded p-4 mt-4 bg-white">
-                                {/* 옵션 제목 */}
+                                {/* 옵션 제목 및 옵션 삭제 버튼 */}
                                 <div className="flex justify-between items-center mb-2">
-                                <input
-                                    type="text"
-                                    placeholder="옵션 제목"
-                                    className="border p-2 rounded bg-white text-black"
-                                    value={option.title}
-                                    onChange={(e) => {
-                                    const newOptions = [...options];
-                                    newOptions[optIdx].title = e.target.value;
-                                    setOptions(newOptions);
-                                    }}
-                                />
-                                <div className="flex items-center space-x-4">
-                                    <label className="flex items-center space-x-1">
-                                        <input
-                                        type="checkbox"
-                                        checked={option.isMultiSelect}
+                                    <input
+                                        type="text"
+                                        placeholder="옵션 제목"
+                                        className="border p-2 rounded bg-white text-black"
+                                        value={option.title}
                                         onChange={(e) => {
                                             const newOptions = [...options];
-                                            newOptions[optIdx].isMultiSelect = e.target.checked;
+                                            newOptions[optIdx].title = e.target.value;
                                             setOptions(newOptions);
                                         }}
-                                        className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
-                                                    bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                                    checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                                    checked:after:font-bold checked:after:block checked:after:text-center
-                                                    checked:after:leading-[18px]"
-                                        />
-                                        <span>중복 선택</span>
-                                    </label>
-                                    <label className="flex items-center space-x-1">
-                                        <input
-                                        type="checkbox"
-                                        checked={categoryCode === "D" && option.title === "사이즈" ? true : option.isRequired}
-                                        disabled={categoryCode === "D" && option.title === "사이즈"}
-                                        onChange={(e) => {
-                                            if (categoryCode === "D" && option.title === "사이즈") return;
-                                            const newOptions = [...options];
-                                            newOptions[optIdx].isRequired = e.target.checked;
-                                            setOptions(newOptions);
-                                        }}
-                                        className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
-                                                    bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
-                                                    checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
-                                                    checked:after:font-bold checked:after:block checked:after:text-center
-                                                    checked:after:leading-[18px]"
-                                        />
-                                        <span>필수 선택</span>
-                                    </label>
+                                    />
+                                    <div className="flex items-center space-x-4">
+                                        <label className="flex items-center space-x-1">
+                                            <input
+                                                type="checkbox"
+                                                checked={option.isMultiSelect}
+                                                onChange={(e) => {
+                                                    const newOptions = [...options];
+                                                    newOptions[optIdx].isMultiSelect = e.target.checked;
+                                                    setOptions(newOptions);
+                                                }}
+                                                className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                                            bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                                            checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                                            checked:after:font-bold checked:after:block checked:after:text-center
+                                                            checked:after:leading-[18px]"
+                                            />
+                                            <span>중복 선택</span>
+                                        </label>
+                                        <label className="flex items-center space-x-1">
+                                            <input
+                                                type="checkbox"
+                                                checked={categoryCode === "D" && option.title === "사이즈" ? true : option.isRequired}
+                                                disabled={categoryCode === "D" && option.title === "사이즈"}
+                                                onChange={(e) => {
+                                                    if (categoryCode === "D" && option.title === "사이즈") return;
+                                                    const newOptions = [...options];
+                                                    newOptions[optIdx].isRequired = e.target.checked;
+                                                    setOptions(newOptions);
+                                                }}
+                                                className="w-5 h-5 rounded border-2 border-[#845EC2] appearance-none cursor-pointer
+                                                            bg-white checked:bg-[#845EC2] checked:border-[#845EC2]
+                                                            checked:after:content-['✓'] checked:after:text-white checked:after:text-sm
+                                                            checked:after:font-bold checked:after:block checked:after:text-center
+                                                            checked:after:leading-[18px]"
+                                            />
+                                            <span>필수 선택</span>
+                                        </label>
+                                        {/* 옵션 전체 삭제 버튼 */}
+                                        <button
+                                            onClick={() => {
+                                                const newOptions = [...options];
+                                                newOptions.splice(optIdx, 1);
+                                                setOptions(newOptions);
+                                            }}
+                                            className="bg-white text-red-500 font-bold text-xl px-2"
+                                            title="옵션 전체 삭제"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
                                 {/* 옵션 상세 항목 반복 */}
                                 {option.details.map((detail, detailIdx) => (
                                 <div key={detailIdx} className="flex space-x-2 mb-2 bg-white p-2 rounded">

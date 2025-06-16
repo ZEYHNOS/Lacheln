@@ -67,6 +67,22 @@ function CompanyHeader() {
         };
     }, []);
 
+    useEffect(() => {
+        // 기존 알림(안 읽은 것) 개수 fetch
+        apiClient.get("/company/alert/list", { withCredentials: true })
+            .then(res => {
+                if (res.data && res.data.data) {
+                    setNotifications(res.data.data);
+                    // isRead === false인 알림만 카운트
+                    const unread = res.data.data.filter(alert => !alert.isRead);
+                    setUnreadCount(unread.length);
+                }
+            })
+            .catch(err => {
+                console.error("알림 불러오기 실패:", err);
+            });
+    }, []);
+
     const handleLogout = async () => {
         try {
             const response = await apiClient.post("/userlogout");

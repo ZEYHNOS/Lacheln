@@ -34,6 +34,7 @@ public class ProductConverter {
 //        }
 
         return ProductResponse.builder()
+                .companyId(entity.getCompany().getCpId())
                 .productId(entity.getPdId())
                 .productName(entity.getPdName())
                 .price(entity.getPdPrice())

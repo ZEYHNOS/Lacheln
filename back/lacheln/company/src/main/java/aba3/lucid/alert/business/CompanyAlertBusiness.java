@@ -34,12 +34,13 @@ public class CompanyAlertBusiness {
 
 
     // 알림 생성하기
-    public void alertRegister(MutualAlert dto, Long companyId) {
+    public void alertRegister(CompanyAlertDto dto, Long companyId) {
         Validator.throwIfNull(dto);
         Validator.throwIfInvalidId(companyId);
 
         CompanyEntity company = companyService.findByIdWithThrow(companyId);
         CompanyAlertEntity entity = alertConverter.toEntity(dto, company);
+        sseService.sendAlert(company.getCpId(), dto);
 
         companyAlertService.alertRegister(entity);
     }

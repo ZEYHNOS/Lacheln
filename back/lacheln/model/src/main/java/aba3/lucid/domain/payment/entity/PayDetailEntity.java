@@ -46,7 +46,7 @@ public class PayDetailEntity {
     private String imageUrl;
 
     // 쿠폰
-    @Column(name = "coupon_name", nullable = false)
+    @Column(name = "coupon_name")
     private String couponName;
 
     // 가격

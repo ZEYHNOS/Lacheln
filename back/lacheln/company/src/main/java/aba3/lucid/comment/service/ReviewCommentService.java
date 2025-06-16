@@ -1,9 +1,12 @@
 package aba3.lucid.comment.service;
 
 
+import aba3.lucid.alert.business.CompanyAlertBusiness;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.domain.alert.dto.CompanyAlertDto;
+import aba3.lucid.domain.alert.dto.MutualAlert;
 import aba3.lucid.domain.alert.dto.UserAlertDto;
 import aba3.lucid.domain.product.enums.ReviewStatus;
 import aba3.lucid.domain.review.dto.ReviewCommentRequest;
@@ -23,6 +26,7 @@ public class ReviewCommentService {
     private final ReviewCommentRepository reviewCommentRepository;
     private final CompanyService companyService;
     private final RabbitTemplate rabbitTemplate;
+    private final CompanyAlertBusiness companyAlertBusiness;
 
     public ReviewCommentEntity findByIdWithThrow(Long reviewCommentId) {
         return reviewCommentRepository.findById(reviewCommentId)
@@ -61,13 +65,14 @@ public class ReviewCommentService {
     public ReviewCommentEntity writeReviewComment(ReviewCommentEntity reviewComment, ReviewCommentRequest request) {
         reviewComment.writeReviewComment(request);
         ReviewCommentEntity savedReviewCommentEntity = reviewCommentRepository.save(reviewComment);
-
         // 알림 보내기
         rabbitTemplate.convertAndSend("user.exchange", "to.user", UserAlertDto.reviewCommentAlert(request.getUserId()));
         return savedReviewCommentEntity;
     }
 
     public void initBaseReviewComment(ReviewCommentEntity reviewCommentEntity) {
+        CompanyAlertDto dto = CompanyAlertDto.reviewWrite(reviewCommentEntity);
+        companyAlertBusiness.alertRegister(dto, reviewCommentEntity.getCompany().getCpId());
         reviewCommentRepository.save(reviewCommentEntity);
     }
 

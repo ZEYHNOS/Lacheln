@@ -4,6 +4,7 @@ import aba3.lucid.common.enums.BinaryChoice;
 import aba3.lucid.domain.alert.enums.AlertType;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.entity.PackageEntity;
+import aba3.lucid.domain.review.entity.ReviewCommentEntity;
 import lombok.*;
 
 import java.io.Serializable;
@@ -39,6 +40,18 @@ public class CompanyAlertDto implements Serializable {
                 .sentTime(LocalDateTime.now())
                 .isRead(BinaryChoice.N)
                 .accessUrl(String.format(AlertType.INVITATION_PACKAGE.getBaseUrl(), entity.getPackId()))
+                .build()
+                ;
+    }
+
+    public static CompanyAlertDto reviewWrite(ReviewCommentEntity reviewCommentEntity) {
+        return CompanyAlertDto.builder()
+                .companyId(reviewCommentEntity.getCompany().getCpId())
+                .type("REVIEW")
+                .isRead(BinaryChoice.N)
+                .sentTime(LocalDateTime.now())
+                .text("리뷰 등록")
+                .accessUrl("/url")
                 .build()
                 ;
     }

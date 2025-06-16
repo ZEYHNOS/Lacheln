@@ -113,6 +113,30 @@ function ViewProduct() {
         .sort((a, b) => a.order - b.order) 
         .map(item => item.value)
 
+    // plusTime(plus_time) HH:mm:ss → 사람이 읽기 쉬운 시간 문자열로 변환
+    function formatLocalTime(time) {
+        // 문자열(HH:mm:ss) 처리
+        if (typeof time === "string" && time.includes(":")) {
+            const [h, m] = time.split(":");
+            const hours = parseInt(h, 10);
+            const minutes = parseInt(m, 10);
+            let result = "";
+            if (hours > 0) result += `${hours}시간`;
+            if (minutes > 0) result += (result ? " " : "") + `${minutes}분`;
+            if (!result) result = "0분";
+            return result;
+        }
+        // 배열([시, 분]) 처리
+        if (Array.isArray(time)) {
+            const [hours, minutes] = time;
+            let result = "";
+            if (hours > 0) result += `${hours}시간`;
+            if (minutes > 0) result += (result ? " " : "") + `${minutes}분`;
+            if (!result) result = "0분";
+            return result;
+        }
+        return "";
+    }
 
     return (
         <div className="w-full max-w-6xl mx-auto p-6 bg-white text-black rounded-md">
@@ -363,7 +387,7 @@ function ViewProduct() {
                                     {opt.optionDtList.map((dt, j) => (
                                         <div key={j} className="flex space-x-2 mb-2 bg-white p-2 rounded">
                                             <input type="text" value={dt.opDtName} disabled className="border p-2 rounded bg-white text-black" />
-                                            <input type="text" value={`${dt.plusTime}분`} disabled className="border p-2 rounded bg-white text-black" />
+                                            <input type="text" value={formatLocalTime(dt.plusTime)} disabled className="border p-2 rounded bg-white text-black" />
                                             <input type="text" value={`${dt.plusCost}원`} disabled className="border p-2 rounded bg-white text-black" />
                                         </div>
                                     ))}

@@ -116,7 +116,7 @@ const MyPage = () => {
                 className={`flex-1 grid place-items-center pb-4 px-4 border-b-2 font-medium text-md transition-colors duration-200 text-center ${
                   activeTab === tab.name
                     ? 'border-purple-600 text-purple-600 bg-pp text-white text-md'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent bg-white text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 {tab.name}

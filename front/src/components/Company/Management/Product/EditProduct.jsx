@@ -16,6 +16,34 @@ const checkboxStyle = "w-5 h-5 rounded border-2 border-[#845EC2] appearance-none
     "checked:after:font-bold checked:after:block checked:after:text-center " +
     "checked:after:leading-[18px]";
 
+// plus_time을 분 단위로 변환하는 함수
+function plusTimeToMinutes(plusTime) {
+    if (Array.isArray(plusTime)) {
+        // [시, 분] 배열
+        return (parseInt(plusTime[0] || 0) * 60) + parseInt(plusTime[1] || 0);
+    }
+    if (typeof plusTime === "string" && plusTime.includes(":")) {
+        const [h, m] = plusTime.split(":");
+        return (parseInt(h, 10) * 60) + parseInt(m, 10);
+    }
+    return parseInt(plusTime || 0);
+}
+
+// 분을 [시, 분] 배열로 변환하는 함수
+function minutesToPlusTimeArray(minutes) {
+    const min = parseInt(minutes || 0);
+    const hours = Math.floor(min / 60);
+    const remain = min % 60;
+    return [hours, remain];
+}
+
+// 분을 HH:mm:ss 문자열로 변환하는 함수
+function minutesToTimeString(minutes) {
+    const min = parseInt(minutes || 0);
+    const hours = Math.floor(min / 60);
+    const remain = min % 60;
+    return `${hours.toString().padStart(2, '0')}:${remain.toString().padStart(2, '0')}:00`;
+}
 
 function EditProduct() {
     const { id } = useParams();
@@ -235,12 +263,30 @@ function EditProduct() {
             })
         );
     
-        // 이미지 리스트에는 새로운 이미지 주소만 포함함
-        const image_url_list = uploadedUrls.filter(Boolean).map(url => url.replace(imageBaseUrl, ""));
+        // 기존 이미지 URL 추출
+        const existingImageUrls = existingImages.map(img => img.url.replace(imageBaseUrl, ""));
+        // 새로 업로드한 이미지 URL 추출
+        const newImageUrls = uploadedUrls.filter(Boolean).map(url => url.replace(imageBaseUrl, ""));
+        // 최종 이미지 리스트 (삭제된 이미지는 제외)
+        const image_url_list = [...existingImageUrls, ...newImageUrls];
+        if (image_url_list.length === 0) {
+            alert("이미지는 1개 이상 등록되어야 합니다.");
+            return;
+        }
     
         // 상세 설명 처리
         const descriptionList = writeRef.current?.getContentAsJsonArray?.() || [];
         const processedDescriptionList = await processDescriptionList(descriptionList);
+    
+        // task_time을 항상 HH:mm:ss 문자열로 변환
+        let taskTimeValue = task_time;
+        if (Array.isArray(task_time)) {
+            // [시, 분] 배열로 온 경우
+            taskTimeValue = minutesToTimeString(plusTimeToMinutes(task_time));
+        } else if (typeof task_time !== 'string' || !task_time.includes(":")) {
+            // 숫자 등 다른 형식일 경우
+            taskTimeValue = minutesToTimeString(task_time);
+        }
     
         // 최종 payload
         const payload = {
@@ -249,7 +295,7 @@ function EditProduct() {
             price: parseInt(price || 0),
             color,
             rec: rec ? "Y" : "N",
-            task_time: task_time,
+            task_time: taskTimeValue,
             in_available: indoor ? "Y" : "N",
             out_available: outdoor ? "Y" : "N",
             image_url_list,
@@ -260,12 +306,18 @@ function EditProduct() {
                 overlap: opt.isMultiSelect ? "Y" : "N",
                 essential: opt.isRequired ? "Y" : "N",
                 status: "ACTIVE",
-                option_dt_list: opt.details.map(dt => ({
-                    op_dt_name: dt.name,
-                    stock: dt.stock || 0,
-                    plus_time: parseInt(dt.extraTime || 0),
-                    plus_cost: parseInt(dt.extraPrice || 0),
-                })),
+                option_dt_list: opt.details.map(dt => {
+                    let plus_time = dt.extraTime ?? dt.plus_time;
+                    if (!Array.isArray(plus_time)) {
+                        plus_time = minutesToPlusTimeArray(plusTimeToMinutes(plus_time));
+                    }
+                    return {
+                        op_dt_name: dt.name,
+                        stock: dt.stock || 0,
+                        plus_time: plus_time,
+                        plus_cost: parseInt(dt.extraPrice || 0),
+                    };
+                }),
             })),
         };
         
@@ -275,15 +327,69 @@ function EditProduct() {
             payload.sizeList = sizeList;
             payload.essential = essential ? "Y" : "N";
             payload.overlap = overlap ? "Y" : "N";
+            payload.option_list = options.slice(1).map(opt => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                option_dt_list: opt.details.map(dt => {
+                    let plus_time = dt.extraTime ?? dt.plus_time;
+                    if (!Array.isArray(plus_time)) {
+                        plus_time = minutesToPlusTimeArray(plusTimeToMinutes(plus_time));
+                    }
+                    return {
+                        op_dt_name: dt.name,
+                        stock: dt.stock || 0,
+                        plus_time: plus_time,
+                        plus_cost: parseInt(dt.extraPrice || 0),
+                    };
+                }),
+            }));
         } else if (categoryCode === "S") {
             // 스튜디오 전용 필드
             payload.maxPeople = parseInt(maxPeople);
             payload.bgOptions = backgroundOption;
+            payload.option_list = options.map(opt => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                option_dt_list: opt.details.map(dt => {
+                    let plus_time = dt.extraTime ?? dt.plus_time;
+                    if (!Array.isArray(plus_time)) {
+                        plus_time = minutesToPlusTimeArray(plusTimeToMinutes(plus_time));
+                    }
+                    return {
+                        op_dt_name: dt.name,
+                        stock: dt.stock || 0,
+                        plus_time: plus_time,
+                        plus_cost: parseInt(dt.extraPrice || 0),
+                    };
+                }),
+            }));
         } else if (categoryCode === "M") {
             // 메이크업 전용 필드
             payload.business_trip = visitAvailable ? "Y" : "N";
             payload.visit = makeupVisit ? "Y" : "N";
             payload.manager = manager;
+            payload.option_list = options.map(opt => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                option_dt_list: opt.details.map(dt => {
+                    let plus_time = dt.extraTime ?? dt.plus_time;
+                    if (!Array.isArray(plus_time)) {
+                        plus_time = minutesToPlusTimeArray(plusTimeToMinutes(plus_time));
+                    }
+                    return {
+                        op_dt_name: dt.name,
+                        stock: dt.stock || 0,
+                        plus_time: plus_time,
+                        plus_cost: parseInt(dt.extraPrice || 0),
+                    };
+                }),
+            }));
         }
     
         apiClient.put(`${baseUrl}/product/${category}/update/${id}`, payload)
@@ -645,7 +751,6 @@ function EditProduct() {
                                                 }}
                                                 className="border p-2 rounded bg-white text-black"
                                             />
-
                                             {isDressSizeOption ? (
                                                 <input
                                                     type="number"
@@ -662,20 +767,20 @@ function EditProduct() {
                                                 <input
                                                     type="number"
                                                     placeholder="추가시간 (분단위)"
-                                                    value={detail.extraTime || ""}
+                                                    value={plusTimeToMinutes(detail.extraTime ?? detail.plus_time)}
                                                     onChange={(e) => {
                                                         const newOptions = [...options];
-                                                        newOptions[optIdx].details[detailIdx].extraTime = parseInt(e.target.value) || 0;
+                                                        // 입력값을 [시, 분] 배열로 변환해서 저장
+                                                        newOptions[optIdx].details[detailIdx].extraTime = minutesToPlusTimeArray(e.target.value);
                                                         setOptions(newOptions);
                                                     }}
                                                     className="border p-2 rounded bg-white text-black"
                                                 />
                                             )}
-
                                             <input
                                                 type="number"
                                                 placeholder="추가금 (원)"
-                                                value={detail.extraPrice || ""}
+                                                value={detail.extraPrice || 0}
                                                 onChange={(e) => {
                                                     const newOptions = [...options];
                                                     newOptions[optIdx].details[detailIdx].extraPrice = parseInt(e.target.value) || 0;
@@ -683,7 +788,6 @@ function EditProduct() {
                                                 }}
                                                 className="border p-2 rounded bg-white text-black"
                                             />
-
                                             <button
                                                 onClick={() => {
                                                     const newOptions = [...options];

@@ -59,7 +59,7 @@ export default function ReportPage() {
       console.log("신고할 업체 이메일 : ", c.email);
       console.log("신고할 업체 id : ", c.id);
       setCpId(c.id);
-      return [{ value: String(c.cpId), label: c.cpName }];
+      return [{ value: String(c.cpId), label: c.name }];
     } catch {
       return [];
     }

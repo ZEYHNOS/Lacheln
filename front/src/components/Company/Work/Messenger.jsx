@@ -19,10 +19,7 @@ export default function Chatting() {
   useEffect(() => {
     fetchChatRooms();
     return () => {
-      if (stompClient.current) {
-        stompClient.current.deactivate();
-        console.log("WebSocket 연결 해제");
-      }
+      disconnectWebSocket();
     }
   }, []);
 
@@ -45,13 +42,21 @@ export default function Chatting() {
       const result = await res.json();
       const rooms = result.data?.chatRooms || [];
       setChatRooms(rooms);
-      connectWebSocket(rooms);
     } catch (err) {
       console.error("채팅방 목록 불러오기 실패:", err);
     }
   };
 
-  const connectWebSocket = (rooms) => {
+  const disconnectWebSocket = () => {
+    if (stompClient.current) {
+      stompClient.current.deactivate();
+      console.log("WebSocket 연결 해제");
+      stompClient.current = null;
+      subscribedRooms.current = new Set();
+    }
+  };
+
+  const connectWebSocket = (roomId) => {
     if (stompClient.current) {
       stompClient.current.deactivate();
     }
@@ -66,31 +71,26 @@ export default function Chatting() {
     client.onConnect = () => {
       console.log("WebSocket 연결 완료");
 
-      rooms.forEach(room => {
-        const roomId = room.roomId;
-        if (subscribedRooms.current.has(roomId)) return;
+      client.subscribe(`/topic/chatroom.${roomId}`, (msg) => {
+        const received = JSON.parse(msg.body);
+        console.log("메시지 수신:", received);
+        setMessagesByRoom(prev => ({
+          ...prev,
+          [roomId]: [...(prev[roomId] || []), received]
+        }));
+      });
 
-        client.subscribe(`/topic/chatroom.${roomId}`, (msg) => {
-          const received = JSON.parse(msg.body);
-          setMessagesByRoom(prev => ({
-            ...prev,
-            [roomId]: [...(prev[roomId] || []), received]
-          }));
-        });
-
-        client.subscribe(`/topic/read.${roomId}`, (msg) => {
-          const data = JSON.parse(msg.body);
-          setMessagesByRoom(prev => ({
-            ...prev,
-            [roomId]: (prev[roomId] || []).map(m =>
-              data.message_ids.includes(m.messageId)
-                ? { ...m, read: 'Y' }
-                : m
-            )
-          }));
-        });
-
-        subscribedRooms.current.add(roomId);
+      client.subscribe(`/topic/read.${roomId}`, (msg) => {
+        const data = JSON.parse(msg.body);
+        console.log("읽음 처리 수신:", data);
+        setMessagesByRoom(prev => ({
+          ...prev,
+          [roomId]: (prev[roomId] || []).map(m =>
+            data.message_ids.includes(m.messageId)
+              ? { ...m, read: 'Y' }
+              : m
+          )
+        }));
       });
     };
 
@@ -98,7 +98,6 @@ export default function Chatting() {
     stompClient.current = client;
   };
 
-  // 업체 쪽에서는 sender와 receiver를 바꿈 (sender가 company, receiver가 user)
   const joinRoom = async (roomId, userId, companyId, userName, companyName) => {
     const isCompanySender = true;  // 업체 쪽이 sender임
 
@@ -131,6 +130,8 @@ export default function Chatting() {
       }
     }
 
+    // 채팅방 선택 시 WebSocket 연결
+    connectWebSocket(roomId);
     fetchChatRooms();
   };
 
@@ -151,17 +152,12 @@ export default function Chatting() {
       sendAt: new Date().toISOString()
     };
 
-    // WebSocket 전송
+    // WebSocket 전송만 하고 로컬 상태에 바로 추가하지 않음
+    // 서버에서 브로드캐스트된 메시지를 구독으로 받아서 표시
     stompClient.current.publish({
       destination: "/chat/send",
       body: JSON.stringify(msg),
     });
-
-    // 로컬 상태에 바로 반영
-    setMessagesByRoom(prev => ({
-      ...prev,
-      [currentRoomId]: [...(prev[currentRoomId] || []), msg],
-    }));
 
     // 입력창 비우기
     messageRef.current.value = "";
@@ -271,11 +267,11 @@ export default function Chatting() {
               }
             `
           }} />
-          {(messagesByRoom[currentRoomId] || []).map(msg => {
+          {(messagesByRoom[currentRoomId] || []).map((msg, index) => {
             const isSent = msg.senderId === sender.id;
             return (
               <div
-                key={msg.messageId}
+                key={msg.messageId || `temp-${index}`}
                 className={`mb-2 p-2 rounded max-w-[35%] shadow-sm ${isSent ? "ml-auto bg-pink-100" : "bg-purple-100"}`}
               >
                 <div className="font-semibold text-sm">{msg.senderName}</div>

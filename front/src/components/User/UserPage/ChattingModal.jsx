@@ -16,10 +16,7 @@ export default function ChatRoomModal({ companyId, onClose }) {
   useEffect(() => {
     joinRoom(companyId);
     return () => {
-      if (stompClient.current) {
-        stompClient.current.deactivate();
-        stompClient.current = null;
-      }
+      disconnectWebSocket();
     };
   }, []);
 
@@ -28,6 +25,14 @@ export default function ChatRoomModal({ companyId, onClose }) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
   }, [messages]);
+
+  const disconnectWebSocket = () => {
+    if (stompClient.current) {
+      stompClient.current.deactivate();
+      console.log("WebSocket 연결 해제");
+      stompClient.current = null;
+    }
+  };
 
   const joinRoom = async (companyId) => {
     const isUserSender = true;
@@ -69,11 +74,30 @@ export default function ChatRoomModal({ companyId, onClose }) {
     client.onConnect = () => {
       client.subscribe(`/topic/chatroom.${roomData.chatRoomId}`, (msg) => {
         const received = JSON.parse(msg.body);
-        setMessages(prev => [...prev, received]);
+        console.log("메시지 수신:", received);
+        
+        setMessages(prev => {
+          const exists = prev.some(m => {
+            if (received.messageId && m.messageId) {
+              return m.messageId === received.messageId;
+            }
+            return m.message === received.message && 
+                   m.senderId === received.senderId && 
+                   Math.abs(new Date(m.sendAt) - new Date(received.sendAt)) < 1000;
+          });
+          
+          if (exists) {
+            console.log("중복 메시지 무시:", received);
+            return prev;
+          }
+          
+          return [...prev, received];
+        });
       });
 
       client.subscribe(`/topic/read.${roomData.chatRoomId}`, (msg) => {
         const data = JSON.parse(msg.body);
+        console.log("읽음 처리 수신:", data);
         setMessages(prev => prev.map(m => (
           data.message_ids.includes(m.messageId)
             ? { ...m, read: 'Y' }
@@ -106,6 +130,8 @@ export default function ChatRoomModal({ companyId, onClose }) {
 
     console.log(msg);
 
+    // WebSocket 전송만 하고 로컬 상태에 바로 추가하지 않음
+    // 서버에서 브로드캐스트된 메시지를 구독으로 받아서 표시
     stompClient.current.publish({
       destination: "/chat/send",
       body: JSON.stringify(msg)
@@ -137,11 +163,11 @@ export default function ChatRoomModal({ companyId, onClose }) {
         </h3>
 
         <div ref={chatBoxRef} className="flex-1 overflow-y-auto bg-gray-50 p-3 border rounded mb-3 custom-scrollbar">
-          {messages.map(msg => {
+          {messages.map((msg, index) => {
             const isSent = msg.senderId === sender.id;
             return (
               <div
-                key={msg.messageId}
+                key={msg.messageId || `temp-${index}`}
                 className={`mb-2 p-2 rounded max-w-[40%] ${isSent ? 'ml-auto bg-pink-100 shadow-lg' : 'bg-purple-100 shadow-lg'}`}
               >
                 <div className="text-sm font-semibold">{msg.senderName}</div>

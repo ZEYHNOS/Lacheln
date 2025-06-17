@@ -40,8 +40,8 @@ public class ImageService {
             }
 
             // 디렉토리 생성
-            String dir = imageConfig.getDir() + "\\" + company.getCpName() + "\\" + type.getType();
-            File fileDir = new File(dir);
+            Path path = Paths.get(imageConfig.getDir(), String.valueOf(company.getCpId()), type.getType());
+            File fileDir = path.toFile();
             if (!fileDir.exists()) {
                 fileDir.mkdirs();
             }
@@ -61,7 +61,7 @@ public class ImageService {
             profileImg.transferTo(destination);
 
             // 경로 반환 (DB에 저장할 값)
-            String filePath = "\\" + company.getCpName() + "\\" + type.getType() + savedName;
+            String filePath = "\\" + company.getCpId() + "\\" + type.getType() + savedName;
             return filePath;
         }
 
@@ -90,8 +90,8 @@ public class ImageService {
         }
 
         // 해당 업체의 파일이 존재하지 않을 때
-        String dir = imageConfig.getDir() + "\\" + company.getCpId() + "\\" + type.getType();
-        File fileDir = new File(dir);
+        Path path = Paths.get(imageConfig.getDir(), String.valueOf(company.getCpId()), type.getType());
+        File fileDir = path.toFile();
         if (!fileDir.exists()) {
             fileDir.mkdirs();
         }
@@ -129,8 +129,8 @@ public class ImageService {
         }
 
         // 해당 업체의 파일이 존재하지 않을 때
-        String dir = imageConfig.getDir() + "\\" + user.getUserId() + "\\" + type.getType();
-        File fileDir = new File(dir);
+        Path path = Paths.get(imageConfig.getDir(), user.getUserId(), type.getType());
+        File fileDir = path.toFile();
         if (!fileDir.exists()) {
             fileDir.mkdirs();
         }

@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,11 +44,8 @@ public class UserImageService {
         log.info("user.getUserId() : {}", user.getUserId());
         log.info("type.getType() : {}", type.getType());
 
-        String dir = imageConfig.getDir() + "\\" + user.getUserId() + "\\" + type.getType();
-
-        log.info("save Image directory : {}", dir);
-
-        File fileDir = new File(dir);
+        Path path = Paths.get(imageConfig.getDir(), String.valueOf(user.getUserId()), type.getType());
+        File fileDir = path.toFile();
         if (!fileDir.exists()) {
             fileDir.mkdirs();
         }
@@ -76,9 +75,8 @@ public class UserImageService {
             throw new ApiException(ErrorCode.BAD_REQUEST, "image 아닙니다.");
         }
 
-        String dir = imageConfig.getDir() + "\\" + user.getUserId() + "\\" + type.getType();
-
-        File fileDir = new File(dir);
+        Path path = Paths.get(imageConfig.getDir(), String.valueOf(user.getUserId()), type.getType());
+        File fileDir = path.toFile();
         if (!fileDir.exists()) {
             fileDir.mkdirs();
         }

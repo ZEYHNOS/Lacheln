@@ -24,6 +24,10 @@ public class ReviewImageConverter {
 
 
     public List<ReviewImageEntity> toEntityList(List<String> urlList, ReviewEntity review) {
+        if (urlList == null || urlList.isEmpty()) {
+            return null;
+        }
+
         return urlList.stream()
                 .map(it -> toEntity(it, review))
                 .toList()
@@ -31,6 +35,9 @@ public class ReviewImageConverter {
     }
 
     public List<String> toResponseList(List<ReviewImageEntity> reviewImageEntityList) {
+        if (reviewImageEntityList == null || reviewImageEntityList.isEmpty()) {
+            return null;
+        }
         return reviewImageEntityList.stream()
                 .map(ReviewImageEntity::getRvImageUrl)
                 .toList()

@@ -27,6 +27,10 @@ public class PayDetailOptionConverter {
     }
 
     public List<PayDetailOptionEntity> toEntityList(List<PayDetailOptionRequest> requestList, PayDetailEntity payDetail) {
+        if (requestList == null || requestList.isEmpty()) {
+            return null;
+        }
+
         return requestList.stream()
                 .map(it -> toEntity(it, payDetail))
                 .toList()
@@ -46,6 +50,10 @@ public class PayDetailOptionConverter {
     }
 
     public List<PayDetailOptionResponse> toResponseList(List<PayDetailOptionEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return null;
+        }
+
         return entityList.stream()
                 .map(this::toResponse)
                 .toList();
@@ -58,6 +66,10 @@ public class PayDetailOptionConverter {
     }
 
     public List<PayDetailBlockOptionResponse> toBlockResponseList(List<PayDetailOptionEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return null;
+        }
+
         return entityList.stream()
                 .map(this::toBlockResponse)
                 .toList()
@@ -84,6 +96,10 @@ public class PayDetailOptionConverter {
     }
 
     public List<PayDetailOptionEntity> toPayDetailOptionEntityListByCartDetailResponseList(List<CartDetailResponse> cartDetailResponseList, PayDetailEntity entity) {
+        if (cartDetailResponseList == null || cartDetailResponseList.isEmpty()) {
+            return null;
+        }
+
         return cartDetailResponseList.stream()
                 .map(it -> toPayDetailOptionEntityByCartDetailResponse(it, entity))
                 .toList()

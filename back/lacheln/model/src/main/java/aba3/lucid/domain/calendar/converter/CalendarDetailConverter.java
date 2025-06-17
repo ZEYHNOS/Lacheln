@@ -62,6 +62,10 @@ public class CalendarDetailConverter {
     }
 
     public List<CalendarDetailResponse> toResponseList(List<CalendarDetailEntity> calendarDetailEntityList) {
+        if (calendarDetailEntityList == null || calendarDetailEntityList.isEmpty()) {
+            return null;
+        }
+
         return calendarDetailEntityList.stream()
                 .map(this::toResponse)
                 .toList()

@@ -11,6 +11,10 @@ import java.util.List;
 public class CartToPaymentConverter {
 
     public List<PayDetailOptionEntity> toEntityList(List<CartDetailResponse> response, PayDetailEntity payDetail) {
+        if (response == null || response.isEmpty()) {
+            return null;
+        }
+
         return response.stream()
                 .map(it -> toEntity(it, payDetail))
                 .toList()

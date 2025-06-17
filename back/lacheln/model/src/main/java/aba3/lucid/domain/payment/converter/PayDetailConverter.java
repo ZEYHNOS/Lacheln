@@ -57,6 +57,10 @@ public class PayDetailConverter {
     }
 
     public List<PayDetailEntity> toEntityList(List<PayDetailRequest> requestList, PayManagementEntity payManagement) {
+        if (requestList == null || requestList.isEmpty()) {
+            return null;
+        }
+
         return requestList.stream()
                 .map(it -> toEntity(it, payManagement))
                 .toList()
@@ -83,6 +87,10 @@ public class PayDetailConverter {
     }
 
     public List<PayDetailResponse> toResponseList(List<PayDetailEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return null;
+        }
+
         return entityList.stream()
                 .map(this::toResponse)
                 .toList();
@@ -97,12 +105,20 @@ public class PayDetailConverter {
     }
 
     public List<PayDetailBlockResponse> toBlockResponseList(List<PayDetailEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return null;
+        }
+
         return entityList.stream()
                 .map(this::toBlockResponse)
                 .toList();
     }
 
     public List<PayDetailEntity> toPayDetailEntityListByCartEntityList(PayManagementEntity payManagement, List<CartAllResponse> cartAllResponseList) {
+        if (cartAllResponseList == null || cartAllResponseList.isEmpty()) {
+            return null;
+        }
+
         return cartAllResponseList.stream()
                 .map(it -> toPayDetailEntityByCartEntity(payManagement, it))
                 .toList()
@@ -141,6 +157,10 @@ public class PayDetailConverter {
     }
 
     public List<OptionDto> toDtoList(List<PayDetailOptionEntity> payDetailOptionEntityList) {
+        if (payDetailOptionEntityList == null || payDetailOptionEntityList.isEmpty()) {
+            return null;
+        }
+
         Map<String, List<OptionDto.OptionDetailDto>> map = new HashMap<>();
         for (PayDetailOptionEntity payDetailOption : payDetailOptionEntityList) {
             String key = payDetailOption.getPayOpName();

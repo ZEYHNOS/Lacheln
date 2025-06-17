@@ -23,6 +23,10 @@ public class PackageConverter {
     private final OptionConverter optionConverter;
 
     public List<PackageResponse> toResponseList(List<PackageEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return null;
+        }
+
         return entityList.stream()
                 .map(this::toResponse)
                 .toList()
@@ -64,6 +68,10 @@ public class PackageConverter {
     }
 
     public List<PackageUserViewListResponse> toUserViewResponseList(List<PackageEntity> packageEntityList) {
+        if (packageEntityList == null || packageEntityList.isEmpty()) {
+            return null;
+        }
+
         return packageEntityList.stream()
                 .map(this::toUserViewResponse)
                 .toList()

@@ -37,6 +37,10 @@ public class ReviewCommentConverter {
     }
 
     public List<ReviewCommentResponse> toResponseList(List<ReviewCommentEntity> reviewCommentEntityList) {
+        if (reviewCommentEntityList == null || reviewCommentEntityList.isEmpty()) {
+            return null;
+        }
+
         return reviewCommentEntityList.stream()
                 .map(this::toResponse)
                 .toList()

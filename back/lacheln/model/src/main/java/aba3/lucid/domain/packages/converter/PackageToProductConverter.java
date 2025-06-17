@@ -2,6 +2,7 @@ package aba3.lucid.domain.packages.converter;
 
 import aba3.lucid.common.annotation.Converter;
 import aba3.lucid.common.enums.BinaryChoice;
+import aba3.lucid.common.image.RepresentativeImage;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.packages.dto.PackageCompanyResponse;
 import aba3.lucid.domain.packages.dto.PackageProductResponse;
@@ -75,9 +76,6 @@ public class PackageToProductConverter {
     }
 
     public PackageProductResponse toPackageProductResponse(PackageToProductEntity packageToProduct) {
-        String productImageUrl = packageToProduct.getProduct().getImageList().isEmpty()
-                ? "/default/product.png" : packageToProduct.getProduct().getImageList().get(0).getPdImageUrl();
-
         PackageProductResponse response = PackageProductResponse.builder()
                 .cpId(packageToProduct.getProduct().getCompany().getCpId())
                 .pdId(packageToProduct.getProduct().getPdId())
@@ -85,7 +83,7 @@ public class PackageToProductConverter {
                 .productName(packageToProduct.getProduct().getPdName())
                 .category(packageToProduct.getProduct().getCompany().getCpCategory())
                 .price(packageToProduct.getProduct().getPdPrice())
-                .imageUrl(productImageUrl)
+                .imageUrl(RepresentativeImage.getRepresentativeImage(packageToProduct.getProduct().getImageList()))
                 .optionDtoList(optionConverter.toDtoList(packageToProduct.getProduct().getOpList()))
                 .build()
                 ;

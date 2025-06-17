@@ -51,6 +51,10 @@ public class CalendarConverter {
     }
 
     public List<CalendarResponse> toResponseList(List<CalendarEntity> entityList) {
+        if (entityList == null || entityList.isEmpty()) {
+            return null;
+        }
+
         return entityList.stream()
                 .map(this::toResponse)
                 .toList()
@@ -58,6 +62,10 @@ public class CalendarConverter {
     }
 
     public List<CalendarDetailResponse>[] toResponseList(List<CalendarDetailEntity>[] calendarList) {
+        if (calendarList == null || calendarList.length == 0) {
+            return null;
+        }
+
         List<CalendarDetailResponse>[] result = new List[calendarList.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = new ArrayList<>();

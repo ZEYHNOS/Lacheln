@@ -54,14 +54,14 @@ public class ImageService {
 
             // 이름 중복 방지
             String uuid = UUID.randomUUID().toString();
-            String savedName = "\\" + uuid + "_" + originalFileName;
+            String savedName = "/" + uuid + "_" + originalFileName;
 
             // 파일 저장
             File destination = new File(fileDir, savedName);
             profileImg.transferTo(destination);
 
             // 경로 반환 (DB에 저장할 값)
-            String filePath = "\\" + company.getCpId() + "\\" + type.getType() + savedName;
+            String filePath = "/" + company.getCpId() + "/" + type.getType() + savedName;
             return filePath;
         }
 
@@ -106,14 +106,14 @@ public class ImageService {
 
             // 이름 중복 방지
             String uuid = UUID.randomUUID().toString();
-            String savedName = "\\" + uuid + "_" + originalFileName;
+            String savedName = "/" + uuid + "_" + originalFileName;
 
             // 파일 저장
             File destination = new File(fileDir, savedName);
             image.transferTo(destination);
             
             // 파일 주소 저장
-            filePathList.add("\\" + company.getCpId() + "\\" + type.getType() + savedName);
+            filePathList.add("/" + company.getCpId() + "/" + type.getType() + savedName);
         }
 
         return filePathList;
@@ -145,14 +145,14 @@ public class ImageService {
 
             // 이름 중복 방지
             String uuid = UUID.randomUUID().toString();
-            String savedName = "\\" + uuid + "_" + originalFileName;
+            String savedName = "/" + uuid + "_" + originalFileName;
 
             // 파일 저장
             File destination = new File(fileDir, savedName);
             image.transferTo(destination);
 
             // 파일 주소 저장
-            filePathList.add("\\" + user.getUserId() + "\\" + type.getType() + savedName);
+            filePathList.add("/" + user.getUserId() + "/" + type.getType() + savedName);
         }
 
         return filePathList;

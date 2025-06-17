@@ -57,12 +57,12 @@ public class UserImageService {
                 throw new ApiException(ErrorCode.BAD_REQUEST, "이미지 이름 존재 X");
             }
             String uuid = UUID.randomUUID().toString();
-            String savedName = "\\" + uuid + "_" + originalName;
+            String savedName = "/" + uuid + "_" + originalName;
 
             File destination = new File(fileDir, savedName);
             image.transferTo(destination);
 
-            filePathList.add("\\" + user.getUserId() + "\\" + type.getType() + savedName);
+            filePathList.add("/" + user.getUserId() + "/" + type.getType() + savedName);
         }
 
         return filePathList;
@@ -86,11 +86,11 @@ public class UserImageService {
             throw new ApiException(ErrorCode.BAD_REQUEST, "이미지 이름 존재 X");
         }
         String uuid = UUID.randomUUID().toString();
-        String savedName = "\\" + uuid + "_" + originalName;
+        String savedName = "/" + uuid + "_" + originalName;
 
         File destination = new File(fileDir, savedName);
         image.transferTo(destination);
 
-        return "\\" + user.getUserId() + "\\" + type.getType() + savedName;
+        return "/" + user.getUserId() + "/" + type.getType() + savedName;
     }
 }

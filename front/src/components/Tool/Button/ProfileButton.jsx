@@ -3,8 +3,7 @@ import { FaUser, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import apiClient from "../../../lib/apiClient";
-import ChattingRoomModal from "../../User/UserPage/chattingRoomModal";
-import ChattingModal from "../../User/UserPage/ChattingModal";
+import ChattingRoomModal from "../../User/UserPage/ChattingRoomModal";
 
 export default function ProfileButton({ isActive, onClick, isLoggedIn, onLogout }) {
     const [showMessageModal, setShowMessageModal] = useState(false);

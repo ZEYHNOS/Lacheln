@@ -342,7 +342,14 @@ function AddPackage() {
                                             {selectedProductId ? (
                                                 <div className="flex items-center">
                                                     {(() => {
-                                                        const selectedProduct = myProductList.find(p => p.id === selectedProductId);
+                                                        console.log('현재 선택된 상품 ID:', selectedProductId);
+                                                        console.log('상품 목록:', myProductList);
+                                                        const selectedProduct = myProductList.find(p => 
+                                                            p.id === selectedProductId || 
+                                                            p.productId === selectedProductId || 
+                                                            p._id === selectedProductId
+                                                        );
+                                                        console.log('찾은 상품:', selectedProduct);
                                                         if (!selectedProduct) return <span>상품을 선택하세요</span>;
                                                         
                                                         return (
@@ -376,10 +383,9 @@ function AddPackage() {
                                                             className={`p-3 flex items-center hover:bg-purple-50 cursor-pointer ${selectedProductId === (product.id || product.productId || product._id) ? 'bg-purple-100' : ''}`}
                                                             onClick={() => {
                                                                 console.log('클릭됨! product:', product);
-                                                                console.log('product.id:', product.id);
-                                                                console.log('product.productId:', product.productId);
-                                                                console.log('product._id:', product._id);
-                                                                setSelectedProductId(product.id || product.productId || product._id);
+                                                                const productId = product.id || product.productId || product._id;
+                                                                console.log('선택된 상품 ID:', productId);
+                                                                setSelectedProductId(productId);
                                                                 setIsDropdownOpen(false);
                                                             }}
                                                         >

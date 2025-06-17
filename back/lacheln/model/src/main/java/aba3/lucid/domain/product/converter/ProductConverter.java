@@ -30,10 +30,6 @@ public class ProductConverter {
     }
 
     public ProductResponse toResponse(ProductEntity entity) {
-//        if (entity.getImageList().isEmpty()) {
-//            throw new ApiException(ErrorCode.NULL_POINT);
-//        }
-
         return ProductResponse.builder()
                 .companyId(entity.getCompany().getCpId())
                 .productId(entity.getPdId())

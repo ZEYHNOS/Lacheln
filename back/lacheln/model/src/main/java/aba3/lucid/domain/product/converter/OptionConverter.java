@@ -25,6 +25,10 @@ public class OptionConverter {
     private final OptionDetailConverter optionDetailConverter;
 
     public List<OptionEntity> toEntityList(List<OptionDto> dtoList, ProductEntity entity) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return null;
+        }
+
         return dtoList.stream()
                 .map(it -> toEntity(it, entity))
                 .toList()
@@ -32,6 +36,9 @@ public class OptionConverter {
     }
 
     public List<OptionDto> toDtoList(List<OptionEntity> entitieList) {
+        if (entitieList == null || entitieList.isEmpty()) {
+            return null;
+        }
         return entitieList.stream()
                 .map(this::toDto)
                 .toList()

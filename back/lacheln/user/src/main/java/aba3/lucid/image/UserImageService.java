@@ -76,13 +76,7 @@ public class UserImageService {
             throw new ApiException(ErrorCode.BAD_REQUEST, "image 아닙니다.");
         }
 
-        log.info("imageConfig.getDir() : {}", imageConfig.getDir());
-        log.info("user.getUserId() : {}", user.getUserId());
-        log.info("type.getType() : {}", type.getType());
-
         String dir = imageConfig.getDir() + "\\" + user.getUserId() + "\\" + type.getType();
-
-        log.info("save Image directory : {}", dir);
 
         File fileDir = new File(dir);
         if (!fileDir.exists()) {

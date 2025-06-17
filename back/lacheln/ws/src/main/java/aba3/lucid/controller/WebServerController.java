@@ -41,13 +41,13 @@ public class WebServerController {
     // 유저 서비스로 요청을 전달하는 메서드
     @RequestMapping("/user/**")
     public API<String> routeToUser(HttpServletRequest request) {
-        return routeRequest("http://localhost:5052", request);
+        return routeRequest("http://52.79.195.13:5052", request);
     }
 
     // 게시판 요청을 전달하는 메서드
     @RequestMapping("/board/**")
     public API<String> routeToBoard(HttpServletRequest request, @AuthenticationPrincipal UserDetails user) {
-        return routeRequest("http://localhost:5052", request);
+        return routeRequest("http://52.79.195.13:5052", request);
     }
 
     // 업체 서비스로 요청을 전달하는 메서드
@@ -59,7 +59,7 @@ public class WebServerController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return routeRequest("http://localhost:5051", request);
+        return routeRequest("http://52.79.195.13:5051", request);
     }
     
     // JWT 기반은 필터에서 처리안함
@@ -141,7 +141,7 @@ public class WebServerController {
             }
         }
 
-        response.sendRedirect("http://localhost:3000");
+        response.sendRedirect("http://52.79.195.13:3000");
         return API.OK(SuccessCode.DELETE_TOKEN);
     }
 

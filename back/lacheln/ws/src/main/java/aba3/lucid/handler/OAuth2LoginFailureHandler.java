@@ -17,6 +17,6 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         System.out.println("OAuth2LoginFailureHandler called");
         System.out.println("로그인 실패: " + exception.getMessage());
-        response.sendRedirect("http://localhost:3000/login");
+        response.sendRedirect("http://52.79.195.13:5050/login");
     }
 }

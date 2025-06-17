@@ -58,7 +58,7 @@
                     .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화(세션 사용시에만 활성화 우리는 토큰 사용으로 필요없음)
                     .cors(cors -> cors.configurationSource(request -> { // TODO AbstractHttpConfigurer::disable
                         CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(List.of("http://localhost:3000"));
+                        config.setAllowedOrigins(List.of("http://52.79.195.13:3000"));
                         config.setAllowCredentials(true);
                         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                         config.setAllowedHeaders(List.of("*"));

@@ -7,6 +7,7 @@ const API_BASE_URL = process.env.VITE_API_BASE_URL;
 export default defineConfig({
   plugins: [react()],
   server: {
+    allowedHosts: ['localhost', '127.0.0.1', 'lacheln.p-e.kr', '52.79.195.13'],
     port: 3000,
     proxy: {
       '/ws': {

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import main1 from "../../../image/MainpageSlide/mainpageslide.jpeg";
 import main2 from "../../../image/MainpageSlide/mainpageslide2.jpg";
-import main3 from "../../../image/MainpageSlide/mainpageslide3.jpg";
+import main3 from "../../../image/MainpageSlide/mainpageslide3.jpeg";
 import luxuaryImg from '../../../image/userprofile/luxuary.jpg';
 import apiClient from "../../../lib/apiClient";
 import { EllipseCarousel } from "./PopularProduct";
@@ -104,7 +104,7 @@ function MainPage() {
     return (
         <div className="min-h-screen bg-white text-black flex flex-col items-center">
             {/* 캐러셀 */}
-            <div className="relative w-full h-[500px] flex items-center justify-center overflow-hidden bg-gray-100 mt-6 rounded-2xl shadow-lg group">
+            <div className="relative w-full h-[500px] flex items-center justify-center overflow-hidden bg-gray-100 mt-12 px-8 rounded-2xl shadow-lg group">
                 {/* 이미지 */}
                 {carouselImages.map((img, idx) => (
                     <img
@@ -112,6 +112,7 @@ function MainPage() {
                         src={img.src}
                         alt={img.alt}
                         className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${idx === current ? 'opacity-100 z-0' : 'opacity-0 z-0'} pointer-events-none`}
+                        style={{ paddingLeft: '128px', paddingRight: '128px', boxSizing: 'border-box', borderRadius: '20px' }}
                     />
                 ))}
                 {/* 좌우 버튼 */}

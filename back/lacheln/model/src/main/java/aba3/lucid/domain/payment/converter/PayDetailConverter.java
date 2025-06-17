@@ -146,7 +146,6 @@ public class PayDetailConverter {
             String key = payDetailOption.getPayOpName();
             OptionDto.OptionDetailDto value = OptionDto.OptionDetailDto.builder()
                     .opDtName(payDetailOption.getPayOpDtName())
-                    .quantity(payDetailOption.getPayDtQuantity())
                     .build()
                     ;
 

@@ -69,10 +69,6 @@ public class OptionDto {
         // 추가 시간
         @NotNull
         private LocalTime plusTime;
-
-        @Negative
-        private int quantity;
-
     }
 
 

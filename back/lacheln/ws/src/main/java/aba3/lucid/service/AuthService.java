@@ -46,7 +46,7 @@ public class AuthService {
         // 쿠키에 각 토큰을 저장
         ResponseCookie accessCookie = ResponseCookie.from("AccessToken", accessToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .sameSite("None") // 개발단계에서는 None 배포 시 strict
                 .path("/")
                 .maxAge(Duration.ofDays(10))
@@ -54,7 +54,7 @@ public class AuthService {
 
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .sameSite("None") // 개발단계에서는 None 배포 시 strict
                 .path("/")
                 .maxAge(Duration.ofDays(10))
@@ -79,7 +79,7 @@ public class AuthService {
         // 유효기간이 0(바로 사라짐)인 Access,RefreshToken을 저장한 쿠키생성
         ResponseCookie accessCookie = ResponseCookie.from("AccessToken", null)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .sameSite("None") // 개발단계에서는 None 배포 시 strict
                 .path("/")
                 .maxAge(0)
@@ -87,7 +87,7 @@ public class AuthService {
 
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", null)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .sameSite("None") // 개발단계에서는 None 배포 시 strict
                 .path("/")
                 .maxAge(0)

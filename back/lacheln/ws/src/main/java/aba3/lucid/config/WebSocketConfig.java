@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.setApplicationDestinationPrefixes("/chat"); // 메시지 송신 경로 접두사(메시지 브로커에 전달하기 위해선 요청의 /chat으로 시작해야함)
         config.enableStompBrokerRelay("/topic") // STOMP를 통해 RabbitMQ 연동
-                .setRelayHost("52.79.195.13")      //TODO HAProxy파일을 통해 로드밸런싱 진행 해야댐 localhost는 로컬환경에서 사용가능한것
+                .setRelayHost("lacheln.p-e.kr")      //TODO HAProxy파일을 통해 로드밸런싱 진행 해야댐 localhost는 로컬환경에서 사용가능한것
                 .setRelayPort(61613)            // RabbitMQ 포트번호
                 .setClientLogin("guest")        // RabbitMQ ID
                 .setClientPasscode("guest");    // RabbitMQ PW

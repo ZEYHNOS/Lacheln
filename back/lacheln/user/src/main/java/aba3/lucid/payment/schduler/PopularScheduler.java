@@ -1,4 +1,4 @@
-package aba3.lucid.payment.schduelr;
+package aba3.lucid.payment.schduler;
 
 import aba3.lucid.payment.business.PaymentBusiness;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,7 +12,8 @@ public class PopularScheduler {
 
     private final PaymentBusiness paymentBusiness;
 
-    @Scheduled(cron = "0 0 0 * * MON", zone = "Asia/Seoul")
+//    @Scheduled(cron = "0 0 0 * * MON", zone = "Asia/Seoul")
+@Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
     public void createPopularProduct() throws JsonProcessingException {
         paymentBusiness.createPopularProductList();
     }

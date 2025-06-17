@@ -7,6 +7,27 @@ import { COLOR_MAP } from "../../../../constants/colorMap.js";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const imageBaseUrl = `${baseUrl}`;
 
+// plus_time을 분 단위로 변환하는 함수
+function plusTimeToMinutes(plusTime) {
+    if (Array.isArray(plusTime)) {
+        // [시, 분] 배열
+        return (parseInt(plusTime[0] || 0) * 60) + parseInt(plusTime[1] || 0);
+    }
+    if (typeof plusTime === "string" && plusTime.includes(":")) {
+        const [h, m] = plusTime.split(":");
+        return (parseInt(h, 10) * 60) + parseInt(m, 10);
+    }
+    return parseInt(plusTime || 0);
+}
+
+// 분을 HH:mm:ss 문자열로 변환하는 함수
+function minutesToTimeString(minutes) {
+    const min = parseInt(minutes || 0);
+    const hours = Math.floor(min / 60);
+    const remain = min % 60;
+    return `${hours.toString().padStart(2, '0')}:${remain.toString().padStart(2, '0')}:00`;
+}
+
 function ViewProduct() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -261,7 +282,7 @@ function ViewProduct() {
                         )}
                         <div className="flex items-center">
                             <label className="w-24">대여시간</label>
-                            <select value={taskTime} disabled className="border p-2 rounded flex-grow bg-white text-black appearance-none">
+                            <select value={Array.isArray(taskTime) ? minutesToTimeString(plusTimeToMinutes(taskTime)) : taskTime} disabled className="border p-2 rounded flex-grow bg-white text-black appearance-none">
                                 <option value="00:30:00">30분 대여</option>
                                 <option value="01:00:00">1시간 대여</option>
                                 <option value="01:30:00">1시간 30분 대여</option>

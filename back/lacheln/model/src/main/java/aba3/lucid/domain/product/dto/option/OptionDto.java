@@ -6,10 +6,7 @@ import aba3.lucid.common.enums.BinaryChoice;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Negative;
-import jakarta.validation.constraints.NegativeOrZero;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigInteger;
@@ -63,7 +60,7 @@ public class OptionDto {
 
         // 추가금
         @NotNull
-        @NegativeOrZero
+        @PositiveOrZero
         private BigInteger plusCost;
 
         // 추가 시간

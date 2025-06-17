@@ -301,24 +301,6 @@ function EditProduct() {
             image_url_list,
             category_code: categoryCode,
             descriptionList: processedDescriptionList,
-            option_list: options.map(opt => ({
-                name: opt.title,
-                overlap: opt.isMultiSelect ? "Y" : "N",
-                essential: opt.isRequired ? "Y" : "N",
-                status: "ACTIVE",
-                option_dt_list: opt.details.map(dt => {
-                    let plus_time = dt.extraTime ?? dt.plus_time;
-                    if (!Array.isArray(plus_time)) {
-                        plus_time = minutesToPlusTimeArray(plusTimeToMinutes(plus_time));
-                    }
-                    return {
-                        op_dt_name: dt.name,
-                        stock: dt.stock || 0,
-                        plus_time: plus_time,
-                        plus_cost: parseInt(dt.extraPrice || 0),
-                    };
-                }),
-            })),
         };
         
         // 카테고리별 추가 필드
@@ -327,24 +309,27 @@ function EditProduct() {
             payload.sizeList = sizeList;
             payload.essential = essential ? "Y" : "N";
             payload.overlap = overlap ? "Y" : "N";
-            payload.option_list = options.slice(1).map(opt => ({
-                name: opt.title,
-                overlap: opt.isMultiSelect ? "Y" : "N",
-                essential: opt.isRequired ? "Y" : "N",
-                status: "ACTIVE",
-                option_dt_list: opt.details.map(dt => {
-                    let plus_time = dt.extraTime ?? dt.plus_time;
-                    if (!Array.isArray(plus_time)) {
-                        plus_time = minutesToPlusTimeArray(plusTimeToMinutes(plus_time));
-                    }
-                    return {
-                        op_dt_name: dt.name,
-                        stock: dt.stock || 0,
-                        plus_time: plus_time,
-                        plus_cost: parseInt(dt.extraPrice || 0),
-                    };
-                }),
-            }));
+            // 사이즈 옵션을 제외한 나머지 옵션들만 전송
+            payload.option_list = options
+                .filter(opt => opt.title.trim().toLowerCase() !== "사이즈")
+                .map(opt => ({
+                    name: opt.title,
+                    overlap: opt.isMultiSelect ? "Y" : "N",
+                    essential: opt.isRequired ? "Y" : "N",
+                    status: "ACTIVE",
+                    option_dt_list: opt.details.map(dt => {
+                        let plus_time = dt.extraTime ?? dt.plus_time;
+                        if (!Array.isArray(plus_time)) {
+                            plus_time = minutesToPlusTimeArray(plusTimeToMinutes(plus_time));
+                        }
+                        return {
+                            op_dt_name: dt.name,
+                            stock: dt.stock || 0,
+                            plus_time: plus_time,
+                            plus_cost: parseInt(dt.extraPrice || 0),
+                        };
+                    }),
+                }));
         } else if (categoryCode === "S") {
             // 스튜디오 전용 필드
             payload.maxPeople = parseInt(maxPeople);

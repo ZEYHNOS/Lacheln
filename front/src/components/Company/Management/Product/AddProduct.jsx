@@ -212,7 +212,6 @@ function AddProduct() {
                 essential: opt.isRequired ? "Y" : "N",
                 status: "ACTIVE",
                 optionDtList: opt.details.map((dt) => {
-                    // 분을 시간 형식으로 변환 (예: 30분 -> 00:30:00)
                     const minutes = parseInt(dt.extraTime || 0);
                     const hours = Math.floor(minutes / 60);
                     const remainingMinutes = minutes % 60;
@@ -231,11 +230,47 @@ function AddProduct() {
             data.outAvailable = outdoor ? "Y" : "N";
             data.maxPeople = parseInt(maxPeople);
             data.bgOptions = backgroundOption;
+            data.optionList = options.map((opt) => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                optionDtList: opt.details.map((dt) => {
+                    const minutes = parseInt(dt.extraTime || 0);
+                    const hours = Math.floor(minutes / 60);
+                    const remainingMinutes = minutes % 60;
+                    const extraTime = `${hours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}:00`;
+                    
+                    return {
+                        opDtName: dt.name,
+                        plusCost: parseInt(dt.extraPrice || 0),
+                        plusTime: extraTime,
+                    };
+                }),
+            }));
         } else if (categoryCode === "M") {
             // 메이크업 전용 필드
             data.business_trip = visitAvailable ? "Y" : "N";
             data.visit = makeupVisit ? "Y" : "N";
             data.manager = manager;
+            data.optionList = options.map((opt) => ({
+                name: opt.title,
+                overlap: opt.isMultiSelect ? "Y" : "N",
+                essential: opt.isRequired ? "Y" : "N",
+                status: "ACTIVE",
+                optionDtList: opt.details.map((dt) => {
+                    const minutes = parseInt(dt.extraTime || 0);
+                    const hours = Math.floor(minutes / 60);
+                    const remainingMinutes = minutes % 60;
+                    const extraTime = `${hours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2, '0')}:00`;
+                    
+                    return {
+                        opDtName: dt.name,
+                        plusCost: parseInt(dt.extraPrice || 0),
+                        plusTime: extraTime,
+                    };
+                }),
+            }));
         }
 
         console.log("🟨 최종 전송 데이터:", data);

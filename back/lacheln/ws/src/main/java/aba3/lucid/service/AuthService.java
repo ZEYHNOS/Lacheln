@@ -40,6 +40,9 @@ public class AuthService {
         String refreshToken = jwtTokenProvider.createRefreshToken(userEmail, role);
         Map<String, ResponseCookie> responseCookies = new HashMap<>();
 
+        log.info("Login access token: {} ", accessToken);
+        log.info("Refresh access token: {} ", refreshToken);
+
         // RefreshToken은 Redis에 저장
         refreshTokenService.saveRefreshToken(userEmail, refreshToken);
 
@@ -47,16 +50,18 @@ public class AuthService {
         ResponseCookie accessCookie = ResponseCookie.from("AccessToken", accessToken)
                 .httpOnly(true)
                 .secure(false)
-                .sameSite("None") // 개발단계에서는 None 배포 시 strict
+                .sameSite("Lax") // 개발단계에서는 None 배포 시 strict
                 .path("/")
+                .domain("lacheln.p-e.kr")
                 .maxAge(Duration.ofDays(10))
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(false)
-                .sameSite("None") // 개발단계에서는 None 배포 시 strict
+                .sameSite("Lax") // 개발단계에서는 None 배포 시 strict
                 .path("/")
+                .domain("lacheln.p-e.kr")
                 .maxAge(Duration.ofDays(10))
                 .build();
 
@@ -80,16 +85,18 @@ public class AuthService {
         ResponseCookie accessCookie = ResponseCookie.from("AccessToken", null)
                 .httpOnly(true)
                 .secure(false)
-                .sameSite("None") // 개발단계에서는 None 배포 시 strict
+                .sameSite("Lax") // 개발단계에서는 None 배포 시 strict
                 .path("/")
+                .domain("lacheln.p-e.kr")
                 .maxAge(0)
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", null)
                 .httpOnly(true)
                 .secure(false)
-                .sameSite("None") // 개발단계에서는 None 배포 시 strict
+                .sameSite("Lax") // 개발단계에서는 None 배포 시 strict
                 .path("/")
+                .domain("lacheln.p-e.kr")
                 .maxAge(0)
                 .build();
 

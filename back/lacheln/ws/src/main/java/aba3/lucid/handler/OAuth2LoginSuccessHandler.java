@@ -69,7 +69,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
 
-        response.sendRedirect("http://52.79.195.13:3000");
+        response.sendRedirect("http://lacheln.p-e.kr:3000");
 
     }
 

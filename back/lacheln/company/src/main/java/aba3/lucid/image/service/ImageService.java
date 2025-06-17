@@ -113,7 +113,7 @@ public class ImageService {
             image.transferTo(destination);
             
             // 파일 주소 저장
-            filePathList.add("/" + company.getCpId() + "/" + type.getType() + savedName);
+            filePathList.add("/image/" + company.getCpId() + "/" + type.getType() + savedName);
         }
 
         return filePathList;
@@ -152,7 +152,7 @@ public class ImageService {
             image.transferTo(destination);
 
             // 파일 주소 저장
-            filePathList.add("/" + user.getUserId() + "/" + type.getType() + savedName);
+            filePathList.add("/image/" + user.getUserId() + "/" + type.getType() + savedName);
         }
 
         return filePathList;

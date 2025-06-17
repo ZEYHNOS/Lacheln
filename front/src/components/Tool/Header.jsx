@@ -52,6 +52,14 @@ export default function Header() {
         }
     }, [activeButton, isSidebarOpen]);
 
+    // 스크롤 시 사이드바 닫기
+    useEffect(() => {
+        if (!isSidebarOpen) return;
+        const handleScroll = () => setIsSidebarOpen(false);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [isSidebarOpen]);
+
     const handleLogout = () => {
         setIsLoggedIn(false);
     };

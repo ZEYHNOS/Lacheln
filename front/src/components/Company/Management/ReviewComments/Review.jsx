@@ -61,7 +61,7 @@ function Review() {
             // 회사 ID로 리뷰를 조회합니다
             const reviewResponse = await apiClient.get(`/review/company/${companyId}`);
             console.log('리뷰 데이터:', reviewResponse.data);
-            setReviews(reviewResponse.data.data);
+            setReviews(reviewResponse.data.data || []);
             setError(null);
         } catch (err) {
             console.error('상세 에러 정보:', err.response || err);

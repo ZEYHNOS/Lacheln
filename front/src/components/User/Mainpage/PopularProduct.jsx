@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import luxuaryImg from '../../../image/userprofile/luxuary.jpg';
 
 export function EllipseCarousel({ items }) {
     const [active, setActive] = useState(0);
     const total = items.length;
+    const dragStartX = useRef(null);
+    const dragEndX = useRef(null);
+    const dragging = useRef(false);
+    const autoSlideRef = useRef();
+    const intervalRef = useRef();
 
     // placeholder 카드
     const placeholders = Array(10).fill(0).map((_, i) => ({
@@ -17,10 +22,74 @@ export function EllipseCarousel({ items }) {
     }));
     const displayItems = items.length > 0 ? items : placeholders;
 
+    // 자동 슬라이드
+    useEffect(() => {
+        startAutoSlide();
+        return () => stopAutoSlide();
+    }, [active, displayItems.length]);
+
+    const startAutoSlide = () => {
+        stopAutoSlide();
+        intervalRef.current = setInterval(() => {
+            setActive((prev) => (prev + 1) % displayItems.length);
+        }, 1000);
+    };
+    const stopAutoSlide = () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+    // 드래그/스와이프 핸들러 (드래그 끝날 때만 이동)
+    const handleDragStart = (e) => {
+        dragging.current = true;
+        dragStartX.current = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+        dragEndX.current = null;
+        stopAutoSlide();
+    };
+    const handleDragMove = (e) => {
+        if (!dragging.current) return;
+        dragEndX.current = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+    };
+    const handleDragEnd = () => {
+        if (!dragging.current || dragStartX.current === null || dragEndX.current === null) {
+            dragging.current = false;
+            startAutoSlide();
+            return;
+        }
+        const diff = dragEndX.current - dragStartX.current;
+        if (Math.abs(diff) > 40) { // 40px 이상 움직이면 넘김
+            if (diff > 0) {
+                setActive((prev) => (prev - 1 + displayItems.length) % displayItems.length);
+            } else {
+                setActive((prev) => (prev + 1) % displayItems.length);
+            }
+        }
+        dragging.current = false;
+        dragStartX.current = null;
+        dragEndX.current = null;
+        startAutoSlide();
+    };
+    // 버튼 클릭 시 자동 슬라이드 리셋
+    const handlePrev = (e) => {
+        e.stopPropagation();
+        setActive((active - 1 + displayItems.length) % displayItems.length);
+        startAutoSlide();
+    };
+    const handleNext = (e) => {
+        e.stopPropagation();
+        setActive((active + 1) % displayItems.length);
+        startAutoSlide();
+    };
+
     return (
         <div
             className="relative w-full h-[500px] mx-auto flex items-center justify-center"
             style={{ perspective: '1400px' }}
+            onMouseDown={handleDragStart}
+            onMouseMove={handleDragMove}
+            onMouseUp={handleDragEnd}
+            onMouseLeave={handleDragEnd}
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
         >
             {displayItems.map((item, i) => {
                 let diff = i - active;
@@ -88,11 +157,11 @@ export function EllipseCarousel({ items }) {
             })}
             {/* 좌우 버튼 */}
             <button
-                onClick={e => { e.stopPropagation(); setActive((active - 1 + displayItems.length) % displayItems.length); }}
+                onClick={handlePrev}
                 className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow text-2xl z-20"
             >&#60;</button>
             <button
-                onClick={e => { e.stopPropagation(); setActive((active + 1) % displayItems.length); }}
+                onClick={handleNext}
                 className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow text-2xl z-20"
             >&#62;</button>
         </div>

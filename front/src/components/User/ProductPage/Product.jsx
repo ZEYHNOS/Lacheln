@@ -58,9 +58,7 @@ function Product() {
                 if (isFirstLoad) {
                     url = "/api/product/list?category=D";
                 } else {
-                    url = selected === "드레스"
-                        ? `/api/product/list?page=${currentPage - 1}`
-                        : `/api/product/list?category=${categoryCodes[selected]}&page=${currentPage - 1}`;
+                    url = `/api/product/list?category=${categoryCodes[selected]}&page=${currentPage - 1}`;
                     if (minPrice) url += `&minimum=${minPrice}`;
                     if (maxPrice) url += `&maximum=${maxPrice}`;
                 }
@@ -121,7 +119,7 @@ function Product() {
 
             <div className="flex max-w-7xl mx-auto">
                 {/* 조건 검색 사이드바 */}
-                <aside className="w-64 p-6 bg-white border-r">
+                <aside className="w-64 p-6 bg-white border-r mt-6">
                     <h2 className="text-xl font-bold mb-4 text-black">조건 검색</h2>
 
                     {/* 가격 범위 검색 (공통) */}

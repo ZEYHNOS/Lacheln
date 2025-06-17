@@ -19,14 +19,14 @@ export function About() {
             {/* 1번째 섹션: 텍스트 + 이미지 */}
             <section className="flex flex-col md:flex-row items-center justify-center gap-12 max-w-screen-xl w-full mb-24">
                 <div className="max-w-md text-left">
-                    
+
                     <h2 className="text-[38px] font-bold text-purple-700 leading-snug mb-6">
                         레헬른은<br />
                         이렇게<br />
                         만들어졌어요
                     </h2>
                     <p className="text-[20px] font-bold text-[#845EC2] leading-relaxed">
-                        2025년 1월 졸업을 위해 6명의 팀원이<br /> 
+                        2025년 1월 졸업을 위해 6명의 팀원이<br />
                         구성되었습니다.<br />
                         서로 밀어주고 당기며 학습과 작업을 함께하고,<br />
                         믿음을 쌓아가며 여러가지를 시도하는 팀입니다.
@@ -45,11 +45,6 @@ export function About() {
 
             {/* 2번째 섹션: 이미지 + 텍스트 */}
             <section className="flex flex-col md:flex-row-reverse items-center justify-center gap-12 max-w-screen-xl w-full mb-24">
-                <img
-                    src={Weddingcost}
-                    alt="웨딩 비용 관련 이미지"
-                    className="w-full max-w-[630px] h-auto rounded-md shadow-md"
-                />
                 <div className="max-w-md text-left">
                     <h2 className="text-[38px] font-bold text-purple-700 leading-snug mb-6 mt-6 md:mt-0">
                         레헬른은<br />
@@ -63,9 +58,14 @@ export function About() {
                         최고의 순간을 남기시길 목표로 합니다.
                     </p>
                 </div>
+                <img
+                    src={Weddingcost}
+                    alt="웨딩 비용 관련 이미지"
+                    className="w-full max-w-[630px] h-auto rounded-md shadow-md"
+                />
             </section>
 
-              {/* 구분선 */}
+            {/* 구분선 */}
             <div className="w-full max-w-screen-xl border-t-4 border-[#845EC2] mb-24"></div>
 
             {/* 3번째 섹션: 텍스트 + 이미지 */}
@@ -93,32 +93,40 @@ export function About() {
                 />
             </section>
 
-               {/* 구분선 */}
+            {/* 구분선 */}
             <div className="w-full max-w-screen-xl border-t-4 border-[#845EC2] mb-24"></div>
 
-         {/* 공식 채널 섹션 */}
-<div className="mb-10 font-semibold text-purple-800 text-[26px]">Lacheln Official Channel</div>
+            {/* 공식 채널 섹션 */}
+            <div className="mb-10 font-semibold text-purple-800 text-[26px]">Lacheln Official Channel</div>
 
-<div className="flex flex-row justify-center gap-20 mb-10 flex-wrap">
-    {/* 채널 아이템 묶기 */}
-    <div className="flex flex-col items-center">
-        <img src={Instagram} alt="Instagram 아이콘" className="w-[80px] h-[80px]" />
-        <p className="mt-2 text-[#845EC2] text-[20px]">instagram</p>
-    </div>
-    <div className="flex flex-col items-center">
-        <img src={Kakaotalk} alt="Kakaotalk 아이콘" className="w-[80px] h-[80px]" />
-        <p className="mt-2 text-[#845EC2] text-[20px]">kakaotalk</p>
-    </div>
-    <div className="flex flex-col items-center">
-        <img src={Blog} alt="Blog 아이콘" className="w-[80px] h-[80px]" />
-        <p className="mt-2 text-[#845EC2] text-[20px]">blog</p>
-    </div>
-    <div className="flex flex-col items-center">
-        <img src={Youtube} alt="YouTube 아이콘" className="w-[80px] h-[80px]" />
-        <p className="mt-2 text-[#845EC2] text-[20px]">youtube</p>
-    </div>
-    </div>
-    </div>
+            <div className="flex flex-row justify-center gap-20 mb-10 flex-wrap">
+                {/* 채널 아이템 묶기 */}
+                <div className="flex flex-col items-center">
+                    <a href="https://www.instagram.com/with_yju/" target="_blank" rel="noopener noreferrer">
+                        <img src={Instagram} alt="Instagram 아이콘" className="w-[80px] h-[80px]" />
+                    </a>
+                    <p className="mt-2 text-[#845EC2] text-[20px]">instagram</p>
+                </div>
+                <div className="flex flex-col items-center">
+                    <a href="https://open.kakao.com/o/sXO0JPeh" target="_blank" rel="noopener noreferrer">
+                        <img src={Kakaotalk} alt="Kakaotalk 아이콘" className="w-[80px] h-[80px]" />
+                    </a>
+                    <p className="mt-2 text-[#845EC2] text-[20px]">kakaotalk</p>
+                </div>
+                <div className="flex flex-col items-center">
+                    <a href="https://zeyhnos.tistory.com/" target="_blank" rel="noopener noreferrer">
+                        <img src={Blog} alt="Blog 아이콘" className="w-[80px] h-[80px]" />
+                    </a>
+                    <p className="mt-2 text-[#845EC2] text-[20px]">blog</p>
+                </div>
+                <div className="flex flex-col items-center">
+                    <a href="https://www.youtube.com/@yeungjin" target="_blank" rel="noopener noreferrer">
+                        <img src={Youtube} alt="YouTube 아이콘" className="w-[80px] h-[80px]" />
+                    </a>
+                    <p className="mt-2 text-[#845EC2] text-[20px]">youtube</p>
+                </div>
+            </div>
+        </div>
 
     );
 }
@@ -131,8 +139,8 @@ export function Terms() {
                 <h1 className="text-4xl font-bold text-center mb-10">서비스 이용약관</h1>
 
                 <section className="mb-10">
-                    <h2 className="text-2xl font-semibold mb-4">본 이용약관은 스,드,메 서비스를 이용하는 고객님께 제공되는<br /> 
-                    서비스의 조건 및 이용에 관한 사항을 규정합니다.</h2>
+                    <h2 className="text-2xl font-semibold mb-4">본 이용약관은 스,드,메 서비스를 이용하는 고객님께 제공되는<br />
+                        서비스의 조건 및 이용에 관한 사항을 규정합니다.</h2>
                 </section>
 
                 <section className="mb-10">
@@ -298,7 +306,6 @@ export function Location() {
         <div className="min-h-screen bg-gray-50 text-gray-800 flex flex-col items-center py-16 px-6">
             {/* 타이틀 영역 */}
             <div className="text-center mb-14">
-                <img src={Lacheln} alt="Lacheln Icon" className="mx-auto w-[200px] h-[40px]" />
                 <h1 className="mt-8 text-[40px] font-extrabold tracking-tight">오시는 길</h1>
                 <p className="mt-4 text-[22px] text-gray-600">Lacheln 대구 본점 방문을 환영합니다.</p>
             </div>

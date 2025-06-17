@@ -1,12 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import main1 from "../../../image/MainpageSlide/mainpageslide.jpeg";
-import main2 from "../../../image/MainpageSlide/mainpageslide2.jpg";
-import main3 from "../../../image/MainpageSlide/mainpageslide3.jpeg";
-import luxuaryImg from '../../../image/userprofile/luxuary.jpg';
+import main1 from "../../../image/MainpageSlide/slide1.png";
+import main2 from "../../../image/MainpageSlide/slide2.png";
+import main3 from "../../../image/MainpageSlide/slide3.png";
 import apiClient from "../../../lib/apiClient";
 import { EllipseCarousel } from "./PopularProduct";
+import officialYoutube from '../../../image/MainpageSlide/official_youtube.png';
+import officialInsta from '../../../image/MainpageSlide/official_insta.png';
+import productIcon from '../../../image/MainpageSlide/button/product.png';
+import packageIcon from '../../../image/MainpageSlide/button/package.png';
+import boardIcon from '../../../image/MainpageSlide/button/board.png';
+import helpIcon from '../../../image/MainpageSlide/button/help.png';
+import { motion } from "framer-motion";
 
 const carouselImages = [
     { src: main1, alt: "메인페이지 슬라이드1" },
@@ -103,37 +109,106 @@ function MainPage() {
 
     return (
         <div className="min-h-screen bg-white text-black flex flex-col items-center">
+            
             {/* 캐러셀 */}
-            <div className="relative w-full h-[500px] flex items-center justify-center overflow-hidden bg-gray-100 mt-12 px-8 rounded-2xl shadow-lg group">
-                {/* 이미지 */}
-                {carouselImages.map((img, idx) => (
-                    <img
-                        key={img.src}
-                        src={img.src}
-                        alt={img.alt}
-                        className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${idx === current ? 'opacity-100 z-0' : 'opacity-0 z-0'} pointer-events-none`}
-                        style={{ paddingLeft: '128px', paddingRight: '128px', boxSizing: 'border-box', borderRadius: '20px' }}
-                    />
-                ))}
-                {/* 좌우 버튼 */}
-                <button onClick={goToPrev} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white/90 rounded-full p-2 shadow text-3xl opacity-0 group-hover:opacity-100 transition z-10">&#60;</button>
-                <button onClick={goToNext} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white/90 rounded-full p-2 shadow text-3xl opacity-0 group-hover:opacity-100 transition z-10">&#62;</button>
-                {/* 인디케이터 */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                    {carouselImages.map((_, idx) => (
-                        <div key={idx} className={`w-3 h-3 rounded-full ${idx === current ? 'bg-[#845EC2]' : 'bg-white border border-[#845EC2]'} transition-all`}></div>
+            <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ duration: 0.7 }}
+                className="w-full flex justify-center mt-12"
+            >
+                <div className="relative w-full max-w-7xl h-[500px] flex items-center justify-center overflow-visible bg-gray-100 rounded-2xl shadow-lg group">
+                    {/* 이미지 */}
+                    {carouselImages.map((img, idx) => (
+                        <img
+                            key={img.src}
+                            src={img.src}
+                            alt={img.alt}
+                            className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${idx === current ? 'opacity-100 z-0' : 'opacity-0 z-0'} pointer-events-none`}
+                            style={{ borderRadius: '20px' }}
+                        />
                     ))}
+                    {/* 좌우 버튼 */}
+                    <button onClick={goToPrev} className="absolute -left-16 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow text-3xl z-20 border border-gray-300">&#60;</button>
+                    <button onClick={goToNext} className="absolute -right-16 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow text-3xl z-20 border border-gray-300">&#62;</button>
+                    {/* 인디케이터 바 */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                        {carouselImages.map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setCurrent(idx)}
+                                className={`transition-all duration-300 rounded-full ${current === idx ? 'bg-[#845EC2]' : 'bg-gray-300'}`}
+                                aria-label={`Go to slide ${idx + 1}`}
+                                style={{ height: '2px', width: current === idx ? '40px' : '18px', minWidth: 'unset', padding: 0 }}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
+            </motion.div>
+
+            {/* 바로가기 버튼 */}
+            <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ duration: 0.7, delay: 0.1 }}
+                className="flex gap-8 justify-center my-8"
+            >
+                <a href="/product">
+                    <img src={productIcon} alt="product" className="h-40 w-40 object-contain border-2 border-[#845EC2] rounded-xl" />
+                </a>
+                <a href="/package">
+                    <img src={packageIcon} alt="package" className="h-40 w-40 object-contain border-2 border-[#845EC2] rounded-xl" />
+                </a>
+                <a href="/community">
+                    <img src={boardIcon} alt="board" className="h-40 w-40 object-contain border-2 border-[#845EC2] rounded-xl" />
+                </a>
+                <a href="/support">
+                    <img src={helpIcon} alt="help" className="h-40 w-40 object-contain border-2 border-[#845EC2] rounded-xl" />
+                </a>
+            </motion.div>
 
             {/* 인기 상품 */}
-            <div className="w-full max-w-6xl px-8 mt-16 mb-32">
+            <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                className="w-full max-w-6xl px-8 mt-16 mb-32"
+            >
                 <h2 className="text-2xl font-bold mb-6 text-[#845EC2]">인기 상품</h2>
                 <EllipseCarousel items={popularProducts.slice(0, 10)} />
-            </div>
+            </motion.div>
+            
+            {/* 공식 유튜브, 인스타그램 */}
+            <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className="w-full flex flex-col items-center max-w-4xl mx-auto my-16"
+            >
+                <div className="text-3xl font-bold mb-2 text-[#845EC2]">OFFICIAL ZONE</div>
+                <div className="w-full h-1 bg-[#845EC2] rounded mb-10" style={{ maxWidth: '600px' }}></div>
+                <div className="w-full flex justify-between items-center gap-20">
+                    <a href="https://www.youtube.com/@yeungjin" target="_blank" rel="noopener noreferrer">
+                        <img src={officialYoutube} alt="공식 유튜브" className="h-48 object-contain rounded-xl" />
+                    </a>
+                    <a href="https://www.instagram.com/with_yju/" target="_blank" rel="noopener noreferrer">
+                        <img src={officialInsta} alt="공식 인스타그램" className="h-48 object-contain rounded-xl" />
+                    </a>
+                </div>
+            </motion.div>
 
             {/* 리뷰/게시글 리스트 영역 */}
-            <div className="flex gap-8 justify-between w-full my-12 pl-10 pr-10">
+            <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="flex gap-8 justify-between w-full my-12 pl-10 pr-10"
+            >
                 {/* 리뷰 리스트 */}
                 <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2">
                     <div className="text-[#3CB4AC] text-lg font-semibold my-2">리뷰</div>
@@ -148,7 +223,7 @@ function MainPage() {
                     <div className="text-[#3CB4AC] text-lg font-semibold my-2">게시글</div>
                     <ul className="w-full">
                         {postList.length === 0
-                            ? [1,2,3,4,5].map(idx => (
+                            ? [1, 2, 3, 4, 5].map(idx => (
                                 <li key={idx} className="py-2 px-4 border-b last:border-b-0 text-center text-gray-400">게시글 없음</li>
                             ))
                             : postList.map((post, idx) => (
@@ -156,7 +231,7 @@ function MainPage() {
                             ))}
                     </ul>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }

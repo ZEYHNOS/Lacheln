@@ -34,6 +34,12 @@ const WishlistSubscribePage = () => {
     { name: '주문내역 & 리뷰', path: '/user/review' }
   ];
 
+  const categoryMap = {
+    'S': 'studio',
+    'D': 'dress',
+    'M': 'makeup'
+  }
+
   useEffect(() => {
     getUserProfile();
   }, []);
@@ -220,8 +226,9 @@ const WishlistSubscribePage = () => {
     }
   };
 
-  const handleProductView = (productId) => {
-    alert(`상품 ID ${productId} 상세 페이지로 이동`);
+  const handleProductView = (product) => {
+    console.log("이동 페이지 : ", `/product/${categoryMap[product.category]}/${product.productId}`);
+    navigate(`/product/${categoryMap[product.category]}/${product.productId}`);
   };
 
   const handleCompanyView = (companyId) => {
@@ -343,7 +350,7 @@ const WishlistSubscribePage = () => {
                               </div>
                               <div className="flex gap-2 mt-4">
                                 <button
-                                  onClick={() => handleProductView(product.data.productId)}
+                                  onClick={() => handleProductView(product.data)}
                                   className="flex items-center gap-1 px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 transition-colors"
                                 >
                                   <Eye className="w-3 h-3" />

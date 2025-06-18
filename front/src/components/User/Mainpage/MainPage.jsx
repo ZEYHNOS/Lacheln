@@ -243,7 +243,7 @@ function MainPage() {
                                                 : "/default/images/product.png"
                                         }
                                         alt={item.productName}
-                                        className="h-28 w-full object-cover rounded mb-2"
+                                        className="h-28 w-21 object-cover rounded mb-2"
                                     />
                                     <div className="font-medium text-xs text-gray-800 text-center line-clamp-1">{item.productName}</div>
                                     <div className="text-[10px] text-gray-500 text-center line-clamp-1">{item.companyName}</div>

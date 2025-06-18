@@ -20,18 +20,18 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
     };
 
     const subMenus = {
-        " 브랜드": [
-            { name: "브랜드 페이지", url: "/brand" },
-        ],
+        // " 브랜드": [
+        //     { name: "브랜드 페이지", url: "/brand" },
+        // ],
         " 상품": [
             { name: "상품 페이지", url: "/product" },
         ],
         " 패키지": [
             { name: "패키지 페이지", url: "/package" },
         ],
-        " 이벤트": [
-            { name: "전체 이벤트", url: "/event" },
-        ],
+        // " 이벤트": [
+        //     { name: "전체 이벤트", url: "/event" },
+        // ],
         " 커뮤니티": [
             { name: "전체 게시판", url: "/community" },
         ],

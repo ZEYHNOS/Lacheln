@@ -24,7 +24,7 @@ const menuSections = [
         icon: Companyinfo,
         items: [
             { path: "modifyinfo", icon: Modifyinfo, label: "정보수정" },
-            { path: "statistics", icon: Statistics, label: "통계" },
+            // { path: "statistics", icon: Statistics, label: "통계" },
         ],
     },
     {
@@ -32,7 +32,7 @@ const menuSections = [
         icon: Management,
         items: [
             { path: "product", icon: Product, label: "상품관리" },
-            { path: "order", icon: Order, label: "주문관리" },
+            // { path: "order", icon: Order, label: "주문관리" },
             { path: "review", icon: Review, label: "리뷰관리" },
         ],
     },

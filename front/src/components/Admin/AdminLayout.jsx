@@ -17,12 +17,12 @@ export default function AdminLayout({ children }) {
 
         apiClient.get("/auth/me")
             .then(res => {
-                const isNowLoggedIn = !!res.data.data?.valid;
+                const isNowLoggedIn = res.data.data?.role === "ADMIN";
                 setIsLoggedIn(isNowLoggedIn);
 
                 if (!isNowLoggedIn) {
                     // 로그인 안 돼 있으면 관리자 로그인 페이지로 리다이렉트
-                    navigate("/admin/login");
+                    navigate("/login");
                 }
 
                 // /login에서 왔고, 로그인된 상태라면 토스트 표시
@@ -35,7 +35,7 @@ export default function AdminLayout({ children }) {
             })
             .catch(() => {
                 setIsLoggedIn(false);
-                navigate("/admin/login");
+                navigate("/");
             });
     }, [location, navigate]);
 
@@ -52,7 +52,7 @@ export default function AdminLayout({ children }) {
                         {children}
                     </div>
                 </main>
-               
+
             </div>
         </div>
     );

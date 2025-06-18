@@ -127,7 +127,7 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
                                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-col items-start gap-1"
                                 onClick={e => {
                                     e.stopPropagation();
-                                    if (item.url) navigate(item.url);
+                                    navigate(item.url);
                                 }}
                             >
                                 <div className="flex items-center gap-2">

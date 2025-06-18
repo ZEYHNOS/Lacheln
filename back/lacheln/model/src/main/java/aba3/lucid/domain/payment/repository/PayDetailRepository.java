@@ -45,7 +45,7 @@ public interface PayDetailRepository extends JpaRepository<PayDetailEntity, Long
 
 
     @Query(value = """
-            SELECT pd_id
+            SELECT d.pd_id
             FROM pay_detail d
             JOIN pay_management m ON d.pay_id = m.pay_id
             WHERE d.start_datetime BETWEEN :start AND :end

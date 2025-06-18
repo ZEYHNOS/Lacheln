@@ -109,6 +109,7 @@ public class DressEntity extends ProductEntity {
         updateProductName(request.getName());
         updateTaskTime(request.getTaskTime());
         updateRec(request.getRec());
+        updatePrice(request.getPrice());
         setColor(request.getColor());
         setDressSizeList(dressSizeList);
         setOutAvailable(request.getOutAvailable());

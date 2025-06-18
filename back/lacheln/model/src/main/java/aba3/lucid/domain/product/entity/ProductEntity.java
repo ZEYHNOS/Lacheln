@@ -100,6 +100,7 @@ public abstract class ProductEntity {
             this.imageList = new ArrayList<>();
         }
 
+        this.imageList.clear();
         this.imageList.addAll(productImageEntityList);
     }
 
@@ -196,6 +197,11 @@ public abstract class ProductEntity {
         }
 
         this.pdTaskTime = time;
+    }
+
+    // 가격 변경
+    public void updatePrice(BigInteger price) {
+        this.pdPrice = price;
     }
 
     public void updateOptionList(List<OptionEntity> optionEntityList) {

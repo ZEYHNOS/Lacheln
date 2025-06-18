@@ -58,7 +58,6 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
         updateAdditionalFields(existingEntity, req);
         existingEntity.updateFormList(optionEntityList, hashtagEntityList, productImageEntityList, productDescriptionEntityList);
 
-
         return repository.save(existingEntity);
     }
 

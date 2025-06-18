@@ -72,6 +72,7 @@ public class StudioEntity extends ProductEntity{
         updateProductName(request.getName());
         updateTaskTime(request.getTaskTime());
         updateRec(request.getRec());
+        updatePrice(request.getPrice());
         setInAvailable(request.getInAvailable());
         setOutAvailable(request.getOutAvailable());
         setMaxPeople(request.getMaxPeople());

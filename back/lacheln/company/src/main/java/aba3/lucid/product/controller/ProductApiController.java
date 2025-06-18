@@ -29,7 +29,7 @@ public class ProductApiController {
     @GetMapping("/list")
     public API<List<ProductResponse>> getProductList(
             ProductSearchRecord productSearchRecord,
-            @PageableDefault(size = 9, page = 0) Pageable pageable
+            @PageableDefault(size = 8, page = 0) Pageable pageable
     ) {
         Page<ProductResponse> productResponseList = productBusiness.getProductList(pageable, productSearchRecord);
         Pagination pagination = paginationConverter.createPagination(productResponseList, productSearchRecord.orderBy());

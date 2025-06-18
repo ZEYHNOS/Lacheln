@@ -70,7 +70,7 @@ public class CompanyBusiness {
 
         companyEntity.setCpRepName(request.getName());
         companyEntity.setCpMainContact(request.getContact());
-        companyEntity.setCpStatus(CompanyStatus.SUSPENSION);
+        companyEntity.setCpStatus(CompanyStatus.ACTIVATE);
         companyEntity.setCpProfile("/image/default.jpg");
         companyEntity.setCpCategory(request.getCategory());
 

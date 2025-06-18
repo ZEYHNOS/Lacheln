@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import apiClient from "../../../lib/apiClient";
+import { useNavigate } from "react-router-dom";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const retryDelay = 5000; // 5초 후 재연결
@@ -9,6 +10,7 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const eventSourceRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const connectSSE = () => {
@@ -63,11 +65,29 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
         };
     }, [isLoggedIn]);
 
+    // 드롭다운(알람창) 열릴 때 읽지 않은 알림 초기화
+    useEffect(() => {
+        if (isActive) {
+            setUnreadCount(0);
+        }
+    }, [isActive]);
+
     const handleAlertHistoryClick = () => {
         onClick(); // 드롭다운 닫기
-        // URL 이동 등 추가 동작
         window.location.href = "/user/alert/list";
     };
+
+    // 날짜 포맷 함수 추가
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const hh = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        return `${yyyy}.${mm}.${dd} ${hh}:${min}`;
+    }
 
     return (
         <div className="relative">
@@ -82,6 +102,10 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
                     <FaChevronDown className="text-2xl text-[#845EC2]" />
                 )}
             </div>
+
+            {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+            )}
 
             {/* 드롭다운 메뉴 */}
             {isActive && isLoggedIn && (
@@ -98,9 +122,20 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
                             <li className="px-4 py-2 text-gray-400 text-center">알림이 없습니다.</li>
                         )}
                         {notifications.map((item, idx) => (
-                            <li key={idx} className="px-4 py-2 hover:bg-gray-100 flex items-start gap-2">
-                                <span className="text-xl">{item.icon || "🔔"}</span>
-                                <span className="flex-1">{item.text || JSON.stringify(item)}</span>
+                            <li
+                                key={idx}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-col items-start gap-1"
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    navigate(item.accessUrl);
+                                }}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xl">{item.icon || "🔔"}</span>
+                                    <span className="font-bold text-sm text-gray-800">{item.title || JSON.stringify(item)}</span>
+                                </div>
+                                <div className="text-xs text-gray-600 ml-7">{item.content || ""}</div>
+                                <div className="text-[10px] text-gray-400 ml-7 mt-1">{item.time ? formatDate(item.time) : ''}</div>
                             </li>
                         ))}
                     </ul>

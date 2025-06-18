@@ -95,7 +95,8 @@ export default function Header() {
                     <AlarmButton
                         isActive={activeButton === "alarm"}
                         onClick={() => handleButtonClick("alarm")}
-                        isLoggedIn={isLoggedIn}/>
+                        isLoggedIn={isLoggedIn}
+                    />
                     <CartButton
                         isActive={activeButton === "cart"}
                         onClick={() => handleButtonClick("cart")}

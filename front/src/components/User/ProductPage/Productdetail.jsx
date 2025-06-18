@@ -83,6 +83,9 @@ const ProductDetail = () => {
     const [product, setProduct] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [loadingReviews, setLoadingReviews] = useState(false);
+    const [wishList, setWishList] = useState([]);
+    const [isWished, setIsWished] = useState(false);
+    const [wishLoading, setWishLoading] = useState(false);
     const navigate = useNavigate();
     const [showChat, setShowChat] = useState(false);
 
@@ -92,6 +95,54 @@ const ProductDetail = () => {
     const [showSchedule, setShowSchedule] = useState(false);
 
     const writeRef = useRef();
+
+    // 찜 목록 조회
+    const fetchWishList = async () => {
+        try {
+            const response = await apiClient.get('/user/wishlist/search');
+            if (response.data?.data) {
+                setWishList(response.data.data);
+                // 현재 상품이 찜 목록에 있는지 확인
+                const isInWishList = response.data.data.some(wish => wish.pdId === product?.id);
+                setIsWished(isInWishList);
+            }
+        } catch (error) {
+            console.error('찜 목록 조회 실패:', error);
+        }
+    };
+
+    // 찜 추가
+    const addToWishList = async () => {
+        if (!product?.id) return;
+        
+        setWishLoading(true);
+        try {
+            const response = await apiClient.post('/user/wishlist/add', {
+                ids: [product.id]
+            });
+            
+            if (response.data?.result?.resultCode === 200) {
+                setIsWished(true);
+                toast.success('찜 목록에 추가되었습니다.');
+                // 찜 목록 새로고침
+                fetchWishList();
+            } else {
+                toast.error('찜 추가에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('찜 추가 실패:', error);
+            toast.error('찜 추가 중 오류가 발생했습니다.');
+        } finally {
+            setWishLoading(false);
+        }
+    };
+
+    // 찜 추가 함수
+    const handleWishClick = () => {
+        if (wishLoading || isWished) return; // 로딩 중이거나 이미 찜한 상태면 클릭 무시
+        
+        addToWishList();
+    };
 
     useEffect(() => {
         apiClient.get(`/product/${category}/${productid}`)
@@ -247,6 +298,13 @@ const ProductDetail = () => {
             day: 'numeric'
         });
     };
+
+    // 상품 정보가 로드되면 찜 목록 조회
+    useEffect(() => {
+        if (product?.id) {
+            fetchWishList();
+        }
+    }, [product?.id]);
 
     if (!product) {
         return <div className="text-center py-20 text-gray-500">상품 정보를 불러오는 중입니다...</div>;
@@ -408,8 +466,22 @@ const ProductDetail = () => {
                             >
                                 <span>🛒</span> 장바구니 담기
                             </button>
-                            <button className="w-12 h-12 border bg-white rounded flex items-center justify-center text-purple-500 text-xl">
-                                ❤️
+                            <button 
+                                className={`w-12 h-12 border rounded flex items-center justify-center text-xl transition-all duration-200 ${
+                                    wishLoading 
+                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                                        : isWished 
+                                            ? 'bg-red-500 text-white border-red-500 cursor-not-allowed' 
+                                            : 'bg-white text-gray-400 border-gray-300 hover:border-red-300 hover:text-red-400 cursor-pointer'
+                                }`}
+                                onClick={handleWishClick}
+                                disabled={wishLoading || isWished}
+                            >
+                                {wishLoading ? (
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div>
+                                ) : (
+                                    <span>{isWished ? '❤️' : '🤍'}</span>
+                                )}
                             </button>
                         </div>
                         {!isAllEssentialSelected() && (

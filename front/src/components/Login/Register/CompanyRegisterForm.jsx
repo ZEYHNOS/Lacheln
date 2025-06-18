@@ -124,8 +124,8 @@ export default function CompanyRegisterForm() {
   const categories = Object.keys(categoryMap);
 
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    const categoryCode = categoryMap[category];
+    console.log("categoryMap[category] : ", categoryMap[category]);
+    setSelectedCategory(categoryMap[category]);
   };
 
   const handleRegister = async () => {
@@ -141,7 +141,7 @@ export default function CompanyRegisterForm() {
       password_confirm: passwordConfirm,
       name,
       repName,
-      mainContact,
+      contact: mainContact.replace(/-/g, ""),
       bn_reg_no: "000-00-00000",
       mos: "2025-서울강남-00000",
       address,
@@ -149,9 +149,11 @@ export default function CompanyRegisterForm() {
       profile: "default-profile-image.jpg", // 기본 프로필 이미지 또는 파일 경로
       category: selectedCategory,
       status: "ACTIVATE",   // 기본 상태 값
-      role: "USER"        // 기본 역할 값
+      role: "COMPANY"        // 기본 역할 값
     };
-    console.log("PasswordConfirm in RequestData : ", requestData.password_confirm);
+
+    console.log("PasswordConfirm in RequestData : ", requestData);
+
     try {
       const response = await fetch(`${baseUrl}/company/signup`, {
         method: "POST",
@@ -483,9 +485,9 @@ export default function CompanyRegisterForm() {
               {categories.map((category) => (
                 <button
                   key={category}
-                  className={`px-4 py-2 rounded-lg transition-colors duration-200 ${selectedCategory === category
-                      ? 'bg-purple-500 text-white border border-purple-500 focus:outline-none'
-                      : 'bg-white text-black border border-gray-300 hover:bg-blue-500 hover:text-white focus:outline-none'
+                  className={`px-4 py-2 rounded-lg transition-colors duration-200 ${selectedCategory === categoryMap[category]
+                    ? 'bg-purple-500 text-white border border-purple-500 focus:outline-none'
+                    : 'bg-white text-black border border-gray-300 hover:bg-blue-500 hover:text-white focus:outline-none'
                     }`}
                   onClick={() => handleCategorySelect(category)}
                 >

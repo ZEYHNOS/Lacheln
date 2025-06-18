@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import apiClient from "../../../lib/apiClient";
+import { useNavigate } from "react-router-dom";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const retryDelay = 5000; // 5초 후 재연결
@@ -9,6 +10,7 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const eventSourceRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const connectSSE = () => {
@@ -123,7 +125,10 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
                             <li
                                 key={idx}
                                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-col items-start gap-1"
-                                onClick={() => { if (item.url) window.location.href = baseUrl + item.url; }}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    if (item.url) navigate(item.url);
+                                }}
                             >
                                 <div className="flex items-center gap-2">
                                     <span className="text-xl">{item.icon || "🔔"}</span>

@@ -37,6 +37,9 @@ public class PayDetailEntity {
     @Column(name = "pd_id")
     private Long pdId;
 
+    @Column(name = "pack_id")
+    private Long packId;
+
     // 상품 이름
     @Column(name = "pay_pd_name", nullable = false, columnDefinition = "VARCHAR(100)")
     private String productName;

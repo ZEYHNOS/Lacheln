@@ -132,6 +132,7 @@ public class PayDetailConverter {
                 ;
 
         PayDetailEntity entity = PayDetailEntity.builder()
+                .packId(response.getPackId())
                 .payManagement(payManagement)
                 .productName(response.getPdName())
                 .pdId(response.getPdId())

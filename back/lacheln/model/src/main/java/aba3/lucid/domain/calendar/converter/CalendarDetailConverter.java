@@ -38,7 +38,7 @@ public class CalendarDetailConverter {
                 .calDtMemo(String.format("%s님이 %s상품, %s 옵션을 예약했습니다.\n전화번호 : %s\n특이사항 : %s",
                         request.getUserName(),
                         request.getProductName(),
-                        request.getOptionDtoList().toString(),
+                        request.getOptionDtoList() == null ? "" : request.getOptionDtoList().toString(), // TODO 리팩토링
                         request.getPhoneNum(),
                         request.getMemo()))
                 .calendar(calendar)

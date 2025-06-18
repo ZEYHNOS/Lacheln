@@ -43,7 +43,7 @@ public interface PayDetailRepository extends JpaRepository<PayDetailEntity, Long
 
     List<PayDetailEntity> findAllByPayManagement_User(UsersEntity user);
 
-    List<PayDetailEntity> findAllByPdIdIn(List<Long> pdIdList);
+    List<PayDetailEntity> findAllByPdIdInAndPackIdIsNull(List<Long> pdIdList);
 
 
     @Query(value = """

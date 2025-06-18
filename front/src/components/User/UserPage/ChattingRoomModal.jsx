@@ -277,7 +277,7 @@ export default function ChattingRoomModal({ showModal, onClose }) {
                   <div className="text-xs text-gray-600">
                     {formatTime(msg.sendAt)}
                   </div>
-                  <div className="text-xs text-right text-gray-500">
+                  <div className="text-xs text-right text-black">
                     {isSent
                       ? msg.read === "Y"
                         ? "✔ 읽음"

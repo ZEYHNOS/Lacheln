@@ -172,8 +172,8 @@ export default function ChatRoomModal({ companyId, onClose }) {
               >
                 <div className="text-sm font-semibold">{msg.senderName}</div>
                 <div>{msg.message}</div>
-                <div className="text-xs text-gray-600">{formatTime(msg.sendAt)}</div>
-                <div className="text-xs text-right text-gray-500">
+                <div className="text-xs text-black">{formatTime(msg.sendAt)}</div>
+                <div className="text-xs text-right text-black">
                   {isSent
                     ? (msg.read === "Y" ? "✔ 읽음" : "⌛ 전송됨")
                     : (msg.read === "N" ? "📨 안읽음" : "")}
@@ -188,7 +188,7 @@ export default function ChatRoomModal({ companyId, onClose }) {
             type="text"
             ref={messageRef}
             placeholder="메시지를 입력하세요"
-            className="border border-gray-300 bg-white text-blackrounded p-2 flex-1 focus:ring-2 focus:ring-purple-500 hover:border-purple-500"
+            className="border border-gray-300 bg-white text-black p-2 flex-1 focus:ring-2 focus:ring-purple-500 hover:border-purple-500"
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
           <button

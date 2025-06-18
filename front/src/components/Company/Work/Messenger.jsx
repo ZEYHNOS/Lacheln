@@ -275,7 +275,7 @@ export default function Chatting() {
                 className={`mb-2 p-2 rounded max-w-[35%] shadow-sm ${isSent ? "ml-auto bg-pink-100" : "bg-purple-100"}`}
               >
                 <div className="font-semibold text-sm">{msg.senderName}</div>
-                <div className="my-1">{msg.message}</div>
+                <div className="my-1 text-black">{msg.message}</div>
                 <div className="text-xs text-gray-600">{formatTime(msg.sendAt)}</div>
                 <div className="text-xs text-right text-gray-500">
                   {isSent ? (msg.read === "Y" ? "✔ 읽음" : "⌛ 전송됨") : (msg.read === "N" ? "📨 안읽음" : "")}
@@ -290,7 +290,7 @@ export default function Chatting() {
             ref={messageRef}
             type="text"
             placeholder="메시지를 입력하세요"
-            className="flex-1 border bg-white border-pp rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="flex-1 text-black border bg-white border-pp rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
             onKeyDown={(e) => { if(e.key === "Enter") sendMessage(); }}
           />
           <button

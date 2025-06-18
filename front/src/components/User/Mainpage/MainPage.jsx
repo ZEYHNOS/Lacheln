@@ -28,6 +28,9 @@ function MainPage() {
     const timeoutRef = useRef(null);
     const [popularProducts, setPopularProducts] = useState([]);
     const [postList, setPostList] = useState([]);
+    const [miniCategory, setMiniCategory] = useState("드레스");
+    const [miniProducts, setMiniProducts] = useState([]);
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         // 이미 토스트를 표시했다면 더 이상 실행하지 않음
@@ -94,6 +97,12 @@ function MainPage() {
                 console.error("게시글 불러오기 실패:", err);
             });
     }, []);
+
+    useEffect(() => {
+        const code = { "드레스": "D", "스튜디오": "S", "메이크업": "M" }[miniCategory];
+        apiClient.get(`/api/product/list?category=${code}&size=3`)
+            .then(res => setMiniProducts(res.data.data || []));
+    }, [miniCategory]);
 
     // 자동 슬라이드
     useEffect(() => {
@@ -200,6 +209,70 @@ function MainPage() {
                 <EllipseCarousel items={popularProducts.slice(0, 10)} />
             </motion.div>
             
+            {/* 리뷰/게시글 리스트 영역 */}
+            <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="flex gap-16 justify-between w-full my-12 pl-32 pr-32 "
+            >
+                {/* 리뷰 리스트 */}
+                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2">
+                    <div className="flex gap-2 mb-4 mt-2">
+                        {["드레스", "스튜디오", "메이크업"].map(cat => (
+                            <button
+                                key={cat}
+                                className={`px-3 py-1 rounded ${miniCategory === cat ? "bg-[#845EC2] text-white" : "bg-white text-[#845EC2] border border-[#845EC2]"}`}
+                                onClick={() => setMiniCategory(cat)}
+                            >{cat}</button>
+                        ))}
+                    </div>
+                    <div className="grid grid-cols-3 gap-4 w-full">
+                        {miniProducts.length === 0 ? (
+                            <div className="col-span-3 text-center text-gray-400 py-10">상품이 없습니다.</div>
+                        ) : (
+                            miniProducts.map(item => (
+                                <div key={item.productId} className="bg-white rounded shadow p-2 flex flex-col items-center">
+                                    <img
+                                        src={
+                                            item.imageUrl
+                                                ? item.imageUrl.startsWith("/image/")
+                                                    ? `${baseUrl}${item.imageUrl}`
+                                                    : `${baseUrl}${item.imageUrl.replace(/\\/g, "/")}`
+                                                : "/default/images/product.png"
+                                        }
+                                        alt={item.productName}
+                                        className="h-28 w-full object-cover rounded mb-2"
+                                    />
+                                    <div className="font-medium text-xs text-gray-800 text-center line-clamp-1">{item.productName}</div>
+                                    <div className="text-[10px] text-gray-500 text-center line-clamp-1">{item.companyName}</div>
+                                    <div className="text-xs text-violet-600 font-semibold mt-1">₩ {item.price.toLocaleString()}</div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+                {/* 게시글 리스트 */}
+                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2">
+                    <div className="text-[#3CB4AC] text-lg font-semibold my-2">최근 게시판</div>
+                    <ul className="w-full">
+                        {postList.length === 0
+                            ? [1, 2, 3, 4, 5].map(idx => (
+                                <li key={idx} className="py-2 px-4 border-b last:border-b-0 text-center text-gray-400">게시글 없음</li>
+                            ))
+                            : postList.map((post, idx) => (
+                                <li key={post.postId || idx} className="py-2 px-4 border-b last:border-b-0 flex items-center text-center">
+                                    <span className="flex-[2] text-xs text-gray-500 text-left">{post.category}</span>
+                                    <span className="flex-[3] font-semibold text-left">{post.postTitle || post.title}</span>
+                                    <span className="flex-[1] text-xs text-gray-500 text-left">{post.userNickName}</span>
+                                    <span className="flex-[1] text-pink-500 text-right">♥ {post.likeCount}</span>
+                                </li>
+                            ))}
+                    </ul>
+                </div>
+            </motion.div>
+
             {/* 공식 유튜브, 인스타그램 */}
             <motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -217,38 +290,6 @@ function MainPage() {
                     <a href="https://www.instagram.com/with_yju/" target="_blank" rel="noopener noreferrer">
                         <img src={officialInsta} alt="공식 인스타그램" className="h-48 object-contain rounded-xl" />
                     </a>
-                </div>
-            </motion.div>
-
-            {/* 리뷰/게시글 리스트 영역 */}
-            <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.3 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-                className="flex gap-8 justify-between w-full my-12 pl-10 pr-10"
-            >
-                {/* 리뷰 리스트 */}
-                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2">
-                    <div className="text-[#3CB4AC] text-lg font-semibold my-2">리뷰</div>
-                    <ul className="w-full">
-                        {["리뷰 1", "리뷰 2", "리뷰 3", "리뷰 4", "리뷰 5"].map((review, idx) => (
-                            <li key={idx} className="py-2 px-4 border-b last:border-b-0 text-center">{review}</li>
-                        ))}
-                    </ul>
-                </div>
-                {/* 게시글 리스트 */}
-                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2">
-                    <div className="text-[#3CB4AC] text-lg font-semibold my-2">게시글</div>
-                    <ul className="w-full">
-                        {postList.length === 0
-                            ? [1, 2, 3, 4, 5].map(idx => (
-                                <li key={idx} className="py-2 px-4 border-b last:border-b-0 text-center text-gray-400">게시글 없음</li>
-                            ))
-                            : postList.map((post, idx) => (
-                                <li key={post.postId || idx} className="py-2 px-4 border-b last:border-b-0 text-center">{post.title}</li>
-                            ))}
-                    </ul>
                 </div>
             </motion.div>
         </div>

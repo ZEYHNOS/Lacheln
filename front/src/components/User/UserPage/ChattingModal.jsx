@@ -38,9 +38,9 @@ export default function ChatRoomModal({ companyId, onClose }) {
     const isUserSender = true;
 
     const msgRes = await fetch(`${baseUrl}/chatroom/addroom/${companyId}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include"
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include"
     });
 
     const getRoomData = await msgRes.json();
@@ -75,22 +75,22 @@ export default function ChatRoomModal({ companyId, onClose }) {
       client.subscribe(`/topic/chatroom.${roomData.chatRoomId}`, (msg) => {
         const received = JSON.parse(msg.body);
         console.log("메시지 수신:", received);
-        
+
         setMessages(prev => {
           const exists = prev.some(m => {
             if (received.messageId && m.messageId) {
               return m.messageId === received.messageId;
             }
-            return m.message === received.message && 
-                   m.senderId === received.senderId && 
-                   Math.abs(new Date(m.sendAt) - new Date(received.sendAt)) < 1000;
+            return m.message === received.message &&
+              m.senderId === received.senderId &&
+              Math.abs(new Date(m.sendAt) - new Date(received.sendAt)) < 1000;
           });
-          
+
           if (exists) {
             console.log("중복 메시지 무시:", received);
             return prev;
           }
-          
+
           return [...prev, received];
         });
       });
@@ -188,7 +188,7 @@ export default function ChatRoomModal({ companyId, onClose }) {
             type="text"
             ref={messageRef}
             placeholder="메시지를 입력하세요"
-            className="border border-gray-300 rounded p-2 flex-1 focus:ring-2 focus:ring-purple-500 hover:border-purple-500"
+            className="border border-gray-300 bg-white text-blackrounded p-2 flex-1 focus:ring-2 focus:ring-purple-500 hover:border-purple-500"
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
           <button

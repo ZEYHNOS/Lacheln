@@ -125,7 +125,7 @@ export function EllipseCarousel({ items }) {
                 // 원의 중심에서 바라보는 3D 원형 캐러셀 효과 
                 const angleStep = 30; // 각 카드 간 각도
                 const angle = diff * angleStep;
-                const radius = 500; // 원의 반지름(px)
+                const radius = 550; // 원의 반지름(px)
                 return (
                     <div
                         key={item.productId}
@@ -158,11 +158,11 @@ export function EllipseCarousel({ items }) {
             {/* 좌우 버튼 */}
             <button
                 onClick={handlePrev}
-                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow text-2xl z-20"
+                className="absolute -left-10 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow text-2xl z-20"
             >&#60;</button>
             <button
                 onClick={handleNext}
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow text-2xl z-20"
+                className="absolute -right-10 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow text-2xl z-20"
             >&#62;</button>
         </div>
     );

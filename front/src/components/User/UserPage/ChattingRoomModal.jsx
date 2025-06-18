@@ -73,26 +73,26 @@ export default function ChattingRoomModal({ showModal, onClose }) {
         client.subscribe(`/topic/chatroom.${roomId}`, (msg) => {
           const received = JSON.parse(msg.body);
           console.log("메시지 수신:", received);
-          
+
           setMessagesByRoom(prev => {
             const currentMessages = prev[roomId] || [];
-            
+
             // 중복 메시지 체크 (messageId가 있으면 우선 체크, 없으면 내용과 시간으로 체크)
             const exists = currentMessages.some(m => {
               if (received.messageId && m.messageId) {
                 return m.messageId === received.messageId;
               }
               // messageId가 없는 경우 메시지 내용과 전송자, 시간으로 중복 체크
-              return m.message === received.message && 
-                     m.senderId === received.senderId && 
-                     Math.abs(new Date(m.sendAt) - new Date(received.sendAt)) < 1000; // 1초 이내
+              return m.message === received.message &&
+                m.senderId === received.senderId &&
+                Math.abs(new Date(m.sendAt) - new Date(received.sendAt)) < 1000; // 1초 이내
             });
-            
+
             if (exists) {
               console.log("중복 메시지 무시:", received);
               return prev;
             }
-            
+
             return {
               ...prev,
               [roomId]: [...currentMessages, received]
@@ -201,9 +201,9 @@ export default function ChattingRoomModal({ showModal, onClose }) {
     return isNaN(date)
       ? "시간 정보 없음"
       : `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}`;
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
   };
 
   if (!showModal) return null;
@@ -214,21 +214,21 @@ export default function ChattingRoomModal({ showModal, onClose }) {
         {/* 채팅방 목록 */}
         <div className="w-1/3 border-r p-4 flex flex-col">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-purple-700">채팅방 목록</h2>
-            <button
-              onClick={fetchChatRooms}
-              className="px-2 py-1 text-sm bg-purple-100 text-purple-700 rounded"
-            >
-              새로고침
+            <h2 className="text-xl font-bold text-pp">채팅방 목록</h2>
+            <button onClick={fetchChatRooms} className="p-2 bg-purple-300 text-white rounded hover:bg-purple-400 flex items-center justify-center" aria-label="새로고침">
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <path d="M21 2v6h-6" />
+                <path d="M3 12a9 9 0 0 1 15-7.7L21 8" />
+                <path d="M3 12a9 9 0 0 0 15 7.7L21 16" />
+              </svg>
             </button>
           </div>
           <div className="flex-1 overflow-y-auto space-y-2">
             {chatRooms.map((room) => (
               <div
                 key={room.roomId}
-                className={`relative p-3 border rounded shadow-sm cursor-pointer ${
-                  currentRoomId === room.roomId ? "bg-purple-200" : "bg-white"
-                } hover:bg-purple-50`}
+                className={`relative p-3 border rounded shadow-sm cursor-pointer ${currentRoomId === room.roomId ? "bg-purple-200" : "bg-white"
+                  } hover:bg-purple-50`}
                 onClick={() =>
                   joinRoom(
                     room.roomId,
@@ -267,11 +267,10 @@ export default function ChattingRoomModal({ showModal, onClose }) {
               return (
                 <div
                   key={msg.messageId}
-                  className={`mb-2 p-2 rounded max-w-[35%] ${
-                    isSent
+                  className={`mb-2 p-2 rounded max-w-[35%] ${isSent
                       ? "ml-auto bg-pink-100 shadow"
                       : "bg-purple-100 shadow"
-                  }`}
+                    }`}
                 >
                   <div className="text-sm font-semibold">{msg.senderName}</div>
                   <div>{msg.message}</div>
@@ -284,8 +283,8 @@ export default function ChattingRoomModal({ showModal, onClose }) {
                         ? "✔ 읽음"
                         : "⌛ 전송됨"
                       : msg.read === "N"
-                      ? "📨 안읽음"
-                      : ""}
+                        ? "📨 안읽음"
+                        : ""}
                   </div>
                 </div>
               );
@@ -298,7 +297,7 @@ export default function ChattingRoomModal({ showModal, onClose }) {
               ref={messageRef}
               type="text"
               placeholder="메시지를 입력하세요"
-              className="border border-gray-300 rounded p-2 flex-1 focus:ring-2 focus:ring-purple-500"
+              className="border border-gray-300 bg-white text-black rounded p-2 flex-1 focus:ring-2 focus:ring-purple-500"
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             />
             <button

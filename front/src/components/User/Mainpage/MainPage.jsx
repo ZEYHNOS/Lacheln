@@ -153,7 +153,7 @@ function MainPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.3 }}
                 transition={{ duration: 0.7, delay: 0.1 }}
-                className="flex gap-8 justify-center my-8"
+                className="flex gap-16 justify-center my-8"
             >
                 <a href="/product">
                     <img src={productIcon} alt="product" className="h-40 w-40 object-contain border-2 border-[#845EC2] rounded-xl" />
@@ -177,7 +177,7 @@ function MainPage() {
                 transition={{ duration: 0.7, delay: 0.2 }}
                 className="w-full max-w-6xl px-8 mt-16 mb-32"
             >
-                <h2 className="text-2xl font-bold mb-6 text-[#845EC2]">인기 상품</h2>
+                <h2 className="text-3xl font-bold mb-16 text-[#845EC2]">인기 상품</h2>
                 <EllipseCarousel items={popularProducts.slice(0, 10)} />
             </motion.div>
             

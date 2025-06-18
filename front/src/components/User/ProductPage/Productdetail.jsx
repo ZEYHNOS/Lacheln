@@ -221,8 +221,26 @@ const ProductDetail = () => {
     };
 
     // 날짜 포맷팅 함수
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
+    const formatDate = (dateData) => {
+        let date;
+        
+        // 배열 형태로 온 경우 (백엔드에서 LocalDateTime이 배열로 직렬화된 경우)
+        if (Array.isArray(dateData)) {
+            const [year, month, day, hour, minute, second] = dateData;
+            date = new Date(year, month - 1, day, hour, minute, second); // month는 0부터 시작하므로 -1
+        } else if (typeof dateData === 'string') {
+            // 문자열 형태로 온 경우
+            date = new Date(dateData);
+        } else {
+            // 기타 경우
+            date = new Date(dateData);
+        }
+        
+        // 유효한 날짜인지 확인
+        if (isNaN(date.getTime())) {
+            return '날짜 정보 없음';
+        }
+        
         return date.toLocaleDateString('ko-KR', {
             year: 'numeric',
             month: 'long',

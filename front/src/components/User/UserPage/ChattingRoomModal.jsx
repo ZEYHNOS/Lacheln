@@ -272,7 +272,7 @@ export default function ChattingRoomModal({ showModal, onClose }) {
                       : "bg-purple-100 shadow"
                     }`}
                 >
-                  <div className="text-sm font-semibold">{msg.senderName}</div>
+                  <div className="text-sm font-semibold text-black">{msg.senderName}</div>
                   <div>{msg.message}</div>
                   <div className="text-xs text-gray-600">
                     {formatTime(msg.sendAt)}

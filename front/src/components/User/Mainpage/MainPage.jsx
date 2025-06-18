@@ -116,6 +116,13 @@ function MainPage() {
     const goToPrev = () => setCurrent((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
     const goToNext = () => setCurrent((prev) => (prev + 1) % carouselImages.length);
 
+    const getCategoryPath = (cat) => {
+        if (cat === "드레스") return "dress";
+        if (cat === "메이크업") return "makeup";
+        if (cat === "스튜디오") return "studio";
+        return "";
+    };
+
     return (
         <div className="min-h-screen bg-white text-black flex flex-col items-center">
             
@@ -209,21 +216,21 @@ function MainPage() {
                 <EllipseCarousel items={popularProducts.slice(0, 10)} />
             </motion.div>
             
-            {/* 리뷰/게시글 리스트 영역 */}
+            {/* 상품/게시글 리스트 영역 */}
             <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.3 }}
                 transition={{ duration: 0.7, delay: 0.4 }}
-                className="flex gap-16 justify-between w-full my-12 pl-32 pr-32 "
+                className="flex gap-16 justify-between w-full my-12 pl-32 pr-32 h-[400px]"
             >
-                {/* 리뷰 리스트 */}
-                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2">
+                {/* 상품 리스트 */}
+                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2 h-full">
                     <div className="flex gap-2 mb-4 mt-2">
-                        {["드레스", "스튜디오", "메이크업"].map(cat => (
+                        {['드레스', '스튜디오', '메이크업'].map(cat => (
                             <button
                                 key={cat}
-                                className={`px-3 py-1 rounded ${miniCategory === cat ? "bg-[#845EC2] text-white" : "bg-white text-[#845EC2] border border-[#845EC2]"}`}
+                                className={`px-3 py-1 rounded ${miniCategory === cat ? 'bg-[#845EC2] text-white' : 'bg-white text-[#845EC2] border border-[#845EC2]'}`}
                                 onClick={() => setMiniCategory(cat)}
                             >{cat}</button>
                         ))}
@@ -233,8 +240,13 @@ function MainPage() {
                             <div className="col-span-3 text-center text-gray-400 py-10">상품이 없습니다.</div>
                         ) : (
                             miniProducts.map(item => (
-                                <div key={item.productId} className="bg-white rounded shadow p-2 flex flex-col items-center">
-                                    <div className="aspect-[3/4] w-21 rounded mb-2 overflow-hidden bg-gray-100">
+                                <div
+                                    key={item.productId}
+                                    className="bg-white rounded shadow p-2 flex flex-col items-center cursor-pointer"
+                                    style={{ width: '200px', height: '280px' }}
+                                    onClick={() => navigate(`/product/${getCategoryPath(miniCategory)}/${item.productId}`)}
+                                >
+                                    <div className="rounded mb-2 overflow-hidden bg-gray-100" style={{ width: '160px', height: '210px' }}>
                                         <img
                                             src={
                                                 item.imageUrl
@@ -255,20 +267,21 @@ function MainPage() {
                         )}
                     </div>
                 </div>
+                
                 {/* 게시글 리스트 */}
-                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2">
-                    <div className="text-[#3CB4AC] text-lg font-semibold my-2">최근 게시판</div>
-                    <ul className="w-full">
+                <div className="flex-1 border-t-4 border-b-4 border-[#845EC2] flex flex-col items-center mx-2 h-full">
+                    <div className="text-[#3CB4AC] text-xl font-semibold my-2 mb-8">최근 게시판</div>
+                    <ul className="w-full overflow-y-auto flex-1">
                         {postList.length === 0
                             ? [1, 2, 3, 4, 5].map(idx => (
                                 <li key={idx} className="py-2 px-4 border-b last:border-b-0 text-center text-gray-400">게시글 없음</li>
                             ))
                             : postList.map((post, idx) => (
-                                <li key={post.postId || idx} className="py-2 px-4 border-b last:border-b-0 flex items-center text-center">
-                                    <span className="flex-[2] text-xs text-gray-500 text-left">{post.category}</span>
-                                    <span className="flex-[3] font-semibold text-left">{post.postTitle || post.title}</span>
-                                    <span className="flex-[1] text-xs text-gray-500 text-left">{post.userNickName}</span>
-                                    <span className="flex-[1] text-pink-500 text-right">♥ {post.likeCount}</span>
+                                <li key={post.postId || idx} className="py-2 px-4 border-b last:border-b-0 flex items-center text-center mb-4">
+                                    <span className="flex-[2] text-sm text-gray-500 text-left">{post.category}</span>
+                                    <span className="flex-[3] text-lg font-semibold text-left">{post.postTitle || post.title}</span>
+                                    <span className="flex-[1] text-sm text-gray-500 text-left">{post.userNickName}</span>
+                                    <span className="flex-[1] text-sm text-pink-500 text-right">♥ {post.likeCount}</span>
                                 </li>
                             ))}
                     </ul>

@@ -81,6 +81,8 @@ function formatOptionTime(plusTime) {
 const ProductDetail = () => {
     const { category, productid } = useParams();
     const [product, setProduct] = useState(null);
+    const [reviews, setReviews] = useState([]);
+    const [loadingReviews, setLoadingReviews] = useState(false);
     const navigate = useNavigate();
     const [showChat, setShowChat] = useState(false);
 
@@ -115,6 +117,29 @@ const ProductDetail = () => {
                 navigate(-1);
             });
     }, [category, productid]);
+
+    // 리뷰 데이터 불러오기
+    useEffect(() => {
+        if (product?.id) {
+            setLoadingReviews(true);
+            apiClient.get(`/review/product/${product.id}`)
+                .then((res) => {
+                    console.log('리뷰 응답:', res.data);
+                    if (res.data?.data) {
+                        setReviews(res.data.data);
+                    } else {
+                        setReviews([]);
+                    }
+                })
+                .catch((err) => {
+                    console.error("리뷰 불러오기 실패", err);
+                    setReviews([]);
+                })
+                .finally(() => {
+                    setLoadingReviews(false);
+                });
+        }
+    }, [product?.id]);
 
     // 오토 이미지 슬라이드
     useEffect(() => {
@@ -173,6 +198,54 @@ const ProductDetail = () => {
             }
         }
         return optionOk && sizeOk;
+    };
+
+    // 평점을 별점으로 표시하는 함수
+    const renderStars = (score) => {
+        const fullStars = Math.floor(score);
+        const hasHalfStar = score % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        
+        return (
+            <div className="flex items-center">
+                {[...Array(fullStars)].map((_, i) => (
+                    <span key={`full-${i}`} className="text-yellow-400 text-lg">★</span>
+                ))}
+                {hasHalfStar && <span className="text-yellow-400 text-lg">☆</span>}
+                {[...Array(emptyStars)].map((_, i) => (
+                    <span key={`empty-${i}`} className="text-gray-300 text-lg">☆</span>
+                ))}
+                <span className="ml-2 text-sm text-gray-600">({score})</span>
+            </div>
+        );
+    };
+
+    // 날짜 포맷팅 함수
+    const formatDate = (dateData) => {
+        let date;
+        
+        // 배열 형태로 온 경우 (백엔드에서 LocalDateTime이 배열로 직렬화된 경우)
+        if (Array.isArray(dateData)) {
+            const [year, month, day, hour, minute, second] = dateData;
+            date = new Date(year, month - 1, day, hour, minute, second); // month는 0부터 시작하므로 -1
+        } else if (typeof dateData === 'string') {
+            // 문자열 형태로 온 경우
+            date = new Date(dateData);
+        } else {
+            // 기타 경우
+            date = new Date(dateData);
+        }
+        
+        // 유효한 날짜인지 확인
+        if (isNaN(date.getTime())) {
+            return '날짜 정보 없음';
+        }
+        
+        return date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     };
 
     if (!product) {
@@ -375,15 +448,58 @@ const ProductDetail = () => {
                         <AddWrite ref={writeRef} readOnly />
                     ) : (
                         <div className="text-sm text-gray-700 leading-relaxed">
-                        {(product.reviews && product.reviews.length > 0) ? (
-                            <ul className="space-y-2">
-                            {product.reviews.map((review, idx) => (
-                                <li key={idx} className="p-2 border rounded">{review}</li>
-                            ))}
-                            </ul>
-                        ) : (
-                            <p className="text-center text-gray-400">리뷰가 없습니다.</p>
-                        )}
+                            {loadingReviews ? (
+                                <div className="text-center py-8">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+                                    <p className="mt-2 text-gray-500">리뷰를 불러오는 중...</p>
+                                </div>
+                            ) : reviews && reviews.length > 0 ? (
+                                <div className="space-y-6">
+                                    {reviews.map((review, idx) => (
+                                        <div key={idx} className="bg-white p-4 rounded-lg border shadow-sm">
+                                            {/* 리뷰 헤더 */}
+                                            <div className="flex justify-between items-start mb-3">
+                                                <div>
+                                                    <div className="font-semibold text-gray-800">{review.nickname}</div>
+                                                    <div className="text-sm text-gray-500">{formatDate(review.createdAt)}</div>
+                                                </div>
+                                                <div className="text-right">
+                                                    {renderStars(review.score)}
+                                                </div>
+                                            </div>
+                                            
+                                            {/* 리뷰 내용 */}
+                                            <div className="mb-4">
+                                                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                                                    {review.content}
+                                                </p>
+                                            </div>
+                                            
+                                            {/* 리뷰 이미지 */}
+                                            {review.imageUrlList && review.imageUrlList.length > 0 && (
+                                                <div className="flex gap-2 overflow-x-auto">
+                                                    {review.imageUrlList.map((imageUrl, imgIdx) => (
+                                                        <img
+                                                            key={imgIdx}
+                                                            src={imageUrl.startsWith('http') ? imageUrl : baseUrl + imageUrl}
+                                                            alt={`리뷰 이미지 ${imgIdx + 1}`}
+                                                            className="w-20 h-20 object-cover rounded border"
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none';
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8">
+                                    <p className="text-gray-400 text-lg">아직 리뷰가 없습니다.</p>
+                                    <p className="text-gray-300 text-sm mt-1">첫 번째 리뷰를 작성해보세요!</p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

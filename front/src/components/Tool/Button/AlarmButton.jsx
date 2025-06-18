@@ -5,7 +5,7 @@ import apiClient from "../../../lib/apiClient";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const retryDelay = 5000; // 5초 후 재연결
 
-export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
+export default function AlarmButton({ isActive, onClick, isLoggedIn, hasNewAlarm }) {
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const eventSourceRef = useRef(null);
@@ -83,6 +83,10 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
                 )}
             </div>
 
+            {hasNewAlarm && (
+                <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+            )}
+
             {/* 드롭다운 메뉴 */}
             {isActive && isLoggedIn && (
                 <div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-lg py-2 z-50">
@@ -100,7 +104,8 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
                         {notifications.map((item, idx) => (
                             <li key={idx} className="px-4 py-2 hover:bg-gray-100 flex items-start gap-2">
                                 <span className="text-xl">{item.icon || "🔔"}</span>
-                                <span className="flex-1">{item.text || JSON.stringify(item)}</span>
+                                <span className="flex-1">{item.text.title || JSON.stringify(item)}</span>
+                                <span className="flex-1">{item.text.content || JSON.stringify(item)}</span>
                             </li>
                         ))}
                     </ul>

@@ -14,6 +14,7 @@ export default function Header() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeButton, setActiveButton] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [hasNewAlarm, setHasNewAlarm] = useState(false);
     const location = useLocation();
     const headerRef = useRef();
 
@@ -60,6 +61,18 @@ export default function Header() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, [isSidebarOpen]);
 
+    useEffect(() => {
+        // SSE 연결 예시
+        const eventSource = new EventSource(`${import.meta.env.VITE_API_BASE_URL}/sse/alarm`, { withCredentials: true });
+        eventSource.onmessage = (event) => {
+            setHasNewAlarm(true);
+        };
+        eventSource.onerror = () => {
+            eventSource.close();
+        };
+        return () => eventSource.close();
+    }, []);
+
     const handleLogout = () => {
         setIsLoggedIn(false);
     };
@@ -70,6 +83,11 @@ export default function Header() {
     // 클릭 시 드롭다운 토글 함수
     const handleButtonClick = (buttonName) => {
         setActiveButton(prev => (prev === buttonName ? null : buttonName));
+    };
+
+    const handleAlarmClick = () => {
+        handleButtonClick("alarm");
+        setHasNewAlarm(false);
     };
 
     return (
@@ -94,8 +112,10 @@ export default function Header() {
                         onLogout={handleLogout}/>
                     <AlarmButton
                         isActive={activeButton === "alarm"}
-                        onClick={() => handleButtonClick("alarm")}
-                        isLoggedIn={isLoggedIn}/>
+                        onClick={handleAlarmClick}
+                        isLoggedIn={isLoggedIn}
+                        hasNewAlarm={hasNewAlarm}
+                    />
                     <CartButton
                         isActive={activeButton === "cart"}
                         onClick={() => handleButtonClick("cart")}

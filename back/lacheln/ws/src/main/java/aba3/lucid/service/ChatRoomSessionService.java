@@ -197,11 +197,9 @@ public class ChatRoomSessionService {
 
     // ✅ 유저가 특정 방에 있는지 확인
     public boolean isUserInRoom(String userId, String roomId) {
-        log.info("userId: {}, roomId: {}", userId, roomId);
-        log.info("Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(ROOM_PREFIX + roomId, userId)) {}", Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(ROOM_PREFIX + roomId, userId)));
-        return Boolean.TRUE.equals(
-                redisTemplate.opsForSet().isMember(ROOM_PREFIX + roomId, userId)
-        );
+        log.info("ROOM_PREFIX + roomId : {}", ROOM_PREFIX + "read." + roomId);
+       return Boolean.TRUE.equals(
+                redisTemplate.opsForSet().isMember(ROOM_PREFIX + "read." + roomId, userId));
     }
 
     // ✅ destination으로부터 roomId 추출

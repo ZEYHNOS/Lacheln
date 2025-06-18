@@ -1,5 +1,6 @@
 package aba3.lucid.domain.payment.dto;
 
+import aba3.lucid.common.annotation.ValidList;
 import aba3.lucid.domain.payment.enums.PaymentStatus;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -37,7 +38,7 @@ public class PaymentRequest {
     private PaymentStatus payStatus;
 
     // 마일리지
-    @NotBlank
+    @NotNull
     private BigInteger payMileage;
 
     // 업체에서 제공하는 Uid
@@ -49,7 +50,7 @@ public class PaymentRequest {
     private LocalDateTime paidAt;
 
     // 장바구니 ID 리스트
-    @NotNull
+    @ValidList
     private List<Long> cartIdList;
 
 }

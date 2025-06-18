@@ -22,7 +22,6 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PaymentVerifyRequest {
     // 쿠폰함 ID
-    @ValidList
     private List<Long> couponBoxIdList;
 
     // 사용할려고 하는 마일리지 금액

@@ -10,12 +10,20 @@ import { toast } from 'react-toastify';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // LocalTime을 'X시간 Y분'으로 변환하는 함수
-function formatLocalTime(timeStr) {
-    if (typeof timeStr !== "string") return "";
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    if (hours > 0 && minutes > 0) return `${hours}시간 ${minutes}분`;
-    if (hours > 0) return `${hours}시간`;
-    return `${minutes}분`;
+function formatLocalTime(taskTime) {
+    if (Array.isArray(taskTime) && taskTime.length === 2) {
+        const [hour, min] = taskTime;
+        if (min === 0) return `${hour}시간`;
+        if (hour === 0) return `${min}분`;
+        return `${hour}시간 ${min}분`;
+    }
+    if (typeof taskTime === 'string' && taskTime.includes(':')) {
+        const [hour, min] = taskTime.split(':').map(Number);
+        if (min === 0) return `${hour}시간`;
+        if (hour === 0) return `${min}분`;
+        return `${hour}시간 ${min}분`;
+    }
+    return taskTime;
 }
 
 // 배열을 HH:mm 형식으로 변환하는 함수
@@ -30,6 +38,13 @@ function minutesToLocalTime(minutes) {
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
+
+// plusTime을 안전하게 HH:mm 문자열로 변환하는 함수 (2자리씩)
+function safeMinutesToLocalTime(plusTime) {
+    if (!plusTime || !Array.isArray(plusTime) || plusTime.length !== 2) return '00:00';
+    const [h, m] = plusTime.map(Number);
+    return `${(isNaN(h) ? 0 : h).toString().padStart(2, '0')}:${(isNaN(m) ? 0 : m).toString().padStart(2, '0')}`;
 }
 
 // 선택한 옵션들의 plus_cost 합산 함수
@@ -51,6 +66,16 @@ function getTotalOptionPrice(product, selectedOptions) {
         if (found) total += found.plus_cost || found.plusCost || 0;
     }
     return total;
+}
+
+function formatOptionTime(plusTime) {
+    if (!Array.isArray(plusTime) || plusTime.length !== 2) return '';
+    const [hour, min] = plusTime;
+    if (hour === 0 && min === 0) return '';
+    if (hour > 0 && min > 0) return `${hour}시간 ${min}분`;
+    if (hour > 0) return `${hour}시간`;
+    if (min > 0) return `${min}분`;
+    return '';
 }
 
 const ProductDetail = () => {
@@ -242,7 +267,8 @@ const ProductDetail = () => {
                                             <option value="">옵션 선택</option>
                                             {optionDetails.map((item, idx) => (
                                                 <option key={idx} value={item.opDtName || item.op_dt_name}>
-                                                    {(item.opDtName || item.op_dt_name)} (₩{(item.plusCost || item.plus_cost || 0).toLocaleString()})
+                                                    {(item.opDtName || item.op_dt_name)}
+                                                    {` (₩${(item.plusCost || item.plus_cost || 0).toLocaleString()}${formatOptionTime(item.plusTime) ? ', ' + formatOptionTime(item.plusTime) : ''})`}
                                                 </option>
                                             ))}
                                         </select>
@@ -389,7 +415,7 @@ const ProductDetail = () => {
                                                     op_name: opt.name,
                                                     op_dt_name: found.opDtName ?? '',
                                                     op_price: found.plusCost ?? 0,
-                                                    op_tasktime: minutesToLocalTime(found.plusTime ?? 0)
+                                                    op_tasktime: safeMinutesToLocalTime(found.plusTime)
                                                 });
                                             }
                                         }
@@ -406,15 +432,13 @@ const ProductDetail = () => {
                                                 op_name: '사이즈',
                                                 op_dt_name: found.size,
                                                 op_price: found.plus_cost || found.plusCost || 0,
-                                                op_tasktime: minutesToLocalTime(found.plus_time || found.plusTime || 0)
+                                                op_tasktime: safeMinutesToLocalTime(found.plus_time || found.plusTime)
                                             });
                                         }
                                     }
 
                                     // cart 테이블용 데이터
                                     const cartData = {
-                                        // user_id는 예시, 실제 로그인 정보에서 받아야 함
-                                        user_id: 'user_id',
                                         pd_id: product.id,
                                         cp_id: product.cpId,
                                         cp_name: product.companyName || '회사명',

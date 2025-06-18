@@ -83,7 +83,7 @@ public class PayDetailEntity {
 
     public void updatePayDetailOptionEntity(List<PayDetailOptionEntity> payDetailOptionEntityList) {
         if (payDetailOptionEntityList == null) {
-            throw new ApiException(ErrorCode.NULL_POINT);
+            return;
         }
 
         this.payDetailOptionEntityList = payDetailOptionEntityList;

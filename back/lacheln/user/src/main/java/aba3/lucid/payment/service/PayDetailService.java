@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -84,9 +86,13 @@ public class PayDetailService {
         log.info("popular id list : {}", popularPdIdList);
         List<PayDetailEntity> payDetailEntityList = payDetailRepository.findAllByPdIdInAndPackIdIsNull(popularPdIdList);
         log.info("paydetailEntityList : {}", payDetailEntityList);
+        Set<Long> pdIdSet = new HashSet<>();
         List<PopularDto> dtoList = new ArrayList<>();
         for (int i = 1; i <= payDetailEntityList.size(); i++) {
             PayDetailEntity payDetail = payDetailEntityList.get(i-1);
+            if (!pdIdSet.add(payDetail.getPdId())) {
+                continue;
+            }
             dtoList.add(PopularDto.builder()
                     .productId(payDetail.getPdId())
                     .companyId(payDetail.getCpId())

@@ -150,7 +150,7 @@ public class UsersEntity {
 
     public void updateProfileImage(String newProfileImage) {
         if(newProfileImage == null) {
-            this.userProfile = "default.jpg";
+            this.userProfile = "/image/default.jpg";
             return;
         }
         this.userProfile = newProfileImage;

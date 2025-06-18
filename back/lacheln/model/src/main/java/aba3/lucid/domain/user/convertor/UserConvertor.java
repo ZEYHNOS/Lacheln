@@ -32,7 +32,7 @@ public class UserConvertor {
                 .userNickName(user.getNickName())
                 .userSocial(SocialEnum.L)
                 .userPhone(user.getPhone())
-                .userProfile("default.jpg")
+                .userProfile("/image/default.jpg")
                 .userTier(TierEnum.SEMI_PRO)
                 .userAdsNotification(user.getAdsNotification())
                 .userAccountStatus(AccountStatusEnum.ACTIVE)

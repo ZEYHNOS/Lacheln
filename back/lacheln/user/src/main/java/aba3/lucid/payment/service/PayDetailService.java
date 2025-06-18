@@ -13,6 +13,7 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PayDetailService {
@@ -78,8 +80,10 @@ public class PayDetailService {
     public void createPopularProductList() throws JsonProcessingException {
         LocalDateTime start = LocalDateTime.now().minusDays(7);
         LocalDateTime end = LocalDateTime.now();
-        List<Long> popularPaymentDetailIdList = payDetailRepository.findTop10BestSellingPdIds(start, end);
-        List<PayDetailEntity> payDetailEntityList = payDetailRepository.findAllById(popularPaymentDetailIdList);
+        List<Long> popularPdIdList = payDetailRepository.findTop10BestSellingPdIds(start, end);
+        log.info("popular id list : {}", popularPdIdList);
+        List<PayDetailEntity> payDetailEntityList = payDetailRepository.findAllByPdIdIn(popularPdIdList);
+        log.info("paydetailEntityList : {}", payDetailEntityList);
         List<PopularDto> dtoList = new ArrayList<>();
         for (int i = 1; i <= payDetailEntityList.size(); i++) {
             PayDetailEntity payDetail = payDetailEntityList.get(i-1);
@@ -91,8 +95,10 @@ public class PayDetailService {
             );
         }
 
+        log.info("payDtoList : {}", dtoList);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(dtoList);
+        log.info("producer json : {}", json);
         rabbitTemplate.convertAndSend("product.exchange", "popular", json);
     }
 }

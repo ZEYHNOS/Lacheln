@@ -160,6 +160,7 @@ public class ProductService {
     @Transactional
     public void createPopularProduct(List<PopularEntity> list) {
         popularRepository.deleteAll();
+        log.info("popularEntityList : {}", list);
         popularRepository.saveAll(list);
     }
 
@@ -171,6 +172,7 @@ public class ProductService {
         Map<Long, PopularResponse> map = new HashMap<>();
         for (ProductEntity product : productEntityList) {
             map.put(product.getPdId(), PopularResponse.builder()
+                            .price(product.getPdPrice())
                             .productImageUrl(RepresentativeImage.getRepresentativeImage(product.getImageList()))
                             .productName(product.getPdName())
                             .productId(product.getPdId())

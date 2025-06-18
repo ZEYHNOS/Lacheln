@@ -132,6 +132,7 @@ public class ProductBusiness {
     }
 
     public void createPopularProduct(List<PopularDto> list) {
+        log.info("popularDtoList : {}", list);
         List<PopularEntity> popularEntityList = productConverter.toEntityList(list);
         productService.createPopularProduct(popularEntityList);
     }

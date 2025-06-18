@@ -43,6 +43,8 @@ public interface PayDetailRepository extends JpaRepository<PayDetailEntity, Long
 
     List<PayDetailEntity> findAllByPayManagement_User(UsersEntity user);
 
+    List<PayDetailEntity> findAllByPdIdIn(List<Long> pdIdList);
+
 
     @Query(value = """
             SELECT d.pd_id

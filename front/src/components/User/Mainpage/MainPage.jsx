@@ -234,17 +234,19 @@ function MainPage() {
                         ) : (
                             miniProducts.map(item => (
                                 <div key={item.productId} className="bg-white rounded shadow p-2 flex flex-col items-center">
-                                    <img
-                                        src={
-                                            item.imageUrl
-                                                ? item.imageUrl.startsWith("/image/")
-                                                    ? `${baseUrl}${item.imageUrl}`
-                                                    : `${baseUrl}${item.imageUrl.replace(/\\/g, "/")}`
-                                                : "/default/images/product.png"
-                                        }
-                                        alt={item.productName}
-                                        className="h-28 w-21 object-cover rounded mb-2"
-                                    />
+                                    <div className="aspect-[3/4] w-21 rounded mb-2 overflow-hidden bg-gray-100">
+                                        <img
+                                            src={
+                                                item.imageUrl
+                                                    ? item.imageUrl.startsWith("/image/")
+                                                        ? `${baseUrl}${item.imageUrl}`
+                                                        : `${baseUrl}${item.imageUrl.replace(/\\/g, "/")}`
+                                                    : "/default/images/product.png"
+                                            }
+                                            alt={item.productName}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
                                     <div className="font-medium text-xs text-gray-800 text-center line-clamp-1">{item.productName}</div>
                                     <div className="text-[10px] text-gray-500 text-center line-clamp-1">{item.companyName}</div>
                                     <div className="text-xs text-violet-600 font-semibold mt-1">₩ {item.price.toLocaleString()}</div>

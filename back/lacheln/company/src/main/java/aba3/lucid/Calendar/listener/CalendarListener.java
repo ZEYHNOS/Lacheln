@@ -32,6 +32,7 @@ public class CalendarListener {
 
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
+            log.info("Calendar reservation Error : {}", e);
             channel.basicNack(deliveryTag, false, true);
         }
     }

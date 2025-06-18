@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import luxuaryImg from '../../../image/userprofile/luxuary.jpg';
+import { useNavigate } from 'react-router-dom';
 
 export function EllipseCarousel({ items }) {
     const [active, setActive] = useState(0);
@@ -9,6 +10,7 @@ export function EllipseCarousel({ items }) {
     const dragging = useRef(false);
     const autoSlideRef = useRef();
     const intervalRef = useRef();
+    const navigate = useNavigate();
 
     // placeholder 카드
     const placeholders = Array(10).fill(0).map((_, i) => ({
@@ -87,6 +89,14 @@ export function EllipseCarousel({ items }) {
         return category;
     }
 
+    // 카테고리별 경로 반환
+    function getCategoryPath(category) {
+        if (category === 'D') return 'dress';
+        if (category === 'S') return 'studio';
+        if (category === 'M') return 'makeup';
+        return '';
+    }
+
     return (
         <div
             className="relative w-full h-[500px] mx-auto flex items-center justify-center"
@@ -146,7 +156,9 @@ export function EllipseCarousel({ items }) {
                             pointerEvents
                         }}
                     >
-                        <div className="w-64 h-96 bg-white rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-[#845EC2] overflow-hidden">
+                        <div className="w-64 h-96 bg-white rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-[#845EC2] overflow-hidden cursor-pointer"
+                            onClick={() => navigate(`/product/${getCategoryPath(item.category)}/${item.productId}`)}
+                        >
                             <div className="w-full h-64 flex items-center justify-center bg-gray-100 mb-2">
                                 <img
                                     src={

@@ -10,6 +10,7 @@ import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
 import aba3.lucid.domain.payment.dto.PopularDto;
 import aba3.lucid.domain.product.dto.PopularResponse;
+import aba3.lucid.domain.product.dto.ProductInfoResponse;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.entity.PopularEntity;
 import aba3.lucid.domain.product.entity.ProductEntity;
@@ -82,4 +83,16 @@ public class ProductConverter {
                 ;
     }
 
+    public ProductInfoResponse toInfoResponse(ProductEntity product, CompanyEntity company) {
+        return ProductInfoResponse.builder()
+                .productId(product.getPdId())
+                .price(product.getPdPrice())
+                .productName(product.getPdName())
+                .status(product.getPdStatus())
+                .imageUrl(RepresentativeImage.getRepresentativeImage(product.getImageList()))
+                .companyId(company.getCpId())
+                .companyName(company.getCpName())
+                .category(company.getCpCategory())
+                .build();
+    }
 }

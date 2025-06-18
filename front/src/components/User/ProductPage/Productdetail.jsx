@@ -147,6 +147,9 @@ const ProductDetail = () => {
         
         setWishLoading(true);
         try {
+
+            console.log("wishItem.wishListId : ", wishItem.wishListId);
+
             const response = await apiClient.delete(`/user/wishlist/delete/${wishItem.wishListId}`);
             
             if (response.data?.result?.resultCode === 200) {

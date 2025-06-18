@@ -160,6 +160,7 @@ public class ProductService {
     @Transactional
     public void createPopularProduct(List<PopularEntity> list) {
         popularRepository.deleteAll();
+        log.info("popularEntityList : {}", list);
         popularRepository.saveAll(list);
     }
 

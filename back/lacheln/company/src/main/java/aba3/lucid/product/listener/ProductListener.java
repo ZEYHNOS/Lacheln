@@ -55,6 +55,7 @@ public class ProductListener {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
             String json = new String(message.getBody());
+            log.info("json : {}", json);
             ObjectMapper objectMapper = new ObjectMapper();
             String raw = new String(message.getBody(), StandardCharsets.UTF_8);
 

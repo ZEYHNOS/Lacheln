@@ -16,8 +16,9 @@ public class UserSseService {
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter subscribe(String userId) throws IOException {
-        Validator.throwIfInvalidId(userId);
-
+        if (userId == null || userId.isBlank()) {
+            return null;
+        }
         SseEmitter emitter = new SseEmitter(60 * 1000L);
         emitters.put(userId, emitter);
 

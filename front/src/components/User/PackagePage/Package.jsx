@@ -6,7 +6,7 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const sortTabs = ["인기 많은 순", "최근 등록 순", "할인 순"];
 
 function Package() {
-  const [selectedTab, setSelectedTab] = useState(sortTabs[0]);
+  const [selectedTab, setSelectedTab] = useState("인기순");
   const [visibleCount, setVisibleCount] = useState(8);
   const [packageList, setPackageList] = useState([]);
   const navigate = useNavigate();
@@ -25,18 +25,27 @@ function Package() {
     fetchPackages();
   }, []);
 
+  // 정렬된 패키지 리스트
+  const sortedPackages = (() => {
+    if (selectedTab === "최근등록순") {
+      return [...packageList].sort((a, b) => b.packageId - a.packageId);
+    }
+    if (selectedTab === "할인순") {
+      return [...packageList].sort((a, b) => (b.discountrate || 0) - (a.discountrate || 0));
+    }
+    // 기본: 인기순 (그대로)
+    return packageList;
+  })();
+
   return (
     <div className="min-h-screen bg-white flex flex-col items-center py-8">
-      <h1 className="text-2xl font-bold mb-2">패키지</h1>
-      <p className="mb-6 text-gray-500 text-center">모든 패키지를 한눈에 확인할 수 있는 페이지 입니다.</p>
-
       {/* 정렬 탭 */}
       <div className="flex mb-8 w-full max-w-4xl">
-        {sortTabs.map(tab => (
+        {["인기순", "최근등록순", "할인순"].map(tab => (
           <button
             key={tab}
             className={`flex-1 py-2 rounded-t-lg text-base font-semibold transition-colors duration-200
-              ${selectedTab === tab ? "bg-[#E0CFFB] text-[#845EC2]" : "bg-[#F3EFFF] text-[#B39CD0]"}`}
+              ${selectedTab === tab ? "bg-[#845EC2] text-[#ffffff]" : "bg-[#F3EFFF] text-[#B39CD0] hover:bg-[#F3EFFF]"}`}
             onClick={() => setSelectedTab(tab)}
           >
             {tab}
@@ -46,10 +55,10 @@ function Package() {
 
       {/* 패키지 카드 리스트 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl mb-8">
-        {packageList.length === 0 ? (
+        {sortedPackages.length === 0 ? (
           <div className="col-span-4 text-center text-gray-400 py-20">패키지가 없습니다.</div>
         ) : (
-          packageList.slice(0, visibleCount).map(pkg => {
+          sortedPackages.slice(0, visibleCount).map(pkg => {
             // 이미지 경로 변환
             const imageUrl = pkg.imageUrl ? `${baseUrl}${pkg.imageUrl.replace(/\\/g, '/')}` : '/default/images/product.png';
             // 구성상품 리스트
@@ -72,7 +81,7 @@ function Package() {
                   className="w-full object-cover rounded mb-3"
                   style={{ aspectRatio: '2 / 3' }}
                 />
-                <div className="font-bold mb-1 text-lg">{pkg.packageName}</div>
+                <div className="font-bold mb-1 text-lg text-black">{pkg.packageName}</div>
                 <ul className="text-xs text-gray-600 mb-2">
                   {products.map((p, i) => (
                     <li key={i}>
@@ -91,7 +100,7 @@ function Package() {
                     <span className="font-bold text-lg text-[#845EC2]">총 {totalPrice.toLocaleString()}원</span>
                   )}
                 </div>
-                <button className="bg-[#B39CD0] text-white py-2 rounded hover:bg-[#845EC2] transition mt-2">패키지 상세 보기</button>
+                <button className="bg-[#845ec2] text-white py-2 rounded hover:bg-purple-700 hover:text-white transition mt-2">패키지 상세 보기</button>
               </div>
             );
           })
@@ -99,7 +108,7 @@ function Package() {
       </div>
 
       {/* 더보기 버튼 */}
-      {packageList.length > visibleCount && (
+      {sortedPackages.length > visibleCount && (
         <button
           className="px-8 py-2 bg-[#B39CD0] text-white rounded hover:bg-[#845EC2] transition mb-8"
           onClick={() => setVisibleCount(visibleCount + 8)}

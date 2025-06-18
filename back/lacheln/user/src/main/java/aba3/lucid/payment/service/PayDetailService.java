@@ -78,10 +78,11 @@ public class PayDetailService {
     public void createPopularProductList() throws JsonProcessingException {
         LocalDateTime start = LocalDateTime.now().minusDays(7);
         LocalDateTime end = LocalDateTime.now();
-        List<PayDetailEntity> popularPaymentList = payDetailRepository.findTop10BestSellingPdIds(start, end);
+        List<Long> popularPaymentDetailIdList = payDetailRepository.findTop10BestSellingPdIds(start, end);
+        List<PayDetailEntity> payDetailEntityList = payDetailRepository.findAllById(popularPaymentDetailIdList);
         List<PopularDto> dtoList = new ArrayList<>();
-        for (int i = 1; i <= popularPaymentList.size(); i++) {
-            PayDetailEntity payDetail = popularPaymentList.get(i-1);
+        for (int i = 1; i <= payDetailEntityList.size(); i++) {
+            PayDetailEntity payDetail = payDetailEntityList.get(i-1);
             dtoList.add(PopularDto.builder()
                     .productId(payDetail.getPdId())
                     .companyId(payDetail.getCpId())

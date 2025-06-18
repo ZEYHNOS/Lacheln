@@ -49,12 +49,12 @@ public interface PayDetailRepository extends JpaRepository<PayDetailEntity, Long
             FROM pay_detail d
             JOIN pay_management m ON d.pay_id = m.pay_id
             WHERE d.start_datetime BETWEEN :start AND :end
-            AND d.pay_status = 'PAID'
+            AND m.pay_status = 'PAID'
             GROUP BY pd_id
             ORDER BY COUNT(pd_id) DESC
             LIMIT 10
             """, nativeQuery = true)
-    List<PayDetailEntity> findTop10BestSellingPdIds(
+    List<Long> findTop10BestSellingPdIds(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 

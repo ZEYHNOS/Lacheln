@@ -19,7 +19,9 @@ public class SseService {
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter subscribe(Long companyId) throws IOException {
-        Validator.throwIfInvalidId(companyId);
+        if (companyId == null) {
+            return null;
+        }
 
         // TODO 시간 설정
         SseEmitter emitter = new SseEmitter(60 * 1000L); // 현재 60초

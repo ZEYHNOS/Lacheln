@@ -274,7 +274,7 @@ export default function Chatting() {
                 key={msg.messageId || `temp-${index}`}
                 className={`mb-2 p-2 rounded max-w-[35%] shadow-sm ${isSent ? "ml-auto bg-pink-100" : "bg-purple-100"}`}
               >
-                <div className="font-semibold text-sm">{msg.senderName}</div>
+                <div className="font-semibold text-sm text-black">{msg.senderName}</div>
                 <div className="my-1 text-black">{msg.message}</div>
                 <div className="text-xs text-gray-600">{formatTime(msg.sendAt)}</div>
                 <div className="text-xs text-right text-gray-500">

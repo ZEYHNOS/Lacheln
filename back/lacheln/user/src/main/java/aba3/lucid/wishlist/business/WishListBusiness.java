@@ -54,9 +54,8 @@ public class WishListBusiness {
     }
     
     // 찜 목록에 있는 상품 제거
-    public API<String> deleteWishList(String userId, Long wishId) {
-        UsersEntity user = userService.findByIdWithThrow(userId);
-        wishListService.deleteWishList(user, wishId);
+    public API<String> deleteWishList(Long wishId) {
+        wishListService.deleteWishList(wishId);
         return API.OK("위시 리스트 상품 제거 완료");
     }
 }

@@ -137,46 +137,11 @@ const ProductDetail = () => {
         }
     };
 
-    // 찜 제거
-    const removeFromWishList = async () => {
-        if (!product?.id) return;
+    // 찜 추가 함수
+    const handleWishClick = () => {
+        if (wishLoading || isWished) return; // 로딩 중이거나 이미 찜한 상태면 클릭 무시
         
-        // 찜 목록에서 해당 상품의 wishListId 찾기
-        const wishItem = wishList.find(wish => wish.pdId === product.id);
-        if (!wishItem) return;
-        
-        setWishLoading(true);
-        try {
-
-            console.log("wishItem.wishListId : ", wishItem.wishListId);
-
-            const response = await apiClient.delete(`/user/wishlist/delete/${wishItem.wishListId}`);
-            
-            if (response.data?.result?.resultCode === 200) {
-                setIsWished(false);
-                toast.success('찜 목록에서 제거되었습니다.');
-                // 찜 목록 새로고침
-                fetchWishList();
-            } else {
-                toast.error('찜 제거에 실패했습니다.');
-            }
-        } catch (error) {
-            console.error('찜 제거 실패:', error);
-            toast.error('찜 제거 중 오류가 발생했습니다.');
-        } finally {
-            setWishLoading(false);
-        }
-    };
-
-    // 찜 토글 함수
-    const toggleWish = () => {
-        if (wishLoading) return; // 로딩 중이면 클릭 무시
-        
-        if (isWished) {
-            removeFromWishList();
-        } else {
-            addToWishList();
-        }
+        addToWishList();
     };
 
     useEffect(() => {
@@ -506,11 +471,11 @@ const ProductDetail = () => {
                                     wishLoading 
                                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
                                         : isWished 
-                                            ? 'bg-red-500 text-white border-red-500 hover:bg-red-600' 
-                                            : 'bg-white text-gray-400 border-gray-300 hover:border-red-300 hover:text-red-400'
+                                            ? 'bg-red-500 text-white border-red-500 cursor-not-allowed' 
+                                            : 'bg-white text-gray-400 border-gray-300 hover:border-red-300 hover:text-red-400 cursor-pointer'
                                 }`}
-                                onClick={toggleWish}
-                                disabled={wishLoading}
+                                onClick={handleWishClick}
+                                disabled={wishLoading || isWished}
                             >
                                 {wishLoading ? (
                                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div>

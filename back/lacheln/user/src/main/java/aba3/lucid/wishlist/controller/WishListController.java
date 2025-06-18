@@ -48,8 +48,7 @@ public class WishListController {
     @DeleteMapping("/delete/{wishId}")
     @Operation(summary = "상품 찜 목록 제거", description = "해당하는 소비자의 찜 목록을 제거합니다.")
     public API<String> delete(
-            @PathVariable Long wishId,
-            @AuthenticationPrincipal CustomUserDetails user) {
-        return wishListBusiness.deleteWishList(user.getUserId(), wishId);
+            @PathVariable Long wishId) {
+        return wishListBusiness.deleteWishList(wishId);
     }
 }

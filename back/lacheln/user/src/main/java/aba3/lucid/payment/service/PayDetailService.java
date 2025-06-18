@@ -82,7 +82,7 @@ public class PayDetailService {
         LocalDateTime end = LocalDateTime.now();
         List<Long> popularPdIdList = payDetailRepository.findTop10BestSellingPdIds(start, end);
         log.info("popular id list : {}", popularPdIdList);
-        List<PayDetailEntity> payDetailEntityList = payDetailRepository.findAllByPdIdIn(popularPdIdList);
+        List<PayDetailEntity> payDetailEntityList = payDetailRepository.findAllByPdIdInAndPackIdIsNull(popularPdIdList);
         log.info("paydetailEntityList : {}", payDetailEntityList);
         List<PopularDto> dtoList = new ArrayList<>();
         for (int i = 1; i <= payDetailEntityList.size(); i++) {

@@ -74,6 +74,10 @@ public class PostEntity {
         this.postUpdate = updateTime;
     }
 
+    public void setBoard(BoardEntity board) {
+        this.board = board;
+    }
+
     // 논리 삭제를 위한 플래그
     @Builder.Default
     @Column(name = "deleted", nullable = false)

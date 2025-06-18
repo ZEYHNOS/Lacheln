@@ -100,20 +100,27 @@ function Setpackage() {
                 
                 // 작업시간 설정
                 if (packageData.taskTime) {
-                    // HH:mm:ss 형식 분리
-                    const [h, m] = packageData.taskTime.split(":");
-                    setHour(h.padStart(2, '0'));
-                    setMinute(m.padStart(2, '0'));
+                    if (Array.isArray(packageData.taskTime)) {
+                        // [2, 0] 형식으로 오는 경우
+                        const [h, m] = packageData.taskTime;
+                        setHour(h.toString().padStart(2, '0'));
+                        setMinute(m.toString().padStart(2, '0'));
+                    } else {
+                        // HH:mm:ss 형식으로 오는 경우
+                        const [h, m] = packageData.taskTime.split(":");
+                        setHour(h.padStart(2, '0'));
+                        setMinute(m.padStart(2, '0'));
+                    }
                 }
                 
                 // endDate 처리 - 배열 형식으로 오는 경우와 문자열로 오는 경우 모두 처리
                 try {
                     if (packageData.endDate) {
                         if (Array.isArray(packageData.endDate)) {
-                            // [2099, 12, 31, 0, 0] 형식 처리
+                            // [2099, 12, 31, 0, 0] 형식 처리 (24시간제)
                             const [year, month, day, hour, minute] = packageData.endDate;
-                            const endDateObj = new Date(year, month-1, day, hour, minute);
-                            setEndDate(endDateObj.toISOString().slice(0, 16));
+                            const endDateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                            setEndDate(endDateStr);
                         } else {
                             // 일반 날짜 문자열 처리
                             const endDateObj = new Date(packageData.endDate);

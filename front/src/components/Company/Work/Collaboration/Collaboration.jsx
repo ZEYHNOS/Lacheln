@@ -134,8 +134,8 @@ function Collaboration() {
                                 />
                                 <p className="text-sm font-bold text-black">{item.name || '이름 없음'}</p>
                                 <p className="text-xs text-gray-500">
-                                    {item.startDate && item.endDate
-                                        ? `${item.startDate[0]}.${item.startDate[1]}.${item.startDate[2]} ~ ${item.endDate[0]}.${item.endDate[1]}.${item.endDate[2]}`
+                                    {item.endDate
+                                        ? `~ ${item.endDate[0]}.${String(item.endDate[1]).padStart(2, '0')}.${String(item.endDate[2]).padStart(2, '0')}`
                                         : '기간 정보 없음'}
                                 </p>
                                 <div className="mt-2">

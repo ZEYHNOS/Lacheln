@@ -169,7 +169,11 @@ function ViewPackage() {
                             </p>
                             <p className="flex justify-between">
                                 <span className="text-gray-600">작업시간</span>
-                                <span className="font-medium text-black">{taskTime || "00:00"}</span>
+                                <span className="font-medium text-black">
+                                    {Array.isArray(taskTime) 
+                                        ? `${taskTime[0]}시간 ${taskTime[1]}분`
+                                        : taskTime || "00:00"}
+                                </span>
                             </p>
                         </div>
                         <div className="mt-4 pt-4 border-t">
@@ -193,17 +197,21 @@ function ViewPackage() {
                     <h2 className="text-xl font-bold text-gray-800 mb-2">포함된 상품</h2>
 
                     {/* 스튜디오 */}
-                    {cp1?.category === 'S' && (
+                    {(cp2?.category === 'S' || admin?.category === 'S') && (
                         <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-purple-500">
                             <div className="flex items-center mb-2">
                                 <div className="w-20 h-14 rounded-full bg-purple-100 flex items-center justify-center mr-3 shadow-inner">
                                     <span className="text-purple-700 font-bold">스튜디오</span>
                                 </div>
                                 <div className="flex-grow">
-                                    <h3 className="font-bold text-lg text-purple-700">{cp1.productName || '스튜디오상품1'}</h3>
+                                    <h3 className="font-bold text-lg text-purple-700">
+                                        {admin?.category === 'S' ? admin.productName : cp2.productName || '스튜디오상품1'}
+                                    </h3>
                                 </div>
                                 <div className="ml-auto">
-                                    <span className="font-bold text-gray-800 text-lg">{cp1.productPrice.toLocaleString()}원</span>
+                                    <span className="font-bold text-gray-800 text-lg">
+                                        {(admin?.category === 'S' ? admin.productPrice : cp2.productPrice || 0).toLocaleString()}원
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -225,9 +233,9 @@ function ViewPackage() {
                                 </div>
                                 <div className="ml-auto">
                                     <span className="font-bold text-gray-800 text-lg">
-                                        {admin?.category === 'D' ? admin.productPrice.toLocaleString() : 
-                                            cp1?.category === 'D' ? cp1.productPrice.toLocaleString() : 
-                                            cp2?.category === 'D' ? cp2.productPrice.toLocaleString() : '0'}원
+                                        {(admin?.category === 'D' ? admin.productPrice : 
+                                            cp1?.category === 'D' ? cp1.productPrice : 
+                                            cp2?.category === 'D' ? cp2.productPrice : 0).toLocaleString()}원
                                     </span>
                                 </div>
                             </div>
@@ -235,17 +243,21 @@ function ViewPackage() {
                     )}
 
                     {/* 메이크업 */}
-                    {cp2?.category === 'M' && (
+                    {(cp1?.category === 'M' || admin?.category === 'M') && (
                         <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500 mt-3">
                             <div className="flex items-center mb-2">
                                 <div className="w-20 h-14 rounded-full bg-blue-100 flex items-center justify-center mr-3 shadow-inner">
                                     <span className="text-blue-700 font-bold">메이크업</span>
                                 </div>
                                 <div className="flex-grow">
-                                    <h3 className="font-bold text-lg text-blue-700">{cp2.productName || '메이크업상품1'}</h3>
+                                    <h3 className="font-bold text-lg text-blue-700">
+                                        {admin?.category === 'M' ? admin.productName : cp1.productName || '메이크업상품1'}
+                                    </h3>
                                 </div>
                                 <div className="ml-auto">
-                                    <span className="font-bold text-gray-800 text-lg">{cp2.productPrice.toLocaleString()}원</span>
+                                    <span className="font-bold text-gray-800 text-lg">
+                                        {(admin?.category === 'M' ? admin.productPrice : cp1.productPrice || 0).toLocaleString()}원
+                                    </span>
                                 </div>
                             </div>
                         </div>

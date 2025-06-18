@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import apiClient from "../../../lib/apiClient";
 import ScheduleSelect from '../../Tool/Schedule/ScheduleSelect.jsx';
 import { toast } from 'react-toastify';
+import AddWrite from '../../Tool/WriteForm/AddWrite';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -12,6 +13,7 @@ function Packagedetail() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showSchedule, setShowSchedule] = useState(false);
+  const addWriteRef = useRef(null);
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -28,6 +30,12 @@ function Packagedetail() {
     };
     fetchDetail();
   }, [id]);
+
+  useEffect(() => {
+    if (addWriteRef.current && data && data.descriptionList) {
+      addWriteRef.current.setContentFromJsonArray(data.descriptionList);
+    }
+  }, [data]);
 
   if (loading) return <div className="text-center py-20">로딩중...</div>;
   if (!data) return <div className="text-center py-20 text-red-500">데이터가 없습니다.</div>;
@@ -135,6 +143,10 @@ function Packagedetail() {
             </div>
           ))}
         </div>
+      </div>
+      {/* 패키지 설명 */}
+      <div className="mb-6">
+        <AddWrite ref={addWriteRef} readOnly={true} />
       </div>
 
       {/* 패키지 특전/가격 표 */}

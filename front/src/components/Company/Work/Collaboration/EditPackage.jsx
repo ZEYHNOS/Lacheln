@@ -15,7 +15,8 @@ function EditPackage() {
         name: '',
         endDate: '',
         discountrate: 0,
-        taskTime: '00:00'
+        taskTime: '00:00',
+        descriptionResponseList: []
     });
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -40,19 +41,31 @@ function EditPackage() {
                     setImagePreview(imgUrl);
                 }
 
-                // 종료일 처리
+                // 종료일 처리 (24시간제)
                 let endDateStr = '';
                 if (data.endDate && Array.isArray(data.endDate)) {
                     const [year, month, day, hour = 0, minute = 0] = data.endDate;
-                    const endDateObj = new Date(year, month-1, day, hour, minute);
-                    endDateStr = endDateObj.toISOString().slice(0, 16);
+                    endDateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                }
+
+                // 작업시간 처리 (24시간제 HH:mm)
+                let taskTimeStr = '00:00';
+                if (data.taskTime) {
+                    if (Array.isArray(data.taskTime)) {
+                        const [hours, minutes] = data.taskTime;
+                        taskTimeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                    } else if (typeof data.taskTime === 'string') {
+                        const match = data.taskTime.match(/(\d{2}:\d{2})/);
+                        taskTimeStr = match ? match[1] : data.taskTime;
+                    }
                 }
 
                 setPackageData({
                     name: data.name || '',
                     endDate: endDateStr,
                     discountrate: data.discountrate || 0,
-                    taskTime: data.taskTime || '00:00'
+                    taskTime: taskTimeStr,
+                    descriptionResponseList: data.descriptionResponseList || []
                 });
 
                 // 업체별 정보 저장
@@ -62,10 +75,6 @@ function EditPackage() {
                     cp2: data.cp2 || null
                 });
 
-                // descriptionResponseList를 에디터에 세팅
-                if (editorRef.current && Array.isArray(data.descriptionResponseList)) {
-                    editorRef.current.setContentFromJsonArray(data.descriptionResponseList);
-                }
                 setLoading(false);
             } catch (error) {
                 console.error('패키지 데이터 로딩 실패:', error);
@@ -75,6 +84,16 @@ function EditPackage() {
         };
         fetchPackageData();
     }, [packageId]);
+
+    // descriptionResponseList가 바뀔 때마다 에디터에 반영
+    useEffect(() => {
+        if (editorRef.current && packageData.descriptionResponseList) {
+            const descriptionList = Array.isArray(packageData.descriptionResponseList)
+                ? packageData.descriptionResponseList
+                : [];
+            editorRef.current.setContentFromJsonArray(descriptionList);
+        }
+    }, [packageData.descriptionResponseList]);
 
     // 대표 이미지 업로드
     const handleImageUpload = (e) => {
@@ -173,14 +192,24 @@ function EditPackage() {
             if (imageUrl && imageUrl.startsWith(baseUrl)) {
                 imageUrl = imageUrl.replace(baseUrl, '');
             }
+
+            // 작업시간 처리
+            let taskTime = packageData.taskTime;
+            if (taskTime.includes(':')) {
+                const [hours, minutes] = taskTime.split(':').map(Number);
+                taskTime = [hours, minutes];
+            }
+
             // 에디터에서 descriptionResponseList 추출 및 이미지 처리
             let descriptionRequestList = [];
             if (editorRef.current) {
                 const rawList = editorRef.current.getContentAsJsonArray();
                 descriptionRequestList = await processDescriptionList(rawList);
             }
+
             const updatedData = {
                 ...packageData,
+                taskTime,
                 imageUrl: imageUrl,
                 descriptionRequestList
             };

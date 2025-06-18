@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FaBell, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import apiClient from "../../../lib/apiClient";
+import dayjs from 'dayjs';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const retryDelay = 5000; // 5초 후 재연결
@@ -102,10 +103,17 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn, hasNewAlarm
                             <li className="px-4 py-2 text-gray-400 text-center">알림이 없습니다.</li>
                         )}
                         {notifications.map((item, idx) => (
-                            <li key={idx} className="px-4 py-2 hover:bg-gray-100 flex items-start gap-2">
-                                <span className="text-xl">{item.icon || "🔔"}</span>
-                                <span className="flex-1">{item.title || JSON.stringify(item)}</span>
-                                <span className="flex-1">{item.content || ""}</span>
+                            <li
+                                key={idx}
+                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-col items-start gap-1"
+                                onClick={() => { if (item.url) window.location.href = item.url; }}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xl">{item.icon || "🔔"}</span>
+                                    <span className="font-bold text-sm text-gray-800">{item.title || JSON.stringify(item)}</span>
+                                </div>
+                                <div className="text-xs text-gray-600 ml-7">{item.content || ""}</div>
+                                <div className="text-[10px] text-gray-400 ml-7 mt-1">{item.time ? dayjs(item.time).format('YYYY.MM.DD HH:mm') : ''}</div>
                             </li>
                         ))}
                     </ul>

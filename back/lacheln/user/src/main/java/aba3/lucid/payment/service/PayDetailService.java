@@ -13,6 +13,7 @@ import aba3.lucid.domain.user.entity.UsersEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PayDetailService {
@@ -91,8 +93,10 @@ public class PayDetailService {
             );
         }
 
+        log.info("payDtoList : {}", dtoList);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(dtoList);
+        log.info("producer json : {}", json);
         rabbitTemplate.convertAndSend("product.exchange", "popular", json);
     }
 }

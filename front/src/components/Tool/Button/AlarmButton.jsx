@@ -104,8 +104,8 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn, hasNewAlarm
                         {notifications.map((item, idx) => (
                             <li key={idx} className="px-4 py-2 hover:bg-gray-100 flex items-start gap-2">
                                 <span className="text-xl">{item.icon || "🔔"}</span>
-                                <span className="flex-1">{item.text.title || JSON.stringify(item)}</span>
-                                <span className="flex-1">{item.text.content || JSON.stringify(item)}</span>
+                                <span className="flex-1">{item.title || JSON.stringify(item)}</span>
+                                <span className="flex-1">{item.content || ""}</span>
                             </li>
                         ))}
                     </ul>

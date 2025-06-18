@@ -165,8 +165,8 @@ function Packagedetail() {
       </div>
 
       <div className="flex gap-4 mt-8">
-        <button className="flex-1 py-3 rounded bg-[#B39CD0] text-white font-bold text-lg hover:bg-[#845EC2] transition" onClick={() => setShowSchedule(true)}>장바구니</button>
-        <button className="flex-1 py-3 rounded bg-[#B39CD0] text-white font-bold text-lg hover:bg-[#845EC2] transition" onClick={() => navigate(-1)}>목록으로</button>
+        <button className="flex-1 py-3 rounded  bg-[#845ec2] text-white font-bold text-lg hover:bg-purple-700 hover:text-white transition" onClick={() => setShowSchedule(true)}>장바구니</button>
+        <button className="flex-1 py-3 rounded  bg-[#845ec2] text-white font-bold text-lg hover:bg-purple-700 hover:text-white transition" onClick={() => navigate(-1)}>목록으로</button>
       </div>
 
       {/* 일정 선택 모달 */}

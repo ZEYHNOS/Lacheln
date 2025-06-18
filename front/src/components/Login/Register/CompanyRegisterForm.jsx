@@ -124,6 +124,7 @@ export default function CompanyRegisterForm() {
   const categories = Object.keys(categoryMap);
 
   const handleCategorySelect = (category) => {
+    console.log("categoryMap[category] : ", categoryMap[category]);
     setSelectedCategory(categoryMap[category]);
   };
 

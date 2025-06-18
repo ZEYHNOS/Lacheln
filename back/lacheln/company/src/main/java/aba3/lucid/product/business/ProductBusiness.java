@@ -15,10 +15,7 @@ import aba3.lucid.domain.packages.entity.PackageEntity;
 import aba3.lucid.domain.packages.entity.PackageToProductEntity;
 import aba3.lucid.domain.payment.dto.PopularDto;
 import aba3.lucid.domain.product.converter.ProductConverter;
-import aba3.lucid.domain.product.dto.PopularResponse;
-import aba3.lucid.domain.product.dto.ProductSearchRecord;
-import aba3.lucid.domain.product.dto.ProductSnapshot;
-import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
+import aba3.lucid.domain.product.dto.*;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.entity.OptionEntity;
 import aba3.lucid.domain.product.entity.PopularEntity;
@@ -116,13 +113,13 @@ public class ProductBusiness {
         return productConverter.toResponse(activateProduct);
     }
 
-    public API<ProductResponse> getProductById(Long productId) {
+    public API<ProductInfoResponse> getProductById(Long productId) {
         Validator.throwIfInvalidId(productId);
 
         ProductEntity product = productService.findByIdWithThrow(productId);
         CompanyEntity company = companyService.findByIdWithThrow(product.getCompany().getCpId());
 
-        ProductResponse response = productConverter.toResponse(product, company);
+        ProductInfoResponse response = productConverter.toInfoResponse(product, company);
 
         return API.OK(response);
     }

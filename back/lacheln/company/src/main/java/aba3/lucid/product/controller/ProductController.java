@@ -4,6 +4,7 @@ import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.domain.packages.dto.ProductPackageInsertResponse;
 import aba3.lucid.domain.product.dto.PopularResponse;
+import aba3.lucid.domain.product.dto.ProductInfoResponse;
 import aba3.lucid.domain.product.dto.ProductStatusUpdateRequest;
 import aba3.lucid.domain.product.dto.option.ProductResponse;
 import aba3.lucid.domain.product.enums.ProductStatus;
@@ -87,7 +88,7 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     @Operation(summary = "상품 ID로 조회", description = "상품 ID로 상품 정보를 조회합니다.")
-    public API<ProductResponse> getProduct(
+    public API<ProductInfoResponse> getProduct(
             @PathVariable Long productId
     )   {
         return productBusiness.getProductById(productId);

@@ -79,6 +79,14 @@ export function EllipseCarousel({ items }) {
         startAutoSlide();
     };
 
+    // 카테고리 변환 함수
+    function getCategoryName(category) {
+        if (category === 'S') return '스튜디오';
+        if (category === 'M') return '메이크업';
+        if (category === 'D') return '드레스';
+        return category;
+    }
+
     return (
         <div
             className="relative w-full h-[500px] mx-auto flex items-center justify-center"
@@ -141,13 +149,17 @@ export function EllipseCarousel({ items }) {
                         <div className="w-64 h-96 bg-white rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-[#845EC2] overflow-hidden">
                             <div className="w-full h-64 flex items-center justify-center bg-gray-100 mb-2">
                                 <img
-                                    src={item.productImageUrl}
+                                    src={
+                                        item.productImageUrl.startsWith('/image/')
+                                            ? `${import.meta.env.VITE_API_BASE_URL}${item.productImageUrl}`
+                                            : item.productImageUrl
+                                    }
                                     alt={item.productName}
                                     className="object-cover w-full h-full"
                                     onError={e => e.currentTarget.src = luxuaryImg}
                                 />
                             </div>
-                            <div className="text-xs text-gray-400 mb-1">{item.category} | {item.companyName}</div>
+                            <div className="text-xs text-gray-400 mb-1">{getCategoryName(item.category)} | {item.companyName}</div>
                             <div className="text-base font-bold text-[#845EC2] mb-1 truncate w-full text-center">{item.productName}</div>
                             <div className="text-sm text-gray-700 font-semibold mb-2">{item.price ? `₩ ${item.price?.toLocaleString()}` : <span className="text-gray-300">가격 정보 없음</span>}</div>
                             <span className={`inline-block px-2 py-1 rounded-full text-xs font-bold mt-auto mb-2 ${item.rank === 1 ? 'bg-[#845EC2] text-white' : 'bg-gray-200 text-gray-700'}`}>#{item.rank}</span>

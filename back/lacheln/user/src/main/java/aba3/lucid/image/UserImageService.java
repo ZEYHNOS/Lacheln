@@ -62,7 +62,7 @@ public class UserImageService {
             File destination = new File(fileDir, savedName);
             image.transferTo(destination);
 
-            filePathList.add("/" + user.getUserId() + "/" + type.getType() + savedName);
+            filePathList.add("/image/" + user.getUserId() + "/" + type.getType() + savedName);
         }
 
         return filePathList;
@@ -91,6 +91,6 @@ public class UserImageService {
         File destination = new File(fileDir, savedName);
         image.transferTo(destination);
 
-        return "/" + user.getUserId() + "/" + type.getType() + savedName;
+        return "/image/" + user.getUserId() + "/" + type.getType() + savedName;
     }
 }

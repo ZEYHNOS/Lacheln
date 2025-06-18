@@ -125,7 +125,10 @@ export default function AlarmButton({ isActive, onClick, isLoggedIn }) {
                             <li
                                 key={idx}
                                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-col items-start gap-1"
-                                onClick={() => { if (item.url) navigate(item.url); }}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    if (item.url) navigate(item.url);
+                                }}
                             >
                                 <div className="flex items-center gap-2">
                                     <span className="text-xl">{item.icon || "🔔"}</span>

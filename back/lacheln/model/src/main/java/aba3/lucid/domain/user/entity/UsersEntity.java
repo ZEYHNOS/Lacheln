@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -206,7 +207,13 @@ public class UsersEntity {
     }
 
     public void addMileage(BigInteger payTotalPrice) {
-        this.userMileage = this.userMileage.add(payTotalPrice.divide(new BigInteger("10")));
+        BigDecimal priceDecimal = new BigDecimal(payTotalPrice);
+        BigDecimal percent = new BigDecimal("0.015"); // 1.5%
+        BigDecimal mileageDecimal = priceDecimal.multiply(percent);
+
+        BigInteger mileage = mileageDecimal.setScale(0, BigDecimal.ROUND_DOWN).toBigInteger();
+
+        this.userMileage = this.userMileage.add(mileage);
     }
 
     public boolean upgradeTierAfterPayment(TierEnum tierEnum) {

@@ -172,6 +172,7 @@ public class ProductService {
         Map<Long, PopularResponse> map = new HashMap<>();
         for (ProductEntity product : productEntityList) {
             map.put(product.getPdId(), PopularResponse.builder()
+                            .price(product.getPdPrice())
                             .productImageUrl(RepresentativeImage.getRepresentativeImage(product.getImageList()))
                             .productName(product.getPdName())
                             .productId(product.getPdId())

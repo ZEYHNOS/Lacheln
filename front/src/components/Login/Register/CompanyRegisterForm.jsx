@@ -141,7 +141,7 @@ export default function CompanyRegisterForm() {
       password_confirm: passwordConfirm,
       name,
       repName,
-      mainContact,
+      contact: mainContact,
       bn_reg_no: "000-00-00000",
       mos: "2025-서울강남-00000",
       address,
@@ -149,7 +149,7 @@ export default function CompanyRegisterForm() {
       profile: "default-profile-image.jpg", // 기본 프로필 이미지 또는 파일 경로
       category: selectedCategory,
       status: "ACTIVATE",   // 기본 상태 값
-      role: "USER"        // 기본 역할 값
+      role: "COMPANY"        // 기본 역할 값
     };
 
     console.log("PasswordConfirm in RequestData : ", requestData);

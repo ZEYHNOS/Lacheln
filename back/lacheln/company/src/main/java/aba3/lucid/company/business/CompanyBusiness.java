@@ -71,7 +71,7 @@ public class CompanyBusiness {
         companyEntity.setCpRepName("임시대표");
         companyEntity.setCpMainContact("01000000000");
         companyEntity.setCpStatus(CompanyStatus.SUSPENSION);
-        companyEntity.setCpProfile("default.png");
+        companyEntity.setCpProfile("/image/default.jpg");
         companyEntity.setCpCategory(CompanyCategory.S);
 
 

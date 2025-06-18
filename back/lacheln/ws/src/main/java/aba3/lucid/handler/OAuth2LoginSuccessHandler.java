@@ -87,7 +87,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .userName(name)
                 .userNickName(nickName)
                 .userSocial(social)
-                .userProfile("default.jpg")
+                .userProfile("/image/default.jpg")
                 .userTier(TierEnum.AMATEUR)
                 .userAdsNotification(NotificationEnum.N)
                 .userAccountStatus(AccountStatusEnum.ACTIVE)

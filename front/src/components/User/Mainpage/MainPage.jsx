@@ -116,22 +116,41 @@ function MainPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.3 }}
                 transition={{ duration: 0.7 }}
-                className="w-full flex justify-center mt-12"
+                className="w-full flex justify-center mt-4"
             >
                 <div className="relative w-full max-w-7xl h-[500px] flex items-center justify-center overflow-visible bg-gray-100 rounded-2xl shadow-lg group">
                     {/* 이미지 */}
-                    {carouselImages.map((img, idx) => (
-                        <img
-                            key={img.src}
-                            src={img.src}
-                            alt={img.alt}
-                            className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${idx === current ? 'opacity-100 z-0' : 'opacity-0 z-0'} pointer-events-none`}
-                            style={{ borderRadius: '20px' }}
-                        />
-                    ))}
+                    {carouselImages.map((img, idx) => {
+                        let position = idx - current;
+                        if (position < -1) position += carouselImages.length;
+                        if (position > 1) position -= carouselImages.length;
+
+                        const isCenter = Math.abs(position) === 0;
+                        let style = {
+                            borderRadius: '20px',
+                            transition: 'transform 0.7s, opacity 0.7s, width 0.7s, height 0.7s',
+                            zIndex: isCenter ? 10 : 0,
+                            opacity: Math.abs(position) > 1 ? 0 : 1,
+                            width: isCenter ? '85%' : '50%',
+                            height: isCenter ? '85%' : '50%',
+                            left: '50%',
+                            top: '50%',
+                            transform: `translate(-50%, -50%) translateX(${position * 100}%)`
+                        };
+
+                        return (
+                            <img
+                                key={img.src}
+                                src={img.src}
+                                alt={img.alt}
+                                className="absolute object-cover"
+                                style={style}
+                            />
+                        );
+                    })}
                     {/* 좌우 버튼 */}
-                    <button onClick={goToPrev} className="absolute -left-16 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow text-3xl z-20 border border-gray-300">&#60;</button>
-                    <button onClick={goToNext} className="absolute -right-16 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow text-3xl z-20 border border-gray-300">&#62;</button>
+                    <button onClick={goToPrev} className="absolute -left-16 top-1/2 -translate-y-1/2 text-black p-3 shadow text-5xl z-20 border-0 bg-transparent transition">&#60;</button>
+                    <button onClick={goToNext} className="absolute -right-16 top-1/2 -translate-y-1/2 text-black p-3 shadow text-5xl z-20 border-0 bg-transparent transition">&#62;</button>
                     {/* 인디케이터 바 */}
                     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
                         {carouselImages.map((_, idx) => (

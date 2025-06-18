@@ -417,7 +417,6 @@ const PaymentAndReview = () => {
                           )}
                         </>
                       )}
-                      <button className="px-4 py-2 border bg-white text-gray-500 border-gray-300 rounded-lg hover:bg-gray-50">상세보기</button>
                     </div>
                   </div>
                 </div>

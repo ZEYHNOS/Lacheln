@@ -45,6 +45,7 @@ const Review = (props) => {
         const fetchCompanyInfo = async () => {
             try {
                 const res = await apiClient.get(`${baseUrl}/company/info/${cpId}`);
+                console.log("res.data.data : ", res.data.data);
                 setCompanyName(res.data.data.name || '');
                 setCompanyImage(res.data.data.profileImageUrl || '');
             } catch (err) {

@@ -88,6 +88,7 @@ public class PayDetailService {
         log.info("paydetailEntityList : {}", payDetailEntityList);
         Set<Long> pdIdSet = new HashSet<>();
         List<PopularDto> dtoList = new ArrayList<>();
+        int rank = 1;
         for (int i = 1; i <= payDetailEntityList.size(); i++) {
             PayDetailEntity payDetail = payDetailEntityList.get(i-1);
             if (!pdIdSet.add(payDetail.getPdId())) {
@@ -96,7 +97,7 @@ public class PayDetailService {
             dtoList.add(PopularDto.builder()
                     .productId(payDetail.getPdId())
                     .companyId(payDetail.getCpId())
-                    .rank(i)
+                    .rank(rank++)
                     .build()
             );
         }

@@ -3,9 +3,11 @@ package aba3.lucid.board.service;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.domain.board.dto.PostUpdateRequest;
+import aba3.lucid.domain.board.entity.BoardEntity;
 import aba3.lucid.domain.board.entity.PostEntity;
 import aba3.lucid.domain.board.entity.PostLikeEntity;
 import aba3.lucid.domain.board.entity.PostViewEntity;
+import aba3.lucid.domain.board.repository.BoardRepository;
 import aba3.lucid.domain.board.repository.PostLikeRepository;
 import aba3.lucid.domain.board.repository.PostRepository;
 import aba3.lucid.domain.board.repository.PostViewRepository;
@@ -28,6 +30,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostViewRepository postViewRepository;
+    private final BoardRepository boardRepository;
 
     /**
      * 게시글 저장
@@ -60,6 +63,14 @@ public class PostService {
     @Transactional
     public PostEntity updatePost(PostEntity post, PostUpdateRequest request) {
         post.updatePost(request.getPostTitle(), request.getPostContent(), LocalDateTime.now());
+
+        // ✅ boardId가 변경됐을 경우에만 새로운 게시판 엔티티로 갱신
+        if (!post.getBoard().getBoardId().equals(request.getBoardId())) {
+            BoardEntity newBoard = boardRepository.findById(request.getBoardId())
+                    .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND, "변경할 게시판이 존재하지 않습니다."));
+            post.setBoard(newBoard);
+        }
+
         return post;
     }
 

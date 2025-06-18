@@ -118,7 +118,7 @@ function MainPage() {
                 transition={{ duration: 0.7 }}
                 className="w-full flex justify-center mt-4"
             >
-                <div className="relative w-full max-w-7xl h-[500px] flex items-center justify-center overflow-visible bg-gray-100 rounded-2xl  group">
+                <div className="relative w-full h-[500px] flex items-center justify-center overflow-visible bg-gray-100 rounded-2xl  group">
                     {/* 이미지 */}
                     {carouselImages.map((img, idx) => {
                         let position = idx - current;

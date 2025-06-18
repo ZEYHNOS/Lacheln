@@ -274,7 +274,7 @@ const Review = (props) => {
                 <div className="flex flex-col items-end">
                     <div className="flex items-center gap-2 mb-2">
                         <img
-                            src={companyImage || 'https://via.placeholder.com/56x56.png?text=Logo'}
+                            src={`${baseUrl}${companyImage}`}
                             alt="회사 프로필"
                             className="w-14 h-14 rounded-full border object-cover bg-white"
                         />

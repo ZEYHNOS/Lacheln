@@ -121,6 +121,8 @@ function Comments() {
         try {
             setIsSubmitting(true);
             
+            console.log("userId : ", review.userId);
+
             const requestData = {
                 userId: review.userId,
                 content: input.trim()

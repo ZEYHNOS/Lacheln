@@ -124,8 +124,7 @@ export default function CompanyRegisterForm() {
   const categories = Object.keys(categoryMap);
 
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    const categoryCode = categoryMap[category];
+    setSelectedCategory(categoryMap[category]);
   };
 
   const handleRegister = async () => {
@@ -151,7 +150,9 @@ export default function CompanyRegisterForm() {
       status: "ACTIVATE",   // 기본 상태 값
       role: "USER"        // 기본 역할 값
     };
-    console.log("PasswordConfirm in RequestData : ", requestData.password_confirm);
+
+    console.log("PasswordConfirm in RequestData : ", requestData);
+    
     try {
       const response = await fetch(`${baseUrl}/company/signup`, {
         method: "POST",

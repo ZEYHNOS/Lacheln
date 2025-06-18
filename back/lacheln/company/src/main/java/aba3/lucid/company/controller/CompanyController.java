@@ -32,6 +32,7 @@ public class CompanyController {
             @RequestBody CompanyRequest companyRequest
 
     ) {
+            log.info("Registering new company: {}", companyRequest);
             CompanyResponse companyResponse = companyBusiness.registerCompany( companyRequest);
             log.debug("Register CompanyResponse: {}", companyResponse);
             return API.OK(companyResponse);

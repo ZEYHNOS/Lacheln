@@ -38,4 +38,11 @@ public class CalendarEntity {
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CalendarDetailEntity> calendarDetailEntity;
 
+    public void addCalendarDetail(CalendarDetailEntity calendarDetailEntity) {
+        if (this.calendarDetailEntity == null) {
+            this.calendarDetailEntity = new ArrayList<>();
+        }
+
+        this.calendarDetailEntity.add(calendarDetailEntity);
+    }
 }

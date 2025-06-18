@@ -32,7 +32,7 @@ public class CalendarService {
 
     @Transactional
     public CalendarEntity createCalendar(CalendarEntity calendarEntity, CalendarDetailEntity calendarDetailEntity) {
-        calendarEntity.getCalendarDetailEntity().add(calendarDetailEntity);
+        calendarEntity.addCalendarDetail(calendarDetailEntity);
         return calendarRepository.save(calendarEntity);
     }
 

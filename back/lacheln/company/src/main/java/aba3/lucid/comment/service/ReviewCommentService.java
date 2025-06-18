@@ -13,12 +13,14 @@ import aba3.lucid.domain.review.dto.ReviewCommentRequest;
 import aba3.lucid.domain.review.entity.ReviewCommentEntity;
 import aba3.lucid.domain.review.repository.ReviewCommentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewCommentService {
@@ -68,6 +70,7 @@ public class ReviewCommentService {
 
     // 리뷰 답글 작성
     public ReviewCommentEntity writeReviewComment(ReviewCommentEntity reviewComment, ReviewCommentRequest request) {
+        log.info("ReviewCommentRequest in userId : {}", request.getUserId());
         reviewComment.writeReviewComment(request);
         ReviewCommentEntity savedReviewCommentEntity = reviewCommentRepository.save(reviewComment);
         // 알림 보내기

@@ -122,7 +122,15 @@ function Packagedetail() {
         <div className="text-sm text-gray-500">최대 혜택 적용 시</div>
         {data.taskTime && (
           <div className="text-sm text-gray-500 mt-1">
-            예상 작업시간: <span className="font-medium">{data.taskTime}</span>
+            예상 작업시간: <span className="font-medium">
+              {(() => {
+                const [h, m] = data.taskTime;
+                if (h && m) return `${h}시간 ${m}분`;
+                if (h) return `${h}시간`;
+                if (m) return `${m}분`;
+                return "";
+              })()}
+            </span>
           </div>
         )}
       </div>

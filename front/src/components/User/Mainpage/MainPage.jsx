@@ -118,7 +118,7 @@ function MainPage() {
                 transition={{ duration: 0.7 }}
                 className="w-full flex justify-center mt-4"
             >
-                <div className="relative w-full h-[500px] flex items-center justify-center overflow-visible bg-gray-100 rounded-2xl  group">
+                <div className="relative w-full max-w-7xl h-[500px] flex items-center justify-center rounded-2xl group">
                     {/* 이미지 */}
                     {carouselImages.map((img, idx) => {
                         let position = idx - current;
@@ -131,11 +131,11 @@ function MainPage() {
                             transition: 'transform 0.7s, opacity 0.7s, width 0.7s, height 0.7s',
                             zIndex: isCenter ? 10 : 0,
                             opacity: Math.abs(position) > 1 ? 0 : 1,
-                            width: isCenter ? '85%' : '50%',
-                            height: isCenter ? '85%' : '50%',
+                            width: isCenter ? '70%' : '50%',
+                            height: isCenter ? '70%' : '50%',
                             left: '50%',
                             top: '50%',
-                            transform: `translate(-50%, -50%) translateX(${position * 100}%)`
+                            transform: `translate(-50%, -50%) translateX(${position * 85}%)`
                         };
 
                         return (

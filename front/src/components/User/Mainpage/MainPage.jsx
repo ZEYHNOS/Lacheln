@@ -277,7 +277,11 @@ function MainPage() {
                                 <li key={idx} className="py-2 px-4 border-b last:border-b-0 text-center text-gray-400">게시글 없음</li>
                             ))
                             : postList.map((post, idx) => (
-                                <li key={post.postId || idx} className="py-2 px-4 border-b last:border-b-0 flex items-center text-center mb-4">
+                                <li
+                                    key={post.postId || idx}
+                                    className="py-2 px-4 border-b last:border-b-0 flex items-center text-center mb-4 cursor-pointer"
+                                    onClick={() => navigate(`/post/${post.postId}`)}
+                                >
                                     <span className="flex-[2] text-sm text-gray-500 text-left">{post.category}</span>
                                     <span className="flex-[3] text-lg font-semibold text-left">{post.postTitle || post.title}</span>
                                     <span className="flex-[1] text-sm text-gray-500 text-left">{post.userNickName}</span>

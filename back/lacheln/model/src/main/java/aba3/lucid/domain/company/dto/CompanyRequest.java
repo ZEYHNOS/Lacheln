@@ -55,6 +55,8 @@ public class CompanyRequest {
     //주소
     private String address;
 
+    private CompanyCategory category;
+
 
 
 

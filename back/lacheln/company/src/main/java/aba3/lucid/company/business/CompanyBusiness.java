@@ -68,12 +68,11 @@ public class CompanyBusiness {
 
         CompanyEntity companyEntity = companyConverter.toEntity(request);
 
-        companyEntity.setCpRepName("임시대표");
-        companyEntity.setCpMainContact("01000000000");
+        companyEntity.setCpRepName(request.getName());
+        companyEntity.setCpMainContact(request.getContact());
         companyEntity.setCpStatus(CompanyStatus.SUSPENSION);
         companyEntity.setCpProfile("/image/default.jpg");
-        companyEntity.setCpCategory(CompanyCategory.S);
-
+        companyEntity.setCpCategory(request.getCategory());
 
         CompanyEntity savedEntity = companyRepository.save(companyEntity);
         return companyConverter.toResponse(savedEntity);

@@ -95,7 +95,7 @@ function AddCompany({ onClose, onComplete }) {
             const packageId = response.data.data.id;
             onComplete(invitedUsers, packageId);
             setIsModalVisible(false);
-            window.location.reload(); // 모달 닫히면 페이지 새로고침
+            navigate('/company/collaboration');
         } catch (err) {
             console.error('패키지 등록 실패:', err);
             setError('패키지 등록 중 오류가 발생했습니다.');

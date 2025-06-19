@@ -102,10 +102,10 @@ function Product() {
                                 >
                                     <td className="border border-gray-300 p-2" style={{width: '20%'}}>
                                         <img 
-                                            src={product.imageUrl ? `${baseUrl}${product.imageUrl.replace(/\\/g, '/')}` : '/default/images/product.png'} 
+                                            src={product.imageUrl ? `${baseUrl}${product.imageUrl.replace(/\\/g, '/')}` : '/image/default.jpg'} 
                                             alt="상품 이미지" 
                                             className="mx-auto w-12 h-12 object-cover rounded"
-                                            onError={e => e.currentTarget.src = '/default/images/product.png'}
+                                            onError={e => e.currentTarget.src = '/image/default.jpg'}
                                         />
                                     </td>
                                     <td className="border border-gray-300 p-2" style={{width: '40%'}}>{product.productName}</td>

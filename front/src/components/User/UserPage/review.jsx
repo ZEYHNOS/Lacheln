@@ -189,6 +189,11 @@ const Review = (props) => {
 
     // 리뷰 등록/수정 함수
     const handleSubmit = async () => {
+        if(images.length === 0) {
+            alert('이미지를 추가해주세요.');
+            return;
+        }
+
         if (!reviewText.trim()) {
             alert('리뷰 내용을 입력해주세요.');
             return;

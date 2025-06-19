@@ -245,7 +245,7 @@ const WishlistSubscribePage = () => {
               onClick={() => handleTabClick(tab)}
               className={`flex-1 text-center py-4 px-4 font-medium border-b-2 
                 ${activeTab === tab.name
-                    ? 'border-purple-600 text-white bg-purple-600'
+                    ? 'border-[#845ec2] text-white bg-[#845ec2]'
                     : 'border-transparent bg-white text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
             >
@@ -438,7 +438,7 @@ const WishlistSubscribePage = () => {
 
         <div className="px-8 mt-8 mb-8">
           <button 
-            className="w-full py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors" 
+            className="w-full py-3 bg-[#845ec2] text-white rounded-lg font-medium hover:bg-purple-700 transition-colors" 
             onClick={() => alert('메인 페이지로 이동')}
           >
             메인 페이지

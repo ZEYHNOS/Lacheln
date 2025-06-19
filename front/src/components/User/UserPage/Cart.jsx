@@ -18,29 +18,9 @@ export default function Cart() {
             .then(res => {
                 const list = res.data.data || [];
                 setCartList(list);
-                // 패키지/단품 분리 및 그룹화
-                const packageMap = {};
-                const singleList = [];
-                list.forEach(item => {
-                    if (item.packId) {
-                        if (!packageMap[item.packId]) {
-                            packageMap[item.packId] = {
-                                ...item,
-                                products: []
-                            };
-                        }
-                        packageMap[item.packId].products.push(item);
-                    } else {
-                        singleList.push(item);
-                    }
-                });
-                const packageList = Object.values(packageMap);
-                // 패키지ID + 단품ID 모두 checked에 포함
-                setChecked([
-                    ...packageList.map(pkg => pkg.packId),
-                    ...singleList.map(item => item.cartId)
-                ]);
-                setAllChecked(true);
+                // 초기 로딩 시에는 모든 항목을 선택하지 않음
+                setChecked([]);
+                setAllChecked(false);
             })
             .catch(() => {
                 setCartList([]);
@@ -66,6 +46,15 @@ export default function Cart() {
     });
     const packageList = Object.values(packageMap);
 
+    // 전체 항목 수 계산
+    const totalItems = packageList.length + singleList.length;
+    const checkedItems = checked.length;
+
+    // 일괄선택 상태 업데이트 (모든 항목이 선택되었을 때만 true)
+    useEffect(() => {
+        setAllChecked(totalItems > 0 && checkedItems === totalItems);
+    }, [checked, totalItems, checkedItems]);
+
     // 패키지/단품 체크박스 관리
     const checkedPackageIds = checked.filter(id => packageList.some(pkg => pkg.packId === id));
     const checkedSingleIds = checked.filter(id => singleList.some(item => item.cartId === id));
@@ -81,7 +70,6 @@ export default function Cart() {
             ];
             setChecked(allIds);
         }
-        setAllChecked(!allChecked);
     };
 
     // 패키지 체크/해제

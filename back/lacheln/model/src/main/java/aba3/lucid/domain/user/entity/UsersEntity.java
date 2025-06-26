@@ -173,13 +173,17 @@ public class UsersEntity {
 
     // 유저정보 업데이트
     public void updateUser(UserUpdateRequest userUpdateRequest, BCryptPasswordEncoder bCryptPasswordEncoder)    {
-        log.info("UserUpdateRequest: {}", userUpdateRequest.getGender());
         if(!userUpdateRequest.getPassword().equals("NULL")) {
             updatePassword(bCryptPasswordEncoder.encode(userUpdateRequest.getPassword()));
         }
+
+        if(this.getUserTier() == TierEnum.AMATEUR && userUpdateRequest.getPhone() != null && this.getUserPhone() == null)   {
+            updatePhone(userUpdateRequest.getPhone());
+            this.userTier = TierEnum.SEMI_PRO;
+        }
+
         updateUserName(userUpdateRequest.getName());
         updateNickName(userUpdateRequest.getNickname());
-        updatePhone(userUpdateRequest.getPhone());
         updateLanguage(userUpdateRequest.getLanguage());
         updateCurrency(userUpdateRequest.getCurrency());
         updateAdsNotification(userUpdateRequest.getNotification());

@@ -3,6 +3,7 @@ package aba3.lucid.image;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.image.ImageType;
 import aba3.lucid.common.status_code.ErrorCode;
+import aba3.lucid.config.GlobalConfig;
 import aba3.lucid.config.ImageConfig;
 import aba3.lucid.domain.review.entity.ReviewEntity;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserImageService {
 
-    private final ImageConfig imageConfig;
+    private final GlobalConfig globalConfig;
     private final UserService userService;
     private final ReviewService reviewService;
 
@@ -40,11 +41,11 @@ public class UserImageService {
             }
         }
 
-        log.info("imageConfig.getDir() : {}", imageConfig.getDir());
+        log.info("globalConfig.getImageDir() : {}", globalConfig.getImageDir());
         log.info("user.getUserId() : {}", user.getUserId());
         log.info("type.getType() : {}", type.getType());
 
-        Path path = Paths.get(imageConfig.getDir(), String.valueOf(user.getUserId()), type.getType());
+        Path path = Paths.get(globalConfig.getImageDir(), String.valueOf(user.getUserId()), type.getType());
         File fileDir = path.toFile();
         if (!fileDir.exists()) {
             fileDir.mkdirs();
@@ -75,7 +76,7 @@ public class UserImageService {
             throw new ApiException(ErrorCode.BAD_REQUEST, "image 아닙니다.");
         }
 
-        Path path = Paths.get(imageConfig.getDir(), String.valueOf(user.getUserId()), type.getType());
+        Path path = Paths.get(globalConfig.getImageDir(), String.valueOf(user.getUserId()), type.getType());
         File fileDir = path.toFile();
         if (!fileDir.exists()) {
             fileDir.mkdirs();

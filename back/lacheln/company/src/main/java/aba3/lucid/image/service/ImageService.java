@@ -4,7 +4,7 @@ import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.image.ImageType;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.common.validate.Validator;
-import aba3.lucid.config.ImageConfig;
+import aba3.lucid.config.GlobalConfig;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.product.entity.ProductImageEntity;
@@ -28,7 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageService {
 
-    private final ImageConfig imageConfig;
+    private final GlobalConfig globalConfig;
 
     private final ProductImageRepository productImageRepository;
     private final CompanyRepository companyRepository;
@@ -40,7 +40,7 @@ public class ImageService {
             }
 
             // 디렉토리 생성
-            Path path = Paths.get(imageConfig.getDir(), String.valueOf(company.getCpId()), type.getType());
+            Path path = Paths.get(globalConfig.getImageDir(), String.valueOf(company.getCpId()), type.getType());
             File fileDir = path.toFile();
             if (!fileDir.exists()) {
                 fileDir.mkdirs();
@@ -71,7 +71,7 @@ public class ImageService {
         if(imagePath == null || imagePath.isEmpty())
             return;
         //만약 imagePath가 상대경로라면, 실제 저장경로로 변환 필요
-        String baseDir = imageConfig.getDir();
+        String baseDir = globalConfig.getImageDir();
         String absPath = baseDir + imagePath; //경로 조합
         File file = new File(absPath.replace("/", File.separator));
         if(file.exists()) {
@@ -90,7 +90,7 @@ public class ImageService {
         }
 
         // 해당 업체의 파일이 존재하지 않을 때
-        Path path = Paths.get(imageConfig.getDir(), String.valueOf(company.getCpId()), type.getType());
+        Path path = Paths.get(globalConfig.getImageDir(), String.valueOf(company.getCpId()), type.getType());
         File fileDir = path.toFile();
         if (!fileDir.exists()) {
             fileDir.mkdirs();
@@ -129,7 +129,7 @@ public class ImageService {
         }
 
         // 해당 업체의 파일이 존재하지 않을 때
-        Path path = Paths.get(imageConfig.getDir(), user.getUserId(), type.getType());
+        Path path = Paths.get(globalConfig.getImageDir(), user.getUserId(), type.getType());
         File fileDir = path.toFile();
         if (!fileDir.exists()) {
             fileDir.mkdirs();
@@ -177,7 +177,7 @@ public class ImageService {
     }
 
     public void deleteProductImageByImageId(ProductImageEntity productImage) {
-        File file = new File(imageConfig.getDir() + productImage.getPdImageUrl());
+        File file = new File(globalConfig.getImageDir() + productImage.getPdImageUrl());
         if (file.exists()) {
             boolean deleted = file.delete();
             if (!deleted) {
@@ -198,7 +198,7 @@ public class ImageService {
 
         // 2. 실제 파일 시스템에서 이미지 삭제
         for (String path : imagePaths) {
-            File file = new File(imageConfig.getDir() + path);
+            File file = new File(globalConfig.getImageDir() + path);
             if (file.exists()) {
                 boolean deleted = file.delete();
                 if (!deleted) {

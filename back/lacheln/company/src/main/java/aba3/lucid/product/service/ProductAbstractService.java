@@ -39,8 +39,6 @@ public abstract class ProductAbstractService<T extends ProductEntity,R extends P
     public T registerProduct(T entity) {
         log.debug("Product Service {}", entity);
 
-        // TODO 구독한 유저에게 알림 보내기
-
         return repository.save(entity);
     }
 

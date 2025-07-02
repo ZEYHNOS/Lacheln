@@ -14,5 +14,5 @@ public class GlobalConfig {
     private String baseUrl;
     private String imagePath;
     private String imageDir;
-
+    private String domain;
 }

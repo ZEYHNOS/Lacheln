@@ -1,5 +1,6 @@
 package aba3.lucid.jwt;
 
+import aba3.lucid.config.GlobalConfig;
 import aba3.lucid.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final GlobalConfig globalConfig;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthService authService;
 
@@ -48,6 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .secure(true)
                         .sameSite("None") // 개발단계에서는 None 배포 시 strict
                         .path("/")
+                        .domain(globalConfig.getDomain())
                         .maxAge(Duration.ofDays(10))
                         .build();
                 response.setHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());

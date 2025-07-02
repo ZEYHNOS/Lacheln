@@ -4,6 +4,7 @@ import aba3.lucid.common.auth.AuthUtil;
 import aba3.lucid.common.exception.ApiException;
 import aba3.lucid.common.status_code.ErrorCode;
 import aba3.lucid.company.service.CompanyService;
+import aba3.lucid.config.GlobalConfig;
 import aba3.lucid.domain.company.entity.CompanyEntity;
 import aba3.lucid.domain.company.repository.CompanyRepository;
 import aba3.lucid.domain.user.entity.UsersEntity;
@@ -28,6 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final GlobalConfig globalConfig;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final UsersRepository userRepository;
@@ -49,19 +51,19 @@ public class AuthService {
         // 쿠키에 각 토큰을 저장
         ResponseCookie accessCookie = ResponseCookie.from("AccessToken", accessToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .sameSite("Lax") // 개발단계에서는 None 배포 시 strict
                 .path("/")
-                .domain("lacheln.p-e.kr")
+                .domain(globalConfig.getDomain())
                 .maxAge(Duration.ofDays(10))
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .sameSite("Lax") // 개발단계에서는 None 배포 시 strict
                 .path("/")
-                .domain("lacheln.p-e.kr")
+                .domain(globalConfig.getDomain())
                 .maxAge(Duration.ofDays(10))
                 .build();
 
@@ -84,19 +86,19 @@ public class AuthService {
         // 유효기간이 0(바로 사라짐)인 Access,RefreshToken을 저장한 쿠키생성
         ResponseCookie accessCookie = ResponseCookie.from("AccessToken", null)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .sameSite("Lax") // 개발단계에서는 None 배포 시 strict
                 .path("/")
-                .domain("lacheln.p-e.kr")
+                .domain(globalConfig.getDomain())
                 .maxAge(0)
                 .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("RefreshToken", null)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .sameSite("Lax") // 개발단계에서는 None 배포 시 strict
                 .path("/")
-                .domain("lacheln.p-e.kr")
+                .domain(globalConfig.getDomain())
                 .maxAge(0)
                 .build();
 

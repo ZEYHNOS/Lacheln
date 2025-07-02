@@ -1,5 +1,6 @@
 package aba3.lucid.handler;
 
+import aba3.lucid.config.GlobalConfig;
 import aba3.lucid.domain.user.entity.UsersEntity;
 import aba3.lucid.domain.user.enums.*;
 import aba3.lucid.domain.user.repository.UsersRepository;
@@ -28,6 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
+    private final GlobalConfig globalConfig;
     private final UsersRepository usersRepository;
     private final AuthService authService;
 
@@ -69,7 +71,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
 
-        response.sendRedirect("http://lacheln.p-e.kr:3000");
+        response.sendRedirect(globalConfig.getBaseUrl());
 
     }
 

@@ -86,35 +86,6 @@ export default function ReportPage() {
   };
   // ────────────────────────────────────────────────────────
 
-  // immediately upload your selected files
-  // const handleFileChange = e => {
-  //   const chosen = Array.from(e.target.files || []);
-  //   setFiles(chosen);
-  //   setImageUrls([]);
-  //   // **use the actor's ID** in the path, _not_ `reportedId`:
-  //   const uploadUrl =
-  //     targetType === "USER"
-  //       ? `${BASE_URL}/report/company/image/upload`
-  //       : `${BASE_URL}/report/user/image/upload`;
-
-  //   const uploaded = [];
-  //   for (let file of chosen) {
-  //     const form = new FormData();
-  //     form.append("images", file);
-  //     try {
-  //       const res =  axios.post(uploadUrl, form, {
-  //         headers: { "Content-Type": "multipart/form-data" }
-  //       });
-  //       // our API returns { data: [ ...urls ] }
-  //       uploaded.push(...res.data.data);
-  //     } catch (err) {
-  //       console.error("upload failed:", err);
-  //       alert(`${file.name} 업로드에 실패했습니다.`);
-  //     }
-  //   }
-  //   console.log("신고업체 ID", reportedId);
-  //   setImageUrls(uploaded);
-  // };
   const handleFileChange = e => {
     const chosen = Array.from(e.target.files || []);
     setFiles(chosen);
@@ -218,64 +189,97 @@ export default function ReportPage() {
 
         {/* STEP 1 */}
         {step === 1 && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <label className="block font-medium mt-4">신고 대상 이름</label>
             <input
               type="text"
               placeholder="신고 대상 이름을 입력하세요"
-              className="w-full bg-white border px-3 py-2 rounded text-gray-900"
+              className="w-full bg-white border px-3 py-2 rounded text-gray-900 placeholder:text-[#845EC2]"
               value={targetName}
               onChange={e => setTargetName(e.target.value)}
             />
-
 
             <label className="block font-medium mt-4">신고자 이름</label>
             <input
               type="text"
               placeholder="신고자 이름을 입력하세요"
-              className="w-full bg-white border px-3 py-2 rounded text-gray-900"
+              className="w-full bg-white border px-3 py-2 rounded text-gray-900 placeholder:text-[#845EC2]"
               value={reporterName}
               onChange={e => setReporterName(e.target.value)}
-
             />
 
-
-            <label className="block font-medium">누구를 신고하나요?</label>
-            <div className="flex gap-4">
-              {["USER", "COMPANY"].map(t => (
-                <button
-                  key={t}
-                  type="button"
-                  className={`px-4 py-2 rounded ${targetType === t
-                      ? "bg-purple-600 text-white"
-                      : "bg-gray-100 text-gray-700"
+            {/* 메인 질문 */}
+            <div className="bg-gray-50 p-6 rounded-lg border">
+              <h2 className="text-xl font-bold text-center mb-6 text-gray-800">
+                누구를 신고하세요?
+              </h2>
+              
+              {/* 선택 버튼 */}
+              <div className="flex gap-4 justify-center">
+                {["USER", "COMPANY"].map(t => (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`px-8 py-3 rounded-lg font-semibold text-lg transition-all duration-200 ${
+                      targetType === t
+                        ? "bg-[#845EC2] text-white shadow-lg transform scale-105"
+                        : "bg-white text-[#845EC2] border-2 border-[#845EC2] hover:bg-[#845EC2] hover:text-white"
                     }`}
-                  onClick={() => {
-                    setTargetType(t);
-                    setReportedId("");
-                  }}
-                >
-                  {t === "USER" ? "사용자" : "업체"}
-                </button>
-              ))}
+                    onClick={() => {
+                      setTargetType(t);
+                      setReportedId("");
+                    }}
+                  >
+                    {t === "USER" ? "사용자" : "업체"}
+                  </button>
+                ))}
+              </div>
             </div>
 
+            {/* 선택에 따른 검색 필드 */}
             {targetType && (
-              <AsyncSelect
-                cacheOptions
-                defaultOptions
-                loadOptions={targetType === "USER" ? loadUserOptions : loadCompanyOptions}
-                onChange={opt => {
-                  console.log("Selected option:", opt);
-                  setReportedId(opt?.value || "");
-                }}
-                placeholder={
-                  targetType === "USER"
-                    ? "사용자 이메일/ID 검색…"
-                    : "업체 이메일 검색…"
-                }
-                className="mt-2"
-              />
+              <div className="bg-white p-4 rounded-lg border-2 border-[#845EC2]">
+                <label className="block font-medium mb-3 text-[#845EC2]">
+                  {targetType === "USER" 
+                    ? "신고할 사용자 이메일 검색" 
+                    : "신고할 업체 이메일 검색"
+                  }
+                </label>
+                <AsyncSelect
+                  cacheOptions
+                  defaultOptions
+                  loadOptions={targetType === "USER" ? loadUserOptions : loadCompanyOptions}
+                  onChange={opt => {
+                    console.log("Selected option:", opt);
+                    setReportedId(opt?.value || "");
+                  }}
+                  placeholder={
+                    targetType === "USER"
+                      ? "사용자 이메일을 입력하여 검색하세요..."
+                      : "업체 이메일을 입력하여 검색하세요..."
+                  }
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      borderColor: '#845EC2',
+                      '&:hover': {
+                        borderColor: '#845EC2'
+                      }
+                    }),
+                    option: (base, state) => ({
+                      ...base,
+                      backgroundColor: state.isSelected ? '#845EC2' : state.isFocused ? '#845EC220' : 'white',
+                      color: state.isSelected ? 'white' : '#333'
+                    })
+                  }}
+                />
+                
+                {reportedId && (
+                  <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded text-green-700 text-sm">
+                    ✓ {targetType === "USER" ? "사용자" : "업체"}가 선택되었습니다.
+                  </div>
+                )}
+              </div>
             )}
 
             <div className="flex justify-end">
@@ -283,8 +287,8 @@ export default function ReportPage() {
                 type="button"
                 disabled={!canNext1}
                 onClick={() => setStep(2)}
-                className={`px-5 py-2 rounded ${canNext1
-                    ? "bg-purple-600 text-white"
+                className={`px-6 py-3 rounded-lg font-semibold ${canNext1
+                    ? "bg-[#845EC2] text-white hover:bg-[#6B46C1] transition-colors"
                     : "bg-gray-200 text-gray-500 cursor-not-allowed"
                   }`}
               >다음</button>
@@ -295,14 +299,6 @@ export default function ReportPage() {
         {/* STEP 2 */}
         {step === 2 && (
           <div className="space-y-4">
-            {/* <label className="block font-medium mt-4">신고 대상 이름</label>
-            <input
-              type="text"
-              placeholder="신고 대상 이름을 입력하세요"
-              className="w-full bg-white border px-3 py-2 rounded text-gray-900"
-              value={reportedName}
-              onChange={e => setReportedName(e.target.value)}
-            /> */}
             <label className="block font-medium">카테고리</label>
             <select
               className="w-full bg-white border px-3 py-2 rounded text-gray-900"
@@ -320,7 +316,7 @@ export default function ReportPage() {
               type="text"
               placeholder="신고 제목을 입력하세요"
               maxLength={100}
-              className="w-full bg-white border px-3 py-2 rounded text-gray-900"
+              className="w-full bg-white border px-3 py-2 rounded text-gray-900 placeholder:text-[#845EC2]"
               value={title}
               onChange={e => setTitle(e.target.value)}
             />
@@ -330,7 +326,7 @@ export default function ReportPage() {
               rows={5}
               placeholder="신고 내용을 입력하세요"
               maxLength={1000}
-              className="w-full bg-white border px-3 py-2 rounded resize-none text-gray-900"
+              className="w-full bg-white border px-3 py-2 rounded resize-none text-gray-900 placeholder:text-[#845EC2]"
               value={content}
               onChange={e => setContent(e.target.value)}
             />
@@ -353,14 +349,14 @@ export default function ReportPage() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="px-5 py-2 rounded bg-gray-200 text-gray-700"
+                className="px-5 py-2 rounded bg-[#845EC2] text-white hover:bg-[#6B46C1] transition-colors"
               >이전</button>
               <button
                 type="button"
                 disabled={!canNext2}
                 onClick={() => setStep(3)}
                 className={`px-5 py-2 rounded ${canNext2
-                    ? "bg-purple-600 text-white"
+                    ? "bg-[#845EC2] text-white hover:bg-[#6B46C1] transition-colors"
                     : "bg-gray-200 text-gray-500 cursor-not-allowed"
                   }`}
               >다음</button>
@@ -404,7 +400,7 @@ export default function ReportPage() {
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="px-5 py-2 rounded bg-green-600 text-white"
+                className="px-5 py-2 rounded bg-purple-600 text-white"
               >제출하기</button>
             </div>
           </div>

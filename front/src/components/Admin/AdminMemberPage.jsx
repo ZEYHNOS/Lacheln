@@ -70,7 +70,7 @@ export default function AdminMemberPage() {
                             <th className="p-6 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[200px]">통신판매업신고번호</th>
                             <th className="p-6 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[150px]">연락처</th>
                             <th className="p-6 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[120px]">카테고리</th>
-                            <th className="p-6 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[150px]">가입 시간</th>
+                            <th className="p-6 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[150px]">가입 날짜</th>
                         </tr>
                     </thead>
                     <tbody>

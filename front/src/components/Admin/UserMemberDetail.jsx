@@ -56,7 +56,7 @@ export default function UserMemberDetail() {
                             <th className="p-5 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[120px]">ID</th>
                             <th className="p-5 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[150px]">이름</th>
                             <th className="p-5 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[200px]">이메일</th>
-                            <th className="p-5 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[150px]">가입일</th>
+                            <th className="p-5 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[150px]">가입 날짜</th>
                             <th className="p-5 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[120px]">전화번호</th>
                             <th className="p-5 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[120px]">닉네임</th>
                             <th className="p-5 text-lg text-white font-bold border-b-2 border-[#F6F1FA] min-w-[120px]">상태</th>

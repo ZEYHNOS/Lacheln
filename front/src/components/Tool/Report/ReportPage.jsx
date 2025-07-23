@@ -211,7 +211,7 @@ export default function ReportPage() {
             {/* 메인 질문 */}
             <div className="bg-gray-50 p-6 rounded-lg border">
               <h2 className="text-xl font-bold text-center mb-6 text-gray-800">
-                누구를 신고하세요?
+                신고 대상을 선택하세요.
               </h2>
               
               {/* 선택 버튼 */}

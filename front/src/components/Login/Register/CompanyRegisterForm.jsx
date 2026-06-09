@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 export default function CompanyRegisterForm() {
   const navigate = useNavigate();
-  const [isVerifiedBusiness, setIsVerifiedBusiness] = useState(true);
+  const [isVerifiedBusiness, setIsVerifiedBusiness] = useState("false");
   const [isVerifiedSales, setIsVerifiedSales] = useState(true);
   const [businessAuthMessage, setBusinessAuthMessage] = useState("");
   const [salesAuthMessage, setSalesAuthMessage] = useState("");
@@ -89,6 +89,13 @@ export default function CompanyRegisterForm() {
     setMainContact(value);
   };
 
+  const verifyBusinessNumber =async () => {
+    const result = await api.verifyBusinessNumber(bnRegNo);
+    if( result.valid) {
+      setIsVerifiedBusiness(bnRegNo);
+    }
+  };
+
   const validateForm = () => {
     let newErrors = {};
     if (!email.trim()) {
@@ -104,7 +111,7 @@ export default function CompanyRegisterForm() {
     if (password !== passwordConfirm) newErrors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
     if (!mainContact.trim()) newErrors.mainContact = "대표자 전화번호를 입력해주세요.";
     if (!isVerifiedPhone) newErrors.authCode = "전화번호 인증을 완료해주세요.";
-    // if (!bnRegNo.trim()) newErrors.bnRegNo = "사업자등록번호를 입력해주세요.";
+    if (!bnRegNo.trim()) newErrors.bnRegNo = "사업자등록번호를 입력해주세요.";
     // if (!isVerifiedBusiness) newErrors.bnRegNo = "사업자등록번호 인증을 완료해주세요.";
     // if (!isSalesNumberValid) newErrors.mos = "통신판매업 신고 번호를 올바르게 입력해주세요.";
     // if (!isVerifiedSales) newErrors.mos = "통신판매업 신고 번호 인증을 완료해주세요.";
@@ -112,6 +119,16 @@ export default function CompanyRegisterForm() {
     setErrors(newErrors);
     console.log("newErrors : ", Object.keys(newErrors).length);
     console.log("newErrors : ", Object.keys(newErrors));
+    setIsFormValid(Object.keys(newErrors).length === 0);
+    if (!bnRegNo.trim()) {
+      newErrors.bnRegNo = "사업자등록번호를 입력해주세요.";
+    }else if (!isVerifiedBusiness) {
+      newErrors.bnRegNo = "사업자등록번호 인증을 완료해주세요.";
+    }
+    if (!address.trim() || !postalCode.trim() || !detailAddress.trim()) {
+    newErrors.address = "주소를 입력해주세요.";
+    }
+    setErrors(newErrors);
     setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
@@ -142,7 +159,7 @@ export default function CompanyRegisterForm() {
       name,
       repName,
       contact: mainContact.replace(/-/g, ""),
-      bn_reg_no: "000-00-00000",
+      bn_reg_no: bnRegNo,
       mos: "2025-서울강남-00000",
       address,
       postal_code: postalCode,
@@ -329,7 +346,18 @@ export default function CompanyRegisterForm() {
     });
   };
   const handleBusinessNumberChange = (e) => {
-    setBnRegNo(formatBusinessNumber(e.target.value));
+    let value = e.target.value.replace(/\D/g, "");
+    value = value.slice(0, 10);
+    if (value.length < 4) {
+      value = value;
+    } else if (value.length < 6) {
+      value = value.replace(/(\d{3})(\d{1,2})/, "$1-$2");
+    } else {
+      value = value.replace(/(\d{3})(\d{2})(\d{1,5})/, "$1-$2-$3");
+    }
+    setBnRegNo(e.target.value);
+    setIsVerifiedBusiness(false);
+    setBusinessAuthMessage("");
   };
 
   // 통신판매업신고번호 입력
@@ -347,16 +375,45 @@ export default function CompanyRegisterForm() {
     firstNum.length === 4 && koreanText.length > 0 && lastNum.length >= 1;
 
   // 사업자 등록번호 인증 
-  const handleVerifyBusinessNumber = () => {
-    const formattedBusinessNumber = bnRegNo.replace(/-/g, "");
-
-    if (formattedBusinessNumber === "0000000000") {
-      setIsVerifiedBusiness(true);
-      setBusinessAuthMessage("✅ 사업자 등록번호 인증 완료");
-    } else {
-      setBusinessAuthMessage("❌ 인증 실패: 번호를 확인해주세요.");
+  const handleVerifyBusinessNumber = async() => {
+   if (!/^\d{3}-\d{2}-\d{5}$/.test(bnRegNo)) {
+      toast.error("사업자 등록 번호 형식이 올바르지 않습니다. (예: 123-45-67890)");
+        return;
     }
-  };
+    try {
+      const response = await fetch(`${baseUrl}/company/status-bn`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({cpBnRegNo: bnRegNo}),
+      });
+      if (!response.ok) {
+            const errorData = await response.json();
+            setIsVerifiedBusiness(false);
+            setBusinessAuthMessage(` ${errorData.message}`);
+            toast.error(errorData.message);
+            return;
+      }
+      
+      const data = await response.json();
+      console.log("사업자 등록번호 인증 : ", data);
+
+      if (data.valid) {
+        setIsVerifiedBusiness(true);
+        setBusinessAuthMessage(`✅ ${data.message} (${data.taxType ?? ""})`);
+        toast.success("사업자등록번호 인증에 성공했습니다.");
+      } else {
+        setIsVerifiedBusiness(false);
+        setBusinessAuthMessage(`❌ ${data.message ?? "유효하지 않은 번호입니다."}`);
+        toast.error(data.message ?? "인증 실패");
+      } 
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("서버 통신 중 오류가 발생했습니다.");
+      setBusinessAuthMessage("❌ 서버와의 통신에 실패했습니다.");
+    }
+};
 
   // 통신판매업신고번호 인증
   const handleVerifySalesNumber = () => {
@@ -601,7 +658,7 @@ export default function CompanyRegisterForm() {
           </div>
 
           {/* 사업자 등록번호 입력 + 조회 버튼 */}
-          {/* <div>
+          { <div>
             <label className="text-sm text-[#845EC2]">사업자 등록 번호</label>
             <div className="flex space-x-2">
               <input
@@ -613,16 +670,24 @@ export default function CompanyRegisterForm() {
                 maxLength="12"
               />
               <button
-                className="px-4 py-2 rounded-md bg-[#845EC2] text-white"
+                className="px-4 py-2 rounded-md bg-[#845EC2] text-white abled:opacity-60"
                 onClick={handleVerifyBusinessNumber}
                 disabled={isVerifiedBusiness}
               >
-                {isVerifiedBusiness ? "✅ 인증 완료" : "조회하기"}
+                {isVerifiedBusiness ? "인증 완료" : "조회하기"}
               </button>
             </div>
-            {businessAuthMessage && <p className="text-sm text-green-500">{businessAuthMessage}</p>}
-          </div> */}
-
+            
+            {/* 변경된 피드백 메시지 영역 */}
+            {businessAuthMessage && (
+              <p className={`text-sm mt-1 ${isVerifiedBusiness ? "text-green-500" : "text-red-500"}`}>
+                {businessAuthMessage}
+              </p>
+            )}
+            {errors.bnRegNo && !businessAuthMessage && (
+              <p className="text-sm text-red-500 mt-1">{errors.bnRegNo}</p>
+            )}
+          </div> }
           {/* 통신판매업 신고번호 입력 및 조회 버튼 */}
           {/* <div className="mt-4">
             <label className="text-sm text-[#845EC2]">통신 판매업 신고 번호</label>

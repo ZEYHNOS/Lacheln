@@ -4,18 +4,21 @@ package aba3.lucid.company.controller;
 import aba3.lucid.common.api.API;
 import aba3.lucid.common.auth.CustomUserDetails;
 import aba3.lucid.company.business.CompanyBusiness;
+import aba3.lucid.company.service.BusinessValidationService;
 import aba3.lucid.company.service.CompanyService;
 import aba3.lucid.domain.company.dto.*;
 import aba3.lucid.domain.company.enums.CompanyCategory;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -25,6 +28,7 @@ import java.util.List;
 public class CompanyController {
     private final CompanyBusiness companyBusiness;
     private final CompanyService companyService;
+    private final BusinessValidationService validationService;
 
 
     @PostMapping("/signup")
@@ -32,10 +36,13 @@ public class CompanyController {
             @RequestBody CompanyRequest companyRequest
 
     ) {
+
             log.info("Registering new company: {}", companyRequest);
             CompanyResponse companyResponse = companyBusiness.registerCompany( companyRequest);
             log.debug("Register CompanyResponse: {}", companyResponse);
+
             return API.OK(companyResponse);
+
 
     }
 
@@ -153,10 +160,41 @@ public class CompanyController {
         return companyBusiness.getMonthlyJoinStats();
     }
 
-//    @GetMapping("/today-reports")
-//    public API<Long> getTodayReports() {
-//        return reportBusiness.getTodayReportCount(); // Report 구현 필요
-//    }
+    @PostMapping("/status-bn")
+    public ResponseEntity<?> validateBn(@RequestBody Map<String, String> body) {
+        String cpBnRegNo = body.get("cpBnRegNo");
+        //형식 검증
+        if( cpBnRegNo == null || !cpBnRegNo.matches("^\\d{3}-\\d{2}-\\d{5}$")) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "valid", false,
+                    "message", "사업자등록번호 형식이 올바르지 않습니다."
+            ));
+        }
+        BnoStatusResponse.DataItem result = validationService.validateBusinessNumber(cpBnRegNo);
 
+        String taxType = result.getTaxType() == null
+                            ? ""
+                            : result.getTaxType();
+
+        boolean isValid = !taxType.contains("등록되지 않은");
+
+        String message =
+                isValid
+                        ? "유효한 사업자등록번호입니다."
+                        : "존재하지 않는 사업자등록번호입니다";
+
+        //프론트로 반환
+        return ResponseEntity.ok(
+                Map.of(
+                        "valid", isValid,
+                        "message", message,
+                        "taxType", taxType
+                )
+
+        );
+
+
+
+    }
 
 }
